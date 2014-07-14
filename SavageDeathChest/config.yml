@@ -1,0 +1,58 @@
+#This is the SavageDeathChest config file
+
+# Localization language
+language: en-US
+
+# Enabled Worlds
+enabled-worlds:
+  - world
+  - another_world
+
+# Require players to have a chest in their inventory
+require-chest: false
+
+# Protect chests from other players
+chest-protection: true
+
+# Check for container access in GriefPrevention claims
+griefprevention-enabled: true
+
+# Check for build access in WorldGuard claims
+worldguard-enabled: true
+
+# Distance from death location to search for a valid chest location
+# NOTE: This checks exponentially more locations for each increase in distance
+# For this reason, it is not recommended to set this value too high.
+seach_distance: 10
+
+# Place sign on death chests
+chest-signs: true
+
+# Time in minutes before death chests expire
+expire-time: 60
+
+# Drop items that don't fit in death chest
+allow-drops: true
+
+# Allow quick-looting of chests with sneak-punch
+quick-loot: true
+
+# Automatically remove empty chests on closing
+remove-empty: true
+
+# Distance from death location to search for a valid chest location
+# NOTE: This checks exponentially more locations for each increase in distance
+# For this reason, it is not recommended to set this value too high.
+search-distance: 5
+
+# List of blocks that can be replaced by a chest
+replaceable-blocks:
+  - AIR
+  - LONG_GRASS
+  - SNOW
+  - VINE
+  - WATER_LILY
+  - WATER
+  - STATIONARY_WATER
+  - LAVA
+  - STATIONARY_LAVA
