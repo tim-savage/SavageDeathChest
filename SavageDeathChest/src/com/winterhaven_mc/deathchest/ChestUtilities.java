@@ -177,6 +177,7 @@ public class ChestUtilities {
 			if (itemstack == null) {
 				continue;
 			}
+			
 			for (ItemStack checkstack : returnlist) {
 				if (checkstack == null) {
 					continue;
@@ -191,9 +192,41 @@ public class ChestUtilities {
 				returnlist.add(itemstack);
 			}
 		}
+		if (plugin.debug) {
+			plugin.getLogger().info("There are " + returnlist.size() + " consolidated item stacks.");
+		}
 		return returnlist;
 	}
 
+  /*  public List<ItemStack> consolidateItems(List<ItemStack> itemlist) {
+    	
+        ArrayList<ItemStack> returnlist = new ArrayList<ItemStack>();
+
+        for (ItemStack itemstack : itemlist) {
+            if (itemstack == null) {
+            	continue;
+            }
+            Iterator<ItemStack> iterator = returnlist.iterator();
+            while (iterator.hasNext()) {
+                ItemStack checkstack = (ItemStack)iterator.next();
+                if (checkstack == null) {
+                	continue;
+                }
+                if (checkstack.isSimilar(itemstack)) {
+                	int transfer = Math.min(itemstack.getAmount(), checkstack.getMaxStackSize() - checkstack.getAmount());
+                	itemstack.setAmount(itemstack.getAmount() - transfer);
+                	checkstack.setAmount(checkstack.getAmount() + transfer);
+                }
+            }
+            if (itemstack.getAmount() <= 0) {
+            	continue;
+            }
+            returnlist.add(itemstack);
+        }
+        return returnlist;
+    } */
+
+	
 
 	/** remove one chest from list of item stacks
 	 * 

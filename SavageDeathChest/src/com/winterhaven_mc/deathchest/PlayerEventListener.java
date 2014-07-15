@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.GameMode;
@@ -41,7 +41,7 @@ public class PlayerEventListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		
 		Player player = (Player)event.getEntity();
-		List<ItemStack> dropped_items = new ArrayList<ItemStack>(event.getDrops());
+		List<ItemStack> dropped_items = event.getDrops();
 		
 		// If player's current world is not enabled in config, do nothing
 		// and allow inventory items to drop on ground
@@ -65,6 +65,9 @@ public class PlayerEventListener implements Listener {
 			return;
 		}
 		// deploy chest
+		if (plugin.debug) {
+			plugin.getLogger().info("Deploying chest..");
+		}
 		dropped_items = plugin.chestmanager.deployChest(player, dropped_items);
 		// clear dropped items
 		event.getDrops().clear();

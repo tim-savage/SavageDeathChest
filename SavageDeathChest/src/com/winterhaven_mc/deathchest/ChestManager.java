@@ -55,6 +55,9 @@ public class ChestManager {
 		// create pointer to main class
 		this.plugin = plugin;
 		
+		// instantiate chestutilities
+        chestutilities = new ChestUtilities(plugin);
+        
 		// instantiate ConfigAccessor for saved chests
 		deathchestsfile = new ConfigAccessor(plugin, "deathchests.yml");
 		
@@ -421,7 +424,7 @@ public class ChestManager {
 		
 		List<ItemStack> remaining_items = new ArrayList<ItemStack>();
 		List<ItemStack> chest_items = new ArrayList<ItemStack>();
-		
+				
 		// combine stacks of same items where possible
 		chest_items = chestutilities.consolidateItems(dropped_items);
 

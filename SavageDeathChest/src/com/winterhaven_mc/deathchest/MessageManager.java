@@ -14,19 +14,19 @@ public class MessageManager {
         this.plugin = plugin;
         
 		// install localization files
-		String[] localization_files = {"en-US","es-ES","de-DE"};	
+		String[] localization_files = {"en-US","es-ES"};	
 		installLocalizationFiles(localization_files);
 
 		// get configured language
 		String language = plugin.getConfig().getString("language","en-US");
 		
-		if (!new File(plugin.getDataFolder() + "/language/" + language + "/messages.yml").exists()) {
+		if (!new File(plugin.getDataFolder() + "/language/" + language + ".yml").exists()) {
 			plugin.getLogger().info("Language file for " + language + " not found. Defaulting to en-US.");
 			language = "en-US";
 		}
 		
 		// instantiate custom configuration manager
-		messages = new ConfigAccessor(plugin, "language/" + language + "/messages.yml");
+		messages = new ConfigAccessor(plugin, "language/" + language + ".yml");
     }
 
     public void sendPlayerMessage(Player player, String messageID) {
@@ -88,8 +88,8 @@ public class MessageManager {
     private void installLocalizationFiles(String[] filelist) {
 		
 		for (String filename : filelist) {
-			if (!new File(plugin.getDataFolder() + "/language/" + filename + "/messages.yml").exists()) {
-				this.plugin.saveResource("language/" + filename + "/messages.yml",false);
+			if (!new File(plugin.getDataFolder() + "/language/" + filename + ".yml").exists()) {
+				this.plugin.saveResource("language/" + filename + ".yml",false);
 				plugin.getLogger().info("Installed localization files for " + filename + ".");
 			}
 		}
