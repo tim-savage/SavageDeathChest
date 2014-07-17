@@ -132,6 +132,11 @@ public class PlayerEventListener implements Listener {
 	 */
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) {
+		
+		// if remove-empty option is not enabled in config, do nothing and return
+		if (!plugin.getConfig().getBoolean("remove-empty",true)) {
+			return;
+		}
 		if (event.getPlayer() instanceof Player) {
 			Player player = (Player)event.getPlayer();
 			Inventory inventory = event.getInventory();
@@ -140,23 +145,32 @@ public class PlayerEventListener implements Listener {
 	        if (inventory.getHolder() instanceof Chest){
 	            Chest chest = (Chest) inventory.getHolder();
 	            Block block = chest.getBlock();
+	            
+	            // if chest does not have deathchest metadata, do nothing and return
 	            if (!block.hasMetadata("deathchest")) {
 		            return;
 	            }
+	            
+	            // if chest is empty, call lootChest method to remove chest and sign
 	            if (emptyChest(chest)) {
 	            	plugin.chestmanager.lootChest(player, block);
 	            	return;
 	            }
 	        }
 	        
+	        // if inventory is a double chest
 	        if (inventory.getHolder() instanceof DoubleChest) {
 	            DoubleChest chest = (DoubleChest) inventory.getHolder();
 	            Chest left = (Chest) chest.getLeftSide();
 	            Chest right = (Chest) chest.getRightSide();
 	            Block block = left.getBlock();
+	            
+	            // if chest does not have deathchest metadata, do nothing and return
 	            if (!block.hasMetadata("deathchest")) {
 		            return;
 	            }
+	            
+	            // if both chests are empty, call lootChest method to remove chests and sign
 	            if (emptyChest(left) && emptyChest(right)) {
 	            	plugin.chestmanager.lootChest(player, block);
 	            	return;

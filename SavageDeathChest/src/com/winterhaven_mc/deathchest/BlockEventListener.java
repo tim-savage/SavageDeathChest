@@ -29,25 +29,47 @@ public class BlockEventListener implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
+	
+	/**
+	 * Block break event handler
+	 * checks for ownership of death chests and prevents breakage by non-owners
+	 * @param event
+	 */
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
+		
+		// if event is cancelled, do nothing and return
 		if (event.isCancelled()) {
 			return;
 		}
+		
+		// if chest-protection is not enabled in config, do nothing and return
+		if (!plugin.getConfig().getBoolean("chest-protection")) {
+			return;
+		}
+
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
+		
+		// if block is not a death chest item, do nothing and return
 		if (!block.hasMetadata("deathchest")) {
 			return;
 		}
-		event.setCancelled(true);
-		if (this.plugin.getConfig().getBoolean("chest-protection") &&
-				((block.getMetadata("deathchest").get(0)).asString().equals(player.getUniqueId().toString()) ||
-				player.hasPermission("deathchest.loot.others"))) {
-			plugin.messagemanager.sendPlayerMessage(player, "not-owner");
+		
+		// cancel event
+		event.setCancelled(true);		
+
+		// if block is not owned by player and player does not have deathchest.loot.others permission,
+		// send not-owner player message and return
+		if (!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString()) &&
+				!player.hasPermission("deathchest.loot.others")) {
+			this.plugin.messagemanager.sendPlayerMessage(player, "not-owner");
 			return;
 		}
+		// set chest to air, destroying chest and dropping contents
 		block.setType(Material.AIR);
-		plugin.chestmanager.removeDeathChestItem(block);
+		// remove death chest item from hashmap
+		this.plugin.chestmanager.removeDeathChestItem(block);
 	}
 
 	@EventHandler
@@ -70,11 +92,10 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 		
-		// Sign sign = (Sign)block.getState().getData(); // decompiler output this. replaced with below
-		Sign sign = (Sign) block.getState();
+        Sign sign = (Sign)block.getState().getData();
 		Block attached_block = block.getRelative(sign.getAttachedFace());
-
-		// if attached block is not air, do nothing and return
+        
+		// if attached block is still there, do nothing and return
 		if (attached_block.getType() != Material.AIR) {
 			return;
 		}
