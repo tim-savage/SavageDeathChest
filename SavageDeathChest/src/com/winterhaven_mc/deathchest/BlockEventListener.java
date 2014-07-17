@@ -31,7 +31,7 @@ public class BlockEventListener implements Listener {
 
 	
 	/**
-	 * Block break event handler
+	 * Block break event handler<br>
 	 * checks for ownership of death chests and prevents breakage by non-owners
 	 * @param event
 	 */
@@ -43,11 +43,6 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 		
-		// if chest-protection is not enabled in config, do nothing and return
-		if (!plugin.getConfig().getBoolean("chest-protection")) {
-			return;
-		}
-
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
 		
@@ -59,19 +54,31 @@ public class BlockEventListener implements Listener {
 		// cancel event
 		event.setCancelled(true);		
 
-		// if block is not owned by player and player does not have deathchest.loot.others permission,
+		// if chest protection is enabled in config and
+		// block is not owned by player and
+		// player does not have deathchest.loot.others permission,
 		// send not-owner player message and return
-		if (!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString()) &&
+		if (plugin.getConfig().getBoolean("chest-protection",true) &&
+				!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString()) &&
 				!player.hasPermission("deathchest.loot.others")) {
 			this.plugin.messagemanager.sendPlayerMessage(player, "not-owner");
 			return;
 		}
+		
 		// set chest to air, destroying chest and dropping contents
+		// this method is used to prevent players gaining an additional chest
 		block.setType(Material.AIR);
+		
 		// remove death chest item from hashmap
 		this.plugin.chestmanager.removeDeathChestItem(block);
 	}
 
+	
+	/**
+	 * Block physics event handler<br>
+	 * remove detached death chest signs from game to prevent players gaining additional signs
+	 * @param event
+	 */
 	@EventHandler
 	public void signDetachCheck(BlockPhysicsEvent event) {
 
@@ -115,6 +122,12 @@ public class BlockEventListener implements Listener {
 		}
 	}
 
+	
+	/**
+	 * Entity explode event handler<br>
+	 * Make death chests explosion proof if chest-protection is enabled
+	 * @param event
+	 */
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event) {
 		
@@ -131,7 +144,9 @@ public class BlockEventListener implements Listener {
 		}
 	}
 
+	
 	/**
+	 * Block damage event handler<br>
 	 * Auto-loot chest on sneak-punch if player is owner or has override permission
 	 * @param event
 	 */
