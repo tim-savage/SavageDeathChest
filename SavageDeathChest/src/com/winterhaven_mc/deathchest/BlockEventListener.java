@@ -185,7 +185,7 @@ public class BlockEventListener implements Listener {
 		
 		// if player clicked sign, set block to attached block
 		if (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST)) {
-			Sign sign = (Sign)block.getState();
+			Sign sign = (Sign)block.getState().getData();
 			block = block.getRelative(sign.getAttachedFace());
 		}
 		plugin.chestmanager.lootChest(player, block);
