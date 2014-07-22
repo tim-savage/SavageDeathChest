@@ -390,10 +390,13 @@ public class ChestManager {
 				}
 			}
 		}
+
 		// remove deathchest item from hashmap
 		plugin.chestmanager.removeDeathChestItem(block);
-		// remove deathchest metadata
+		
+		// remove deathchest metadata from block
 		block.removeMetadata("deathchest", plugin);
+		
 		// destroy chest by setting to AIR, dropping contents but not block itself
 		block.setType(Material.AIR);
 		
@@ -416,9 +419,9 @@ public class ChestManager {
 
 	/**
 	 * Attempt to deploy a death chest at player's death location containing dropped items
-	 * @param player			Player that died
-	 * @param dropped_items		Items player had in inventory on death
-	 * @return any items that didn't fit in chest, as List of ItemStacks
+	 * @param player				Player that died
+	 * @param dropped_items			Items player had in inventory on death
+	 * @return List of ItemStack	items that didn't fit in chest
 	 */
 	public List<ItemStack> deployChest(Player player, List<ItemStack> dropped_items) {
 		

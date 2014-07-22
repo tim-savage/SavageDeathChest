@@ -48,36 +48,44 @@ public class PlayerEventListener implements Listener {
 		if (!playerWorldEnabled(player)) {
 			return;
 		}
+		
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
-		if(!player.hasPermission("deathchest.chest")) {
+		if (!player.hasPermission("deathchest.chest")) {
 			plugin.messagemanager.sendPlayerMessage(player, "permission-denied");
 			return;
 		}
+		
 		// if player is in creative mode, output message and return
 		if (player.getGameMode().equals(GameMode.CREATIVE)) {
 			plugin.messagemanager.sendPlayerMessage(player, "creative-mode");
 			return;
 		}
+		
 		// if player inventory is empty, output message and return
 		if (dropped_items.isEmpty()) {
 			plugin.messagemanager.sendPlayerMessage(player, "inventory-empty");
 			return;
 		}
+		
 		// deploy chest
 		if (plugin.debug) {
 			plugin.getLogger().info("Deploying chest..");
 		}
+		
+		// 
 		dropped_items = plugin.chestmanager.deployChest(player, dropped_items);
+		
 		// clear dropped items
 		event.getDrops().clear();
+		
 		// drop any items that couldn't be placed in a death chest
 		event.getDrops().addAll(dropped_items);
 		return;
 	}
 
 	
-	/** prevent deathchest access for non-owners
+	/** prevent deathchest opening by non-owners
 	 * 
 	 * @param	event	PlayerInteractEvent
 	 * @return	void
@@ -92,37 +100,42 @@ public class PlayerEventListener implements Listener {
 		if (event.isCancelled()) {
 			return;
 		}
+		
 		// if clicked block is not a chest, do nothing and return
 		if (!block.getType().equals(Material.CHEST)) {
 			return;
 		}
-		// if player did not right click deathchest, do nothing and return 
+		
+		// if clicked block does not have deathchest metadata, do nothing and return
+		if (!block.hasMetadata("deathchest")) {
+			return;
+		}
+		
+		// if player did not right click chest, do nothing and return 
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
+		
 		// if chest-protection option is not enabled, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
 			return;
 		}
-		// if player world is not enabled in config, do nothing and return
-		if (!playerWorldEnabled(player)) {
+		
+		// if player is chest owner, do nothing and return
+		if (block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString())) {
 			return;
 		}
-		// if clicked block is not a deathchest, do nothing and return
-		if (!block.hasMetadata("deathchest")) {
+
+		// if player has deathchest.loot.other permission, do nothing and return
+		if (player.hasPermission("deathchest.loot.other")) {
 			return;
 		}
-		// if player does not own chest, cancel event and send player message
-		String chestowner = block.getMetadata("deathchest").get(0).asString();
-		if (!chestowner.equals(player.getUniqueId().toString()) &&
-				!player.hasPermission("deathchest.loot.other")) {
-			event.setCancelled(true);
-			plugin.messagemanager.sendPlayerMessage(player, "not-owner");
-			if (plugin.debug) {
-				plugin.getLogger().info("Clicking Player UUID: " + player.getUniqueId());
-				plugin.getLogger().info("Metadata Player UUID: " + block.getMetadata("deathchest").get(0).asString());
-			}
-		}
+		
+		// cancel event
+		event.setCancelled(true);
+		
+		// send player not-owner message
+		plugin.messagemanager.sendPlayerMessage(player, "not-owner");
 	}
 
 	
@@ -137,6 +150,7 @@ public class PlayerEventListener implements Listener {
 		if (!plugin.getConfig().getBoolean("remove-empty",true)) {
 			return;
 		}
+		
 		if (event.getPlayer() instanceof Player) {
 			Player player = (Player)event.getPlayer();
 			Inventory inventory = event.getInventory();
@@ -180,7 +194,8 @@ public class PlayerEventListener implements Listener {
 	}
 
 	
-	/** Test if plugin is enabled in player's current world.
+	/**
+	 * Test if plugin is enabled in player's current world.
 	 * 
 	 * @param player	Player to test world enabled.
 	 * @return boolean
@@ -194,6 +209,12 @@ public class PlayerEventListener implements Listener {
 	}
 	
 	
+	/**
+	 * Test if chest is empty
+	 * 
+	 * @param chest
+	 * @return true if chest is empty, false if chest has any contents
+	 */
 	private boolean emptyChest(Chest chest) {
         ItemStack[] items = chest.getInventory().getContents();
         for (ItemStack item : items) {

@@ -52,17 +52,21 @@ public class BlockEventListener implements Listener {
 		}
 		
 		// cancel event
-		event.setCancelled(true);		
+		event.setCancelled(true);
+		
+		// if chest-protection is enabled in config, test for ownership
+		if (plugin.getConfig().getBoolean("chest-protection", true)) {
+			
+			// if block is not owned by player, test for override permission
+			if (!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString())) {
 
-		// if chest protection is enabled in config and
-		// block is not owned by player and
-		// player does not have deathchest.loot.others permission,
-		// send not-owner player message and return
-		if (plugin.getConfig().getBoolean("chest-protection",true) &&
-				!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString()) &&
-				!player.hasPermission("deathchest.loot.others")) {
-			this.plugin.messagemanager.sendPlayerMessage(player, "not-owner");
-			return;
+				// if player does not have deathchest.loot.others permission,
+				// send not-owner player message and return
+				if (!player.hasPermission("deathchest.loot.others")) {
+					this.plugin.messagemanager.sendPlayerMessage(player, "not-owner");
+					return;
+				}
+			}
 		}
 		
 		// set chest to air, destroying chest and dropping contents
@@ -135,6 +139,7 @@ public class BlockEventListener implements Listener {
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
 			return;
 		}
+		
 		// iterate through all blocks in explosion event and remove those that have deathchest metadata
 		ArrayList<Block> blocks = new ArrayList<Block>(event.blockList());
 		for (Block block : blocks) {
@@ -171,15 +176,20 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 
-		// if chest-protection is enabled in config, test for ownership or override permission
+		// if chest-protection is enabled in config, test for ownership
 		if (plugin.getConfig().getBoolean("chest-protection", true)) {
 			
-			// if player is not block owner and does not have override permisssion, cancel event, output message and return
-			if	(!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString()) &&
-					!player.hasPermission("deathchest.loot.other")) {
-				event.setCancelled(true);
-				plugin.messagemanager.sendPlayerMessage(player, "not-owner");
-				return;
+			// if player is not block owner test, for override permisssion
+			if	(!block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString())) {
+
+				// if player does not have deathchest.loot.other permission
+				if (!player.hasPermission("deathchest.loot.other")) {
+
+					// cancel event, output message and return
+					event.setCancelled(true);
+					plugin.messagemanager.sendPlayerMessage(player, "not-owner");
+					return;
+				}
 			}
 		}
 		
@@ -188,6 +198,8 @@ public class BlockEventListener implements Listener {
 			Sign sign = (Sign)block.getState().getData();
 			block = block.getRelative(sign.getAttachedFace());
 		}
+		
+		// loot chest
 		plugin.chestmanager.lootChest(player, block);
 	}
 }
