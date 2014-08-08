@@ -194,9 +194,10 @@ public class ChestManager {
 	}
 
 	private void putDeathChestItem(Block block) {
-		if (!this.protecteditems.contains((Object)block.getType())) {
-			if (!this.plugin.debug) return;
-			this.plugin.getLogger().info("Block was not a deathchest item, so not inserted into hash set.");
+		if (!protecteditems.contains((Object)block.getType())) {
+			if (plugin.debug) {
+				this.plugin.getLogger().info("Block was not a deathchest item, so not inserted into hash set.");
+			}
 			return;
 		}
 		Long expiretime = System.currentTimeMillis() + this.plugin.getConfig().getLong("expire-time", 60) * 60000;

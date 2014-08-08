@@ -2,7 +2,6 @@ package com.winterhaven_mc.deathchest;
 
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,9 +15,17 @@ public final class DeathChestMain extends JavaPlugin {
 
 
     public void onEnable() {
-        this.getCommand("deathchest").setExecutor((CommandExecutor)new CommandHandler(this));
+    	
+    	// register command handler
+        getCommand("deathchest").setExecutor(new CommandHandler(this));
+        
+        // copy default config from jar if it doesn't exist
         this.saveDefaultConfig();
+        
+        // instantiate message manager
         this.messagemanager = new MessageManager(this);
+        
+        // instantiate chest manager
         this.chestmanager = new ChestManager(this);
 
         // initialize listeners

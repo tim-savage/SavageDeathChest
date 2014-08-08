@@ -144,7 +144,7 @@ public class BlockEventListener implements Listener {
 		ArrayList<Block> blocks = new ArrayList<Block>(event.blockList());
 		for (Block block : blocks) {
 			if (block.hasMetadata("deathchest")) {
-				event.blockList().remove((Object)block);
+				event.blockList().remove(block);
 			}
 		}
 	}
