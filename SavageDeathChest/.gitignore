@@ -1,3 +1,20 @@
-/bin
-/.settings
+# Eclipse stuff
 *~
+/.classpath
+/.project
+/.settings
+/bin
+/target
+/build.xml                                                                                                                                                     
+                                                                                                                                                               
+# vim
+.*.sw[a-p]
+
+# various other potential build files
+/build
+/bin
+/dist
+/manifest.mf
+
+# Mac filesystem dust
+.DS_Store
