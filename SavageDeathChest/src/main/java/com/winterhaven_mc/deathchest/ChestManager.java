@@ -37,7 +37,7 @@ public class ChestManager {
 	private Set<Material> protecteditems = new HashSet<Material>();
 	
 	// materials that can be replaced by chests
-	private Set<Material> replaceableblocks = new HashSet<Material>();
+	private HashSet<Material> replaceableblocks = new HashSet<Material>();
 	
 	//  hashmap of death chests indexed by location, storing their deployed time as systime
 	private ConcurrentHashMap<Block, Long> deathchestitems = new ConcurrentHashMap<Block, Long>();
@@ -185,7 +185,7 @@ public class ChestManager {
 	 * Get set list of replaceable blocks
 	 * @return
 	 */
-	public Set<Material> getReplaceableBlocks() {
+	public HashSet<Material> getReplaceableBlocks() {
 		return replaceableblocks;
 	}
 
@@ -194,14 +194,17 @@ public class ChestManager {
 	}
 
 	private void putDeathChestItem(Block block) {
+		
 		if (!protecteditems.contains((Object)block.getType())) {
 			if (plugin.debug) {
 				this.plugin.getLogger().info("Block was not a deathchest item, so not inserted into hash set.");
 			}
 			return;
 		}
+		
 		Long expiretime = System.currentTimeMillis() + this.plugin.getConfig().getLong("expire-time", 60) * 60000;
 		deathchestitems.put(block, expiretime);
+
 		if (plugin.debug) {
 			plugin.getLogger().info("Deathchest item inserted into hash set. Expire time: " + expiretime);
 		}

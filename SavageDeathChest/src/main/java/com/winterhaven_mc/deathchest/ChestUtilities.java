@@ -130,7 +130,7 @@ public class ChestUtilities {
 	 */
 	public boolean gpPermission(Player player, Location location) {
 		// if GriefPrevention option is enabled and GriefPrevention is present, check for chest access
-		if (plugin.getConfig().getBoolean("griefprevention-nabled", true) && plugin.gp_loaded) {
+		if (plugin.getConfig().getBoolean("griefprevention-enabled", true) && plugin.gp_loaded) {
 			// if player does not have Grief Prevention chest access, spill inventory
 			Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 			if (claim != null) {
