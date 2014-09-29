@@ -3,6 +3,9 @@
 # Localization language
 language: en-US
 
+# Storage Type ( sqlite | file )
+storage-type: sqlite
+
 # Enabled Worlds
 enabled-worlds:
   - world

@@ -54,7 +54,12 @@ public class ChestManager {
         chestutilities = new ChestUtilities(plugin);
 		
 		// instantiate datastore
-		datastore = new DatastoreSQLite();
+		if (plugin.getConfig().getString("storage-type","sqlite").equalsIgnoreCase("file")) {
+			datastore = new DatastoreYML();
+		}
+		else {
+			datastore = new DatastoreSQLite();
+		}
 		
 		// initialize datastore
 		try {
@@ -72,7 +77,7 @@ public class ChestManager {
 		// get protected items (chests and signs)
 		getProtectedItemsList();
 		
-		// load deathchests from save datastore
+		// load death chest blocks from datastore
 		loadDeathChestBlocks();
 		
 	}
@@ -451,9 +456,6 @@ public class ChestManager {
 			chest.getInventory().addItem(item);
 			remaining_items.remove(item);
 			itemcount++;
-			if (plugin.debug) {
-				plugin.getLogger().info(itemcount + ": " + item.toString());
-			}
 			if (itemcount >= chestsize) {
 				break;
 			}
