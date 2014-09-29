@@ -48,10 +48,12 @@ public final class DeathChestMain extends JavaPlugin {
 			this.getLogger().info("WorldGuard detected.");
 		}
 	}
-
+	
 	public void onDisable() {
-		// save death chest items from hashmap to persistent file storage
-		chestmanager.saveDeathChestItems();
+		
+		// close datastore
+		chestmanager.close();
+		
 	}
 
 	// check for grief prevention plugin

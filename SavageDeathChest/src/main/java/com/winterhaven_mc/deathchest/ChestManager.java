@@ -11,13 +11,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -27,10 +25,10 @@ public class ChestManager {
 
 	private DeathChestMain plugin;
 
-	// instantiate ConfigAccessor class
-	private ConfigAccessor deathchestsfile;
-
-	// instantiate chest utilities class
+	// datastore object
+	private Datastore datastore;
+	
+	// chest utilities object
 	private ChestUtilities chestutilities;
 	
 	// protected item materials
@@ -39,9 +37,6 @@ public class ChestManager {
 	// materials that can be replaced by chests
 	private HashSet<Material> replaceableblocks = new HashSet<Material>();
 	
-	//  hashmap of death chests indexed by location, storing their deployed time as systime
-	private ConcurrentHashMap<Block, Long> deathchestitems = new ConcurrentHashMap<Block, Long>();
-
 	private ConcurrentHashMap<String, Boolean> expire_message_cooldown = new ConcurrentHashMap<String, Boolean>();
 
 
@@ -57,9 +52,19 @@ public class ChestManager {
 		
 		// instantiate chestutilities
         chestutilities = new ChestUtilities(plugin);
-        
-		// instantiate ConfigAccessor for saved chests
-		deathchestsfile = new ConfigAccessor(plugin, "deathchests.yml");
+		
+		// instantiate datastore
+		datastore = new DatastoreSQLite();
+		
+		// initialize datastore
+		try {
+			datastore.initialize();
+		} catch (Exception e) {
+			plugin.getLogger().warning("An error occured while initializing the datastore.");
+			if (plugin.debug) {
+				plugin.getLogger().warning(e.getLocalizedMessage());
+			}
+		}
 		
 		// load material types that chests can replace from config file
 		loadReplaceableBlocks();
@@ -67,67 +72,76 @@ public class ChestManager {
 		// get protected items (chests and signs)
 		getProtectedItemsList();
 		
-		// load deathchests from save file into hashmap
-		loadDeathChestItems();
+		// load deathchests from save datastore
+		loadDeathChestBlocks();
 		
-		scheduleExpiredChests();
 	}
 
+	
+	private void loadDeathChestBlocks() {
+		
+		Long currentTime = System.currentTimeMillis();
 
-	/**
-	 * Iterate through all items in deathchest hashmap and expire items who's expire time is past
-	 * and set a task to expire the the rest at the appropriate time
-	 */
-	private void scheduleExpiredChests() {
-		Long currenttime = System.currentTimeMillis();
-		for (Block block : deathchestitems.keySet()) {
-			Long itemexpiretime  = deathchestitems.get(block);
-			if (itemexpiretime < currenttime) {
-				this.expireDeathChestItem(block);
-				continue;
+		for (DeathChestBlock deathChestBlock : datastore.getAllRecords()) {
+			
+			// get current block at deathChestBlock location
+			Block block = deathChestBlock.getLocation().getBlock();
+			
+			// if block is not a death chest block, remove from datastore
+			if (!protecteditems.contains(block.getType())) {
+				datastore.deleteRecord(deathChestBlock.getLocation());
+				
+				// send debug message to log
+				if (plugin.debug) {
+					plugin.getLogger().info("Block at loaded location is not a chest or sign. Removed from datastore.");
+				}
+				return;
 			}
-			createItemExpireTask(block);
+			
+			// if expiration time has passed, expire deathChestBlock now
+			if (deathChestBlock.getExpiration() < currentTime) {
+				expireDeathChestItem(deathChestBlock.getLocation().getBlock());
+				return;
+			}
+			
+			// set block metadata
+			block.setMetadata("deathchest", new FixedMetadataValue(plugin, deathChestBlock.getOwnerUUID().toString()));
+
+			// schedule task to expire at appropriate time
+			createItemExpireTask(deathChestBlock);
 		}
 	}
 
-
+	
 	/**
 	 * Create task to expire deathchest item at appropriate time in the future
 	 * @param block
 	 */
-	private void createItemExpireTask(final Block block) {
-		Long currenttime = System.currentTimeMillis();
-		Long expiretime = this.deathchestitems.get((Object)block);
-		Long ticks_remaining = (expiretime - currenttime) / 50;
-		if (ticks_remaining < 1) {
-			ticks_remaining = (long) 1;
+	private void createItemExpireTask(final DeathChestBlock deathChestBlock) {
+		Long currentTime = System.currentTimeMillis();
+		Long expireTime = deathChestBlock.getExpiration();
+		Long ticksRemaining = (expireTime - currentTime) / 50;
+		if (ticksRemaining < 1) {
+			ticksRemaining = (long) 1;
 		}
 		if (plugin.debug) {
-			plugin.getLogger().info("Scheduling item to expire in " + ticks_remaining + " ticks.");
+			plugin.getLogger().info("Scheduling item to expire in " + ticksRemaining + " ticks.");
 		}
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
 
 			@Override
 			public void run() {
-				expireDeathChestItem(block);
+				expireDeathChestItem(deathChestBlock.getLocation().getBlock());
 			}
-		}, ticks_remaining);
+		}, ticksRemaining);
 	}
+	
 
 	private void expireDeathChestItem(Block block) {
+
 		Player player;
 		Player[] arrplayer;
 
-		// if block is not in deathchest item hashmap, do nothing and return
-		if (!deathchestitems.containsKey(block)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Item is no longer in hashmap. It was probably retrieved by player.");
-			}
-			return;
-		}
-		// remove block from deathchest item hashmap
-		deathchestitems.remove(block);
-		
 		// if block does not have deathchest metadata, do nothing and return
 		if (!block.hasMetadata("deathchest")) {
 			if (plugin.debug) {
@@ -135,10 +149,12 @@ public class ChestManager {
 			}
 			return;
 		}
-		
-		// remove deathchest item from persistent storage file
+
+		// get player UUID from block metadata
 		final String playeruuid = block.getMetadata("deathchest").get(0).asString();
-		deathchestsfile.getConfig().set(playeruuid + "." + chestutilities.makeKey(block.getState()), null);
+		
+		// remove deathChestBlock from datastore
+		datastore.deleteRecord(block.getLocation());
 		
 		// remove death chest block from in game
 		breakDeathchestItem(block);
@@ -189,124 +205,26 @@ public class ChestManager {
 		return replaceableblocks;
 	}
 
-	public Long getDeathChestItem(Block block) {
-		return deathchestitems.get(block);
-	}
-
-	private void putDeathChestItem(Block block) {
-		
-		if (!protecteditems.contains((Object)block.getType())) {
-			if (plugin.debug) {
-				this.plugin.getLogger().info("Block was not a deathchest item, so not inserted into hash set.");
-			}
-			return;
-		}
-		
-		Long expiretime = System.currentTimeMillis() + this.plugin.getConfig().getLong("expire-time", 60) * 60000;
-		deathchestitems.put(block, expiretime);
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Deathchest item inserted into hash set. Expire time: " + expiretime);
-		}
-		createItemExpireTask(block);
-	}
-
-	public void removeDeathChestItem(Block block) {
-		if (!deathchestitems.containsKey(block)) {
-			return;
-		}
-		deathchestitems.remove(block);
-		if (plugin.debug) {
-			plugin.getLogger().info("Deathchest item removed from hash set.");
-		}
-	}
-
-
-	/** Load deathchest locations from file into private deathchestitems hash set
-	 *  currently only used in chestmanager class constructor, but could be made public
-	 */
-	private void loadDeathChestItems() {
-		// get player uuids from save file
-		for (String playeruuid : deathchestsfile.getConfig().getKeys(false)) {
-			// get player chest record keys from save file
-			Set<String> keys = deathchestsfile.getConfig().getConfigurationSection(playeruuid).getKeys(false);
-			// remove player uuid from save file if there are no records
-			if (keys.isEmpty()) {
-				deathchestsfile.getConfig().set(playeruuid, null);
-				if (plugin.debug) {
-					plugin.getLogger().info("Configuration section " + playeruuid + " was removed because it had no entries.");
-				}
-				continue;
-			}
-			// get death chest item expire times from save file
-			for (String key : keys) {
-				plugin.getLogger().info("Loading key: " + key);
-				String[] temp = key.split("\\|");
-				String worldname = temp[0];
-				Double locX = Double.parseDouble(temp[1]);
-				Double locY = Double.parseDouble(temp[2]);
-				Double locZ = Double.parseDouble(temp[3]);
-				Long expiretime = deathchestsfile.getConfig().getLong(playeruuid + "." + key);
-				World world = Bukkit.getWorld(worldname);
-				Location location = new Location(world,locX,locY,locZ);
-				Block block = location.getBlock();
-				// remove record if block is not a death chest item
-				if (!protecteditems.contains(block.getType())) {
-					plugin.getLogger().info("Block at loaded location is not a chest or sign. Removed from save file object.");
-					deathchestsfile.getConfig().set(playeruuid + "." + key, null);
-				}
-				else {
-					// put record into hashmap
-					deathchestitems.put(block, expiretime);
-					// set metadata on death chest item blocks
-					block.setMetadata("deathchest", new FixedMetadataValue(plugin, playeruuid));
-					if (plugin.debug) {
-						plugin.getLogger().info("Inserted deathchest item in hash set.");
-						plugin.getLogger().info("Material: " + block.getType().toString());
-						plugin.getLogger().info("World: " + worldname);
-						plugin.getLogger().info("X: " + locX);
-						plugin.getLogger().info("Y:" + locY);
-						plugin.getLogger().info("Z: " + locZ);
-						plugin.getLogger().info("expire time: " + expiretime);
-					}
-				}
-			}
-		}
-		// write updated save file object to disk
-		deathchestsfile.saveConfig();
-	}
-
-	/** Save deathchest locations from deathchestitems hash set to file
-	 *
-	 * called by onDisable() in main
-	 * 
-	 */
-	public void saveDeathChestItems() {
-		for (Block block : deathchestitems.keySet()) {
-			BlockState blockstate = block.getState();
-			String playerID = blockstate.getMetadata("deathchest").get(0).asString();
-			String key = chestutilities.makeKey(blockstate);
-			if (!protecteditems.contains(block.getType())) {
-				deathchestsfile.getConfig().set(key, null);
-				if (plugin.debug) {
-					plugin.getLogger().info("Block is not a deathchest item. Removed from save file object.");
-				}
-				continue;
-			}
-			Long expiretime = deathchestitems.get(block);
-			if (expiretime != null) {
-				deathchestsfile.getConfig().set(playerID + "." + key, expiretime);
-			}
-		}
-		// write updated save file object to disk
-		deathchestsfile.saveConfig();
-		plugin.getLogger().info("Saved deathchests to file.");
-		return;
-	}
-
 	
+	public DeathChestBlock getDeathChestBlock(Location location) {
+		return datastore.getRecord(location);
+	}
+	
+	
+	public void removeDeathChestItem(Block block) {
+
+		// delete record from datastore
+		datastore.deleteRecord(block.getLocation());
+
+		// send debug message
+		if (plugin.debug) {
+			plugin.getLogger().info("Deathchest item removed from datastore.");
+		}
+	}
+
+
 	/**
-	 * Remove deathchest item from hashmap, remove metadata, and delete from world, dropping items
+	 * Remove deathchest item from datastore, remove metadata, and delete from world, dropping items
 	 * 
 	 * @param block
 	 */
@@ -331,7 +249,7 @@ public class ChestManager {
 			block.getChunk().load();
 		}
 		
-		// remove block from death chest hashmap
+		// remove block from death chest datastore
 		removeDeathChestItem(block);
 		
 		// remove metadata from block
@@ -342,23 +260,23 @@ public class ChestManager {
 	}
 
 	
-	/**
-	 * List currently tracked deathchest items in hashmap, mainly for debugging purposes
-	 * @param sender
-	 */
-	public void listDeathChestItems(CommandSender sender) {
-		sender.sendMessage("Tracked Deathchests: " + this.deathchestitems.keySet().size());
-		for (Block block : deathchestitems.keySet()) {
-			BlockState blockstate = block.getState();
-			Location location = blockstate.getLocation();
-			Long expiretime = (deathchestitems.get(block) - System.currentTimeMillis()) / 60000;
-			sender.sendMessage("----------");
-			sender.sendMessage("Owner: " + (block.getMetadata("deathchest").get(0)).asString());
-			sender.sendMessage("Material: " + blockstate.getType().toString());
-			sender.sendMessage("Location: " + location.getWorld().getName() + " x: " + location.getBlockX() + " y: " + location.getBlockY() + " z: " + location.getBlockZ());
-			sender.sendMessage("Expires: " + expiretime + " minutes.");
-		}
-	}
+//	/**
+//	 * List currently tracked deathchest items in hashmap, mainly for debugging purposes
+//	 * @param sender
+//	 */
+//	public void listDeathChestItems(CommandSender sender) {
+//		sender.sendMessage("Tracked Deathchests: " + this.deathchestitems.keySet().size());
+//		for (Block block : deathchestitems.keySet()) {
+//			BlockState blockstate = block.getState();
+//			Location location = blockstate.getLocation();
+//			Long expiretime = (deathchestitems.get(block) - System.currentTimeMillis()) / 60000;
+//			sender.sendMessage("----------");
+//			sender.sendMessage("Owner: " + (block.getMetadata("deathchest").get(0)).asString());
+//			sender.sendMessage("Material: " + blockstate.getType().toString());
+//			sender.sendMessage("Location: " + location.getWorld().getName() + " x: " + location.getBlockX() + " y: " + location.getBlockY() + " z: " + location.getBlockZ());
+//			sender.sendMessage("Expires: " + expiretime + " minutes.");
+//		}
+//	}
 
 	
 	/**
@@ -550,9 +468,24 @@ public class ChestManager {
 		// place sign on chest
 		placeChestSign(player,block);
 
-		// put chest in deathchest hashmap
-		putDeathChestItem(block);
+		// create DeathChestBlock object
+		Long expiration = System.currentTimeMillis() + this.plugin.getConfig().getLong("expire-time", 60) * 60000;
+
+		DeathChestBlock deathChestBlock = new DeathChestBlock();
+		deathChestBlock.setOwnerUUID(player.getUniqueId());
+		deathChestBlock.setLocation(block.getLocation());
+		deathChestBlock.setExpiration(expiration);
+
+		// put DeathChestBlock in datastore
+		datastore.putRecord(deathChestBlock);
+		
+		// create expire task for deathChestBlock
+		createItemExpireTask(deathChestBlock);
+
+		// send success message to player
 		plugin.messagemanager.sendPlayerMessage(player, "chest-success");
+		
+		// return list of items that did not fit in chest
 		return remaining_items;
 	}
 	
@@ -606,10 +539,19 @@ public class ChestManager {
 		// place sign on chest
 		placeChestSign(player,block);
 	
-		// put chest in deathchest hashmap
-		putDeathChestItem(block);
+		// create DeathChestBlock object
+		Long expiration = System.currentTimeMillis() + this.plugin.getConfig().getLong("expire-time", 60) * 60000;
+		DeathChestBlock deathChestBlock = new DeathChestBlock();
+		deathChestBlock.setOwnerUUID(player.getUniqueId());
+		deathChestBlock.setLocation(block.getLocation());
+		deathChestBlock.setExpiration(expiration);
 		
+		// put deathChestBlock in datastore
+		datastore.putRecord(deathChestBlock);
 		
+		// create expire task for deathChestBlock
+		createItemExpireTask(deathChestBlock);
+
 		// get block to the right of first chest
 		block = chestutilities.blockToRight(location);
 	
@@ -650,9 +592,22 @@ public class ChestManager {
 		// set metadata to identify chest as a deathchest
 		block.setMetadata("deathchest", new FixedMetadataValue(plugin, player.getUniqueId().toString()));
 	
-		// put chest in deathchest hashmap
-		putDeathChestItem(block);
+		// create DeathChestBlock object
+		DeathChestBlock deathChestBlock2 = new DeathChestBlock();
+		deathChestBlock2.setOwnerUUID(player.getUniqueId());
+		deathChestBlock2.setLocation(block.getLocation());
+		deathChestBlock2.setExpiration(expiration);
+		
+		// insert deathChestBlock in datastore
+		datastore.putRecord(deathChestBlock2);
+		
+		// create expire task for deathChestBlock
+		createItemExpireTask(deathChestBlock2);
+
+		// send success message to player
 		plugin.messagemanager.sendPlayerMessage(player, "chest-success");
+		
+		// return list of items that did not fit in chest
 		return remaining_items2;
 	}
 
@@ -690,7 +645,21 @@ public class ChestManager {
 			}
 		}
 		signblock.setMetadata("deathchest", new FixedMetadataValue(plugin, player.getUniqueId().toString()));
-		putDeathChestItem(signblock);
+		
+		// create DeathChestBlock object for sign
+		Long expiration = System.currentTimeMillis() + this.plugin.getConfig().getLong("expire-time", 60) * 60000;
+		DeathChestBlock deathChestBlock = new DeathChestBlock();
+		deathChestBlock.setOwnerUUID(player.getUniqueId());
+		deathChestBlock.setLocation(signblock.getLocation());
+		deathChestBlock.setExpiration(expiration);
+		
+		// insert deathChestBlock in datastore
+		datastore.putRecord(deathChestBlock);
+		
+		// create expire task for deathChestBlock
+		createItemExpireTask(deathChestBlock);
+
+		// create actual sign with player name and death date
 		Sign sign = (Sign)signblock.getState();
 		String datestring = new SimpleDateFormat("MMM d, yyyy").format(System.currentTimeMillis());
 		sign.setLine(0, ChatColor.BOLD + "R.I.P.");
@@ -709,5 +678,9 @@ public class ChestManager {
 		protecteditems.add(Material.SIGN_POST);
 	}
 
+	public void close() {
+		datastore.close();
+	}
+	
 }
 
