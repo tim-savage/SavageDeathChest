@@ -1,7 +1,7 @@
 name: SavageDeathChest
 main: com.winterhaven_mc.deathchest.DeathChestMain
-author: Tim Savage
-version: 1.0-beta
+author: ${project.author}
+version: ${project.version}
 softdepend: [GriefPrevention,WorldGuard]
 
 commands:
@@ -10,10 +10,8 @@ commands:
       description: This is the DeathChest command.
       permission: deathchest.reload
       permission-message: You don't have required permission <permission>.
-      usage: |
-        /<command> [subcommand]
+      usage:
         /<command> reload - Reloads the configuration file
-        /<command> list - Lists all currently active death chests
       
 permissions:
   deathchest.chest:
@@ -24,7 +22,7 @@ permissions:
     description: Allows player to quick-loot death chests by sneak-punching.
     default: true
 
-  deathchest.loot.others:
+  deathchest.loot.other:
     description: Allow player to quick-loot other player's chests.
     default: op
 
@@ -44,10 +42,6 @@ permissions:
     description: Allows reloading the config file.
     default: op
 
-  deathchest.list:
-    description: Allows listing all currently tracked DeathChest items.
-    default: op
-
   deathchest.player:
     description: Default permissions.
     default: true
@@ -63,6 +57,5 @@ permissions:
     children:
       deathchest.player: true
       deathchest.freechest: true
-      deathchest.loot.others: true
+      deathchest.loot.other: true
       deathchest.reload: true
-      deathchest.list: true

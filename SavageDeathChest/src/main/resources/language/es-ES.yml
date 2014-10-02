@@ -3,6 +3,7 @@ hour: 'hora'
 hour_plural: 'horas'
 minute: 'minuto'
 minute_plural: 'minutos'
+unlimited: 'tiempo ilimitado'
 
 # Custom Messages
 #
@@ -17,7 +18,7 @@ minute_plural: 'minutos'
 messages:
   chest-success:
     enabled: true
-    string: '&cCofre de la muerte se ha desplegado con éxito. Tienes %expiretime% para recuperar sus artículos.'
+    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %expiretime% para recuperar tu artículos.'
   doublechest-partial-success:
     enabled: true
     string: '&cSólo se podía colocar un solo cofre del punto muerte.'

@@ -38,26 +38,34 @@ public class MessageManager {
 			String playernickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
 			String playerdisplayname = player.getDisplayName();
 			String worldname = player.getWorld().getName();
+			String expiretime = "";
 
 			int expiration = this.plugin.getConfig().getInt("expire-time");
-			int hours = expiration / 60;
-			int minutes = expiration % 60;
-			String hour_string = this.messages.getConfig().getString("hour", "hour");
-			String hour_plural_string = this.messages.getConfig().getString("hour_plural", "hours");
-			String minute_string = this.messages.getConfig().getString("minute", "minute");
-			String minute_plural_string = this.messages.getConfig().getString("minute_plural", "minutes");
-			String expiretime = "";
-			if (hours > 1) {
-				expiretime = String.valueOf(expiretime) + hours + " " + hour_plural_string + " ";
-			} else if (hours == 1) {
-				expiretime = String.valueOf(expiretime) + hours + " " + hour_string + " ";
+			
+			// if configured expire-time < 1, set expiretime string to "unlimited"
+			if (expiration < 1) {
+				expiretime = "unlimited";
 			}
-			if (minutes > 1) {
-				expiretime = String.valueOf(expiretime) + minutes + " " + minute_plural_string;
-			} else if (minutes == 1) {
-				expiretime = String.valueOf(expiretime) + minutes + " " + minute_string;
+			// otherwise, set string to hours and minutes remaining
+			else {
+				int hours = expiration / 60;
+				int minutes = expiration % 60;
+				String hour_string = this.messages.getConfig().getString("hour", "hour");
+				String hour_plural_string = this.messages.getConfig().getString("hour_plural", "hours");
+				String minute_string = this.messages.getConfig().getString("minute", "minute");
+				String minute_plural_string = this.messages.getConfig().getString("minute_plural", "minutes");
+				if (hours > 1) {
+					expiretime = String.valueOf(expiretime) + hours + " " + hour_plural_string + " ";
+				} else if (hours == 1) {
+					expiretime = String.valueOf(expiretime) + hours + " " + hour_string + " ";
+				}
+				if (minutes > 1) {
+					expiretime = String.valueOf(expiretime) + minutes + " " + minute_plural_string;
+				} else if (minutes == 1) {
+					expiretime = String.valueOf(expiretime) + minutes + " " + minute_string;
+				}
+				expiretime = expiretime.trim();
 			}
-			expiretime = expiretime.trim();
 			message = message.replaceAll("%playername%", playername);
 			message = message.replaceAll("%playerdisplayname%", playerdisplayname);
 			message = message.replaceAll("%playernickname%", playernickname);

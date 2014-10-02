@@ -1,26 +1,34 @@
 package com.winterhaven_mc.deathchest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Location;
 
-public class DatastoreYML extends Datastore {
+public class DatastoreYAML extends Datastore {
 	
 	// reference to main class
 	private DeathChestMain plugin = DeathChestMain.plugin;
 	
+	// datastore name
+	static final String NAME = "YAML";
+	
+	// data file filename
+	static final String FILENAME = "deathchests.yml";
+	
 	// ConfigAccessor for yml datafile
-	private ConfigAccessor dataFile = new ConfigAccessor(plugin , "deathchests.yml");
+	private ConfigAccessor dataFile = new ConfigAccessor(plugin, FILENAME);
 
-	@Override
+
 	void initialize() throws Exception {
 		
 		// create default data file from embedded resource if it doesn't already exist
 		dataFile.saveDefaultConfig();
+		
 	}
 
-	@Override
+
 	void close() {
 		
 		// save data file
@@ -31,7 +39,7 @@ public class DatastoreYML extends Datastore {
 	
 	DeathChestBlock getRecord(Location location) {
 		
-		String key = makeKey(location);
+		String key = locationToString(location);
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
 
 		if (dataFile.getConfig().get(key) == null) {
@@ -60,6 +68,7 @@ public class DatastoreYML extends Datastore {
 			return null;
 		}
 		
+		// create a new DeathChestBlock object to return
 		DeathChestBlock deathChestBlock = new DeathChestBlock();
 		deathChestBlock.setOwnerUUID(owneruuid);
 		deathChestBlock.setKillerUUID(killeruuid);
@@ -69,14 +78,14 @@ public class DatastoreYML extends Datastore {
 		return deathChestBlock;
 	}
 
-	@Override
+
 	ArrayList<DeathChestBlock> getAllRecords() {
 		
 		ArrayList<DeathChestBlock> result = new ArrayList<DeathChestBlock>();
 		
 		for (String key : dataFile.getConfig().getKeys(false)) {
 			
-			DeathChestBlock deathChestBlock = getRecord(makeLocation(key));
+			DeathChestBlock deathChestBlock = getRecord(stringToLocation(key));
 			if (deathChestBlock != null) {
 				result.add(deathChestBlock);
 			}
@@ -85,11 +94,11 @@ public class DatastoreYML extends Datastore {
 		return result;
 	}
 
-	@Override
+
 	void putRecord(DeathChestBlock deathChestBlock) {
 		
 		// create key based on block location
-		String key = makeKey(deathChestBlock.getLocation());
+		String key = locationToString(deathChestBlock.getLocation());
 		
 		// create string from owner uuid
 		String owneruuid = null;
@@ -97,11 +106,16 @@ public class DatastoreYML extends Datastore {
 			owneruuid = deathChestBlock.getOwnerUUID().toString();
 		}
 		catch (Exception e) {
+			plugin.getLogger().warning("[YAML putRecord] Error converting ownerUUID to string.");
+			if (plugin.debug) {
+				plugin.getLogger().warning(e.getLocalizedMessage());
+			}
 			owneruuid = "";
 		}
 		
 		// if owneruuid is empty, this is not a valid record
 		if (owneruuid.isEmpty()) {
+			plugin.getLogger().warning("[YAML putRecord] OwnerUUID string is empty. Record not inserted.");
 			return;
 		}
 		
@@ -126,50 +140,74 @@ public class DatastoreYML extends Datastore {
 
 	}
 
-	@Override
+
 	void deleteRecord(Location location) {
 		
-		String key = makeKey(location);
+		String key = locationToString(location);
 		dataFile.getConfig().set(key, null);
 		
 		dataFile.saveConfig();
 	}
 
+	String getDatastoreName() {
+		return NAME;
+	}
 	
-    /**
+	String getFilename() {
+		return FILENAME;
+	}
+	
+	void deleteFile() {
+		
+		File file = new File(plugin.getDataFolder() + File.separator + FILENAME);
+		file.delete();
+		
+	}
+
+	
+	/**
 	 * Create a unique key string based on a location
 	 * 
 	 * @param location Location to create unique location key string
 	 * @return String key
 	 */
-	private String makeKey(Location location) {
+	private String locationToString(Location location) {
+
+		// parse location elements into distinct variables
 		String worldname = location.getWorld().getName();
 		String x = String.valueOf(location.getBlockX());
 		String y = String.valueOf(location.getBlockY());
 		String z = String.valueOf(location.getBlockZ());
-		String key = worldname + "|" + x + "|" + y + "|" + z;
-		return key;
+		
+		// concatenate location elements into string
+		String locationString = worldname + "|" + x + "|" + y + "|" + z;
+
+		// return concatenated string
+		return locationString;
 	}
 	
 	
 	/**
 	 * create a new location object from a given key
-	 * @param key
+	 * @param locationString
 	 * @return location
 	 */
-	private Location makeLocation(String key) {
+	private Location stringToLocation(String locationString) {
 		
-		String elements[] = key.split("|");
+		// split location string into distinct elements
+		String[] elements = locationString.split("\\|");
 		
+		// assign location elements to variables
 		String worldname = elements[0];
 		int x = Integer.parseInt(elements[1]);
 		int y = Integer.parseInt(elements[2]);
 		int z = Integer.parseInt(elements[3]);
 		
+		// create location object from location string elements
 		Location location = new Location(plugin.getServer().getWorld(worldname),x,y,z);
-		
+
+		// return newly formed location object
 		return location;		
 	}
 
-	
 }

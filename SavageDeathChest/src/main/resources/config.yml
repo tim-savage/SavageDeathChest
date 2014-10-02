@@ -3,7 +3,7 @@
 # Localization language
 language: en-US
 
-# Storage Type ( sqlite | file )
+# Storage Type ( sqlite | yaml )
 storage-type: sqlite
 
 # Enabled Worlds
@@ -26,12 +26,12 @@ worldguard-enabled: true
 # Distance from death location to search for a valid chest location
 # NOTE: This checks exponentially more locations for each increase in distance
 # For this reason, it is not recommended to set this value too high.
-seach_distance: 10
+search-distance: 5
 
 # Place sign on death chests
 chest-signs: true
 
-# Time in minutes before death chests expire
+# Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
 expire-time: 60
 
 # Drop items that don't fit in death chest
@@ -40,13 +40,11 @@ allow-drops: true
 # Allow quick-looting of chests with sneak-punch
 quick-loot: true
 
+# Allow killers to loot chests
+killer-looting: false
+
 # Automatically remove empty chests on closing
 remove-empty: true
-
-# Distance from death location to search for a valid chest location
-# NOTE: This checks exponentially more locations for each increase in distance
-# For this reason, it is not recommended to set this value too high.
-search-distance: 5
 
 # List of blocks that can be replaced by a chest
 replaceable-blocks:

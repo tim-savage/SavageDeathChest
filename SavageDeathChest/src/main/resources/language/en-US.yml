@@ -3,6 +3,7 @@ hour: 'hour'
 hour_plural: 'hours'
 minute: 'minute'
 minute_plural: 'minutes'
+unlimited: 'unlimited time'
 
 # Custom Messages
 #
@@ -17,31 +18,40 @@ minute_plural: 'minutes'
 messages:
   chest-success:
     enabled: true
-    string: '&cSuccessfully Placed death chest. You have %expiretime% to retrieve your items.'
+    string: '&cSuccessfully placed death chest. You have %expiretime% to retrieve your items.'
+
   doublechest-partial-success:
     enabled: true
-    string: '&cCould only place a single chest at death location.'
+    string: '&cOnly a single chest could be placed at your death location. Some items were dropped.'
+
   chest-denied:
     enabled: true
     string: '&cCould not place death chest.'
+
   inventory-empty:
     enabled: true
-    string: '&cYou had no inventory to place in a Death Chest.'
+    string: '&cYou had no inventory to place in a death chest.'
+
   no-room:
     enabled: true
-    string: '&cThere was no room to place chest at death location.'
+    string: '&cThere was no room to place chest at your death location.'
+
   no-chest-in-inventory:
     enabled: true
     string: '&cYou did not have any chests in your inventory.'
+
   death-broadcast:
     enabled: true
     string: '&4%playername%&r died. Deploying death chest.'
+
   not-owner:
     enabled: true
     string: '&cThat death chest does not belong to you.'
+
   chest-expired:
     enabled: true
     string: "&cYour death chest has expired."
+
   creative-mode:
     enabled: true
     string: "&cCreative mode inventory is not saved in death chests."

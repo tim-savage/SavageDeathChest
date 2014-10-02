@@ -52,7 +52,7 @@ public final class DeathChestMain extends JavaPlugin {
 	public void onDisable() {
 		
 		// close datastore
-		chestmanager.close();
+		chestmanager.closeDatastore();
 		
 	}
 

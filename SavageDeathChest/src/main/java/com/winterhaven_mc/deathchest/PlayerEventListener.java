@@ -72,8 +72,6 @@ public class PlayerEventListener implements Listener {
 		if (plugin.debug) {
 			plugin.getLogger().info("Deploying chest..");
 		}
-		
-		// 
 		dropped_items = plugin.chestmanager.deployChest(player, dropped_items);
 		
 		// clear dropped items
@@ -106,8 +104,8 @@ public class PlayerEventListener implements Listener {
 			return;
 		}
 		
-		// if clicked block does not have deathchest metadata, do nothing and return
-		if (!block.hasMetadata("deathchest")) {
+		// if block is not a DeathChestBlock, do nothing and return
+		if (!DeathChestBlock.isDeathChestBlock(block)) {
 			return;
 		}
 		
@@ -122,12 +120,18 @@ public class PlayerEventListener implements Listener {
 		}
 		
 		// if player is chest owner, do nothing and return
-		if (block.getMetadata("deathchest").get(0).asString().equals(player.getUniqueId().toString())) {
+		if (block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
 			return;
 		}
 
 		// if player has deathchest.loot.other permission, do nothing and return
 		if (player.hasPermission("deathchest.loot.other")) {
+			return;
+		}
+		
+		// if killer-looting is enabled and player is killer, do nothing and return
+		if (plugin.getConfig().getBoolean("killer-looting",false) &&
+				block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
 			return;
 		}
 		
@@ -160,11 +164,11 @@ public class PlayerEventListener implements Listener {
 	            Chest chest = (Chest) inventory.getHolder();
 	            Block block = chest.getBlock();
 	            
-	            // if chest does not have deathchest metadata, do nothing and return
-	            if (!block.hasMetadata("deathchest")) {
-		            return;
-	            }
-	            
+	    		// if block is not a DeathChestBlock, do nothing and return
+	    		if (!DeathChestBlock.isDeathChestBlock(block)) {
+	    			return;
+	    		}
+	    		
 	            // if chest is empty, call lootChest method to remove chest and sign
 	            if (emptyChest(chest)) {
 	            	plugin.chestmanager.lootChest(player, block);
@@ -179,11 +183,11 @@ public class PlayerEventListener implements Listener {
 	            Chest right = (Chest) chest.getRightSide();
 	            Block block = left.getBlock();
 	            
-	            // if chest does not have deathchest metadata, do nothing and return
-	            if (!block.hasMetadata("deathchest")) {
-		            return;
-	            }
-	            
+	    		// if block is not a DeathChestBlock, do nothing and return
+	    		if (!DeathChestBlock.isDeathChestBlock(block)) {
+	    			return;
+	    		}
+	    		
 	            // if both chests are empty, call lootChest method to remove chests and sign
 	            if (emptyChest(left) && emptyChest(right)) {
 	            	plugin.chestmanager.lootChest(player, block);
@@ -198,7 +202,7 @@ public class PlayerEventListener implements Listener {
 	 * Test if plugin is enabled in player's current world.
 	 * 
 	 * @param player	Player to test world enabled.
-	 * @return boolean
+	 * @return true if player world is enabled, false if not enabled 
 	 */
 	private boolean playerWorldEnabled(Player player) {
 		List<String> enabledworlds = plugin.getConfig().getStringList("enabled-worlds");
@@ -226,4 +230,3 @@ public class PlayerEventListener implements Listener {
 	}
 	
 }
-

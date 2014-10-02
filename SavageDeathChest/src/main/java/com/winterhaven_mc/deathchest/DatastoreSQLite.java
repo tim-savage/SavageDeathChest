@@ -26,6 +26,9 @@ public class DatastoreSQLite extends Datastore {
 
 	// database connection object
 	private Connection connection;
+	
+	static final String NAME = "SQLite";
+	static final String FILENAME = "deathchests.db";
 
 
 	/**
@@ -54,7 +57,7 @@ public class DatastoreSQLite extends Datastore {
 		Class.forName(jdbcDriverName);
 
 		// create database url
-		String deathChestsDb = plugin.getDataFolder() + File.separator + "deathchests.db";
+		String deathChestsDb = plugin.getDataFolder() + File.separator + FILENAME;
 		String jdbc = "jdbc:sqlite";
 		String dbUrl = jdbc + ":" + deathChestsDb;
 
@@ -65,11 +68,6 @@ public class DatastoreSQLite extends Datastore {
 		// execute table creation statement
 		statement.executeUpdate(makeBlockTable);
 
-		// output status to log
-		plugin.getLogger().info("SQLite database intialized.");
-		
-		// convert records from flat file if necessary
-		//convertFromFile("deathchests.yml");
 	}
 
 	
@@ -125,7 +123,7 @@ public class DatastoreSQLite extends Datastore {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					deathChestBlock.setOwnerUUID((UUID)null);
 				}
 				
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
@@ -133,11 +131,10 @@ public class DatastoreSQLite extends Datastore {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					deathChestBlock.setOwnerUUID((UUID)null);
 				}
 				
 				// set other fields in deathChestBlock from database
-				deathChestBlock.setBlockId(rs.getInt("blockid"));
 				deathChestBlock.setLocation(location);
 				deathChestBlock.setExpiration(rs.getLong("expiration"));
 			}
@@ -179,15 +176,22 @@ public class DatastoreSQLite extends Datastore {
 			
 			while (rs.next()) {
 				
-				// create DeathChestBlock object
+				// create empty DeathChestBlock object
 				DeathChestBlock deathChestBlock = new DeathChestBlock();
 				
+				String ownerUUID = rs.getString("ownerid");
+				if (plugin.debug) {
+					plugin.getLogger().info("ownerid: " + ownerUUID);
+				}
 				// try to convert owner uuid from stored string, or set to null if invalid uuid
 				try {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					plugin.getLogger().warning("[SQLite getAllRecords] An error occured while trying to set ownerUUID.");
+					plugin.getLogger().warning("[SQLite getAllRecords] ownerid string: " + rs.getString("ownerid"));
+					plugin.getLogger().warning(e.getLocalizedMessage());
+					//deathChestBlock.setOwnerUUID((UUID)null);
 				}
 				
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
@@ -195,7 +199,7 @@ public class DatastoreSQLite extends Datastore {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					//deathChestBlock.setOwnerUUID((UUID)null);
 				}
 
 				// create Location object from database fields
@@ -204,8 +208,7 @@ public class DatastoreSQLite extends Datastore {
 						rs.getInt("y"),
 						rs.getInt("z"));
 				
-				// set other fields in deathChestBlock from database fields				
-				deathChestBlock.setBlockId(rs.getInt("blockid"));
+				// set other fields in deathChestBlock from database fields
 				deathChestBlock.setLocation(location);
 				deathChestBlock.setExpiration(rs.getLong("expiration"));
 
@@ -242,14 +245,15 @@ public class DatastoreSQLite extends Datastore {
 			ownerid = deathChestBlock.getOwnerUUID().toString();
 		}
 		catch (Exception e) {
-			//TODO: something
+			plugin.getLogger().warning("DeathChestBlock owner UUID is invalid.");
+			return;
 		}
 		
 		try {
 			killerid = deathChestBlock.getKillerUUID().toString();
 		}
 		catch (Exception e) {
-			//TODO: something
+			killerid = null;
 		}
 		
 		try {
@@ -318,14 +322,20 @@ public class DatastoreSQLite extends Datastore {
 				plugin.getLogger().warning(e.getLocalizedMessage());
 			}
 		}
-		
 	}
 	
+	String getDatastoreName() {
+		return NAME;
+	}
 	
-//	private void convertFromFile(String string) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
-
+	String getFilename() {
+		return FILENAME;
+	}
+	
+	void deleteFile() {
+		
+		File file = new File(plugin.getDataFolder() + File.separator + FILENAME);
+		file.delete();
+		
+	}
 }

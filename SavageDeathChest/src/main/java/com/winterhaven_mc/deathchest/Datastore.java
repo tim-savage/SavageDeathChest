@@ -41,5 +41,22 @@ public abstract class Datastore {
 	 * @param location
 	 */
 	abstract void deleteRecord(Location location);
+	
+	/**
+	 * Return datastore NAME constant
+	 * @return
+	 */
+	abstract String getDatastoreName();
+	
+	/**
+	 * Return datastore FILENAME constant
+	 * @return
+	 */
+	abstract String getFilename();
+
+	/**
+	 * Delete datastore file
+	 */
+	abstract void deleteFile();
 
 }
