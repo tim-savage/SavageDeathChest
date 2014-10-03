@@ -56,11 +56,12 @@ implements CommandExecutor {
 			
 			// if storage type has changed, instantiate new datastore
 			if (!originalStorageType.equals(currentStorageType)) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Changing storage type from '" 
-							+ originalStorageType + "' to '" + currentStorageType + "'...");
-				}
+				plugin.getLogger().info("Changing storage type from '" 
+						+ originalStorageType + "' to '" + currentStorageType + "'...");
 				plugin.chestmanager.setCurrentDatastore(plugin.chestmanager.getNewDatastore());
+				
+				// convert any old datastore files to new datastore
+				plugin.chestmanager.convertDatastores();
 			}
 			
 			sender.sendMessage(ChatColor.AQUA + plugin_name + "Configuration reloaded.");

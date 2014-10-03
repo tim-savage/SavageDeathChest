@@ -98,19 +98,6 @@ public class DeathChestBlock {
 	}
 
 	/**
-	 * Setter method for DeathChestBlock ownerUUID from string
-	 * @param ownerUUID
-	 */
-	public void setOwnerUUID(String ownerUUID) {
-		try {
-			this.ownerUUID = UUID.fromString(ownerUUID);
-		}
-		catch (Exception e) {
-			plugin.getLogger().warning("Could not set ownerUUID from string.");
-		}
-	}
-
-	/**
 	 * Getter method for DeathChestBlock killerUUID
 	 * @return UUID
 	 */

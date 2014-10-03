@@ -179,10 +179,6 @@ public class DatastoreSQLite extends Datastore {
 				// create empty DeathChestBlock object
 				DeathChestBlock deathChestBlock = new DeathChestBlock();
 				
-				String ownerUUID = rs.getString("ownerid");
-				if (plugin.debug) {
-					plugin.getLogger().info("ownerid: " + ownerUUID);
-				}
 				// try to convert owner uuid from stored string, or set to null if invalid uuid
 				try {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
@@ -191,7 +187,6 @@ public class DatastoreSQLite extends Datastore {
 					plugin.getLogger().warning("[SQLite getAllRecords] An error occured while trying to set ownerUUID.");
 					plugin.getLogger().warning("[SQLite getAllRecords] ownerid string: " + rs.getString("ownerid"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
-					//deathChestBlock.setOwnerUUID((UUID)null);
 				}
 				
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
@@ -199,7 +194,7 @@ public class DatastoreSQLite extends Datastore {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					//deathChestBlock.setOwnerUUID((UUID)null);
+					deathChestBlock.setOwnerUUID(null);
 				}
 
 				// create Location object from database fields
@@ -226,7 +221,6 @@ public class DatastoreSQLite extends Datastore {
 				plugin.getLogger().warning(e.getLocalizedMessage());
 			}
 		}
-		
 		return results;
 	}
 	

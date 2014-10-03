@@ -53,6 +53,9 @@ public class ChestManager {
 		
 		// instantiate datastore
         datastore = getNewDatastore();
+        
+		// convert any old datastore files to new datastore
+		convertDatastores();
  		
 		// load material types that chests can be replace from config file
 		loadReplaceableBlocks();
@@ -616,45 +619,14 @@ public class ChestManager {
 	public Datastore getNewDatastore() {
 		
 		Datastore newDatastore;
-		Datastore oldDatastore = getCurrentDatastore();
 		
 		if (plugin.getConfig().getString("storage-type","sqlite").equals("yaml")) {
-
 			// instantiate yaml datastore
 			newDatastore = new DatastoreYAML();
-			
-			// if oldDatastore is null, check for existence of SQLite file for conversion
-			if (oldDatastore == null) {
-				oldDatastore = new DatastoreSQLite();
-				File sqliteFile = new File(plugin.getDataFolder() + File.separator + oldDatastore.getFilename());
-				if (sqliteFile.exists()) {
-					try {
-						oldDatastore.initialize();
-					} catch (Exception e) {
-						plugin.getLogger().warning("Could not initialize existing SQLite datastore for conversion.");
-						oldDatastore = null;
-					}
-				}
-			}
 		}
 		else {
-			
 			// instantiate sqlite datastore
 			newDatastore = new DatastoreSQLite();
-			
-			// if oldDatastore is null, check for existence of YAML file for conversion
-			if (oldDatastore == null) {
-				oldDatastore = new DatastoreYAML();
-				File yamlFile = new File(plugin.getDataFolder() + File.separator + oldDatastore.getFilename());
-				if (yamlFile.exists()) {
-					try {
-						oldDatastore.initialize();
-					} catch (Exception e) {
-						plugin.getLogger().warning("Could not initialize existing YAML datastore for conversion.");
-						oldDatastore = null;
-					}
-				}
-			}
 		}
 
 		// initialize new datastore
@@ -684,44 +656,11 @@ public class ChestManager {
 		}
 		plugin.getLogger().info(newDatastore.getDatastoreName() + " datastore initialized.");
 
-		// if old datastore is not null and filename is valid...
-		if (oldDatastore != null && oldDatastore.getFilename() != null && !oldDatastore.getFilename().isEmpty()) {
-			
-			// get old datastore file reference
-			File oldDatastoreFile = new File(plugin.getDataFolder() + File.separator + oldDatastore.getFilename());
-			
-			// if old datastore file exists, convert to new datastore
-			if (oldDatastoreFile.exists()) {
-				
-				// counter for records converted
-				int blockCount = 0;
-
-				// get all old datastore records
-				ArrayList<DeathChestBlock> allOldRecords = new ArrayList<DeathChestBlock>(oldDatastore.getAllRecords());
-
-				// copy each record to new datastore
-				for (DeathChestBlock deathChestBlock : allOldRecords) {
-					newDatastore.putRecord(deathChestBlock);
-					blockCount++;
-				}
-				
-				// output number of records converted to log
-				plugin.getLogger().info(blockCount + " DeathChestBlocks converted from "
-						+ oldDatastore.getDatastoreName() + " datastore.");
-				
-				// close old datastore
-				oldDatastore.close();
-				
-				// delete old data file
-				oldDatastore.deleteFile();
-				
-				// dereference old datastore
-				oldDatastore = null;
-			}
-		}
+		// return new datastore
 		return newDatastore;
 	}
 
+	
 	/**
 	 * Get reference to current datastore
 	 * @return Datastore
@@ -730,12 +669,75 @@ public class ChestManager {
 		return this.datastore;
 	}
 
+	
 	/**
 	 * Set new datastore
 	 * @param newDatastore
 	 */
 	public void setCurrentDatastore(Datastore newDatastore) {
 		this.datastore = newDatastore;
+	}
+
+	
+	/**
+	 * Convert existing datastore files to new datastore
+	 */
+	public void convertDatastores() {
+
+		Datastore currentDatastore = getCurrentDatastore();
+		Datastore oldDatastore;
+
+		// if current datastore is yaml, check for sqlite file to convert 
+		if (currentDatastore instanceof DatastoreYAML) {
+			oldDatastore = new DatastoreSQLite();
+		}
+		// otherwise, check for yaml file to convert
+		else {
+			oldDatastore = new DatastoreYAML();
+		}
+
+		// if old datastore is not null and filename is not null or blank...
+		if (oldDatastore != null && oldDatastore.getFilename() != null && !oldDatastore.getFilename().isEmpty()) {
+
+			// try to convert old datastore to current datastore 
+			File oldDatastoreFile = new File(plugin.getDataFolder() + File.separator + oldDatastore.getFilename());
+			if (oldDatastoreFile.exists()) {
+				try {
+					oldDatastore.initialize();
+				} catch (Exception e) {
+					plugin.getLogger().warning("Could not initialize existing " 
+							+ oldDatastore.getDatastoreName() + "  datastore for conversion.");
+					return;
+				}
+
+				// counter for records converted
+				int blockCount = 0;
+
+				// get all old datastore records
+				ArrayList<DeathChestBlock> allOldRecords = new ArrayList<DeathChestBlock>(oldDatastore.getAllRecords());
+
+				// copy each record to new datastore
+				for (DeathChestBlock deathChestBlock : allOldRecords) {
+					currentDatastore.putRecord(deathChestBlock);
+					blockCount++;
+				}
+
+				// output number of records converted to log
+				plugin.getLogger().info(blockCount + " DeathChestBlocks converted from "
+						+ oldDatastore.getDatastoreName() + " datastore.");
+
+				// close old datastore
+				oldDatastore.close();
+
+				// delete old data file
+				oldDatastoreFile.delete();
+			}
+			// dereference old datastore file
+			oldDatastoreFile = null;
+			
+			// dereference old datastore
+			oldDatastore = null;
+		}
 	}
 
 }
