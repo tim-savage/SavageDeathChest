@@ -21,14 +21,14 @@ import org.bukkit.Location;
 
 public class DatastoreSQLite extends Datastore {
 
-	// static reference to main class
+	// reference to main class
 	private DeathChestMain plugin = DeathChestMain.plugin;
 
 	// database connection object
 	private Connection connection;
 	
-	static final String NAME = "SQLite";
-	static final String FILENAME = "deathchests.db";
+	private static final String NAME = "SQLite";
+	private static final String FILENAME = "deathchests.db";
 
 
 	/**
@@ -40,7 +40,7 @@ public class DatastoreSQLite extends Datastore {
 	void initialize() throws SQLException, ClassNotFoundException {
 
 		// sql statement to create table if it doesn't already exist
-		final String makeBlockTable = "CREATE TABLE IF NOT EXISTS blocks (" +
+		final String createBlockTable = "CREATE TABLE IF NOT EXISTS blocks (" +
 				"blockid INTEGER PRIMARY KEY, " +
 				"ownerid VARCHAR(36) NOT NULL, " +
 				"killerid VARCHAR(36), " +
@@ -66,7 +66,7 @@ public class DatastoreSQLite extends Datastore {
 		Statement statement = connection.createStatement();
 
 		// execute table creation statement
-		statement.executeUpdate(makeBlockTable);
+		statement.executeUpdate(createBlockTable);
 
 	}
 
@@ -166,7 +166,7 @@ public class DatastoreSQLite extends Datastore {
 		
 		// sql statement to retrieve all records
 		final String sqlSelectAllRecords = "SELECT * FROM blocks";
-
+		
 		try {
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectAllRecords);
@@ -194,7 +194,7 @@ public class DatastoreSQLite extends Datastore {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					deathChestBlock.setKillerUUID(null);
 				}
 
 				// create Location object from database fields
@@ -220,6 +220,9 @@ public class DatastoreSQLite extends Datastore {
 			if (plugin.debug) {
 				plugin.getLogger().warning(e.getLocalizedMessage());
 			}
+		}
+		if (plugin.debug) {
+			plugin.getLogger().info(results.size() + " records fetched from SQLite datastore.");
 		}
 		return results;
 	}

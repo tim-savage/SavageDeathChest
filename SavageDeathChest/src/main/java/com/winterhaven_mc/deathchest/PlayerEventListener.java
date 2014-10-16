@@ -129,10 +129,16 @@ public class PlayerEventListener implements Listener {
 			return;
 		}
 		
-		// if killer-looting is enabled and player is killer, do nothing and return
-		if (plugin.getConfig().getBoolean("killer-looting",false) &&
-				block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
-			return;
+		// if killer-looting is enabled check if player is killer
+		if (plugin.getConfig().getBoolean("killer-looting",false)) {
+			
+			// if player is killer, do nothing and return
+			if (block.hasMetadata("deathchest-killer") && block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
+				if (plugin.debug) {
+					plugin.getLogger().info(player.getName() + " was allowed to killer-loot a deathchest.");
+				}
+				return;
+			}
 		}
 		
 		// cancel event

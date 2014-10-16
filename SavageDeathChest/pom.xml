@@ -2,9 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.winterhaven_mc</groupId>
   <artifactId>SavageDeathChest</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <name>SavageDeathChest</name>
   <properties>
+    <project.author>Tim Savage</project.author>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
@@ -76,4 +77,5 @@
         <systemPath>/home/savage/Projects/Libraries/GriefPrevention-281.jar</systemPath>
     </dependency>
   </dependencies>
+  <url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

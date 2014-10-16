@@ -8,7 +8,7 @@ commands:
    deathchest:
       aliases: sdc
       description: This is the DeathChest command.
-      permission: deathchest.reload
+      permission: deathchest.admin
       permission-message: You don't have required permission <permission>.
       usage:
         /<command> reload - Reloads the configuration file

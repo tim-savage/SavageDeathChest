@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -36,7 +37,7 @@ public class BlockEventListener implements Listener {
 	 * checks for ownership of death chests and prevents breakage by non-owners
 	 * @param event
 	 */
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
 		
 		// if event is cancelled, do nothing and return
@@ -60,18 +61,31 @@ public class BlockEventListener implements Listener {
 			
 			// if block is not owned by player, test for override permission or killer-looting enabled
 			if (!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
+				
+				if (plugin.debug) {
+					plugin.getLogger().info("A non-owner is attempting to break a death chest block...");
+				}
 
 				// if player does not have deathchest.loot.other permission,
 				if (!player.hasPermission("deathchest.loot.other")) {
 
-					// if killer-looting is enabled and player is not killer
-					if (plugin.getConfig().getBoolean("killer-looting",false) &&
-							!block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
+					// if killer-looting is enabled, check if player is killer
+					if (plugin.getConfig().getBoolean("killer-looting",false)) { 
+						
+						// if player is not killer send message and return
+						if (!block.hasMetadata("deathchest-killer") || !block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
 
-						// send not-owner player message and return
-						plugin.messagemanager.sendPlayerMessage(player,"not-owner");
-						return;
+							// send not-owner player message and return
+							plugin.messagemanager.sendPlayerMessage(player,"not-owner");
+							return;
+						}
+						else if (plugin.debug) {
+							plugin.getLogger().info("Death chest breakage allowed by killer-looting configuration setting.");
+						}
 					}
+				}
+				else if (plugin.debug) {
+						plugin.getLogger().info("Death chest breakage allowed by loot.other permission.");
 				}
 			}
 		}
@@ -119,15 +133,22 @@ public class BlockEventListener implements Listener {
 				// if player does not have deathchest.loot.other permission
 				if (!player.hasPermission("deathchest.loot.other")) {
 	
-					// if killer-looting is enabled and player is not killer
-					if (plugin.getConfig().getBoolean("killer-looting",false) &&
-							!block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
+					// if killer-looting is enabled check if player is killer
+					if (plugin.getConfig().getBoolean("killer-looting",false)) {
+						
+						// if killer metadata is not set or player is not killer
+						if (!block.hasMetadata("deathchest-killer") ||
+								!block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
 					
-						// cancel event, output message and return
-						event.setCancelled(true);
-						plugin.messagemanager.sendPlayerMessage(player, "not-owner");
-						return;
+							// cancel event, output message and return
+							event.setCancelled(true);
+							plugin.messagemanager.sendPlayerMessage(player, "not-owner");
+							return;
+						}
 					}
+				}
+				else if (plugin.debug) {
+					plugin.getLogger().info("Sneak-puncher has deathchest.loot.other permission.");
 				}
 			}
 		}

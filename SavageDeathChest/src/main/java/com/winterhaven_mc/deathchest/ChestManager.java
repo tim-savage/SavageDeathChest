@@ -29,7 +29,7 @@ public class ChestManager {
 	private ChestUtilities chestUtilities;
 	
 	// DeathChestBlock material types
-	private HashSet<Material> deathChestBlocks = new HashSet<Material>();
+	private HashSet<Material> deathChestMaterials = new HashSet<Material>();
 	
 	// material types that can be replaced by death chests
 	private HashSet<Material> replaceableBlocks = new HashSet<Material>();
@@ -78,20 +78,20 @@ public class ChestManager {
 		
 		Long currentTime = System.currentTimeMillis();
 
-		for (DeathChestBlock deathChestBlock : getCurrentDatastore().getAllRecords()) {
+		for (DeathChestBlock deathChestBlock : datastore.getAllRecords()) {
 			
 			// get current block at deathChestBlock location
 			Block block = deathChestBlock.getLocation().getBlock();
 			
 			// if block at location is not a DeathChestBlock type, remove from datastore
-			if (!deathChestBlocks.contains(block.getType())) {
-				getCurrentDatastore().deleteRecord(deathChestBlock.getLocation());
+			if (!deathChestMaterials.contains(block.getType())) {
+				datastore.deleteRecord(deathChestBlock.getLocation());
 				
 				// send debug message to log
 				if (plugin.debug) {
 					plugin.getLogger().info("Block at loaded location is not a DeathChestBlock type. Removed from datastore.");
 				}
-				return;
+				continue;
 			}
 			
 			// set block metadata
@@ -196,7 +196,7 @@ public class ChestManager {
 		getCurrentDatastore().deleteRecord(block.getLocation());
 		
 		// if block is indeed a DeathChestBlock, break block and drop contents
-		if (deathChestBlocks.contains(block.getType()) && DeathChestBlock.isDeathChestBlock(block)) {
+		if (deathChestMaterials.contains(block.getType()) && DeathChestBlock.isDeathChestBlock(block)) {
 
 			// if chunk containing death chest is not loaded, load it so items will drop
 			if (!block.getChunk().isLoaded()) {
@@ -575,9 +575,9 @@ public class ChestManager {
 	 * Assign DeathChestBlock material types to hash set
 	 */
 	private void setDeathChestBlockTypes() {
-		deathChestBlocks.add(Material.CHEST);
-		deathChestBlocks.add(Material.WALL_SIGN);
-		deathChestBlocks.add(Material.SIGN_POST);
+		deathChestMaterials.add(Material.CHEST);
+		deathChestMaterials.add(Material.WALL_SIGN);
+		deathChestMaterials.add(Material.SIGN_POST);
 	}
 
 	
