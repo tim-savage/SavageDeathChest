@@ -76,6 +76,13 @@
         <scope>system</scope>
         <systemPath>/home/savage/Projects/Libraries/GriefPrevention-281.jar</systemPath>
     </dependency>
+    <dependency>
+    	<groupId>com.palmergames.bukkit.towny</groupId>
+    	<artifactId>Towny</artifactId>
+    	<version>0.84.0.0</version>
+    	<scope>system</scope>
+    	<systemPath>/home/savage/Projects/Libraries/Towny.jar</systemPath>
+    </dependency>
   </dependencies>
   <url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

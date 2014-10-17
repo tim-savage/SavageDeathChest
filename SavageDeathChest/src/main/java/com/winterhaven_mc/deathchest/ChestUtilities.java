@@ -3,9 +3,6 @@ package com.winterhaven_mc.deathchest;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,13 +11,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-
 public class ChestUtilities {
+	
     final DeathChestMain plugin;
+    
+    PermissionManager permManager;
 
     public ChestUtilities(DeathChestMain plugin) {
         this.plugin = plugin;
+        
+        permManager = new PermissionManager(plugin);
     }
 
 
@@ -105,50 +105,70 @@ public class ChestUtilities {
 	}
 
 
-	/** Check if player has GriefPrevention chest access at location
-	 * 
-	 * @param player	Player to check permission
-	 * @param location	Location to check permission
-	 * @return boolean	true/false player has chest access at location
-	 */
-	public boolean gpPermission(Player player, Location location) {
-		// if GriefPrevention option is enabled and GriefPrevention is present, check for chest access
-		if (plugin.getConfig().getBoolean("griefprevention-enabled", true) && plugin.gp_loaded) {
-			// if player does not have Grief Prevention chest access, spill inventory
-			Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-			if (claim != null) {
-				String gpErrorMessage = claim.allowContainers(player);
-				if (gpErrorMessage != null) {
-					plugin.getLogger().info(gpErrorMessage);
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+//	/**
+//	 *  Check if player has GriefPrevention chest access at location
+//	 * @param player	Player to check permission
+//	 * @param location	Location to check permission
+//	 * @return boolean	true/false player has chest access at location
+//	 */
+//	private boolean gpPermission(Player player, Location location) {
+//		// if GriefPrevention option is enabled and GriefPrevention is present, check for chest access
+//		if (plugin.getConfig().getBoolean("griefprevention-enabled", true) && plugin.gp_loaded) {
+//			// if player does not have Grief Prevention chest access, spill inventory
+//			Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+//			if (claim != null) {
+//				String gpErrorMessage = claim.allowContainers(player);
+//				if (gpErrorMessage != null) {
+//					plugin.getLogger().info(gpErrorMessage);
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
+//
+//
+//	/**
+//	 *  Check if player has WorldGuard build permission at location
+//	 * @param player	Player to check permissions
+//	 * @param location	Location to check permissions
+//	 * @return boolean	true/false player has build permission at location
+//	 */
+//	private boolean wgPermission(Player player, Location location) {
+//		// if WorldGuard option is enabled and WorldGuard is installed, check for chest access
+//		if (plugin.getConfig().getBoolean("worldguard-enabled", true)) {
+//			if (WGBukkit.getPlugin().isEnabled()) {
+//				if (!WGBukkit.getPlugin().canBuild(player, location)) {
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
+//	
+//	
+//	/**
+//	 * Check if player has Towny chest permission at location
+//	 * @param player
+//	 * @param location
+//	 * @return boolean true/false player has chest permission at location
+//	 */
+//	@SuppressWarnings("deprecation")
+//	private boolean townyPermission(Player player, Location location) {
+//		// if Towny option is enabled and Towny is installed, check for chest access
+//		if (plugin.getConfig().getBoolean("towny-enabled", true)) {
+//			if (plugin.towny.isEnabled()) {
+//				if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(), (byte)0, TownyPermission.ActionType.SWITCH)) {
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
 
-
-	/** Check if player has WorldGuard build permission at location
-	 * 
-	 * @param player	Player to check permissions
-	 * @param location	Location to check permissions
-	 * @return boolean	true/false player has build permission at location
-	 */
-	private boolean wgPermission(Player player, Location location) {
-		// if WorldGuard option is enabled and WorldGuard is installed, check for chest access
-		if (plugin.getConfig().getBoolean("worldguard-enabled", true)) {
-			if (WGBukkit.getPlugin().isEnabled()) {
-				if (!WGBukkit.getPlugin().canBuild(player, location)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-
-	/** Combine item stacks of same material up to max stack size
-	 * 
+	
+	/**
+	 * Combine item stacks of same material up to max stack size
 	 * @param itemlist	List of itemstacks to combine
 	 * @return List of ItemStack with same materials combined
 	 */
@@ -182,8 +202,8 @@ public class ChestUtilities {
 	}
 
 	
-	/** remove one chest from list of item stacks
-	 * 
+	/**
+	 * Remove one chest from list of item stacks
 	 * @param list	List of itemstacks to remove chest
 	 * @return List of itemstacks with one chest removed
 	 */
@@ -203,8 +223,8 @@ public class ChestUtilities {
 	}
 
 
-	/** Check if list of item stacks contains at least one chest
-	 * 
+	/**
+	 * Check if list of item stacks contains at least one chest
 	 * @param list List of itemstacks to check for chest
 	 * @return boolean
 	 */
@@ -396,13 +416,18 @@ public class ChestUtilities {
     		return false;
     	}
     	// check if player has GP permission at location
-    	if (!gpPermission(player,location)) {
+    	if (!permManager.gpPermission(player,location)) {
     		return false;
     	}
     	// check if player has WG permission at location 
-    	if (!wgPermission(player,location)) {
+    	if (!permManager.wgPermission(player,location)) {
     		return false;
     	}
+    	// check if player has Towny permission at location
+    	if (!permManager.townyPermission(player,location)) {
+    		return false;
+    	}
+    	
     	return true;
     }
 
