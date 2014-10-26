@@ -31,7 +31,7 @@ public class ChestUtilities {
      * @param yaw	Direction in degrees
      * @return BlockFace of cardinal direction
      */
-    public BlockFace getChestDirectionFace(float yaw) {
+    public BlockFace getDirection(float yaw) {
     	double rot = yaw % 360;
     	if (rot < 0) {
     		rot += 360.0;
@@ -49,122 +49,6 @@ public class ChestUtilities {
     		return BlockFace.NORTH;
     	}
     }
-
-
-    /**
-	 * Get cardinal compass direction.<p>
-	 * Converts direction in degrees to Chest byte
-	 * representing cardinal direction chest is facing. (N,E,S,W)
-	 * 
-	 * @param yaw		Direction in degrees	
-	 * @return Byte		representing chest face direction
-	 */
-	public Byte getChestDirectionByte(float yaw) {
-		double rot = yaw % 360;
-		if (rot < 0) {
-			rot += 360.0;
-		}
-		if (45 <= rot && rot < 135) {		// east
-			return 0x5;
-		}
-		else if (135 <= rot && rot < 225) {	// south
-			return 0x3;
-		}
-		else if (225 <= rot && rot < 315) {	// west
-			return 0x4;
-		}
-		else {								// north
-			return 0x2;
-		}
-	}
-	
-
-	/**
-	 * Get the cardinal compass direction for sign post. (N,E,S,W)
-	 * 
-	 * @param yaw		Direction in degrees
-	 * @return Byte		representing sign post direction
-	 */
-	public Byte getSignPostDirectionByte(float yaw) {
-		double rot = yaw % 360;
-		if (rot < 0) {
-			rot += 360.0;
-		}
-		if (45 <= rot && rot < 135) { 		 // east
-			return 0xC;
-		}
-		else if (135 <= rot && rot < 225) {	// south
-			return 0x0;
-		}
-		else if (225 <= rot && rot < 315) {	// west
-			return 0x4;
-		}
-		else {								// north
-			return 0x8;
-		}
-	}
-
-
-//	/**
-//	 *  Check if player has GriefPrevention chest access at location
-//	 * @param player	Player to check permission
-//	 * @param location	Location to check permission
-//	 * @return boolean	true/false player has chest access at location
-//	 */
-//	private boolean gpPermission(Player player, Location location) {
-//		// if GriefPrevention option is enabled and GriefPrevention is present, check for chest access
-//		if (plugin.getConfig().getBoolean("griefprevention-enabled", true) && plugin.gp_loaded) {
-//			// if player does not have Grief Prevention chest access, spill inventory
-//			Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-//			if (claim != null) {
-//				String gpErrorMessage = claim.allowContainers(player);
-//				if (gpErrorMessage != null) {
-//					plugin.getLogger().info(gpErrorMessage);
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-//
-//
-//	/**
-//	 *  Check if player has WorldGuard build permission at location
-//	 * @param player	Player to check permissions
-//	 * @param location	Location to check permissions
-//	 * @return boolean	true/false player has build permission at location
-//	 */
-//	private boolean wgPermission(Player player, Location location) {
-//		// if WorldGuard option is enabled and WorldGuard is installed, check for chest access
-//		if (plugin.getConfig().getBoolean("worldguard-enabled", true)) {
-//			if (WGBukkit.getPlugin().isEnabled()) {
-//				if (!WGBukkit.getPlugin().canBuild(player, location)) {
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
-//	
-//	
-//	/**
-//	 * Check if player has Towny chest permission at location
-//	 * @param player
-//	 * @param location
-//	 * @return boolean true/false player has chest permission at location
-//	 */
-//	@SuppressWarnings("deprecation")
-//	private boolean townyPermission(Player player, Location location) {
-//		// if Towny option is enabled and Towny is installed, check for chest access
-//		if (plugin.getConfig().getBoolean("towny-enabled", true)) {
-//			if (plugin.towny.isEnabled()) {
-//				if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(), (byte)0, TownyPermission.ActionType.SWITCH)) {
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
 
 	
 	/**
@@ -247,7 +131,7 @@ public class ChestUtilities {
 	 */
 	public Location locactionToLeft(Location location) {
 		float yaw = location.getYaw() + 90;
-		return location.getBlock().getRelative(getChestDirectionFace(yaw)).getLocation();
+		return location.getBlock().getRelative(getDirection(yaw)).getLocation();
 	}
 
 
@@ -258,7 +142,7 @@ public class ChestUtilities {
 	 */
 	public Block blockToLeft(Location location) {
 		float yaw = location.getYaw() + 90;
-		return location.getBlock().getRelative(getChestDirectionFace(yaw));
+		return location.getBlock().getRelative(getDirection(yaw));
 	}
 
 
@@ -269,7 +153,7 @@ public class ChestUtilities {
 	 */
 	public Block blockToRight(Location location) {
 		float yaw = location.getYaw() - 90;
-		return location.getBlock().getRelative(getChestDirectionFace(yaw));
+		return location.getBlock().getRelative(getDirection(yaw));
 	}
 
 
@@ -280,7 +164,7 @@ public class ChestUtilities {
 	 */
 	public Block blockInFront(Location location) {
 		float yaw = location.getYaw() + 180;
-		return location.getBlock().getRelative(getChestDirectionFace(yaw));
+		return location.getBlock().getRelative(getDirection(yaw));
 	}
 
 	
@@ -291,7 +175,7 @@ public class ChestUtilities {
 	 */
 	public Block blockToRear(Location location) {
 		float yaw = location.getYaw();
-		return location.getBlock().getRelative(getChestDirectionFace(yaw));
+		return location.getBlock().getRelative(getDirection(yaw));
 	}
 
 
@@ -412,7 +296,7 @@ public class ChestUtilities {
     public boolean validLocation(Player player, Location location) {
     	Block block = location.getBlock();
     	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestmanager.getReplaceableBlocks().contains(block.getType())) {
+    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
     		return false;
     	}
     	// check if player has GP permission at location

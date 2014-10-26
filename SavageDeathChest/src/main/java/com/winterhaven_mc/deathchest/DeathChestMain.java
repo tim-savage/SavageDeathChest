@@ -5,26 +5,27 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DeathChestMain extends JavaPlugin {
 
 	public static DeathChestMain plugin;
-	public MessageManager messagemanager;
-	public ChestManager chestmanager;
+	public CommandHandler commandHandler;
+	public MessageManager messageManager;
+	public ChestManager chestManager;
 	public boolean debug = getConfig().getBoolean("debug");
 
 	public void onEnable() {
 
-		// static reference to main class
+		// static reference to plugin instance
 		plugin = this;
 
-		// register command handler
-		getCommand("deathchest").setExecutor(new CommandHandler(this));
-
 		// copy default config from jar if it doesn't exist
-		this.saveDefaultConfig();
+		saveDefaultConfig();
+
+		// register command handler
+		commandHandler = new CommandHandler(this);
 
 		// instantiate message manager
-		this.messagemanager = new MessageManager(this);
+		messageManager = new MessageManager(this);
 
 		// instantiate chest manager
-		this.chestmanager = new ChestManager(this);
+		chestManager = new ChestManager(this);
 
 		// initialize listeners
 		new PlayerEventListener(this);
@@ -35,7 +36,7 @@ public final class DeathChestMain extends JavaPlugin {
 	public void onDisable() {
 		
 		// close datastore
-		chestmanager.closeDatastore();
+		chestManager.closeDatastore();
 		
 	}
 

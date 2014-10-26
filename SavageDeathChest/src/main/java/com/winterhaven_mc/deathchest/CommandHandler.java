@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0_79.
- * 
- * Could not load the following classes:
- *  org.bukkit.ChatColor
- *  org.bukkit.command.Command
- *  org.bukkit.command.CommandExecutor
- *  org.bukkit.command.CommandSender
- *  org.bukkit.plugin.PluginDescriptionFile
- */
 package com.winterhaven_mc.deathchest;
 
 import org.bukkit.ChatColor;
@@ -21,6 +11,9 @@ implements CommandExecutor {
 
 	public CommandHandler(DeathChestMain plugin) {
 		this.plugin = plugin;
+		
+		plugin.getCommand("deathchest").setExecutor(this);
+
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -35,7 +28,7 @@ implements CommandExecutor {
 			String versionString = this.plugin.getDescription().getVersion();
 			sender.sendMessage(ChatColor.GREEN + plugin_name + "Version: " + ChatColor.RESET + versionString);
 			sender.sendMessage(ChatColor.GREEN + "Language: " + ChatColor.RESET + plugin.getConfig().getString("language"));
-			sender.sendMessage(ChatColor.GREEN + "Storage Type: " + ChatColor.RESET + plugin.chestmanager.getCurrentDatastore().getDatastoreName());
+			sender.sendMessage(ChatColor.GREEN + "Storage Type: " + ChatColor.RESET + plugin.chestManager.getCurrentDatastore().getDatastoreName());
 			sender.sendMessage(ChatColor.GREEN + "Chest Expiration: " + ChatColor.RESET + plugin.getConfig().getInt("expire-time") + " minutes");
 			sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + plugin.getConfig().getStringList("enabled-worlds").toString());
 			return true;
@@ -49,7 +42,7 @@ implements CommandExecutor {
 			plugin.reloadConfig();
 			
 			// reload messages file
-			plugin.messagemanager.reloadMessages();
+			plugin.messageManager.reloadMessages();
 			
 			// get current storage type
 			String currentStorageType = plugin.getConfig().getString("storage-type","sqlite");
@@ -58,10 +51,10 @@ implements CommandExecutor {
 			if (!originalStorageType.equals(currentStorageType)) {
 				plugin.getLogger().info("Changing storage type from '" 
 						+ originalStorageType + "' to '" + currentStorageType + "'...");
-				plugin.chestmanager.setCurrentDatastore(plugin.chestmanager.getNewDatastore());
+				plugin.chestManager.setCurrentDatastore(plugin.chestManager.getNewDatastore());
 				
 				// convert any old datastore files to new datastore
-				plugin.chestmanager.convertDatastores();
+				plugin.chestManager.convertDatastores();
 			}
 			
 			sender.sendMessage(ChatColor.AQUA + plugin_name + "Configuration reloaded.");

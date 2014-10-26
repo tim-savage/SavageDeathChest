@@ -23,27 +23,43 @@ public class PermissionManager {
 	
 	PermissionManager(DeathChestMain plugin) {
 		
+		// reference to main class
 		this.plugin = plugin;
 		
 		// check if WorldGuard plugin is enabled
-		Plugin wg = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
-		if (wg != null && wg.isEnabled()) {
-			plugin.getLogger().info("WorldGuard detected.");
-			wg_enabled = true;
+		if (plugin.getConfig().getBoolean("worldguard-enabled")) {
+			Plugin wg = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
+			if (wg != null && wg.isEnabled()) {
+				plugin.getLogger().info("WorldGuard detected.");
+				wg_enabled = true;
+			}
+			else {
+				plugin.getLogger().warning("WorldGuard compatibility configured, but plugin not found.");
+			}
 		}
 
 		// check if GriefPrevention plugin is enabled
-		Plugin gp = plugin.getServer().getPluginManager().getPlugin("GriefPrevention");
-		if (gp != null && gp.isEnabled()) {
-			plugin.getLogger().info("GriefPrevention detected.");
-			gp_enabled = true;
+		if (plugin.getConfig().getBoolean("griefprevention-enabled")) {
+			Plugin gp = plugin.getServer().getPluginManager().getPlugin("GriefPrevention");
+			if (gp != null && gp.isEnabled()) {
+				plugin.getLogger().info("GriefPrevention detected.");
+				gp_enabled = true;
+			}
+			else {
+				plugin.getLogger().warning("GriefPrevention compatibility configured, but plugin not found.");
+			}
 		}
 
 		// check if Towny plugin is enabled
-		Plugin towny = plugin.getServer().getPluginManager().getPlugin("Towny");
-		if (towny != null && towny.isEnabled()) {
-			plugin.getLogger().info("Towny detected.");
-			towny_enabled = true;
+		if (plugin.getConfig().getBoolean("towny-enabled")) {
+			Plugin towny = plugin.getServer().getPluginManager().getPlugin("Towny");
+			if (towny != null && towny.isEnabled()) {
+				plugin.getLogger().info("Towny detected.");
+				towny_enabled = true;
+			}
+			else {
+				plugin.getLogger().warning("Towny compatibility configured, but plugin not found.");
+			}
 		}
 	}
 
@@ -63,7 +79,6 @@ public class PermissionManager {
 			if (claim != null) {
 				String gpErrorMessage = claim.allowContainers(player);
 				if (gpErrorMessage != null) {
-					plugin.getLogger().info(gpErrorMessage);
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest placement prevented by GriefPrevention.");
 					}

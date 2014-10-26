@@ -20,7 +20,10 @@ chest-protection: true
 # Check for container access in GriefPrevention claims
 griefprevention-enabled: true
 
-# Check for build access in WorldGuard claims
+# Check for chest use permission in Towny plots
+towny-enabled: true
+
+# Check for build access in WorldGuard regions
 worldguard-enabled: true
 
 # Distance from death location to search for a valid chest location

@@ -76,7 +76,7 @@ public class BlockEventListener implements Listener {
 						if (!block.hasMetadata("deathchest-killer") || !block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
 
 							// send not-owner player message and return
-							plugin.messagemanager.sendPlayerMessage(player,"not-owner");
+							plugin.messageManager.sendPlayerMessage(player,"not-owner");
 							return;
 						}
 						else if (plugin.debug) {
@@ -91,7 +91,7 @@ public class BlockEventListener implements Listener {
 		}
 		
 		// destroy DeathChestBlock
-		plugin.chestmanager.destroyDeathChestBlock(block);
+		plugin.chestManager.destroyDeathChestBlock(block);
 	}
 
 	
@@ -142,7 +142,7 @@ public class BlockEventListener implements Listener {
 					
 							// cancel event, output message and return
 							event.setCancelled(true);
-							plugin.messagemanager.sendPlayerMessage(player, "not-owner");
+							plugin.messageManager.sendPlayerMessage(player, "not-owner");
 							return;
 						}
 					}
@@ -160,7 +160,7 @@ public class BlockEventListener implements Listener {
 		}
 		
 		// loot chest
-		plugin.chestmanager.lootChest(player, block);
+		plugin.chestManager.lootChest(player, block);
 	}
 
 
@@ -224,6 +224,6 @@ public class BlockEventListener implements Listener {
 		event.setCancelled(true);
 		
 		// destroy DeathChestBlock
-		plugin.chestmanager.destroyDeathChestBlock(block);
+		plugin.chestManager.destroyDeathChestBlock(block);
 	}
 }

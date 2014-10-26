@@ -52,19 +52,19 @@ public class PlayerEventListener implements Listener {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			plugin.messagemanager.sendPlayerMessage(player, "permission-denied");
+			plugin.messageManager.sendPlayerMessage(player, "permission-denied");
 			return;
 		}
 		
 		// if player is in creative mode, output message and return
 		if (player.getGameMode().equals(GameMode.CREATIVE)) {
-			plugin.messagemanager.sendPlayerMessage(player, "creative-mode");
+			plugin.messageManager.sendPlayerMessage(player, "creative-mode");
 			return;
 		}
 		
 		// if player inventory is empty, output message and return
 		if (dropped_items.isEmpty()) {
-			plugin.messagemanager.sendPlayerMessage(player, "inventory-empty");
+			plugin.messageManager.sendPlayerMessage(player, "inventory-empty");
 			return;
 		}
 		
@@ -72,7 +72,7 @@ public class PlayerEventListener implements Listener {
 		if (plugin.debug) {
 			plugin.getLogger().info("Deploying chest..");
 		}
-		dropped_items = plugin.chestmanager.deployChest(player, dropped_items);
+		dropped_items = plugin.chestManager.deployChest(player, dropped_items);
 		
 		// clear dropped items
 		event.getDrops().clear();
@@ -145,7 +145,7 @@ public class PlayerEventListener implements Listener {
 		event.setCancelled(true);
 		
 		// send player not-owner message
-		plugin.messagemanager.sendPlayerMessage(player, "not-owner");
+		plugin.messageManager.sendPlayerMessage(player, "not-owner");
 	}
 
 	
@@ -177,7 +177,7 @@ public class PlayerEventListener implements Listener {
 	    		
 	            // if chest is empty, call lootChest method to remove chest and sign
 	            if (emptyChest(chest)) {
-	            	plugin.chestmanager.lootChest(player, block);
+	            	plugin.chestManager.lootChest(player, block);
 	            	return;
 	            }
 	        }
@@ -196,7 +196,7 @@ public class PlayerEventListener implements Listener {
 	    		
 	            // if both chests are empty, call lootChest method to remove chests and sign
 	            if (emptyChest(left) && emptyChest(right)) {
-	            	plugin.chestmanager.lootChest(player, block);
+	            	plugin.chestManager.lootChest(player, block);
 	            	return;
 	            }
 	        }
