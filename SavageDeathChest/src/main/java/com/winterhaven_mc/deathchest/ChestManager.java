@@ -354,11 +354,12 @@ public class ChestManager {
 	 */
 	private List<ItemStack> deploySingleChest(Player player, List<ItemStack> droppedItems) {
 		
-		Location location = chestUtilities.findValidSingleLocation(player);
+		Location location = chestUtilities.findValidSingleChestLocation(player);
 
-		if (!chestUtilities.validLocation(player,location)) {
+		// null location is returned if valid location could not be found
+		if (location == null) {
 			if (plugin.debug) {
-				plugin.getLogger().info("Block at death location is not a replaceable block. Trying one block up...");
+				plugin.getLogger().info("Could not find a valid deathchest location. Dropping items.");
 			}
 			return droppedItems;
 		}
@@ -423,16 +424,25 @@ public class ChestManager {
 	 */
 	private List<ItemStack> deployDoubleChest(Player player, List<ItemStack> droppedItems) {
 		
-		Location location = chestUtilities.findValidDoubleLocation(player);
+		// try to find a valid double chest location
+		Location location = chestUtilities.findValidDoubleChestLocation(player);
 		
-		if (!chestUtilities.validLocation(player,location)) {
+		// if no valid double chest location can be found, try to find a valid single chest location
+		if (location == null) {
 			if (plugin.debug) {
-				plugin.getLogger().info("Block at death location is not a replaceable block.");
+				plugin.getLogger().info("Could not find a valid double chest location. Trying for single chest...");
+			}
+			location = chestUtilities.findValidSingleChestLocation(player);
+		}
+		
+		if (location == null) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Could not find a valid deathchest location. Dropping items.");
 			}
 			return droppedItems;
 		}
 		if (plugin.debug) {
-			plugin.getLogger().info("First chest can be placed at death location.");
+			plugin.getLogger().info("Placing first chest at death location...");
 		}
 		
 		// actual chest creation
@@ -450,7 +460,7 @@ public class ChestManager {
 
 		chest.update();
 		
-		// put items into chest, items that don't fit are put in remaining_items list
+		// put items into first chest, items that don't fit are put in remaining_items list
 		List<ItemStack> remaining_items = new ArrayList<ItemStack>(droppedItems);
 		int chestsize = chest.getInventory().getSize();
 		int itemcount = 0;
@@ -475,17 +485,12 @@ public class ChestManager {
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
 
-		// get block to the right of first chest
-		block = chestUtilities.blockToRight(location);
-	
-		// if not a valid location, try block to left of first chest
-		if (!chestUtilities.validLocation(player,block.getLocation())) {
-			block = chestUtilities.blockToLeft(location);
-		}
+		// get location one block to right of first chest
+		location = chestUtilities.locationToRight(location);
 		
-		if (!chestUtilities.validLocation(player,block.getLocation())) {
+		if (!chestUtilities.isValidDoubleLocation(player,location)) {
 			if (plugin.debug) {
-				plugin.getLogger().info("Block at second chest location is not a replaceable block.");
+				plugin.getLogger().info("Block at second chest location is not a valid location.");
 			}
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
 			return remaining_items;
@@ -494,6 +499,9 @@ public class ChestManager {
 			plugin.getLogger().info("Second chest can be placed at death location.");
 		}
 		
+		// get block at location to the right of first chest
+		block = location.getBlock();
+	
 		// set block to chest material
 		block.setType(Material.CHEST);
 		
