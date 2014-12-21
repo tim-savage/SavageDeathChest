@@ -19,31 +19,43 @@ messages:
   chest-success:
     enabled: true
     string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %expiretime% para recuperar tu artículos.'
+    
   doublechest-partial-success:
     enabled: true
     string: '&cSólo se podía colocar un solo cofre del punto muerte.'
+    
   chest-denied:
     enabled: true
     string: '&cNo se pudo colocar el cofre de la muerte.'
+    
   inventory-empty:
     enabled: true
     string: '&cNo tenías ningún inventario para poner en un cofre de la muerte.'
+    
   no-room:
     enabled: true
     string: '&cNo había espacio para colocar en el cofre en el lugar de la muerte.'
+    
   no-chest-in-inventory:
     enabled: true
     string: '&cNo tenías ningún cofres en su inventario.'
+    
   death-broadcast:
     enabled: true
     string: '&4%playername%&r murió. La colocación el cofre de muerte.'
+    
   not-owner:
     enabled: true
     string: '&cEse el cofre de muerte no pertenece a usted.'
+    
   chest-expired:
     enabled: true
-    string: "&cSu el cofre de muerte ha expirado."
+    string: '&cSu el cofre de muerte ha expirado.'
+    
   creative-mode:
     enabled: true
-    string: "&cInventario de modo creativo no se guarda en cofres de muerte."
+    string: '&cInventario de modo creativo no se guarda en cofres de muerte.'
     
+  no-creative-access:
+    enabled: true
+    string: '&cEl acceso a los cofres de la muerte en el modo creativo no está permitido.'

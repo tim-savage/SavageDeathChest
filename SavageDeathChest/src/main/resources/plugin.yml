@@ -29,6 +29,10 @@ permissions:
   deathchest.freechest:
     description: Overrides require chest in inventory configuration.
     default: op
+    
+  deathchest.creative-access:
+    description: Overrides restriction on opening death chests in creative mode.
+    default: op
 
   deathchest.doublechest:
     description: Allows placement of double chests if necessary.
@@ -58,4 +62,5 @@ permissions:
       deathchest.player: true
       deathchest.freechest: true
       deathchest.loot.other: true
+      deathchest.creative-access: true
       deathchest.reload: true

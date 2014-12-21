@@ -10,6 +10,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -83,12 +84,12 @@ public class PlayerEventListener implements Listener {
 	}
 
 	
-	/** prevent deathchest opening by non-owners
+	/** prevent deathchest opening by non-owners OR CREATIVE PLAYERS
 	 * 
 	 * @param	event	PlayerInteractEvent
 	 * @return	void
 	 */
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
 		final Player player = event.getPlayer();
@@ -111,6 +112,13 @@ public class PlayerEventListener implements Listener {
 		
 		// if player did not right click chest, do nothing and return 
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+			return;
+		}
+		
+		// if player is in creative mode and does not have override permission, cancel event, send message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
+			event.setCancelled(true);
+			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
 			return;
 		}
 		

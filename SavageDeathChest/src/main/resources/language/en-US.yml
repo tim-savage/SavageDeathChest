@@ -50,9 +50,12 @@ messages:
 
   chest-expired:
     enabled: true
-    string: "&cYour death chest has expired."
+    string: '&cYour death chest has expired.'
 
   creative-mode:
     enabled: true
-    string: "&cCreative mode inventory is not saved in death chests."
-    
+    string: '&cCreative mode inventory is not saved in death chests.'
+  
+  no-creative-access:
+    enabled: true
+    string: '&cAccess to death chests in creative mode is not allowed.'
