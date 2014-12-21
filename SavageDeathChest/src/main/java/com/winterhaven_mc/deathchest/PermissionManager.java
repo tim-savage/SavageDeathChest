@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -79,9 +80,6 @@ public class PermissionManager {
 			if (claim != null) {
 				String gpErrorMessage = claim.allowContainers(player);
 				if (gpErrorMessage != null) {
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest placement prevented by GriefPrevention.");
-					}
 					return false;
 				}
 			}
@@ -99,11 +97,26 @@ public class PermissionManager {
 	boolean wgPermission(Player player, Location location) {
 		// if WorldGuard config option is enabled and WorldGuard plugin is enabled, check for chest access
 		if (plugin.getConfig().getBoolean("worldguard-enabled", true) && WGBukkit.getPlugin().isEnabled()) {
-			if (!WGBukkit.getPlugin().canBuild(player, location)) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Chest placement prevented by WorldGuard.");
+			
+			// get reference to worldguard plugin
+			WorldGuardPlugin wg = WGBukkit.getPlugin();
+	
+			// get worldguard version string
+			String wgVersion = wg.getDescription().getVersion();
+			
+			// if worldguard version 5, use canBuild method
+			if (wgVersion.startsWith("5.")) {
+			
+				if (!WGBukkit.getPlugin().canBuild(player, location)) {
+					return false;
 				}
-				return false;
+			}
+			// if worldguard version 6, use testBlockPlace method
+			else if (wgVersion.startsWith("6.")) {
+				
+				if (!wg.createProtectionQuery().testBlockPlace(player, location, Material.CHEST)) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -121,9 +134,6 @@ public class PermissionManager {
 		// if Towny config option is enabled and Towny plugin is enabled
 		if (plugin.getConfig().getBoolean("towny-enabled", true) && towny_enabled) {
 			if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(), (byte)0, TownyPermission.ActionType.SWITCH)) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Chest placement prevented by Towny.");
-				}
 				return false;
 			}
 		}

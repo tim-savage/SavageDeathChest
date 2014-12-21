@@ -30,7 +30,7 @@ permissions:
     description: Overrides require chest in inventory configuration.
     default: op
     
-  deathchest.creative.override:
+  deathchest.creative-access:
     description: Overrides restriction on opening death chests in creative mode.
     default: op
 
