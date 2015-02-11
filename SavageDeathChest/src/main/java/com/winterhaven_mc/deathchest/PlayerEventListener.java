@@ -10,7 +10,6 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -89,7 +88,7 @@ public class PlayerEventListener implements Listener {
 	 * @param	event	PlayerInteractEvent
 	 * @return	void
 	 */
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
 		final Player player = event.getPlayer();
@@ -107,6 +106,9 @@ public class PlayerEventListener implements Listener {
 		
 		// if block is not a DeathChestBlock, do nothing and return
 		if (!DeathChestBlock.isDeathChestBlock(block)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Clicked chest does not have deathchest metadata.");
+			}
 			return;
 		}
 		
@@ -123,17 +125,26 @@ public class PlayerEventListener implements Listener {
 		}
 		
 		// if chest-protection option is not enabled, do nothing and return
-		if (!plugin.getConfig().getBoolean("chest-protection")) {
+		if (!plugin.getConfig().getBoolean("chest-protection",true)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Chest protection is not enabled in config.");
+			}
 			return;
 		}
 		
 		// if player is chest owner, do nothing and return
 		if (block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Chest clicking player is death chest owner.");
+			}
 			return;
 		}
 
 		// if player has deathchest.loot.other permission, do nothing and return
 		if (player.hasPermission("deathchest.loot.other")) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Chest clicking player has loot.other permission.");
+			}
 			return;
 		}
 		

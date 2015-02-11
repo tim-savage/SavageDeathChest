@@ -203,7 +203,7 @@ public class ChestUtilities {
 	 * taking into account replaceable blocks, as well as 
 	 * WorldGuard regions and GriefPrevention claims if configured
 	 * @param player Player that deathchest is being deployed for
-	 * @return location that is valid for a single chest, or original location if valid location cannot be found
+	 * @return location that is valid for a single chest, or null if valid location cannot be found
 	 */
 	public Location findValidSingleChestLocation(Player player) {
 
@@ -255,7 +255,7 @@ public class ChestUtilities {
 	 * WorldGuard regions and GriefPrevention claims if configured
 	 * and adjacent existing chests
 	 * @param player Player that deathchest is being deployed for
-	 * @return location that is valid for double chest deployment, or original location if valid location cannot be found
+	 * @return location that is valid for double chest deployment, or null if valid location cannot be found
 	 */
 	public Location findValidDoubleChestLocation(Player player) {
 	
@@ -308,13 +308,13 @@ public class ChestUtilities {
 	}
 
 
-	/** Check if chest can be placed at location
+	/** Check if sign can be placed at location
      * 
      * @param player	Player to check permissions
      * @param location	Location to check permissions
      * @return boolean
      */
-    public boolean validLocation(Player player, Location location) {
+    public boolean isValidSignLocation(Player player, Location location) {
     	
     	Block block = location.getBlock();
     	
@@ -353,7 +353,7 @@ public class ChestUtilities {
     		return false;
     	}
     	// check if location is adjacent to an existing chest
-    	if (adjacentChest(location)) {
+    	if (adjacentChest(location,true)) {
     		return false;
     	}
     	// check if player has GP permission at location
@@ -386,7 +386,7 @@ public class ChestUtilities {
     		return false;
     	}
     	// check if location is adjacent to an existing chest, ignoring first placed chest
-    	if (adjacentChest2(location)) {
+    	if (adjacentChest(location,false)) {
     		return false;
     	}
     	// check if player has GP permission at location
@@ -404,10 +404,12 @@ public class ChestUtilities {
     	return true;
     }
     
-    public boolean adjacentChest(Location location) {
+    boolean adjacentChest(Location location, Boolean firstChest) {
     	
-    	if (blockToLeft(location).getType().equals(Material.CHEST)) {
-    		return true;
+    	if (firstChest) {
+    		if (blockToLeft(location).getType().equals(Material.CHEST)) {
+    			return true;
+    		}
     	}
     	if (blockToRight(location).getType().equals(Material.CHEST)) {
     		return true;
@@ -421,28 +423,19 @@ public class ChestUtilities {
     	return false;
     }
 
-    public boolean adjacentChest2(Location location) {
-    	
-    	if (blockToRight(location).getType().equals(Material.CHEST)) {
-    		if (plugin.debug) {
-    			plugin.getLogger().info("Chest detected to right of second chest.");
-    		}
-    		return true;
-    	}
-    	if (blockInFront(location).getType().equals(Material.CHEST)) {
-    		if (plugin.debug) {
-    			plugin.getLogger().info("Chest detected in front of second chest.");
-    		}
-    		return true;
-    	}
-    	if (blockToRear(location).getType().equals(Material.CHEST)) {
-    		if (plugin.debug) {
-    			plugin.getLogger().info("Block detected to rear of second chest.");
-    		}
-    		return true;
-    	}
-    	return false;
-    }
+//    boolean adjacentChest2(Location location) {
+//    	
+//    	if (blockToRight(location).getType().equals(Material.CHEST)) {
+//    		return true;
+//    	}
+//    	if (blockInFront(location).getType().equals(Material.CHEST)) {
+//    		return true;
+//    	}
+//    	if (blockToRear(location).getType().equals(Material.CHEST)) {
+//    		return true;
+//    	}
+//    	return false;
+//    }
 
 }
 

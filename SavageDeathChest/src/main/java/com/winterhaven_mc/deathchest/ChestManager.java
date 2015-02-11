@@ -564,13 +564,13 @@ public class ChestManager {
 		Block signblock = chestblock.getRelative(chestUtilities.getDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
-		if (chestUtilities.validLocation(player,signblock.getLocation())) {
+		if (chestUtilities.isValidSignLocation(player,signblock.getLocation())) {
 			signblock.setType(Material.WALL_SIGN);
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
 			signblock = chestblock.getRelative(BlockFace.UP);
-			if (chestUtilities.validLocation(player,signblock.getLocation())) {
+			if (chestUtilities.isValidSignLocation(player,signblock.getLocation())) {
 				signblock.setType(Material.SIGN_POST);
 			}
 			else {

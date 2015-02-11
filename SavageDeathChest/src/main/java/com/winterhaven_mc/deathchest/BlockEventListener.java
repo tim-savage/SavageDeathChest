@@ -4,6 +4,7 @@ import com.winterhaven_mc.deathchest.DeathChestMain;
 
 import java.util.ArrayList;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -48,13 +49,19 @@ public class BlockEventListener implements Listener {
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
 		
-		// if block is not a DeathChestBlock, do nothing and return
+		// if block is not a DeathChestBlock, we're not concerned with it, so do nothing and return
 		if (!DeathChestBlock.isDeathChestBlock(block)) {
 			return;
 		}
 		
 		// cancel event
 		event.setCancelled(true);
+		
+		// if player is in creative mode and does not have override permission, send message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
+			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
+			return;
+		}
 		
 		// if chest-protection is enabled in config, test for ownership
 		if (plugin.getConfig().getBoolean("chest-protection",true)) {
@@ -75,7 +82,7 @@ public class BlockEventListener implements Listener {
 						// if player is not killer send message and return
 						if (!block.hasMetadata("deathchest-killer") || !block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
 
-							// send not-owner player message and return
+							// player is not killer, so send not-owner player message and return
 							plugin.messageManager.sendPlayerMessage(player,"not-owner");
 							return;
 						}
@@ -83,9 +90,14 @@ public class BlockEventListener implements Listener {
 							plugin.getLogger().info("Death chest breakage allowed by killer-looting configuration setting.");
 						}
 					}
+					else {
+						// killer-looting is not enabled, so send not-owner player message and return
+						plugin.messageManager.sendPlayerMessage(player,"not-owner");
+						return;						
+					}
 				}
 				else if (plugin.debug) {
-						plugin.getLogger().info("Death chest breakage allowed by loot.other permission.");
+						plugin.getLogger().info("Death chest breakage allowed by deathchest.loot.other permission.");
 				}
 			}
 		}
@@ -106,6 +118,16 @@ public class BlockEventListener implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		// if block is not a DeathChestBlock, do nothing and return
+		if (!DeathChestBlock.isDeathChestBlock(block)) {
+			return;
+		}
+		else {
+			if (plugin.debug) {
+				plugin.getLogger().info("BlockDamageEvent detected on death chest block.");
+			}
+		}
+		
 		// if quick-loot is not enabled in configuration, do nothing and return
 		if (!plugin.getConfig().getBoolean("quick-loot", true)) {
 			return;
@@ -116,8 +138,12 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 		
-		// if block is not a DeathChestBlock, do nothing and return
-		if (!DeathChestBlock.isDeathChestBlock(block)) {
+		// cancel event
+		event.setCancelled(true);
+		
+		// if player is in creative mode and does not have override permission, cancel event, send message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
+			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
 			return;
 		}
 		
@@ -125,7 +151,7 @@ public class BlockEventListener implements Listener {
 		if (plugin.getConfig().getBoolean("chest-protection",true)) {
 			
 			// if player is not block owner, test for override permisssion or killer-looting enabled
-			if	(!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
+			if (!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
 				if (plugin.debug) {
 					plugin.getLogger().info("Sneak-puncher is not chest owner.");
 				}
@@ -136,15 +162,25 @@ public class BlockEventListener implements Listener {
 					// if killer-looting is enabled check if player is killer
 					if (plugin.getConfig().getBoolean("killer-looting",false)) {
 						
-						// if killer metadata is not set or player is not killer
+						// if killer metadata is not set or doesn't match player uuid, player is not killer
 						if (!block.hasMetadata("deathchest-killer") ||
 								!block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
 					
-							// cancel event, output message and return
-							event.setCancelled(true);
+							// player is not killer, so output message and return
 							plugin.messageManager.sendPlayerMessage(player, "not-owner");
+							if (plugin.debug) {
+								plugin.getLogger().info("Sneak-puncher is not chest owner killer.");
+							}
 							return;
 						}
+					}
+					else {
+						// killer looting is not enabled, so output message and return
+						plugin.messageManager.sendPlayerMessage(player, "not-owner");
+						if (plugin.debug) {
+							plugin.getLogger().info("Killer looting is not enabled in config.");
+						}
+						return;						
 					}
 				}
 				else if (plugin.debug) {
