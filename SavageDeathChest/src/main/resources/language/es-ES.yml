@@ -59,3 +59,7 @@ messages:
   no-creative-access:
     enabled: true
     string: '&cEl acceso a los cofres de la muerte en el modo creativo no está permitido.'
+    
+  chest-currently-open:
+    enabled: true
+    string: '&cPecho Muerte está accediendo por otro jugador.'
