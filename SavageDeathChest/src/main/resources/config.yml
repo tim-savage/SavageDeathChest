@@ -55,6 +55,9 @@ killer-looting: false
 # Automatically remove empty chests on closing
 remove-empty: true
 
+# Use sound effects
+sound-effects: true
+
 # List of blocks that can be replaced by a chest
 replaceable-blocks:
   - AIR
