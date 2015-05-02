@@ -42,10 +42,12 @@ public class DatastoreYAML extends Datastore {
 		String key = locationToString(location);
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
 
+		// if stored record is null, return null
 		if (dataFile.getConfig().get(key) == null) {
 			return null;
 		}
 		
+		// get ownerid from stored record, or set to null if invalid
 		UUID owneruuid = null;
 		try {
 			owneruuid = UUID.fromString(dataFile.getConfig().getString(key + pathSeparator + "owneruuid"));
@@ -54,6 +56,7 @@ public class DatastoreYAML extends Datastore {
 			owneruuid = null;
 		}
 
+		// get killerid from stored record, or set to null if invalid
 		UUID killeruuid = null;
 		try {
 			killeruuid = UUID.fromString(dataFile.getConfig().getString(key + pathSeparator + "killeruuid"));
@@ -81,6 +84,8 @@ public class DatastoreYAML extends Datastore {
 
 	ArrayList<DeathChestBlock> getAllRecords() {
 		
+		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
+
 		ArrayList<DeathChestBlock> result = new ArrayList<DeathChestBlock>();
 		
 		for (String key : dataFile.getConfig().getKeys(false)) {
@@ -89,7 +94,13 @@ public class DatastoreYAML extends Datastore {
 			if (deathChestBlock != null) {
 				result.add(deathChestBlock);
 			}
-			
+			else {
+				// delete expired records from file if returned record is null,
+				// so that expired records in invalid worlds get deleted from datastore
+				if (dataFile.getConfig().getLong(key + pathSeparator + "expiration") > System.currentTimeMillis()) {
+					deleteRecord(key);
+				}
+			}			
 		}
 		return result;
 	}
@@ -119,7 +130,7 @@ public class DatastoreYAML extends Datastore {
 			return;
 		}
 		
-		// create string from killer uuid
+		// create string from killer uuid, or set to empty string if no killer uuid exists
 		String killeruuid = null;
 		try {
 			killeruuid = deathChestBlock.getKillerUUID().toString();
@@ -141,11 +152,25 @@ public class DatastoreYAML extends Datastore {
 	}
 
 
+	/**
+	 * Delete record by location
+	 * @param location
+	 */
 	void deleteRecord(Location location) {
 		
 		String key = locationToString(location);
 		dataFile.getConfig().set(key, null);
+		dataFile.saveConfig();
+	}
+
+	
+	/**
+	 * Delete record by string
+	 * @param key
+	 */
+	void deleteRecord(String key) {
 		
+		dataFile.getConfig().set(key, null);		
 		dataFile.saveConfig();
 	}
 
@@ -173,6 +198,11 @@ public class DatastoreYAML extends Datastore {
 	 */
 	private String locationToString(Location location) {
 
+		// if location is null, return null string
+		if (location == null) {
+			return null;
+		}
+		
 		// parse location elements into distinct variables
 		String worldname = location.getWorld().getName();
 		String x = String.valueOf(location.getBlockX());
@@ -197,12 +227,24 @@ public class DatastoreYAML extends Datastore {
 		// split location string into distinct elements
 		String[] elements = locationString.split("\\|");
 		
+		// if location string did not split into 4 fields, return null location
+		if (elements.length < 4) {
+			return null;
+		}
+		
 		// assign location elements to variables
 		String worldname = elements[0];
 		int x = Integer.parseInt(elements[1]);
 		int y = Integer.parseInt(elements[2]);
 		int z = Integer.parseInt(elements[3]);
 		
+		// check that world exists
+		if (plugin.getServer().getWorld(worldname) == null) {
+			// world does not exist, so output log message and return null
+			plugin.getLogger().warning("Deathchest world '" + worldname + "' does not exist.");
+			return null;
+		}
+
 		// create location object from location string elements
 		Location location = new Location(plugin.getServer().getWorld(worldname),x,y,z);
 

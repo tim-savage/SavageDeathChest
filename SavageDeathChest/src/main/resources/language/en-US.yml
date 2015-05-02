@@ -59,3 +59,7 @@ messages:
   no-creative-access:
     enabled: true
     string: '&cAccess to death chests in creative mode is not allowed.'
+  
+  chest-currently-open:
+    enabled: true
+    string: '&cDeath chest is currently being accessed by another player.'

@@ -9,6 +9,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -151,9 +152,6 @@ public class ChestManager {
 
 		// if block is not a DeathChestBlock, do nothing and return
 		if (!DeathChestBlock.isDeathChestBlock(block)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Block to expire is not a DeathChestBlock.");
-			}
 			return;
 		}
 		
@@ -209,11 +207,6 @@ public class ChestManager {
 		
 		// remove block metadata
 		DeathChestBlock.removeMetadata(block);
-		
-		// send debug message
-		if (plugin.debug) {
-			plugin.getLogger().info("DeathChestBlock removed.");
-		}
 	}
 
 	
@@ -247,6 +240,9 @@ public class ChestManager {
 				if(chestinventory[i] != null) {
 					playerinventory.addItem(chestinventory[i]);
 					chest.getInventory().removeItem(chestinventory[i]);
+					if (plugin.getConfig().getBoolean("sound-effects",true)) {
+						player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
+					}
 				}
 			}
 		}
@@ -358,13 +354,7 @@ public class ChestManager {
 
 		// null location is returned if valid location could not be found
 		if (location == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Could not find a valid deathchest location. Dropping items.");
-			}
 			return droppedItems;
-		}
-		if (plugin.debug) {
-			plugin.getLogger().info("Chest can be placed at death location.");
 		}
 		
 		// actual chest creation
@@ -390,9 +380,6 @@ public class ChestManager {
 			if (itemcount >= chestsize) {
 				break;
 			}
-		}
-		if (plugin.debug) {
-			plugin.getLogger().info("Remaining Items: " + remainingItems.size());
 		}
 
 		// create DeathChestBlock object
@@ -429,20 +416,12 @@ public class ChestManager {
 		
 		// if no valid double chest location can be found, try to find a valid single chest location
 		if (location == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Could not find a valid double chest location. Trying for single chest...");
-			}
 			location = chestUtilities.findValidSingleChestLocation(player);
 		}
-		
+
+		// if no valid single chest location, return droppedItems
 		if (location == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Could not find a valid deathchest location. Dropping items.");
-			}
 			return droppedItems;
-		}
-		if (plugin.debug) {
-			plugin.getLogger().info("Placing first chest at death location...");
 		}
 		
 		// actual chest creation
@@ -488,15 +467,10 @@ public class ChestManager {
 		// get location one block to right of first chest
 		location = chestUtilities.locationToRight(location);
 		
+		// if block at second chest location is not valid, send message and return remaining_items
 		if (!chestUtilities.isValidDoubleLocation(player,location)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Block at second chest location is not a valid location.");
-			}
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
 			return remaining_items;
-		}
-		if (plugin.debug) {
-			plugin.getLogger().info("Second chest can be placed at death location.");
 		}
 		
 		// get block at location to the right of first chest
@@ -512,6 +486,7 @@ public class ChestManager {
 		chestData = (org.bukkit.material.Chest) chest.getData();
 		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
 		
+		// update blockstate
 		chest.update();
 	
 		// put items into chest, items that don't fit are put in remaining_items list
@@ -564,20 +539,17 @@ public class ChestManager {
 		Block signblock = chestblock.getRelative(chestUtilities.getDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
-		if (chestUtilities.validLocation(player,signblock.getLocation())) {
+		if (chestUtilities.isValidSignLocation(player,signblock.getLocation())) {
 			signblock.setType(Material.WALL_SIGN);
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
 			signblock = chestblock.getRelative(BlockFace.UP);
-			if (chestUtilities.validLocation(player,signblock.getLocation())) {
+			if (chestUtilities.isValidSignLocation(player,signblock.getLocation())) {
 				signblock.setType(Material.SIGN_POST);
 			}
 			else {
-				// if top of chest is also an invalid location, log debug message and return
-				if (plugin.debug) {
-					plugin.getLogger().info("Could not place sign on chest.");
-				}
+				// if top of chest is also an invalid location, do nothing and return
 				return false;
 			}
 		}
@@ -585,9 +557,8 @@ public class ChestManager {
 		// get block state of sign block
 		BlockState signblockState = signblock.getState();
 		
-		// confirm block has been successfully transformed into a sign
+		// if block has not been successfully transformed into a sign, return false
 		if (!(signblockState instanceof Sign)) {
-			plugin.getLogger().warning("Sign placement failed, despite valid location check passing.");
 			return false;
 		}
 		
@@ -619,7 +590,32 @@ public class ChestManager {
 		return true;
 	}
 	
-	
+
+	/**
+	 * Get count of chest inventory viewers
+	 * @param block
+	 * @return
+	 */
+	public int getChestViewerCount(Block block) {
+		
+		int count = 0;
+		
+		// confirm block is a chest
+		if (block.getType().equals(Material.CHEST)) {
+			
+			// get chest inventory object
+			BlockState state = block.getState();
+			Chest chest = (Chest)state;
+			
+			// get count of inventory viewers
+			count = chest.getInventory().getViewers().size();
+		}
+		
+		// return number of chest inventory viewers
+		return count;
+	}
+
+
 	/**
 	 * Assign DeathChestBlock material types to hash set
 	 */
@@ -629,6 +625,7 @@ public class ChestManager {
 		deathChestMaterials.add(Material.SIGN_POST);
 	}
 
+	
 	
 	/**
 	 * Get HashSet of replaceable blocks

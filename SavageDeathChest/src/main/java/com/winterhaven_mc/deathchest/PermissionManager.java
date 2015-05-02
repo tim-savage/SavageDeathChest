@@ -96,8 +96,8 @@ public class PermissionManager {
 	 */
 	boolean wgPermission(Player player, Location location) {
 		// if WorldGuard config option is enabled and WorldGuard plugin is enabled, check for chest access
-		if (plugin.getConfig().getBoolean("worldguard-enabled", true) && WGBukkit.getPlugin().isEnabled()) {
-			
+		if (plugin.getConfig().getBoolean("worldguard-enabled", true) && wg_enabled) {
+				
 			// get reference to worldguard plugin
 			WorldGuardPlugin wg = WGBukkit.getPlugin();
 	

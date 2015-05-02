@@ -179,7 +179,7 @@ public class DatastoreSQLite extends Datastore {
 				// create empty DeathChestBlock object
 				DeathChestBlock deathChestBlock = new DeathChestBlock();
 				
-				// try to convert owner uuid from stored string, or set to null if invalid uuid
+				// try to convert owner uuid from stored string
 				try {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
 				}
@@ -187,6 +187,7 @@ public class DatastoreSQLite extends Datastore {
 					plugin.getLogger().warning("[SQLite getAllRecords] An error occured while trying to set ownerUUID.");
 					plugin.getLogger().warning("[SQLite getAllRecords] ownerid string: " + rs.getString("ownerid"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
+					continue;
 				}
 				
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
@@ -197,8 +198,21 @@ public class DatastoreSQLite extends Datastore {
 					deathChestBlock.setKillerUUID(null);
 				}
 
+				String worldName = rs.getString("worldname");
+
+				// check that world is valid
+				if (plugin.getServer().getWorld(worldName) == null) {
+					
+					// world does not exist, so output log message and continue to next record
+					plugin.getLogger().warning("Saved deathchest world '" + worldName + "' does not exist.");
+					
+					// delete all expired records in database that have this invalid world
+					deleteExpiredRecords(worldName);
+					continue;
+				}
+				
 				// create Location object from database fields
-				Location location = new Location(plugin.getServer().getWorld(rs.getString("worldname")),
+				Location location = new Location(plugin.getServer().getWorld(worldName),
 						rs.getInt("x"),
 						rs.getInt("y"),
 						rs.getInt("z"));
@@ -321,6 +335,47 @@ public class DatastoreSQLite extends Datastore {
 		}
 	}
 	
+	
+	/**
+	 * Delete expired records in world <i>worldName</i>
+	 * @param worldName
+	 */
+	void deleteExpiredRecords(String worldName) {
+		
+		final String sqlDeleteDeathChestBlock = "DELETE FROM blocks "
+				+ "WHERE worldname = ? AND expiration > ?";
+		
+		// current time in milliseconds
+		final Long currentTime = System.currentTimeMillis();
+				
+		try {
+			// create prepared statement
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteDeathChestBlock);
+	
+			preparedStatement.setString(1, worldName);
+			preparedStatement.setLong(2, currentTime);
+	
+			// execute prepared statement
+			int rowsAffected = preparedStatement.executeUpdate();
+			
+			// output debugging information
+			if (plugin.debug) {
+				plugin.getLogger().info(rowsAffected + " rows deleted.");
+			}
+		}
+		catch (SQLException e) {
+	
+			// output simple error message
+			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
+	
+			// if debugging is enabled, output sql error message
+			if (plugin.debug) {
+				plugin.getLogger().warning(e.getLocalizedMessage());
+			}
+		}
+	}
+
+
 	String getDatastoreName() {
 		return NAME;
 	}
