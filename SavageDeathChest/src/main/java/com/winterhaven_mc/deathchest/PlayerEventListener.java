@@ -1,22 +1,17 @@
 package com.winterhaven_mc.deathchest;
 
 import java.util.List;
-
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerEventListener implements Listener {
@@ -184,89 +179,17 @@ public class PlayerEventListener implements Listener {
 
 	
 	/**
-	 * Remove empty death chest on inventory close event
-	 * @param event
-	 */
-	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent event) {
-		
-		// if remove-empty option is not enabled in config, do nothing and return
-		if (!plugin.getConfig().getBoolean("remove-empty",true)) {
-			return;
-		}
-		
-		if (event.getPlayer() instanceof Player) {
-			Player player = (Player)event.getPlayer();
-			Inventory inventory = event.getInventory();
-
-			// if inventory is a single chest
-	        if (inventory.getHolder() instanceof Chest){
-	            Chest chest = (Chest) inventory.getHolder();
-	            Block block = chest.getBlock();
-	            
-	    		// if block is not a DeathChestBlock, do nothing and return
-	    		if (!DeathChestBlock.isDeathChestBlock(block)) {
-	    			return;
-	    		}
-	    		
-	            // if chest is empty, call lootChest method to remove chest and sign
-	            if (emptyChest(chest)) {
-	            	plugin.chestManager.lootChest(player, block);
-	            	return;
-	            }
-	        }
-	        
-	        // if inventory is a double chest
-	        if (inventory.getHolder() instanceof DoubleChest) {
-	            DoubleChest chest = (DoubleChest) inventory.getHolder();
-	            Chest left = (Chest) chest.getLeftSide();
-	            Chest right = (Chest) chest.getRightSide();
-	            Block block = left.getBlock();
-	            
-	    		// if block is not a DeathChestBlock, do nothing and return
-	    		if (!DeathChestBlock.isDeathChestBlock(block)) {
-	    			return;
-	    		}
-	    		
-	            // if both chests are empty, call lootChest method to remove chests and sign
-	            if (emptyChest(left) && emptyChest(right)) {
-	            	plugin.chestManager.lootChest(player, block);
-	            	return;
-	            }
-	        }
-		}
-	}
-
-	
-	/**
 	 * Test if plugin is enabled in player's current world.
 	 * 
 	 * @param player	Player to test world enabled.
 	 * @return true if player world is enabled, false if not enabled 
 	 */
 	private boolean playerWorldEnabled(Player player) {
-		List<String> enabledworlds = plugin.getConfig().getStringList("enabled-worlds");
-		if (!enabledworlds.contains(player.getWorld().getName())) {
-			return false;
+		
+		if (plugin.commandHandler.getEnabledWorlds().contains(player.getWorld().getName())) {
+			return true;
 		}
-		return true;
+		return false;
 	}
-	
-	
-	/**
-	 * Test if chest is empty
-	 * 
-	 * @param chest
-	 * @return true if chest is empty, false if chest has any contents
-	 */
-	private boolean emptyChest(Chest chest) {
-        ItemStack[] items = chest.getInventory().getContents();
-        for (ItemStack item : items) {
-        	if (item != null) {
-        		return false;
-        	}
-        }
-        return true;
-	}
-	
+
 }

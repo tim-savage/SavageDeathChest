@@ -1,18 +1,23 @@
 package com.winterhaven_mc.deathchest;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class CommandHandler
-implements CommandExecutor {
+public class CommandHandler implements CommandExecutor {
+	
 	private DeathChestMain plugin;
+	private ArrayList<String> enabledWorlds;
 
 	public CommandHandler(DeathChestMain plugin) {
-		this.plugin = plugin;
 		
+		this.plugin = plugin;		
 		plugin.getCommand("deathchest").setExecutor(this);
+		updateEnabledWorlds();
 
 	}
 
@@ -30,7 +35,7 @@ implements CommandExecutor {
 			sender.sendMessage(ChatColor.GREEN + "Language: " + ChatColor.RESET + plugin.getConfig().getString("language"));
 			sender.sendMessage(ChatColor.GREEN + "Storage Type: " + ChatColor.RESET + plugin.chestManager.getCurrentDatastore().getDatastoreName());
 			sender.sendMessage(ChatColor.GREEN + "Chest Expiration: " + ChatColor.RESET + plugin.getConfig().getInt("expire-time") + " minutes");
-			sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + plugin.getConfig().getStringList("enabled-worlds").toString());
+			sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + getEnabledWorlds().toString());
 			return true;
 		}
 		if ((args[0]).equalsIgnoreCase("reload")) {
@@ -40,6 +45,9 @@ implements CommandExecutor {
 
 			// reload config file
 			plugin.reloadConfig();
+			
+			// update enabledWorlds list
+			updateEnabledWorlds();
 			
 			// reload messages file
 			plugin.messageManager.reloadMessages();
@@ -62,5 +70,36 @@ implements CommandExecutor {
 		}
 		return false;
 	}
-}
+	
+	
+	/**
+	 * update enabledWorlds ArrayList field from config file settings
+	 */
+	void updateEnabledWorlds() {
+		
+		// copy list of enabled worlds from config into enabledWorlds ArrayList field
+		this.enabledWorlds = new ArrayList<String>(plugin.getConfig().getStringList("enabled-worlds"));
+		
+		// if enabledWorlds ArrayList is empty, add all worlds to ArrayList
+		if (this.enabledWorlds.isEmpty()) {
+			for (World world : plugin.getServer().getWorlds()) {
+				enabledWorlds.add(world.getName());
+			}
+		}
+		
+		// remove each disabled world from enabled worlds field
+		for (String disabledWorld : plugin.getConfig().getStringList("disabled-worlds")) {
+			this.enabledWorlds.remove(disabledWorld);
+		}
+	}
+	
+	
+	/**
+	 * get list of enabled worlds
+	 * @return ArrayList of String enabledWorlds
+	 */
+	ArrayList<String> getEnabledWorlds() {
+		return this.enabledWorlds;
+	}
 
+}

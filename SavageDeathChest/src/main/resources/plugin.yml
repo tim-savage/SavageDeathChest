@@ -33,6 +33,9 @@ permissions:
   deathchest.creative-access:
     description: Overrides restriction on opening death chests in creative mode.
     default: op
+    
+  deathchest.allow-place:
+    description: Overrides restriction on placing items in death chests.
 
   deathchest.doublechest:
     description: Allows placement of double chests if necessary.
@@ -63,4 +66,5 @@ permissions:
       deathchest.freechest: true
       deathchest.loot.other: true
       deathchest.creative-access: true
+      deathchest.allow-place: true
       deathchest.reload: true

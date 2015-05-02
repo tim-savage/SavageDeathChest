@@ -4,11 +4,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DeathChestMain extends JavaPlugin {
 
-	public static DeathChestMain plugin;
-	public CommandHandler commandHandler;
-	public MessageManager messageManager;
+	static DeathChestMain plugin;
+	
+	CommandHandler commandHandler;
+	MessageManager messageManager;
 	public ChestManager chestManager;
-	public boolean debug = getConfig().getBoolean("debug");
+
+	boolean debug = getConfig().getBoolean("debug");
 
 	public void onEnable() {
 
@@ -27,17 +29,16 @@ public final class DeathChestMain extends JavaPlugin {
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
 
-		// initialize listeners
+		// initialize event listeners
 		new PlayerEventListener(this);
 		new BlockEventListener(this);
-
+		new InventoryEventListener(this);
 	}
 	
 	public void onDisable() {
 		
 		// close datastore
 		chestManager.closeDatastore();
-		
 	}
 
 }
