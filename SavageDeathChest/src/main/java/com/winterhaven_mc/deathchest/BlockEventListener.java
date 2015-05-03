@@ -65,7 +65,7 @@ public class BlockEventListener implements Listener {
 		}
 		
 		// if chest-protection is enabled in config, test for ownership
-		if (plugin.getConfig().getBoolean("chest-protection",true)) {
+		if (plugin.getConfig().getBoolean("chest-protection")) {
 			
 			// if block is not owned by player, test for override permission or killer-looting enabled
 			if (!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
@@ -74,7 +74,7 @@ public class BlockEventListener implements Listener {
 				if (!player.hasPermission("deathchest.loot.other")) {
 
 					// if killer-looting is enabled, check if player is killer
-					if (plugin.getConfig().getBoolean("killer-looting",false)) { 
+					if (plugin.getConfig().getBoolean("killer-looting")) { 
 						
 						// if player is not killer send message and return
 						if (!block.hasMetadata("deathchest-killer") || !block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
@@ -114,7 +114,7 @@ public class BlockEventListener implements Listener {
 				plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
 				// play denied access sound
-				if (plugin.getConfig().getBoolean("sound-effects",true)) {
+				if (plugin.getConfig().getBoolean("sound-effects")) {
 					player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 				}
 			}
@@ -143,7 +143,7 @@ public class BlockEventListener implements Listener {
 		}
 		
 		// if quick-loot is not enabled in configuration, do nothing and return
-		if (!plugin.getConfig().getBoolean("quick-loot", true)) {
+		if (!plugin.getConfig().getBoolean("quick-loot")) {
 			return;
 		}
 		
@@ -162,7 +162,7 @@ public class BlockEventListener implements Listener {
 		}
 		
 		// if chest-protection is enabled in config, test for ownership
-		if (plugin.getConfig().getBoolean("chest-protection",true)) {
+		if (plugin.getConfig().getBoolean("chest-protection")) {
 			
 			// if player is not block owner, test for override permission or killer-looting enabled
 			if (!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
@@ -171,7 +171,7 @@ public class BlockEventListener implements Listener {
 				if (!player.hasPermission("deathchest.loot.other")) {
 	
 					// if killer-looting is enabled check if player is killer
-					if (plugin.getConfig().getBoolean("killer-looting",false)) {
+					if (plugin.getConfig().getBoolean("killer-looting")) {
 						
 						// if killer metadata is not set or doesn't match player uuid, player is not killer
 						if (!block.hasMetadata("deathchest-killer") ||
@@ -212,7 +212,7 @@ public class BlockEventListener implements Listener {
 				plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
 				// play denied access sound
-				if (plugin.getConfig().getBoolean("sound-effects",true)) {
+				if (plugin.getConfig().getBoolean("sound-effects")) {
 					player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 				}
 			}

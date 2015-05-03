@@ -41,7 +41,7 @@ public class InventoryEventListener implements Listener {
 	public void onInventoryClose(InventoryCloseEvent event) {
 		
 		// if remove-empty option is not enabled in config, do nothing and return
-		if (!plugin.getConfig().getBoolean("remove-empty",true)) {
+		if (!plugin.getConfig().getBoolean("remove-empty")) {
 			return;
 		}
 		
@@ -116,7 +116,7 @@ public class InventoryEventListener implements Listener {
 		
 		// if inventory is a death chest inventory
 	    if (inventoryIsDeathChest(inventory)) {
-	
+	    	
 			// if prevent-item-placement is configured false, do nothing and return
 			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
 				return;
@@ -125,12 +125,55 @@ public class InventoryEventListener implements Listener {
 			// if click action is place, test for chest slots
 			if (action.equals(InventoryAction.PLACE_ALL) 
 					|| action.equals(InventoryAction.PLACE_SOME)
-					|| action.equals(InventoryAction.PLACE_ONE)) {
+					|| action.equals(InventoryAction.PLACE_ONE)
+					|| action.equals(InventoryAction.SWAP_WITH_CURSOR)) {
 				
-				// if place action is in chest slots, cancel event
-				if ((inventory.getHolder() instanceof DoubleChest && event.getRawSlot() < 54)
-						|| event.getRawSlot() < 27) {
+				// if double chest check for slot below 54
+				if (inventory.getHolder() instanceof DoubleChest) {
+
+					// if slot is below 54, check for player override permission
+					if (event.getRawSlot() < 54) {
+
+						// if player does not have allow-place permission, cancel event
+						if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
+							event.setCancelled(true);
+						}
+					}
+					return;
+				}
+
+				// not a double chest, so check for slot below 27
+				if (event.getRawSlot() < 27) {
+
 					// if player does not have allow-place permission, cancel event
+					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
+						event.setCancelled(true);
+					}
+				}
+				return;
+			}
+			
+			// if click action is move to other inventory, test slots
+			if (action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+
+				// if double chest, player inventory starts at slot 54
+				if (inventory.getHolder() instanceof DoubleChest) {
+
+					// if slot above 53, check for player override permission
+					if (event.getRawSlot() > 53) {
+
+						// if player does not have allow-place permission, cancel event
+						if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
+							event.setCancelled(true);
+						}
+					}
+					return;
+				}
+
+				// single chest, so check for slot above 26
+				if (event.getRawSlot() > 26) {
+
+					// if player does not have allow-place permission, cancel event and return
 					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
 						event.setCancelled(true);
 					}

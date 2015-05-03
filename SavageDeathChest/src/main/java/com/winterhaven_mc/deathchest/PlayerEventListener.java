@@ -117,7 +117,7 @@ public class PlayerEventListener implements Listener {
 		}
 		
 		// if chest-protection option is not enabled, do nothing and return
-		if (!plugin.getConfig().getBoolean("chest-protection",true)) {
+		if (!plugin.getConfig().getBoolean("chest-protection")) {
 			return;
 		}
 		
@@ -134,7 +134,7 @@ public class PlayerEventListener implements Listener {
 				plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
 				// if sound effects are enabled, play denied access sound
-				if (plugin.getConfig().getBoolean("sound-effects",true)) {
+				if (plugin.getConfig().getBoolean("sound-effects")) {
 					player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 				}
 			}
@@ -147,7 +147,7 @@ public class PlayerEventListener implements Listener {
 		}
 		
 		// if killer-looting is enabled check if player is killer
-		if (plugin.getConfig().getBoolean("killer-looting",false)) {
+		if (plugin.getConfig().getBoolean("killer-looting")) {
 			
 			// if player is killer, check that chest owner does not already have chest open
 			if (block.hasMetadata("deathchest-killer") && block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
@@ -162,7 +162,7 @@ public class PlayerEventListener implements Listener {
 					plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
 					// if sound effects are enabled, play denied access sound
-					if (plugin.getConfig().getBoolean("sound-effects",true)) {
+					if (plugin.getConfig().getBoolean("sound-effects")) {
 						player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 					}
 				}

@@ -6,13 +6,17 @@ language: en-US
 # Storage Type ( sqlite | yaml )
 storage-type: sqlite
 
+
 # Note: use only one enabled/disabled list, and comment out or remove the other
 # enabled worlds list (use this list for a default-deny world policy)
+
 #enabled-worlds:
 #  - enabled_world1
 #  - enabled_world2
 
+
 # disabled worlds list (use this list for a default-allow world policy)
+
 disabled-worlds:
   - disabled_world1
   - disabled_world2
@@ -22,6 +26,9 @@ require-chest: false
 
 # Protect chests from other players
 chest-protection: true
+
+# prevent placing items in death chests
+prevent-item-placement: true
 
 # Check for container access in GriefPrevention claims
 griefprevention-enabled: true

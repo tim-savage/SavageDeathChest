@@ -74,7 +74,7 @@ public class PermissionManager {
 	boolean gpPermission(Player player, Location location) {
 
 		// if GriefPrevention config option is enabled and GriefPrevention plugin is enabled
-		if (plugin.getConfig().getBoolean("griefprevention-enabled", true) && gp_enabled) {
+		if (plugin.getConfig().getBoolean("griefprevention-enabled") && gp_enabled) {
 			// if player does not have Grief Prevention chest access, spill inventory
 			Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 			if (claim != null) {
@@ -96,7 +96,7 @@ public class PermissionManager {
 	 */
 	boolean wgPermission(Player player, Location location) {
 		// if WorldGuard config option is enabled and WorldGuard plugin is enabled, check for chest access
-		if (plugin.getConfig().getBoolean("worldguard-enabled", true) && wg_enabled) {
+		if (plugin.getConfig().getBoolean("worldguard-enabled") && wg_enabled) {
 				
 			// get reference to worldguard plugin
 			WorldGuardPlugin wg = WGBukkit.getPlugin();
@@ -132,7 +132,7 @@ public class PermissionManager {
 	@SuppressWarnings("deprecation")
 	boolean townyPermission(Player player, Location location) {
 		// if Towny config option is enabled and Towny plugin is enabled
-		if (plugin.getConfig().getBoolean("towny-enabled", true) && towny_enabled) {
+		if (plugin.getConfig().getBoolean("towny-enabled") && towny_enabled) {
 			if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(), (byte)0, TownyPermission.ActionType.SWITCH)) {
 				return false;
 			}

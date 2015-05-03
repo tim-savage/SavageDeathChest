@@ -240,7 +240,7 @@ public class ChestManager {
 				if(chestinventory[i] != null) {
 					playerinventory.addItem(chestinventory[i]);
 					chest.getInventory().removeItem(chestinventory[i]);
-					if (plugin.getConfig().getBoolean("sound-effects",true)) {
+					if (plugin.getConfig().getBoolean("sound-effects")) {
 						player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
 					}
 				}
@@ -283,7 +283,7 @@ public class ChestManager {
 
 		// if require-chest option is enabled
 		// and player does not have permission override
-		if(plugin.getConfig().getBoolean("require-chest", false) &&
+		if(plugin.getConfig().getBoolean("require-chest") &&
 				!player.hasPermission("deathchest.freechest")) {
 
 			// if player does not have a chest in their inventory
@@ -671,7 +671,7 @@ public class ChestManager {
 		
 		Datastore newDatastore;
 		
-		if (plugin.getConfig().getString("storage-type","sqlite").equals("yaml")) {
+		if (plugin.getConfig().getString("storage-type").equals("yaml")) {
 			// instantiate yaml datastore
 			newDatastore = new DatastoreYAML();
 		}
