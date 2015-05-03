@@ -209,7 +209,7 @@ public class ChestUtilities {
 
 		Location origin = player.getLocation();
 		
-		int radius = plugin.getConfig().getInt("search-distance", 5);
+		int radius = plugin.getConfig().getInt("search-distance");
 
 		int ox = origin.getBlockX();
 		int oy = origin.getBlockY();
@@ -261,7 +261,7 @@ public class ChestUtilities {
 	
 		Location origin = player.getLocation();
 		
-		int radius = plugin.getConfig().getInt("search-distance", 5);
+		int radius = plugin.getConfig().getInt("search-distance");
 	
 		int ox = origin.getBlockX();
 		int oy = origin.getBlockY();

@@ -22,7 +22,7 @@ public class MessageManager {
 		installLocalizationFiles(localization_files);
 
 		// get configured language
-		String language = plugin.getConfig().getString("language","en-US");
+		String language = plugin.getConfig().getString("language");
 		
 		if (!new File(plugin.getDataFolder() + "/language/" + language + ".yml").exists()) {
 			plugin.getLogger().info("Language file for " + language + " not found. Defaulting to en-US.");
@@ -42,7 +42,7 @@ public class MessageManager {
     }
 
     public void sendPlayerMessage(Player player, String messageID) {
-		if (messages.getConfig().getBoolean("messages." + messageID + ".enabled",false)) {
+		if (messages.getConfig().getBoolean("messages." + messageID + ".enabled")) {
 			String message = messages.getConfig().getString("messages." + messageID + ".string");
 
 			// strip colorcodes and special characters from variables
@@ -72,10 +72,10 @@ public class MessageManager {
 			else {
 				int hours = expiration / 60;
 				int minutes = expiration % 60;
-				String hour_string = this.messages.getConfig().getString("hour", "hour");
-				String hour_plural_string = this.messages.getConfig().getString("hour_plural", "hours");
-				String minute_string = this.messages.getConfig().getString("minute", "minute");
-				String minute_plural_string = this.messages.getConfig().getString("minute_plural", "minutes");
+				String hour_string = this.messages.getConfig().getString("hour");
+				String hour_plural_string = this.messages.getConfig().getString("hour_plural");
+				String minute_string = this.messages.getConfig().getString("minute");
+				String minute_plural_string = this.messages.getConfig().getString("minute_plural");
 				if (hours > 1) {
 					expireTime = String.valueOf(expireTime) + hours + " " + hour_plural_string + " ";
 				} else if (hours == 1) {
@@ -101,7 +101,9 @@ public class MessageManager {
 
 
     public void broadcastMessage(Player player, String messageID) {
-        if (!messages.getConfig().getBoolean("messages." + messageID + ".enabled", false)) return;
+        if (!messages.getConfig().getBoolean("messages." + messageID + ".enabled")) {
+        	return;
+        }
         String message = messages.getConfig().getString("messages." + messageID + ".string");
         String playername = player.getName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
         String playernickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");

@@ -41,7 +41,7 @@ public class CommandHandler implements CommandExecutor {
 		if ((args[0]).equalsIgnoreCase("reload")) {
 			
 			// get original storage type
-			String originalStorageType = plugin.getConfig().getString("storage-type","sqlite");
+			String originalStorageType = plugin.getConfig().getString("storage-type");
 
 			// reload config file
 			plugin.reloadConfig();
@@ -53,7 +53,7 @@ public class CommandHandler implements CommandExecutor {
 			plugin.messageManager.reloadMessages();
 			
 			// get current storage type
-			String currentStorageType = plugin.getConfig().getString("storage-type","sqlite");
+			String currentStorageType = plugin.getConfig().getString("storage-type");
 			
 			// if storage type has changed, instantiate new datastore
 			if (!originalStorageType.equals(currentStorageType)) {

@@ -53,12 +53,12 @@ public class DeathChestBlock {
 		}
 		
 		// if configured expiration is zero (or less), set expiration to zero to signify never expire
-		if (plugin.getConfig().getLong("expire-time", 60) < 1) {
+		if (plugin.getConfig().getLong("expire-time") < 1) {
 			this.setExpiration(0);
 		}
 		else {
 			// set expiration field based on config setting (config setting is in minutes, so multiply by 60000)
-			this.setExpiration(System.currentTimeMillis() + plugin.getConfig().getLong("expire-time", 60) * 60000);
+			this.setExpiration(System.currentTimeMillis() + plugin.getConfig().getLong("expire-time") * 60000);
 		}
 		
 		// set deathChestBlock metadata
