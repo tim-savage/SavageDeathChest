@@ -19,6 +19,7 @@ public class MessageManager {
     private ConfigAccessor messages;
 	MultiverseCore mvCore;
 	Boolean mvEnabled = false;
+	private String language;
 
     public MessageManager(DeathChestMain plugin) {
         this.plugin = plugin;
@@ -124,16 +125,35 @@ public class MessageManager {
     }
 
 
+	void reload() {
+		
+		// reinstall message files if necessary
+		installLocalizationFiles();
+		
+		// get currently configured language
+		String newLanguage = languageFileExists(plugin.getConfig().getString("language"));
+		
+		// if configured language has changed, instantiate new messages object
+		if (!newLanguage.equals(this.language)) {
+			this.messages = new ConfigAccessor(plugin, "language" + File.separator + newLanguage + ".yml");
+			this.language = newLanguage;
+			plugin.getLogger().info("New language " + this.language + " enabled.");
+		}
+		
+		// reload language file
+		messages.reloadConfig();
+	}
+
 	/**
 	 * Install localization files from <em>language</em> directory in jar 
 	 */
 	private void installLocalizationFiles() {
-
+	
 		List<String> filelist = new ArrayList<String>();
-
+	
 		// get the absolute path to this plugin as URL
 		URL pluginURL = plugin.getServer().getPluginManager().getPlugin(plugin.getName()).getClass().getProtectionDomain().getCodeSource().getLocation();
-
+	
 		// read files contained in jar, adding language/*.yml files to list
 		ZipInputStream zip;
 		try {
@@ -151,7 +171,7 @@ public class MessageManager {
 		} catch (IOException e1) {
 			plugin.getLogger().warning("Could not read language files from jar.");
 		}
-
+	
 		// iterate over list of language files and install from jar if not already present
 		for (String filename : filelist) {
 			// this check prevents a warning message when files are already installed
@@ -162,10 +182,22 @@ public class MessageManager {
 			plugin.getLogger().info("Installed localization file:  " + filename);
 		}
 	}
-	
 
-    public void reloadMessages() {
-		installLocalizationFiles();
-		messages.reloadConfig();
+	private String languageFileExists(String language) {
+		
+		// check if localization file for configured language exists, if not then fallback to en-US
+		File languageFile = new File(plugin.getDataFolder() 
+				+ File.separator + "language" 
+				+ File.separator + language + ".yml");
+		
+		if (languageFile.exists()) {
+			return language;
+	    }
+		plugin.getLogger().info("Language file " + language + ".yml does not exist. Defaulting to en-US.");
+		return "en-US";
+	}
+
+	public String getLanguage() {
+		return this.language;
 	}
 }

@@ -49,8 +49,8 @@ public class CommandHandler implements CommandExecutor {
 			// update enabledWorlds list
 			updateEnabledWorlds();
 			
-			// reload messages file
-			plugin.messageManager.reloadMessages();
+			// reload messages
+			plugin.messageManager.reload();
 			
 			// get current storage type
 			String currentStorageType = plugin.getConfig().getString("storage-type");
