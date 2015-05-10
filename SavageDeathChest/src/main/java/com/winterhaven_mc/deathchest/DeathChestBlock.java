@@ -187,6 +187,10 @@ public class DeathChestBlock {
 	 */
 	public static boolean isDeathChestBlock(Block block) {
 		
+		if (block == null) {
+			return false;
+		}
+		
 		return block.hasMetadata("deathchest-owner");
 	}
 	

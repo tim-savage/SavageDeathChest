@@ -246,30 +246,30 @@ public class InventoryEventListener implements Listener {
 	    	return false;
 	    }
 	    
+	    // if inventory holder is null, return false
+	    if (inventory.getHolder() == null) {
+	    	return false;
+	    }
+	    
 	    // try to get inventory holder block
-    	Block block;
-    	if (inventory.getHolder() instanceof DoubleChest) {
-    		DoubleChest doubleChest;
-			try {
+    	Block block = null;
+    	
+    	try {
+			if (inventory.getHolder() instanceof DoubleChest) {
+				DoubleChest doubleChest;
 				doubleChest = (DoubleChest) inventory.getHolder();
-			} catch (ClassCastException e) {
-				// inventory holder cannot be cast to DoubleChest
-				return false;
+				block = doubleChest.getLocation().getBlock();
 			}
-    		block = doubleChest.getLocation().getBlock();
-    	}
-    	else {
-    		Chest chest;
-			try {
+			else {
+				Chest chest;
 				chest = (Chest) inventory.getHolder();
-			} catch (ClassCastException e) {
-				// inventory holder cannot be cast to Chest
-				return false;
+				block = chest.getBlock();
 			}
-    		block = chest.getBlock();
-    	}
+		} catch (Exception e) {
+			return false;
+		}
 
-		// if block is not a DeathChestBlock, return false
+		// if inventory holder block is not a DeathChestBlock, return false
 		if (!DeathChestBlock.isDeathChestBlock(block)) {
 			return false;
 		}

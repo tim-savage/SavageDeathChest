@@ -1,6 +1,12 @@
 package com.winterhaven_mc.deathchest;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,19 +24,20 @@ public class MessageManager {
         this.plugin = plugin;
         
 		// install localization files
-		String[] localization_files = {"en-US","es-ES"};	
-		installLocalizationFiles(localization_files);
+		installLocalizationFiles();
 
 		// get configured language
 		String language = plugin.getConfig().getString("language");
 		
-		if (!new File(plugin.getDataFolder() + "/language/" + language + ".yml").exists()) {
+		if (!new File(plugin.getDataFolder()
+				+ File.separator + "language" 
+				+ File.separator + language + ".yml").exists()) {
 			plugin.getLogger().info("Language file for " + language + " not found. Defaulting to en-US.");
 			language = "en-US";
 		}
 		
 		// instantiate custom configuration manager
-		messages = new ConfigAccessor(plugin, "language/" + language + ".yml");
+		messages = new ConfigAccessor(plugin, "language" + File.separator + language + ".yml");
 		
 		// get reference to Multiverse-Core if installed
 		mvCore = (MultiverseCore) plugin.getServer().getPluginManager().getPlugin("Multiverse-Core");
@@ -117,18 +124,48 @@ public class MessageManager {
     }
 
 
-    private void installLocalizationFiles(String[] filelist) {
-		
-		for (String filename : filelist) {
-			if (!new File(plugin.getDataFolder() + "/language/" + filename + ".yml").exists()) {
-				this.plugin.saveResource("language/" + filename + ".yml",false);
-				plugin.getLogger().info("Installed localization files for " + filename + ".");
+	/**
+	 * Install localization files from <em>language</em> directory in jar 
+	 */
+	private void installLocalizationFiles() {
+
+		List<String> filelist = new ArrayList<String>();
+
+		// get the absolute path to this plugin as URL
+		URL pluginURL = plugin.getServer().getPluginManager().getPlugin(plugin.getName()).getClass().getProtectionDomain().getCodeSource().getLocation();
+
+		// read files contained in jar, adding language/*.yml files to list
+		ZipInputStream zip;
+		try {
+			zip = new ZipInputStream(pluginURL.openStream());
+			while (true) {
+				ZipEntry e = zip.getNextEntry();
+				if (e == null) {
+					break;
+				}
+				String name = e.getName();
+				if (name.startsWith("language" + '/') && name.endsWith(".yml")) {
+					filelist.add(name);
+				}
 			}
+		} catch (IOException e1) {
+			plugin.getLogger().warning("Could not read language files from jar.");
+		}
+
+		// iterate over list of language files and install from jar if not already present
+		for (String filename : filelist) {
+			// this check prevents a warning message when files are already installed
+			if (new File(plugin.getDataFolder() + File.separator + filename).exists()) {
+				continue;
+			}
+			plugin.saveResource(filename, false);
+			plugin.getLogger().info("Installed localization file:  " + filename);
 		}
 	}
 	
 
     public void reloadMessages() {
+		installLocalizationFiles();
 		messages.reloadConfig();
 	}
 }
