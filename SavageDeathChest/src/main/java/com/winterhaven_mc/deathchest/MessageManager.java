@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -17,10 +19,16 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 public class MessageManager {
     private final DeathChestMain plugin;
     private ConfigAccessor messages;
+	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
 	MultiverseCore mvCore;
 	Boolean mvEnabled = false;
 	private String language;
 
+	
+	/**
+	 * Class constructor
+	 * @param plugin
+	 */
     public MessageManager(DeathChestMain plugin) {
         this.plugin = plugin;
         
@@ -28,17 +36,13 @@ public class MessageManager {
 		installLocalizationFiles();
 
 		// get configured language
-		String language = plugin.getConfig().getString("language");
-		
-		if (!new File(plugin.getDataFolder()
-				+ File.separator + "language" 
-				+ File.separator + language + ".yml").exists()) {
-			plugin.getLogger().info("Language file for " + language + " not found. Defaulting to en-US.");
-			language = "en-US";
-		}
-		
+		this.language = languageFileExists(plugin.getConfig().getString("language"));
+
 		// instantiate custom configuration manager
 		messages = new ConfigAccessor(plugin, "language" + File.separator + language + ".yml");
+		
+		// initialize messageCooldownMap
+		this.messageCooldownMap = new ConcurrentHashMap<UUID,ConcurrentHashMap<String,Long>>();
 		
 		// get reference to Multiverse-Core if installed
 		mvCore = (MultiverseCore) plugin.getServer().getPluginManager().getPlugin("Multiverse-Core");
@@ -46,73 +50,100 @@ public class MessageManager {
 			plugin.getLogger().info("Multiverse-Core detected.");
 			this.mvEnabled = true;
 		}
-		
     }
 
-    public void sendPlayerMessage(Player player, String messageID) {
-		if (messages.getConfig().getBoolean("messages." + messageID + ".enabled")) {
-			String message = messages.getConfig().getString("messages." + messageID + ".string");
-
-			// strip colorcodes and special characters from variables
-			String playerName = player.getName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
-			String playerNickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
-			String playerDisplayName = player.getDisplayName();
-			String worldName = player.getWorld().getName();
-			String expireTime = "";
-			
-			// if Multiverse is installed, use Multiverse world alias for world name
-			if (mvEnabled && mvCore.getMVWorldManager().getMVWorld(worldName) != null) {
-				
-				// if Multiverse alias is not blank, set world name to alias
-				if (!mvCore.getMVWorldManager().getMVWorld(worldName).getAlias().isEmpty()) {
-					worldName = mvCore.getMVWorldManager().getMVWorld(worldName).getAlias();
-				}
-			}
-	        
-
-			int expiration = this.plugin.getConfig().getInt("expire-time");
-			
-			// if configured expire-time < 1, set expiretime string to "unlimited"
-			if (expiration < 1) {
-				expireTime = "unlimited";
-			}
-			// otherwise, set string to hours and minutes remaining
-			else {
-				int hours = expiration / 60;
-				int minutes = expiration % 60;
-				String hour_string = this.messages.getConfig().getString("hour");
-				String hour_plural_string = this.messages.getConfig().getString("hour_plural");
-				String minute_string = this.messages.getConfig().getString("minute");
-				String minute_plural_string = this.messages.getConfig().getString("minute_plural");
-				if (hours > 1) {
-					expireTime = String.valueOf(expireTime) + hours + " " + hour_plural_string + " ";
-				} else if (hours == 1) {
-					expireTime = String.valueOf(expireTime) + hours + " " + hour_string + " ";
-				}
-				if (minutes > 1) {
-					expireTime = String.valueOf(expireTime) + minutes + " " + minute_plural_string;
-				} else if (minutes == 1) {
-					expireTime = String.valueOf(expireTime) + minutes + " " + minute_string;
-				}
-				expireTime = expireTime.trim();
-			}
-			message = message.replaceAll("%playername%", playerName);
-			message = message.replaceAll("%playerdisplayname%", playerDisplayName);
-			message = message.replaceAll("%playernickname%", playerNickname);
-			message = message.replaceAll("%worldname%", worldName);
-			message = message.replaceAll("%expiretime%", expireTime);
-			
-			// send message to player
-			player.sendMessage(ChatColor.translateAlternateColorCodes((char)'&', (String)message));
+    
+    /**
+     * Send message to player
+     * @param player
+     * @param messageId
+     */
+    public void sendPlayerMessage(Player player, String messageId) {
+    	
+    	// if message is not enabled, do nothing and return
+		if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
+			return;
 		}
+		
+		// set substitution variables defaults			
+		String playerName = "console";
+		String playerNickname = "console";
+		String playerDisplayName = "console";
+		String worldName = "world";
+
+		// get message cooldown time remaining
+		Long lastDisplayed = getMessageCooldown(player,messageId);
+
+		// get message repeat delay
+		int messageRepeatDelay = messages.getConfig().getInt("messages." + messageId + ".repeat-delay",1);
+
+		// if message has repeat delay value and was displayed to player more recently, do nothing and return
+		if (lastDisplayed > System.currentTimeMillis() - messageRepeatDelay * 1000) {
+			return;
+		}
+
+		// if repeat delay value is greater than zero, add entry to messageCooldownMap
+		if (messageRepeatDelay > 0) {
+			putMessageCooldown(player,messageId);
+		}
+
+		// assign player dependent variables
+		playerName = player.getName();
+		playerNickname = player.getPlayerListName();
+		playerDisplayName = player.getDisplayName();
+		worldName = player.getWorld().getName();
+
+		
+		// get message string
+		String message = messages.getConfig().getString("messages." + messageId + ".string");
+
+		// if Multiverse is installed, use Multiverse world alias for world name
+		if (mvEnabled && mvCore.getMVWorldManager().getMVWorld(worldName) != null) {
+
+			// if Multiverse alias is not blank, set world name to alias
+			if (!mvCore.getMVWorldManager().getMVWorld(worldName).getAlias().isEmpty()) {
+				worldName = mvCore.getMVWorldManager().getMVWorld(worldName).getAlias();
+			}
+		}
+
+		// get time to expire formatted string
+		String expireTime = getExpireTimeString();
+
+		// do variable substitutions
+		message = message.replaceAll("%playername%", playerName);
+		message = message.replaceAll("%playerdisplayname%", playerDisplayName);
+		message = message.replaceAll("%playernickname%", playerNickname);
+		message = message.replaceAll("%worldname%", worldName);
+		message = message.replaceAll("%expiretime%", expireTime);
+		
+		// do variable substitutions, stripping color codes from all caps variables
+		message = message.replace("%PLAYERNAME%", 
+				ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerName)));
+		message = message.replace("%PLAYERNICKNAME%", 
+				ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerNickname)));
+		message = message.replace("%WORLDNAME%", 
+				ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',worldName)));
+
+		// no stripping of color codes necessary, but do variable substitutions anyhow
+		// in case all caps variables were used
+		message = message.replace("%PLAYERDISPLAYNAME%", playerDisplayName);
+
+		// send message to player
+		player.sendMessage(ChatColor.translateAlternateColorCodes((char)'&', (String)message));
+
     }
 
 
-    public void broadcastMessage(Player player, String messageID) {
-        if (!messages.getConfig().getBoolean("messages." + messageID + ".enabled")) {
+    /**
+     * Send message to all players
+     * @param player
+     * @param messageId
+     */
+    public void broadcastMessage(Player player, String messageId) {
+        if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
         	return;
         }
-        String message = messages.getConfig().getString("messages." + messageID + ".string");
+        String message = messages.getConfig().getString("messages." + messageId + ".string");
         String playername = player.getName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
         String playernickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
         String playerdisplayname = player.getDisplayName();
@@ -125,6 +156,9 @@ public class MessageManager {
     }
 
 
+    /**
+     * Reload language files
+     */
 	void reload() {
 		
 		// reinstall message files if necessary
@@ -200,4 +234,83 @@ public class MessageManager {
 	public String getLanguage() {
 		return this.language;
 	}
+	
+	
+	/**
+	 * Add entry to message cooldown map
+	 * @param player
+	 * @param messageId
+	 */
+	private void putMessageCooldown(Player player, String messageId) {
+		
+    	ConcurrentHashMap<String, Long> tempMap = new ConcurrentHashMap<String, Long>();
+    	tempMap.put(messageId, System.currentTimeMillis());
+    	messageCooldownMap.put(player.getUniqueId(), tempMap);
+	}
+
+
+	/**
+	 * get entry from message cooldown map
+	 * @param player
+	 * @param messageId
+	 * @return cooldown expire time
+	 */
+	private long getMessageCooldown(Player player, String messageId) {
+		
+		// check if player is in message cooldown hashmap
+		if (messageCooldownMap.containsKey(player.getUniqueId())) {
+			
+			// check if messageID is in player's cooldown hashmap
+			if (messageCooldownMap.get(player.getUniqueId()).containsKey(messageId)) {
+				
+				// return cooldown time
+				return messageCooldownMap.get(player.getUniqueId()).get(messageId);
+			}
+		}
+		return 0L;
+	}
+	
+	
+	/**
+	 * Remove player from message cooldown map
+	 * @param player
+	 */
+	void removePlayerCooldown(Player player) {
+		messageCooldownMap.remove(player.getUniqueId());
+	}
+
+	
+	String getExpireTimeString() {
+		
+		String expireTime = "";
+		
+		int expiration = this.plugin.getConfig().getInt("expire-time");
+
+		// if configured expire-time < 1, set expiretime string to "unlimited"
+		if (expiration < 1) {
+			expireTime = "unlimited";
+		}
+		// otherwise, set string to hours and minutes remaining
+		else {
+			int hours = expiration / 60;
+			int minutes = expiration % 60;
+			String hour_string = this.messages.getConfig().getString("hour");
+			String hour_plural_string = this.messages.getConfig().getString("hour_plural");
+			String minute_string = this.messages.getConfig().getString("minute");
+			String minute_plural_string = this.messages.getConfig().getString("minute_plural");
+			if (hours > 1) {
+				expireTime = String.valueOf(expireTime) + hours + " " + hour_plural_string + " ";
+			} else if (hours == 1) {
+				expireTime = String.valueOf(expireTime) + hours + " " + hour_string + " ";
+			}
+			if (minutes > 1) {
+				expireTime = String.valueOf(expireTime) + minutes + " " + minute_plural_string;
+			} else if (minutes == 1) {
+				expireTime = String.valueOf(expireTime) + minutes + " " + minute_string;
+			}
+			expireTime = expireTime.trim();
+		}
+		return expireTime;
+	}
+	
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
+
 /**
  * SQLite implementation of Datastore
  * for saving death chest item locations
@@ -19,16 +20,26 @@ import org.bukkit.Location;
  *
  */
 
-public class DatastoreSQLite extends Datastore {
+public class DataStoreSQLite extends DataStore {
 
 	// reference to main class
-	private DeathChestMain plugin = DeathChestMain.plugin;
+	private DeathChestMain plugin = DeathChestMain.instance;
 
 	// database connection object
 	private Connection connection;
+
+	// datastore type
+	private static final DataStoreType TYPE = DataStoreType.SQLITE;
 	
-	private static final String NAME = "SQLite";
+	// datastore filename
 	private static final String FILENAME = "deathchests.db";
+
+
+	DataStoreSQLite (DeathChestMain plugin) {
+	
+		// reference to main class
+		this.plugin = plugin;	
+	}
 
 
 	/**
@@ -68,31 +79,14 @@ public class DatastoreSQLite extends Datastore {
 		// execute table creation statement
 		statement.executeUpdate(createBlockTable);
 
+		// set initialized true
+		setInitialized(true);
+		if (plugin.debug) {
+			plugin.getLogger().info("sqlite datastore initialized.");
+		}
 	}
 
 	
-	/**
-	 * Close database connection
-	 */
-	void close() {
-		
-		try {
-			connection.close();
-			plugin.getLogger().info("SQLite database connection closed.");		
-		}
-		catch (SQLException e) {
-
-			// output simple error message
-			plugin.getLogger().warning("An error occured while closing the SQLite database connection.");
-
-			// if debugging is enabled, output sql error message
-			if (plugin.debug) {
-				plugin.getLogger().warning(e.getMessage());
-			}
-		}
-
-	}
-
 	DeathChestBlock getRecord(Location location) {
 		
 		final String sqlGetDeathChestBlock = "SELECT * FROM blocks "
@@ -149,10 +143,11 @@ public class DatastoreSQLite extends Datastore {
 
 			// output simple error message
 			plugin.getLogger().warning("An error occured while fetching a death chest block from the SQLite database.");
-			
-			// if debugging is enabled, output sql error message
+			plugin.getLogger().warning(e.getMessage());
+
+			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
+				e.getStackTrace();
 			}
 		}
 		
@@ -229,10 +224,11 @@ public class DatastoreSQLite extends Datastore {
 
 			// output simple error message
 			plugin.getLogger().warning("An error occurred while trying to fetch all records from the SQLite database.");
-			
-			// if debugging is enabled, output sql error message
+			plugin.getLogger().warning(e.getMessage());
+
+			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
+				e.getStackTrace();
 			}
 		}
 		if (plugin.debug) {
@@ -291,10 +287,11 @@ public class DatastoreSQLite extends Datastore {
 
 			// output simple error message
 			plugin.getLogger().warning("An error occured while inserting a deathchest block into the SQLite database.");
+			plugin.getLogger().warning(e.getMessage());
 
-			// if debugging is enabled, output sql error message
+			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
+				e.getStackTrace();
 			}
 		}
 		
@@ -327,10 +324,11 @@ public class DatastoreSQLite extends Datastore {
 
 			// output simple error message
 			plugin.getLogger().warning("An error occurred while attempting to delete a record from the SQLite database.");
+			plugin.getLogger().warning(e.getMessage());
 
-			// if debugging is enabled, output sql error message
+			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
+				e.getStackTrace();
 			}
 		}
 	}
@@ -367,27 +365,71 @@ public class DatastoreSQLite extends Datastore {
 	
 			// output simple error message
 			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
-	
-			// if debugging is enabled, output sql error message
+			plugin.getLogger().warning(e.getMessage());
+
+			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
+				e.getStackTrace();
 			}
 		}
 	}
 
-
-	String getDatastoreName() {
-		return NAME;
-	}
+	/**
+	 * Close database connection
+	 */
+	@Override
+	void close() {
+		
+		try {
+			connection.close();
+			plugin.getLogger().info("SQLite database connection closed.");		
+		}
+		catch (SQLException e) {
 	
+			// output simple error message
+			plugin.getLogger().warning("An error occured while closing the SQLite database connection.");
+			plugin.getLogger().warning(e.getMessage());
+	
+			// if debugging is enabled, output stack trace
+			if (plugin.debug) {
+				e.getStackTrace();
+			}
+		}
+		setInitialized(false);
+	}
+
+
+	@Override
+	void sync() {
+		// no action necessary for this storage type
+	}
+
+
+	@Override
+	void delete() {
+		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
+		if (dataStoreFile.exists()) {
+			dataStoreFile.delete();
+		}
+	}
+
+
+	@Override
+	boolean exists() {		
+		// get path name to old data store file
+		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
+		return dataStoreFile.exists();
+	}
+
+
+	@Override
 	String getFilename() {
 		return FILENAME;
 	}
-	
-	void deleteFile() {
-		
-		File file = new File(plugin.getDataFolder() + File.separator + FILENAME);
-		file.delete();
-		
+
+
+	@Override
+	DataStoreType getType() {
+		return TYPE;
 	}
 }

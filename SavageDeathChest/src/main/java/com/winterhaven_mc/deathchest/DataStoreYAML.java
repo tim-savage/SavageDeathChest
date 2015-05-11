@@ -6,10 +6,11 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
-public class DatastoreYAML extends Datastore {
+
+public class DataStoreYAML extends DataStore {
 	
 	// reference to main class
-	private DeathChestMain plugin = DeathChestMain.plugin;
+	private DeathChestMain plugin = DeathChestMain.instance;
 	
 	// datastore name
 	static final String NAME = "YAML";
@@ -19,6 +20,15 @@ public class DatastoreYAML extends Datastore {
 	
 	// ConfigAccessor for yml datafile
 	private ConfigAccessor dataFile = new ConfigAccessor(plugin, FILENAME);
+
+	// data store type
+	private static final DataStoreType TYPE = DataStoreType.YAML;
+
+	DataStoreYAML (DeathChestMain plugin) {
+		
+		// reference to main class
+		this.plugin = plugin;	
+	}
 
 
 	void initialize() throws Exception {
@@ -182,14 +192,6 @@ public class DatastoreYAML extends Datastore {
 		return FILENAME;
 	}
 	
-	void deleteFile() {
-		
-		File file = new File(plugin.getDataFolder() + File.separator + FILENAME);
-		file.delete();
-		
-	}
-
-	
 	/**
 	 * Create a unique key string based on a location
 	 * 
@@ -250,6 +252,38 @@ public class DatastoreYAML extends Datastore {
 
 		// return newly formed location object
 		return location;		
+	}
+
+
+	@Override
+	void sync() {
+		dataFile.saveConfig();
+	}
+
+
+	@Override
+	void delete() {
+		
+		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
+		if (dataStoreFile.exists()) {
+			dataStoreFile.delete();
+		}
+	}
+
+
+	@Override
+	boolean exists() {
+		
+		// get path name to this data store file
+		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
+		return dataStoreFile.exists();
+	
+	}
+
+
+	@Override
+	DataStoreType getType() {
+		return TYPE;
 	}
 
 }

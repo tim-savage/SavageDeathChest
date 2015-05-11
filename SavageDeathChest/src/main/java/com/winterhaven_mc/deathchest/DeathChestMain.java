@@ -4,10 +4,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DeathChestMain extends JavaPlugin {
 
-	static DeathChestMain plugin;
+	static DeathChestMain instance;
 	
-	CommandHandler commandHandler;
+	CommandManager commandManager;
 	MessageManager messageManager;
+	DataStore dataStore;
 	public ChestManager chestManager;
 
 	boolean debug = getConfig().getBoolean("debug");
@@ -15,17 +16,20 @@ public final class DeathChestMain extends JavaPlugin {
 	public void onEnable() {
 
 		// static reference to plugin instance
-		plugin = this;
+		instance = this;
 
 		// copy default config from jar if it doesn't exist
 		saveDefaultConfig();
 
-		// register command handler
-		commandHandler = new CommandHandler(this);
+		// instantiate command manager
+		commandManager = new CommandManager(this);
 
 		// instantiate message manager
 		messageManager = new MessageManager(this);
-
+		
+		// instantiate datastore
+		dataStore = DataStoreFactory.create();
+		
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
 
@@ -38,7 +42,7 @@ public final class DeathChestMain extends JavaPlugin {
 	public void onDisable() {
 		
 		// close datastore
-		chestManager.closeDatastore();
+		dataStore.close();
 	}
 
 }

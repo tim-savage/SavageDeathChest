@@ -38,7 +38,7 @@ public class ConfigAccessor {
     private File configFile;
     private FileConfiguration fileConfiguration;
 
-    public ConfigAccessor(JavaPlugin plugin, String fileName) {
+	public ConfigAccessor(JavaPlugin plugin, String fileName) {
         if (plugin == null)
             throw new IllegalArgumentException("plugin cannot be null");
         if (!plugin.isInitialized())
@@ -57,7 +57,7 @@ public class ConfigAccessor {
         // Look for defaults in the jar
         InputStream defConfigStream = plugin.getResource(fileName);
         if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
             fileConfiguration.setDefaults(defConfig);
         }
     }

@@ -2,7 +2,7 @@ name: SavageDeathChest
 main: com.winterhaven_mc.deathchest.DeathChestMain
 author: ${project.author}
 version: ${project.version}
-softdepend: [GriefPrevention,WorldGuard,Towny]
+softdepend: [GriefPrevention,WorldGuard,Towny,Multiverse-Core]
 
 commands:
    deathchest:

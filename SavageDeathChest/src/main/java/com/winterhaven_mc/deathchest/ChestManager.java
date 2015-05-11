@@ -1,6 +1,5 @@
 package com.winterhaven_mc.deathchest;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,9 +22,6 @@ public class ChestManager {
 
 	private DeathChestMain plugin;
 
-	// datastore object
-	private Datastore datastore;
-	
 	// chest utilities object
 	private ChestUtilities chestUtilities;
 	
@@ -52,12 +48,6 @@ public class ChestManager {
 		// instantiate chestutilities
         chestUtilities = new ChestUtilities(plugin);
 		
-		// instantiate datastore
-        datastore = getNewDatastore();
-        
-		// convert any old datastore files to new datastore
-		convertDatastores();
- 		
 		// load material types that chests can be replace from config file
 		loadReplaceableBlocks();
 		
@@ -79,18 +69,19 @@ public class ChestManager {
 		
 		Long currentTime = System.currentTimeMillis();
 
-		for (DeathChestBlock deathChestBlock : datastore.getAllRecords()) {
+		for (DeathChestBlock deathChestBlock : plugin.dataStore.getAllRecords()) {
 			
 			// get current block at deathChestBlock location
 			Block block = deathChestBlock.getLocation().getBlock();
 			
 			// if block at location is not a DeathChestBlock type, remove from datastore
 			if (!deathChestMaterials.contains(block.getType())) {
-				datastore.deleteRecord(deathChestBlock.getLocation());
+				plugin.dataStore.deleteRecord(deathChestBlock.getLocation());
 				
 				// send debug message to log
 				if (plugin.debug) {
-					plugin.getLogger().info("Block at loaded location is not a DeathChestBlock type. Removed from datastore.");
+					plugin.getLogger().info("Block at loaded location is not a DeathChestBlock type."
+							+ " Removed from datastore.");
 				}
 				continue;
 			}
@@ -191,7 +182,7 @@ public class ChestManager {
 	public void destroyDeathChestBlock(Block block) {
 
 		// delete record from datastore
-		getCurrentDatastore().deleteRecord(block.getLocation());
+		plugin.dataStore.deleteRecord(block.getLocation());
 		
 		// if block is indeed a DeathChestBlock, break block and drop contents
 		if (deathChestMaterials.contains(block.getType()) && DeathChestBlock.isDeathChestBlock(block)) {
@@ -386,7 +377,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
 		
 		// put DeathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock);
+		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
@@ -459,7 +450,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
 		
 		// put deathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock);
+		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
@@ -506,7 +497,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock2 = new DeathChestBlock(player,block);
 		
 		// insert deathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock2);
+		plugin.dataStore.putRecord(deathChestBlock2);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock2);
@@ -581,7 +572,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,signblock);
 
 		// insert deathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock);
+		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
@@ -651,143 +642,6 @@ public class ChestManager {
 			if (Material.matchMaterial(materialString) != null) {
 				replaceableBlocks.add(Material.matchMaterial(materialString));
 			}
-		}
-	}
-
-
-	/**
-	 * Public wrapper for datastore.close() method
-	 */
-	public void closeDatastore() {
-		getCurrentDatastore().close();
-	}
-	
-	/**
-	 * Get new datastore, converting records from old datastore if provided
-	 * @param oldDatastore
-	 * @return
-	 */
-	public Datastore getNewDatastore() {
-		
-		Datastore newDatastore;
-		
-		if (plugin.getConfig().getString("storage-type").equals("yaml")) {
-			// instantiate yaml datastore
-			newDatastore = new DatastoreYAML();
-		}
-		else {
-			// instantiate sqlite datastore
-			newDatastore = new DatastoreSQLite();
-		}
-
-		// initialize new datastore
-		try {
-			newDatastore.initialize();
-		}
-		catch (Exception e) {
-			plugin.getLogger().warning("Could not initialize "
-					+ newDatastore.getDatastoreName() + " datastore. ");
-			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
-			}
-			
-			// if new datastore that failed to initialize was not a yaml datastore, try and fallback to that
-			if (!(newDatastore instanceof DatastoreYAML)) {
-				newDatastore = new DatastoreYAML();
-				try {
-					newDatastore.initialize();
-				}
-				catch (Exception e2) {
-					plugin.getLogger().warning("Could not initialize "
-							+ newDatastore.getDatastoreName() + " datastore. "
-							+ "Death chests will not persist after server restart.");
-					return null;
-				}
-			}
-		}
-		plugin.getLogger().info(newDatastore.getDatastoreName() + " datastore initialized.");
-
-		// return new datastore
-		return newDatastore;
-	}
-
-	
-	/**
-	 * Get reference to current datastore
-	 * @return Datastore
-	 */
-	public Datastore getCurrentDatastore() {
-		return this.datastore;
-	}
-
-	
-	/**
-	 * Set new datastore
-	 * @param newDatastore
-	 */
-	public void setCurrentDatastore(Datastore newDatastore) {
-		this.datastore = newDatastore;
-	}
-
-	
-	/**
-	 * Convert existing datastore files to new datastore
-	 */
-	public void convertDatastores() {
-
-		Datastore currentDatastore = getCurrentDatastore();
-		Datastore oldDatastore;
-
-		// if current datastore is yaml, check for sqlite file to convert 
-		if (currentDatastore instanceof DatastoreYAML) {
-			oldDatastore = new DatastoreSQLite();
-		}
-		// otherwise, check for yaml file to convert
-		else {
-			oldDatastore = new DatastoreYAML();
-		}
-
-		// if old datastore is not null and filename is not null or blank...
-		if (oldDatastore != null && oldDatastore.getFilename() != null && !oldDatastore.getFilename().isEmpty()) {
-
-			// try to convert old datastore to current datastore 
-			File oldDatastoreFile = new File(plugin.getDataFolder() + File.separator + oldDatastore.getFilename());
-			if (oldDatastoreFile.exists()) {
-				try {
-					oldDatastore.initialize();
-				} catch (Exception e) {
-					plugin.getLogger().warning("Could not initialize existing " 
-							+ oldDatastore.getDatastoreName() + "  datastore for conversion.");
-					return;
-				}
-
-				// counter for records converted
-				int blockCount = 0;
-
-				// get all old datastore records
-				ArrayList<DeathChestBlock> allOldRecords = new ArrayList<DeathChestBlock>(oldDatastore.getAllRecords());
-
-				// copy each record to new datastore
-				for (DeathChestBlock deathChestBlock : allOldRecords) {
-					currentDatastore.putRecord(deathChestBlock);
-					blockCount++;
-				}
-
-				// output number of records converted to log
-				plugin.getLogger().info(blockCount + " DeathChestBlocks converted from "
-						+ oldDatastore.getDatastoreName() + " datastore.");
-
-				// close old datastore
-				oldDatastore.close();
-
-				// delete old data file
-				oldDatastoreFile.delete();
-			}
-			// dereference old datastore file
-			oldDatastoreFile = null;
-			
-			// dereference old datastore
-			oldDatastore = null;
 		}
 	}
 

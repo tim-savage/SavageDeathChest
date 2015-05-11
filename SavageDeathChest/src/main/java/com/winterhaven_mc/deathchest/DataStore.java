@@ -4,18 +4,16 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 
-public abstract class Datastore {
+
+public abstract class DataStore {
 	
+	protected boolean initialized;
+
 	/**
 	 * Initialize the datastore
 	 * @throws Exception
 	 */
 	abstract void initialize() throws Exception;
-	
-	/**
-	 * Close the datastore
-	 */
-	abstract void close();
 	
 	/**
 	 * Retrieve a record from the datastore
@@ -41,22 +39,36 @@ public abstract class Datastore {
 	 * @param location
 	 */
 	abstract void deleteRecord(Location location);
-	
-	/**
-	 * Return datastore NAME constant
-	 * @return
-	 */
-	abstract String getDatastoreName();
-	
+
 	/**
 	 * Return datastore FILENAME constant
 	 * @return
 	 */
 	abstract String getFilename();
 
+	boolean isInitialized() {
+		return this.initialized;
+	}
+
+	void setInitialized(boolean initialized) {
+		this.initialized = initialized;
+	}
+
 	/**
-	 * Delete datastore file
+	 * Close the datastore
 	 */
-	abstract void deleteFile();
+	abstract void close();
+
+	abstract void sync();
+
+	abstract void delete();
+
+	abstract boolean exists();
+
+	abstract DataStoreType getType();
+
+	String getName() {
+		return this.getType().getName();
+	}
 
 }

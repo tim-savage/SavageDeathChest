@@ -186,7 +186,7 @@ public class PlayerEventListener implements Listener {
 	 */
 	private boolean playerWorldEnabled(Player player) {
 		
-		if (plugin.commandHandler.getEnabledWorlds().contains(player.getWorld().getName())) {
+		if (plugin.commandManager.getEnabledWorlds().contains(player.getWorld().getName())) {
 			return true;
 		}
 		return false;
