@@ -71,6 +71,9 @@ public class CommandManager implements CommandExecutor {
 		// reload config file
 		plugin.reloadConfig();
 		
+		// update debug field
+		plugin.debug = plugin.getConfig().getBoolean("debug");
+		
 		// update enabledWorlds list
 		updateEnabledWorlds();
 		

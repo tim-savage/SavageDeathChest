@@ -2,8 +2,8 @@ package com.winterhaven_mc.deathchest;
 
 public enum DataStoreType {
 
-	YAML("yaml"),
-	SQLITE("sqlite");
+	YAML("Yaml"),
+	SQLITE("SQLite");
 
 	private String name;
 

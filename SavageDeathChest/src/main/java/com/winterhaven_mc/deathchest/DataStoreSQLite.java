@@ -15,7 +15,7 @@ import org.bukkit.Location;
 
 /**
  * SQLite implementation of Datastore
- * for saving death chest item locations
+ * for saving death chest block locations
  * @author Tim Savage
  *
  */
@@ -23,22 +23,27 @@ import org.bukkit.Location;
 public class DataStoreSQLite extends DataStore {
 
 	// reference to main class
-	private DeathChestMain plugin = DeathChestMain.instance;
+	private DeathChestMain plugin;
 
 	// database connection object
 	private Connection connection;
 
-	// datastore type
-	private static final DataStoreType TYPE = DataStoreType.SQLITE;
-	
-	// datastore filename
-	private static final String FILENAME = "deathchests.db";
 
-
+	/**
+	 * Class constructor
+	 * @param plugin
+	 */
 	DataStoreSQLite (DeathChestMain plugin) {
-	
+
 		// reference to main class
-		this.plugin = plugin;	
+		this.plugin = plugin;
+
+		// set datastore type
+		this.type = DataStoreType.SQLITE;
+
+		// set filename
+		this.filename = "deathchests.db";
+
 	}
 
 
@@ -48,7 +53,14 @@ public class DataStoreSQLite extends DataStore {
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException 
 	 */
+	@Override
 	void initialize() throws SQLException, ClassNotFoundException {
+		
+		// if data store is already initialized, do nothing and return
+		if (this.isInitialized()) {
+			plugin.getLogger().info(this.getName() + " datastore already initialized.");
+			return;
+		}
 
 		// sql statement to create table if it doesn't already exist
 		final String createBlockTable = "CREATE TABLE IF NOT EXISTS blocks (" +
@@ -64,11 +76,11 @@ public class DataStoreSQLite extends DataStore {
 
 		// register the driver 
 		final String jdbcDriverName = "org.sqlite.JDBC";
-		
+
 		Class.forName(jdbcDriverName);
 
 		// create database url
-		String deathChestsDb = plugin.getDataFolder() + File.separator + FILENAME;
+		String deathChestsDb = plugin.getDataFolder() + File.separator + filename;
 		String jdbc = "jdbc:sqlite";
 		String dbUrl = jdbc + ":" + deathChestsDb;
 
@@ -81,26 +93,26 @@ public class DataStoreSQLite extends DataStore {
 
 		// set initialized true
 		setInitialized(true);
-		if (plugin.debug) {
-			plugin.getLogger().info("sqlite datastore initialized.");
-		}
+		
+		// output log message
+		plugin.getLogger().info(this.getName() + " datastore initialized.");
 	}
 
-	
+	@Override
 	DeathChestBlock getRecord(Location location) {
-		
+
 		final String sqlGetDeathChestBlock = "SELECT * FROM blocks "
 				+ "WHERE worldname = ? "
 				+ "AND x = ? "
 				+ "AND y = ? "
 				+ "AND z = ?";
-		
+
 		DeathChestBlock deathChestBlock = new DeathChestBlock();
-		
+
 		try {
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlGetDeathChestBlock);
-			
+
 			preparedStatement.setString(1, location.getWorld().getName());
 			preparedStatement.setInt(2, location.getBlockX());
 			preparedStatement.setInt(3, location.getBlockY());
@@ -108,10 +120,10 @@ public class DataStoreSQLite extends DataStore {
 
 			// execute sql query
 			ResultSet rs = preparedStatement.executeQuery();
-			
+
 			// only zero or one record can match the unique location
 			if (rs.next()) {
-				
+
 				// try to convert owner uuid from stored string, or set to null if invalid uuid
 				try {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
@@ -119,7 +131,7 @@ public class DataStoreSQLite extends DataStore {
 				catch (Exception e) {
 					deathChestBlock.setOwnerUUID((UUID)null);
 				}
-				
+
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
 				try {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
@@ -127,17 +139,17 @@ public class DataStoreSQLite extends DataStore {
 				catch (Exception e) {
 					deathChestBlock.setOwnerUUID((UUID)null);
 				}
-				
+
 				// set other fields in deathChestBlock from database
 				deathChestBlock.setLocation(location);
 				deathChestBlock.setExpiration(rs.getLong("expiration"));
 			}
-			
+
 			// return null DeathChestBlock object if no matching location exists in database
 			else {
 				deathChestBlock = null;
 			}
-			
+
 		}
 		catch (SQLException e) {
 
@@ -150,30 +162,30 @@ public class DataStoreSQLite extends DataStore {
 				e.getStackTrace();
 			}
 		}
-		
+
 		return deathChestBlock;
 	}
 
-	
+	@Override
 	ArrayList<DeathChestBlock> getAllRecords() {
-		
+
 		ArrayList<DeathChestBlock> results = new ArrayList<DeathChestBlock>();
-		
+
 		// sql statement to retrieve all records
 		final String sqlSelectAllRecords = "SELECT * FROM blocks";
-		
+
 		try {
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectAllRecords);
 
 			// execute sql query
 			ResultSet rs = preparedStatement.executeQuery();
-			
+
 			while (rs.next()) {
-				
+
 				// create empty DeathChestBlock object
 				DeathChestBlock deathChestBlock = new DeathChestBlock();
-				
+
 				// try to convert owner uuid from stored string
 				try {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
@@ -184,7 +196,7 @@ public class DataStoreSQLite extends DataStore {
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
 				}
-				
+
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
 				try {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
@@ -197,21 +209,21 @@ public class DataStoreSQLite extends DataStore {
 
 				// check that world is valid
 				if (plugin.getServer().getWorld(worldName) == null) {
-					
+
 					// world does not exist, so output log message and continue to next record
 					plugin.getLogger().warning("Saved deathchest world '" + worldName + "' does not exist.");
-					
+
 					// delete all expired records in database that have this invalid world
 					deleteExpiredRecords(worldName);
 					continue;
 				}
-				
+
 				// create Location object from database fields
 				Location location = new Location(plugin.getServer().getWorld(worldName),
 						rs.getInt("x"),
 						rs.getInt("y"),
 						rs.getInt("z"));
-				
+
 				// set other fields in deathChestBlock from database fields
 				deathChestBlock.setLocation(location);
 				deathChestBlock.setExpiration(rs.getLong("expiration"));
@@ -236,15 +248,15 @@ public class DataStoreSQLite extends DataStore {
 		}
 		return results;
 	}
-	
-		
+
+	@Override
 	void putRecord(final DeathChestBlock deathChestBlock) {
-		
+
 		// sql statement to insert or replace record
 		final String sqlInsertDeathChestBlock = "INSERT OR REPLACE INTO blocks "
 				+ "(ownerid,killerid,worldname,x,y,z,expiration) "
 				+ "values(?,?,?,?,?,?,?)";
-		
+
 		// catch invalid uuid exceptions, and set to null
 		String ownerid = null;
 		String killerid = null;
@@ -255,14 +267,14 @@ public class DataStoreSQLite extends DataStore {
 			plugin.getLogger().warning("DeathChestBlock owner UUID is invalid.");
 			return;
 		}
-		
+
 		try {
 			killerid = deathChestBlock.getKillerUUID().toString();
 		}
 		catch (Exception e) {
 			killerid = null;
 		}
-		
+
 		try {
 			// create prepared statement
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertDeathChestBlock);
@@ -274,7 +286,7 @@ public class DataStoreSQLite extends DataStore {
 			preparedStatement.setInt(5, deathChestBlock.getLocation().getBlockY());
 			preparedStatement.setInt(6, deathChestBlock.getLocation().getBlockZ());
 			preparedStatement.setLong(7, deathChestBlock.getExpiration());
-			
+
 			// execute prepared statement
 			int rowsAffected = preparedStatement.executeUpdate();
 
@@ -294,15 +306,15 @@ public class DataStoreSQLite extends DataStore {
 				e.getStackTrace();
 			}
 		}
-		
+
 	}
 
-	
+	@Override
 	void deleteRecord(Location location) {
-		
+
 		final String sqlDeleteDeathChestBlock = "DELETE FROM blocks "
 				+ "WHERE worldname = ? AND x = ? AND y = ? and z =?";
-		
+
 		try {
 			// create prepared statement
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteDeathChestBlock);
@@ -311,10 +323,10 @@ public class DataStoreSQLite extends DataStore {
 			preparedStatement.setInt(2, location.getBlockX());
 			preparedStatement.setInt(3, location.getBlockY());
 			preparedStatement.setInt(4, location.getBlockZ());
-			
+
 			// execute prepared statement
 			int rowsAffected = preparedStatement.executeUpdate();
-			
+
 			// output debugging information
 			if (plugin.debug) {
 				plugin.getLogger().info(rowsAffected + " rows deleted.");
@@ -332,64 +344,24 @@ public class DataStoreSQLite extends DataStore {
 			}
 		}
 	}
-	
-	
-	/**
-	 * Delete expired records in world <i>worldName</i>
-	 * @param worldName
-	 */
-	void deleteExpiredRecords(String worldName) {
-		
-		final String sqlDeleteDeathChestBlock = "DELETE FROM blocks "
-				+ "WHERE worldname = ? AND expiration > ?";
-		
-		// current time in milliseconds
-		final Long currentTime = System.currentTimeMillis();
-				
-		try {
-			// create prepared statement
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteDeathChestBlock);
-	
-			preparedStatement.setString(1, worldName);
-			preparedStatement.setLong(2, currentTime);
-	
-			// execute prepared statement
-			int rowsAffected = preparedStatement.executeUpdate();
-			
-			// output debugging information
-			if (plugin.debug) {
-				plugin.getLogger().info(rowsAffected + " rows deleted.");
-			}
-		}
-		catch (SQLException e) {
-	
-			// output simple error message
-			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
-			plugin.getLogger().warning(e.getMessage());
 
-			// if debugging is enabled, output stack trace
-			if (plugin.debug) {
-				e.getStackTrace();
-			}
-		}
-	}
 
 	/**
 	 * Close database connection
 	 */
 	@Override
 	void close() {
-		
+
 		try {
 			connection.close();
-			plugin.getLogger().info("SQLite database connection closed.");		
+			plugin.getLogger().info(this.getName() + " datastore connection closed.");		
 		}
 		catch (SQLException e) {
-	
+
 			// output simple error message
 			plugin.getLogger().warning("An error occured while closing the SQLite database connection.");
 			plugin.getLogger().warning(e.getMessage());
-	
+
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
 				e.getStackTrace();
@@ -422,14 +394,44 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 
-	@Override
-	String getFilename() {
-		return FILENAME;
+	/**
+	 * Delete expired records in world <i>worldName</i>
+	 * @param worldName
+	 */
+	void deleteExpiredRecords(String worldName) {
+
+		final String sqlDeleteDeathChestBlock = "DELETE FROM blocks "
+				+ "WHERE worldname = ? AND expiration > ?";
+
+		// current time in milliseconds
+		final Long currentTime = System.currentTimeMillis();
+
+		try {
+			// create prepared statement
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteDeathChestBlock);
+
+			preparedStatement.setString(1, worldName);
+			preparedStatement.setLong(2, currentTime);
+
+			// execute prepared statement
+			int rowsAffected = preparedStatement.executeUpdate();
+
+			// output debugging information
+			if (plugin.debug) {
+				plugin.getLogger().info(rowsAffected + " rows deleted.");
+			}
+		}
+		catch (SQLException e) {
+
+			// output simple error message
+			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
+			plugin.getLogger().warning(e.getMessage());
+
+			// if debugging is enabled, output stack trace
+			if (plugin.debug) {
+				e.getStackTrace();
+			}
+		}
 	}
 
-
-	@Override
-	DataStoreType getType() {
-		return TYPE;
-	}
 }
