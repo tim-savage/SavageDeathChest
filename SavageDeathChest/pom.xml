@@ -60,6 +60,11 @@
 			<id>onarandombox-repo</id>
 			<url>http://repo.onarandombox.com/content/groups/public/</url>
 		</repository>
+		<repository>
+			<id>SacredCoding Artifactory Server</id>
+			<name>SacredCoding Artifactory Server-releases</name>
+			<url>http://repo.sacredlabyrinth.net/artifactory/plugins-release-local/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -86,6 +91,11 @@
 			<groupId>com.palmergames</groupId>
 			<artifactId>Towny</artifactId>
 			<version>0.89.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sacredlabyrinth.Phaed</groupId>
+			<artifactId>PreciousStones</artifactId>
+			<version>9.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.onarandombox.multiversecore</groupId>

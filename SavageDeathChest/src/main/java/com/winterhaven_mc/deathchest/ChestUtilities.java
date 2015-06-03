@@ -334,6 +334,10 @@ public class ChestUtilities {
     	if (!permManager.townyPermission(player,location)) {
     		return false;
     	}
+    	// check if player has PreciousStones permission at location
+    	if (!permManager.psPermission(player, location)) {
+    		return false;
+    	}
     	return true;
     }
     
@@ -366,6 +370,10 @@ public class ChestUtilities {
     	}
     	// check if player has Towny permission at location
     	if (!permManager.townyPermission(player,location)) {
+    		return false;
+    	}
+    	// check if player has PreciousStones permission at location
+    	if (!permManager.psPermission(player, location)) {
     		return false;
     	}
     	return true;
@@ -401,6 +409,10 @@ public class ChestUtilities {
     	if (!permManager.townyPermission(player,location)) {
     		return false;
     	}
+    	// check if player has PreciousStones permission at location
+    	if (!permManager.psPermission(player, location)) {
+    		return false;
+    	}
     	return true;
     }
     
@@ -422,20 +434,6 @@ public class ChestUtilities {
     	}
     	return false;
     }
-
-//    boolean adjacentChest2(Location location) {
-//    	
-//    	if (blockToRight(location).getType().equals(Material.CHEST)) {
-//    		return true;
-//    	}
-//    	if (blockInFront(location).getType().equals(Material.CHEST)) {
-//    		return true;
-//    	}
-//    	if (blockToRear(location).getType().equals(Material.CHEST)) {
-//    		return true;
-//    	}
-//    	return false;
-//    }
 
 }
 

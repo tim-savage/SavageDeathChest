@@ -33,6 +33,9 @@ prevent-item-placement: true
 # Check for container access in GriefPrevention claims
 griefprevention-enabled: true
 
+# Check for block place permission in PreciousStones areas
+preciousstones-enabled: true
+
 # Check for chest use permission in Towny plots
 towny-enabled: true
 

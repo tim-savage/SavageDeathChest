@@ -1,5 +1,6 @@
 package com.winterhaven_mc.deathchest;
 
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,6 +15,8 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import com.palmergames.bukkit.towny.object.TownyPermission;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+
 public class PermissionManager {
 
 	DeathChestMain plugin;
@@ -21,6 +24,7 @@ public class PermissionManager {
 	Boolean wg_enabled = false;
 	Boolean gp_enabled = false;
 	Boolean towny_enabled = false;
+	Boolean ps_enabled = false;
 	
 	PermissionManager(DeathChestMain plugin) {
 		
@@ -62,6 +66,18 @@ public class PermissionManager {
 				plugin.getLogger().warning("Towny compatibility configured, but plugin not found.");
 			}
 		}
+		
+		// check if PreciousStones plugin is enabled
+		if (plugin.getConfig().getBoolean("preciousstones-enabled")) {
+			Plugin ps = plugin.getServer().getPluginManager().getPlugin("PreciousStones");
+			if (ps != null && ps.isEnabled()) {
+				plugin.getLogger().info("PreciousStones detected.");
+				ps_enabled = true;
+			}
+			else {
+				plugin.getLogger().warning("PreciousStones compatibility configured, but plugin not found.");
+			}
+		}
 	}
 
 	
@@ -74,7 +90,7 @@ public class PermissionManager {
 	boolean gpPermission(Player player, Location location) {
 
 		// if GriefPrevention config option is enabled and GriefPrevention plugin is enabled
-		if (plugin.getConfig().getBoolean("griefprevention-enabled") && gp_enabled) {
+		if (gp_enabled) {
 			// if player does not have Grief Prevention chest access, spill inventory
 			Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 			if (claim != null) {
@@ -96,7 +112,7 @@ public class PermissionManager {
 	 */
 	boolean wgPermission(Player player, Location location) {
 		// if WorldGuard config option is enabled and WorldGuard plugin is enabled, check for chest access
-		if (plugin.getConfig().getBoolean("worldguard-enabled") && wg_enabled) {
+		if (wg_enabled) {
 				
 			// get reference to worldguard plugin
 			WorldGuardPlugin wg = WGBukkit.getPlugin();
@@ -132,8 +148,22 @@ public class PermissionManager {
 	@SuppressWarnings("deprecation")
 	boolean townyPermission(Player player, Location location) {
 		// if Towny config option is enabled and Towny plugin is enabled
-		if (plugin.getConfig().getBoolean("towny-enabled") && towny_enabled) {
+		if (towny_enabled) {
 			if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(), (byte)0, TownyPermission.ActionType.SWITCH)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * Check if player has PreciousStones permission at location
+	 * 
+	 */
+	boolean psPermission(Player player, Location location) {
+		if (ps_enabled) {
+			if (!PreciousStones.API().canPlace(player, location)) {
 				return false;
 			}
 		}
