@@ -17,14 +17,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class PlayerEventListener implements Listener {
 
 	// reference to main class
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 
 	
 	/** class constructor
 	 * 
 	 * @param plugin reference to main class
 	 */
-	public PlayerEventListener(DeathChestMain plugin) {
+	public PlayerEventListener(PluginMain plugin) {
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}

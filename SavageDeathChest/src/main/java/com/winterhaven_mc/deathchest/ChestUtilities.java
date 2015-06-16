@@ -13,14 +13,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestUtilities {
 	
-    final DeathChestMain plugin;
+    final PluginMain plugin;
     
-    PermissionManager permManager;
-
-    public ChestUtilities(DeathChestMain plugin) {
+    public ChestUtilities(PluginMain plugin) {
         this.plugin = plugin;
         
-        permManager = new PermissionManager(plugin);
     }
 
 
@@ -322,21 +319,15 @@ public class ChestUtilities {
     	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
     		return false;
     	}
-    	// check if player has GP permission at location
-    	if (!permManager.gpPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has WG permission at location 
-    	if (!permManager.wgPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has Towny permission at location
-    	if (!permManager.townyPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has PreciousStones permission at location
-    	if (!permManager.psPermission(player, location)) {
-    		return false;
+    	
+    	// check all enabled protection plugins for player permission at location
+    	for (ProtectionPlugin pp : ProtectionPlugin.values()) {    		
+    		if (!pp.hasPermission(player, location)) {
+    			if (plugin.debug) {
+    				plugin.getLogger().info("DeathChest sign prevented by " + pp.getName());
+    			}
+    			return false;
+    		}
     	}
     	return true;
     }
@@ -360,21 +351,14 @@ public class ChestUtilities {
     	if (adjacentChest(location,true)) {
     		return false;
     	}
-    	// check if player has GP permission at location
-    	if (!permManager.gpPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has WG permission at location 
-    	if (!permManager.wgPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has Towny permission at location
-    	if (!permManager.townyPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has PreciousStones permission at location
-    	if (!permManager.psPermission(player, location)) {
-    		return false;
+    	// check all enabled protection plugins for player permission at location
+    	for (ProtectionPlugin pp : ProtectionPlugin.values()) {    		
+    		if (!pp.hasPermission(player, location)) {
+    			if (plugin.debug) {
+    				plugin.getLogger().info("DeathChest prevented by " + pp.getName());
+    			}
+    			return false;
+    		}
     	}
     	return true;
     }
@@ -397,21 +381,14 @@ public class ChestUtilities {
     	if (adjacentChest(location,false)) {
     		return false;
     	}
-    	// check if player has GP permission at location
-    	if (!permManager.gpPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has WG permission at location 
-    	if (!permManager.wgPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has Towny permission at location
-    	if (!permManager.townyPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has PreciousStones permission at location
-    	if (!permManager.psPermission(player, location)) {
-    		return false;
+    	// check all enabled protection plugins for player permission at location
+    	for (ProtectionPlugin pp : ProtectionPlugin.values()) {    		
+    		if (!pp.hasPermission(player, location)) {
+    			if (plugin.debug) {
+    				plugin.getLogger().info("DeathChest prevented by " + pp.getName());
+    			}
+    			return false;
+    		}
     	}
     	return true;
     }

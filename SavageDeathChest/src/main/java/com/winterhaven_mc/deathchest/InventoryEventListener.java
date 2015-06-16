@@ -20,14 +20,14 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryEventListener implements Listener {
 
 	// reference to main class
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 
 	
 	/** class constructor
 	 * 
 	 * @param plugin reference to main class
 	 */
-	public InventoryEventListener(DeathChestMain plugin) {
+	public InventoryEventListener(PluginMain plugin) {
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}

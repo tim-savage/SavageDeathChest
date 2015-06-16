@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DataStoreFactory {
 
-	static DeathChestMain plugin = DeathChestMain.instance;
+	static PluginMain plugin = PluginMain.instance;
 
 
 	/**
@@ -151,10 +151,6 @@ public class DataStoreFactory {
 
 		// if datastores are same type, do not convert
 		if (oldDataStore.getType().equals(newDataStore.getType())) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Old and new datastore both " 
-						+ newDataStore.getName() + ". No conversion necessary.");
-			}
 			return;
 		}
 		
@@ -179,11 +175,6 @@ public class DataStoreFactory {
 			List<DeathChestBlock> allRecords = new ArrayList<DeathChestBlock>();
 			
 			allRecords = oldDataStore.getAllRecords();
-			
-			if (plugin.debug) {
-				plugin.getLogger().info("Retrieved " + allRecords.size() 
-						+ " records from " + oldDataStore.getName() + " datastore.");
-			}
 			
 			int count = 0;
 			for (DeathChestBlock record : allRecords) {
@@ -231,4 +222,5 @@ public class DataStoreFactory {
 			}
 		}
 	}
+	
 }

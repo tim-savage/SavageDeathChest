@@ -2,14 +2,14 @@ package com.winterhaven_mc.deathchest;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class DeathChestMain extends JavaPlugin {
+public final class PluginMain extends JavaPlugin {
 
-	static DeathChestMain instance;
+	static PluginMain instance;
 	
 	CommandManager commandManager;
 	MessageManager messageManager;
 	DataStore dataStore;
-	public ChestManager chestManager;
+	ChestManager chestManager;
 
 	boolean debug = getConfig().getBoolean("debug");
 
@@ -37,6 +37,9 @@ public final class DeathChestMain extends JavaPlugin {
 		new PlayerEventListener(this);
 		new BlockEventListener(this);
 		new InventoryEventListener(this);
+		
+		// detect supported plugins
+		ProtectionPlugin.detectEnabled();
 	}
 	
 	public void onDisable() {

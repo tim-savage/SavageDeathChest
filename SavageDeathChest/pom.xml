@@ -108,6 +108,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>roadblock</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

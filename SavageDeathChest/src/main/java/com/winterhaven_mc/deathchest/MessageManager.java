@@ -17,7 +17,7 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 
 
 public class MessageManager {
-    private final DeathChestMain plugin;
+    private final PluginMain plugin;
     private ConfigAccessor messages;
 	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
 	MultiverseCore mvCore;
@@ -29,7 +29,7 @@ public class MessageManager {
 	 * Class constructor
 	 * @param plugin
 	 */
-    public MessageManager(DeathChestMain plugin) {
+    public MessageManager(PluginMain plugin) {
         this.plugin = plugin;
         
 		// install localization files

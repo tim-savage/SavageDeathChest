@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest;
 
-import com.winterhaven_mc.deathchest.DeathChestMain;
+import com.winterhaven_mc.deathchest.PluginMain;
 
 import java.util.ArrayList;
 
@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.material.Sign;
@@ -21,14 +22,14 @@ import org.bukkit.material.Sign;
 
 public class BlockEventListener implements Listener {
 
-	DeathChestMain plugin;  // pointer to main class
+	PluginMain plugin;  // pointer to main class
 
 	
 	/**
 	 * Class constructor
 	 * @param plugin
 	 */
-	public BlockEventListener(DeathChestMain plugin) {
+	public BlockEventListener(PluginMain plugin) {
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
@@ -247,6 +248,29 @@ public class BlockEventListener implements Listener {
 	}
 
 
+	/**
+	 * Block explode event handler<br>
+	 * Make death chests explosion proof if chest-protection is enabled
+	 * @param event
+	 */
+	@EventHandler
+	public void onBlockExplode(BlockExplodeEvent event) {
+		
+		// if chest-protection is not enabled in config, do nothing and return
+		if (!plugin.getConfig().getBoolean("chest-protection")) {
+			return;
+		}
+		
+		// iterate through all blocks in explosion event and remove those that are DeathChestBlocks
+		ArrayList<Block> blocks = new ArrayList<Block>(event.blockList());
+		for (Block block : blocks) {
+			if (DeathChestBlock.isDeathChestBlock(block)) {
+				event.blockList().remove(block);
+			}
+		}
+	}
+
+	
 	/**
 	 * Block physics event handler<br>
 	 * remove detached death chest signs from game to prevent players gaining additional signs

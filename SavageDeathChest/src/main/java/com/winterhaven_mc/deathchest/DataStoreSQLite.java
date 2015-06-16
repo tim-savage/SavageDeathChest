@@ -23,7 +23,7 @@ import org.bukkit.Location;
 public class DataStoreSQLite extends DataStore {
 
 	// reference to main class
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 
 	// database connection object
 	private Connection connection;
@@ -33,7 +33,7 @@ public class DataStoreSQLite extends DataStore {
 	 * Class constructor
 	 * @param plugin
 	 */
-	DataStoreSQLite (DeathChestMain plugin) {
+	DataStoreSQLite (PluginMain plugin) {
 
 		// reference to main class
 		this.plugin = plugin;
@@ -352,22 +352,24 @@ public class DataStoreSQLite extends DataStore {
 	@Override
 	void close() {
 
-		try {
-			connection.close();
-			plugin.getLogger().info(this.getName() + " datastore connection closed.");		
-		}
-		catch (SQLException e) {
-
-			// output simple error message
-			plugin.getLogger().warning("An error occured while closing the SQLite database connection.");
-			plugin.getLogger().warning(e.getMessage());
-
-			// if debugging is enabled, output stack trace
-			if (plugin.debug) {
-				e.getStackTrace();
+		if (isInitialized()) {
+			try {
+				connection.close();
+				plugin.getLogger().info(this.getName() + " datastore connection closed.");		
 			}
+			catch (SQLException e) {
+
+				// output simple error message
+				plugin.getLogger().warning("An error occured while closing the SQLite database connection.");
+				plugin.getLogger().warning(e.getMessage());
+
+				// if debugging is enabled, output stack trace
+				if (plugin.debug) {
+					e.getStackTrace();
+				}
+			}
+			setInitialized(false);
 		}
-		setInitialized(false);
 	}
 
 

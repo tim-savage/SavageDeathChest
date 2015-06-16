@@ -20,7 +20,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class ChestManager {
 
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 
 	// chest utilities object
 	private ChestUtilities chestUtilities;
@@ -40,7 +40,7 @@ public class ChestManager {
 	 * 
 	 * @param	plugin		A reference to this plugin's main class
 	 */
-	public ChestManager(DeathChestMain plugin) {
+	public ChestManager(PluginMain plugin) {
 		
 		// create pointer to main class
 		this.plugin = plugin;

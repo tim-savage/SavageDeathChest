@@ -10,11 +10,11 @@ import org.bukkit.command.CommandSender;
 
 public class CommandManager implements CommandExecutor {
 	
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 	private ArrayList<String> enabledWorlds;
 	private final String pluginName;
 
-	public CommandManager(DeathChestMain plugin) {
+	public CommandManager(PluginMain plugin) {
 		
 		this.plugin = plugin;		
 		plugin.getCommand("deathchest").setExecutor(this);
@@ -80,12 +80,15 @@ public class CommandManager implements CommandExecutor {
 		// reload messages
 		plugin.messageManager.reload();
 		
+		// detect supported plugins
+		ProtectionPlugin.detectEnabled();
+
 		// reload datastore if changed
 		DataStoreFactory.reload();
 		
 		sender.sendMessage(ChatColor.AQUA + pluginName + "Configuration reloaded.");
+		
 		return true;
-
 	}
 	
 	/**

@@ -24,23 +24,21 @@ disabled-worlds:
 # Require players to have a chest in their inventory
 require-chest: false
 
+# Uncomment the name of protection plugins that should be ignored when 
+# placing a death chest. Players may not have access to their chests in
+# areas protected by these plugins if they are ignored.
+# NOTE: Listed values must match plugin name exactly, including case.
+ignored-plugins:
+#  - GriefPrevention
+#  - PreciousStones
+#  - Towny
+#  - WorldGuard
+
 # Protect chests from other players
 chest-protection: true
 
 # prevent placing items in death chests
 prevent-item-placement: true
-
-# Check for container access in GriefPrevention claims
-griefprevention-enabled: true
-
-# Check for block place permission in PreciousStones areas
-preciousstones-enabled: true
-
-# Check for chest use permission in Towny plots
-towny-enabled: true
-
-# Check for build access in WorldGuard regions
-worldguard-enabled: true
 
 # Distance from death location to search for a valid chest location
 # NOTE: This checks exponentially more locations for each increase in distance

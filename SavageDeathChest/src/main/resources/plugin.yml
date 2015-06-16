@@ -1,8 +1,8 @@
-name: SavageDeathChest
-main: com.winterhaven_mc.deathchest.DeathChestMain
+name: ${project.name}
+main: com.winterhaven_mc.deathchest.PluginMain
 author: ${project.author}
 version: ${project.version}
-softdepend: [GriefPrevention,WorldGuard,Towny,Multiverse-Core]
+softdepend: [GriefPrevention,PreciousStones,Towny,WorldGuard,Multiverse-Core]
 
 commands:
    deathchest:

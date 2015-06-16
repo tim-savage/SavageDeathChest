@@ -13,7 +13,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class DeathChestBlock {
 	
 	// reference to main class
-	private DeathChestMain plugin = DeathChestMain.instance;
+	private PluginMain plugin = PluginMain.instance;
 	
 	// the location for this deathchest item
 	private Location location;
@@ -200,8 +200,8 @@ public class DeathChestBlock {
 	 */
 	public static void removeMetadata(Block block) {
 		
-		block.removeMetadata("deathchest-owner", DeathChestMain.instance);
-		block.removeMetadata("deathchest-killer", DeathChestMain.instance);
+		block.removeMetadata("deathchest-owner", PluginMain.instance);
+		block.removeMetadata("deathchest-killer", PluginMain.instance);
 	}
 	
 }

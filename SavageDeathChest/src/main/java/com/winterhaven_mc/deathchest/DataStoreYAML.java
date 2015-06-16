@@ -10,7 +10,7 @@ import org.bukkit.Location;
 public class DataStoreYAML extends DataStore {
 
 	// reference to main class
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 
 	// ConfigAccessor for yml datafile
 	private ConfigAccessor dataFile;
@@ -20,7 +20,7 @@ public class DataStoreYAML extends DataStore {
 	 * Class constructor
 	 * @param plugin
 	 */
-	DataStoreYAML (DeathChestMain plugin) {
+	DataStoreYAML (PluginMain plugin) {
 
 		// reference to main class
 		this.plugin = plugin;
@@ -187,14 +187,16 @@ public class DataStoreYAML extends DataStore {
 
 	@Override
 	void close() {
-		// save data to file
-		dataFile.saveConfig();
+		if (isInitialized()) {
+			// save data to file
+			dataFile.saveConfig();
 
-		// set initialized to false
-		setInitialized(false);
-		
-		// output log message
-		plugin.getLogger().info(this.getName() + " datastore closed.");
+			// set initialized to false
+			setInitialized(false);
+
+			// output log message
+			plugin.getLogger().info(this.getName() + " datastore closed.");
+		}
 	}
 
 
