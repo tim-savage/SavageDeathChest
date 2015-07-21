@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -59,14 +60,51 @@ public class CommandManager implements CommandExecutor {
 		
 		String versionString = this.plugin.getDescription().getVersion();
 		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " + ChatColor.RESET + versionString);
-		sender.sendMessage(ChatColor.GREEN + "Language: " + ChatColor.RESET + plugin.getConfig().getString("language"));
-		sender.sendMessage(ChatColor.GREEN + "Storage Type: " + ChatColor.RESET + plugin.dataStore.getName());
-		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: " + ChatColor.RESET + plugin.getConfig().getInt("expire-time") + " minutes");
+		if (plugin.debug) {
+			sender.sendMessage(ChatColor.DARK_RED + "DEBUG: true");
+		}
+		sender.sendMessage(ChatColor.GREEN + "Language: " 
+				+ ChatColor.RESET + plugin.getConfig().getString("language"));
+		sender.sendMessage(ChatColor.GREEN + "Storage Type: " 
+				+ ChatColor.RESET + plugin.dataStore.getName());
+		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: " 
+				+ ChatColor.RESET + plugin.getConfig().getInt("expire-time") + " minutes");
+		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
+		
+		int count = 0;
+		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
+			
+			if (pp.isEnabled()) {
+				
+				List<String> pluginSettings = new ArrayList<String>();
+				
+				count++;
+				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
+				
+				if (plugin.getConfig().getStringList("check-on-place").contains(pp.getPluginName())) {
+					pluginSettings.add("check-on-place");
+				}
+				if (plugin.getConfig().getStringList("check-on-access").contains(pp.getPluginName())) {
+					pluginSettings.add("check-on-access");
+				}
+				statusString = statusString + ChatColor.RESET + pluginSettings.toString();
+				sender.sendMessage(statusString);
+			}
+		}		
+		if (count == 0) {
+			sender.sendMessage(ChatColor.AQUA + "  [ NONE ENABLED ]");
+		}
+		
 		sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + getEnabledWorlds().toString());
-		return true;		
+		
+		return true;
 	}
+
 	
 	boolean reloadCommand(CommandSender sender) {
+		
+		// copy default config from jar if it doesn't exist
+		plugin.saveDefaultConfig();
 		
 		// reload config file
 		plugin.reloadConfig();
@@ -80,9 +118,6 @@ public class CommandManager implements CommandExecutor {
 		// reload messages
 		plugin.messageManager.reload();
 		
-		// detect supported plugins
-		ProtectionPlugin.detectEnabled();
-
 		// reload datastore if changed
 		DataStoreFactory.reload();
 		

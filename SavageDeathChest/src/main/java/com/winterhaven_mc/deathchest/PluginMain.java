@@ -38,8 +38,9 @@ public final class PluginMain extends JavaPlugin {
 		new BlockEventListener(this);
 		new InventoryEventListener(this);
 		
-		// detect supported plugins
-		ProtectionPlugin.detectEnabled();
+		// log detected protection plugins
+		ProtectionPlugin.reportInstalled();
+		
 	}
 	
 	public void onDisable() {

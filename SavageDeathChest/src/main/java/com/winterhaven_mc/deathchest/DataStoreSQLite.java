@@ -159,7 +159,7 @@ public class DataStoreSQLite extends DataStore {
 
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				e.getStackTrace();
+				e.printStackTrace();
 			}
 		}
 
@@ -240,7 +240,7 @@ public class DataStoreSQLite extends DataStore {
 
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				e.getStackTrace();
+				e.printStackTrace();
 			}
 		}
 		if (plugin.debug) {
@@ -303,7 +303,7 @@ public class DataStoreSQLite extends DataStore {
 
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				e.getStackTrace();
+				e.printStackTrace();
 			}
 		}
 
@@ -340,7 +340,7 @@ public class DataStoreSQLite extends DataStore {
 
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				e.getStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
@@ -365,7 +365,7 @@ public class DataStoreSQLite extends DataStore {
 
 				// if debugging is enabled, output stack trace
 				if (plugin.debug) {
-					e.getStackTrace();
+					e.printStackTrace();
 				}
 			}
 			setInitialized(false);
@@ -431,7 +431,7 @@ public class DataStoreSQLite extends DataStore {
 
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
-				e.getStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}

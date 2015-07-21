@@ -52,13 +52,22 @@ public class MessageManager {
 		}
     }
 
-    
     /**
      * Send message to player
      * @param player
      * @param messageId
      */
     public void sendPlayerMessage(Player player, String messageId) {
+    	sendPlayerMessage(player,messageId,null);
+    }
+    
+    /**
+     * Send message to player
+     * @param player
+     * @param messageId
+     * @param plugin
+     */
+    public void sendPlayerMessage(Player player, String messageId, ProtectionPlugin protectionPlugin) {
     	
     	// if message is not enabled, do nothing and return
 		if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
@@ -70,6 +79,12 @@ public class MessageManager {
 		String playerNickname = "console";
 		String playerDisplayName = "console";
 		String worldName = "world";
+		String protectionPluginName = "unknown";
+		
+		// get protection plugin name
+		if (protectionPlugin != null) {
+			protectionPluginName = protectionPlugin.getPluginName();
+		}
 
 		// get message cooldown time remaining
 		Long lastDisplayed = getMessageCooldown(player,messageId);
@@ -115,6 +130,7 @@ public class MessageManager {
 		message = message.replaceAll("%playernickname%", playerNickname);
 		message = message.replaceAll("%worldname%", worldName);
 		message = message.replaceAll("%expiretime%", expireTime);
+		message = message.replaceAll("%plugin%", protectionPluginName);
 		
 		// do variable substitutions, stripping color codes from all caps variables
 		message = message.replace("%PLAYERNAME%", 
@@ -127,6 +143,7 @@ public class MessageManager {
 		// no stripping of color codes necessary, but do variable substitutions anyhow
 		// in case all caps variables were used
 		message = message.replace("%PLAYERDISPLAYNAME%", playerDisplayName);
+		message = message.replace("%PLUGIN%", protectionPluginName);
 
 		// send message to player
 		player.sendMessage(ChatColor.translateAlternateColorCodes((char)'&', (String)message));

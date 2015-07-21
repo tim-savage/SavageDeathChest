@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven_mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.4.4</version>
+	<version>1.5-beta3</version>
 	<name>SavageDeathChest</name>
 	<properties>
 		<project.author>Tim Savage</project.author>
@@ -85,7 +85,9 @@
 		<dependency>
 			<groupId>me.ryanhamshire</groupId>
 			<artifactId>griefprevention</artifactId>
-			<version>8.2</version>
+			<version>11.7.4</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/GriefPrevention.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.palmergames</groupId>
@@ -114,6 +116,29 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!--Factions:-->
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <!--the name can't be the same because maven would automatically use the newer version-->
+            <artifactId>factions-2.7</artifactId>
+            <!--2.7+-->
+            <version>2.7.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Factions.jar</systemPath>
+            <optional>true</optional>
+        </dependency>
+        
+        <!--MCore must be available for factions-->
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>mcore</artifactId>
+            <version>2.7.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/MassiveCore.jar</systemPath>
+            <optional>true</optional>
+        </dependency>
+		
 	</dependencies>
 	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

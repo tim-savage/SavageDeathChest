@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -202,101 +201,132 @@ public class ChestUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return location that is valid for a single chest, or null if valid location cannot be found
 	 */
-	public Location findValidSingleChestLocation(Player player) {
+//	public Location findValidSingleChestLocation(Player player) {
+//
+//		Location origin = player.getLocation();
+//		
+//		int radius = plugin.getConfig().getInt("search-distance");
+//
+//		int ox = origin.getBlockX();
+//		int oy = origin.getBlockY();
+//		int oz = origin.getBlockZ();
+//		float oyaw = origin.getYaw();
+//		float opitch = origin.getPitch();
+//		World world = origin.getWorld();
+//
+//		Location location = new Location(world,ox,oy,oz,oyaw,opitch);
+//		
+//		for (int y = 0; y < radius; y++) {
+//			for (int x = 0; x < radius; x++) {
+//				for (int z = 0; z < radius; z++) {
+//					location = new Location(world,ox+x,oy+y,oz+z,oyaw,opitch);
+//					if (isValidSingleLocation(player,location)) {
+//						return location;
+//					}
+//					if (x == 0 && z == 0) {
+//						continue;
+//					}
+//					location = new Location(world,ox-x,oy+y,oz+z,oyaw,opitch);
+//					if (isValidSingleLocation(player,location)) {
+//						return location;
+//					}
+//					location = new Location(world,ox-x,oy+y,oz-z,oyaw,opitch);
+//					if (isValidSingleLocation(player,location)) {
+//						return location;
+//					}
+//					location = new Location(world,ox+x,oy+y,oz-z,oyaw,opitch);
+//					if (isValidSingleLocation(player,location)) {
+//						return location;
+//					}
+//				}
+//			}
+//		}
+//		// no valid location could be found for a single chest, so return null
+//		return null;
+//	}
 
-		Location origin = player.getLocation();
-		
+	public SearchResult findValidSingleChestLocation(Player player) {
+
 		int radius = plugin.getConfig().getInt("search-distance");
-
-		int ox = origin.getBlockX();
-		int oy = origin.getBlockY();
-		int oz = origin.getBlockZ();
-		float oyaw = origin.getYaw();
-		float opitch = origin.getPitch();
-		World world = origin.getWorld();
-
-		Location location = new Location(world,ox,oy,oz,oyaw,opitch);
+		Location origin = player.getLocation();
+		SearchResult result = null;
 		
 		for (int y = 0; y < radius; y++) {
 			for (int x = 0; x < radius; x++) {
 				for (int z = 0; z < radius; z++) {
-					location = new Location(world,ox+x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					result = isValidSingleLocation(player,origin.clone().add(x,y,z));
+					if (result.equals(SearchResult.SUCCESS)) {
+						return result;
 					}
 					if (x == 0 && z == 0) {
 						continue;
 					}
-					location = new Location(world,ox-x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					result = isValidSingleLocation(player,origin.clone().add(-x,y,z));
+					if (result.equals(SearchResult.SUCCESS)) {
+						return result;
 					}
-					location = new Location(world,ox-x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					result = isValidSingleLocation(player,origin.clone().add(-x,y,-z));
+					if (result.equals(SearchResult.SUCCESS)) {
+						return result;
 					}
-					location = new Location(world,ox+x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					result = isValidSingleLocation(player,origin.clone().add(x,y,-z));
+					if (result.equals(SearchResult.SUCCESS)) {
+						return result;
 					}
 				}
 			}
 		}
 		// no valid location could be found for a single chest, so return null
-		return null;
+		return result;
 	}
 
 	/**
 	 * Search for valid location to place a double chest, 
 	 * taking into account replaceable blocks, as well as 
-	 * WorldGuard regions and GriefPrevention claims if configured
+	 * protection plugin regions if configured
 	 * and adjacent existing chests
 	 * @param player Player that deathchest is being deployed for
 	 * @return location that is valid for double chest deployment, or null if valid location cannot be found
 	 */
-	public Location findValidDoubleChestLocation(Player player) {
+	public SearchResult findValidDoubleChestLocation(Player player) {
 	
-		Location origin = player.getLocation();
-		
 		int radius = plugin.getConfig().getInt("search-distance");
-	
-		int ox = origin.getBlockX();
-		int oy = origin.getBlockY();
-		int oz = origin.getBlockZ();
-		float oyaw = origin.getYaw();
-		float opitch = origin.getPitch();
-		World world = origin.getWorld();
-	
-		Location location = new Location(world,ox,oy,oz,oyaw,opitch);
-		
+		Location origin = player.getLocation();
+		SearchResult result1 = null;
+		SearchResult result2 = null;
+
 		for (int y = 0; y < radius; y++) {
 			for (int x = 0; x < radius; x++) {
 				for (int z = 0; z < radius; z++) {
-					location = new Location(world,ox+x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					result1 = isValidSingleLocation(player,origin.clone().add(x,y,z));
+					result2 = isValidSingleLocation(player,locationToRight(origin.clone().add(x,y,z)));
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						return result1;
 					}
 					if (x == 0 && z == 0) {
 						continue;
 					}
-					location = new Location(world,ox-x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					result1 = isValidSingleLocation(player,origin.clone().add(-x,y,-z));
+					result2 = isValidSingleLocation(player,locationToRight(origin.clone().add(-x,y,-z)));
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						return result1;
 					}
 					if (x == 0 || z == 0) {
 						continue;
 					}
-					location = new Location(world,ox-x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					result1 = isValidSingleLocation(player,origin.clone().add(-x,y,z));
+					result2 = isValidSingleLocation(player,locationToRight(origin.clone().add(-x,y,z)));
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						return result1;
 					}
-					location = new Location(world,ox+x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					result1 = isValidSingleLocation(player,origin.clone().add(x,y,-z));
+					result2 = isValidSingleLocation(player,locationToRight(origin.clone().add(x,y,-z)));
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						return result1;
 					}
 				}
 			}
@@ -306,111 +336,164 @@ public class ChestUtilities {
 
 
 	/** Check if sign can be placed at location
-     * 
-     * @param player	Player to check permissions
-     * @param location	Location to check permissions
-     * @return boolean
-     */
-    public boolean isValidSignLocation(Player player, Location location) {
-    	
-    	Block block = location.getBlock();
-    	
-    	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
-    		return false;
-    	}
-    	
-    	// check all enabled protection plugins for player permission at location
-    	for (ProtectionPlugin pp : ProtectionPlugin.values()) {    		
-    		if (!pp.hasPermission(player, location)) {
-    			if (plugin.debug) {
-    				plugin.getLogger().info("DeathChest sign prevented by " + pp.getName());
-    			}
-    			return false;
-    		}
-    	}
-    	return true;
-    }
-    
-    
-    /** Check if single chest can be placed at location
-     * 
-     * @param player	Player to check permissions
-     * @param location	Location to check permissions
-     * @return boolean
-     */
-    public boolean isValidSingleLocation(Player player, Location location) {
-    	
-    	Block block = location.getBlock();
-    	
-    	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
-    		return false;
-    	}
-    	// check if location is adjacent to an existing chest
-    	if (adjacentChest(location,true)) {
-    		return false;
-    	}
-    	// check all enabled protection plugins for player permission at location
-    	for (ProtectionPlugin pp : ProtectionPlugin.values()) {    		
-    		if (!pp.hasPermission(player, location)) {
-    			if (plugin.debug) {
-    				plugin.getLogger().info("DeathChest prevented by " + pp.getName());
-    			}
-    			return false;
-    		}
-    	}
-    	return true;
-    }
-    
-    /** Check if second of double chest can be placed at location
-     * 
-     * @param player	Player to check permissions
-     * @param location	Location to check permissions
-     * @return boolean
-     */
-    public boolean isValidDoubleLocation(Player player, Location location) {
-    	
-    	Block block = location.getBlock();
-    	
-    	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
-    		return false;
-    	}
-    	// check if location is adjacent to an existing chest, ignoring first placed chest
-    	if (adjacentChest(location,false)) {
-    		return false;
-    	}
-    	// check all enabled protection plugins for player permission at location
-    	for (ProtectionPlugin pp : ProtectionPlugin.values()) {    		
-    		if (!pp.hasPermission(player, location)) {
-    			if (plugin.debug) {
-    				plugin.getLogger().info("DeathChest prevented by " + pp.getName());
-    			}
-    			return false;
-    		}
-    	}
-    	return true;
-    }
-    
-    boolean adjacentChest(Location location, Boolean firstChest) {
-    	
-    	if (firstChest) {
-    		if (blockToLeft(location).getType().equals(Material.CHEST)) {
-    			return true;
-    		}
-    	}
-    	if (blockToRight(location).getType().equals(Material.CHEST)) {
-    		return true;
-    	}
-    	if (blockInFront(location).getType().equals(Material.CHEST)) {
-    		return true;
-    	}
-    	if (blockToRear(location).getType().equals(Material.CHEST)) {
-    		return true;
-    	}
-    	return false;
-    }
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	public boolean isValidSignLocation(Player player, Location location) {
+
+		Block block = location.getBlock();
+
+		// check if block at location is a ReplaceableBlock
+		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+			return false;
+		}
+
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (blockingPlugin != null) {
+			return false;
+		}
+		return true;
+	}
+
+
+	/** Check if single chest can be placed at location
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+//	public boolean isValidSingleLocation(Player player, Location location) {
+//
+//		Block block = location.getBlock();
+//
+//		// check if block at location is a ReplaceableBlock
+//		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+//			return false;
+//		}
+//		// check if location is adjacent to an existing chest
+//		if (adjacentChest(location,true)) {
+//			return false;
+//		}
+//
+//		// check all enabled protection plugins for player permission at location
+//		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+//		if (blockingPlugin != null) {
+//			return false;
+//		}
+//		return true;
+//	}
+
+
+	/** Check if single chest can be placed at location
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	public SearchResult isValidSingleLocation(Player player, Location location) {
+
+		Block block = location.getBlock();
+		SearchResult result = null;
+
+		// check if block at location is a ReplaceableBlock
+		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+			return SearchResult.NON_REPLACEABLE_BLOCK;
+		}
+		// check if location is adjacent to an existing chest
+		if (adjacentChest(location,true)) {
+			return SearchResult.ADJACENT_CHEST;
+		}
+
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (blockingPlugin != null) {
+			result = SearchResult.PROTECTION_PLUGIN;
+			result.setProtectionPlugin(blockingPlugin);
+			return result;
+		}
+		result = SearchResult.SUCCESS;
+		result.setLocation(location);
+		return result;
+	}
+
+
+	/** Check if second of double chest can be placed at location
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+//	public boolean isValidDoubleLocation(Player player, Location location) {
+//
+//		Block block = location.getBlock();
+//
+//		// check if block at location is a ReplaceableBlock
+//		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+//			return false;
+//		}
+//		// check if location is adjacent to an existing chest, ignoring first placed chest
+//		if (adjacentChest(location,false)) {
+//			return false;
+//		}
+//		// check all enabled protection plugins for player permission at location
+//		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+//		if (blockingPlugin != null) {
+//			return false;
+//		}
+//		return true;
+//	}
+
+
+	/** Check if second of double chest can be placed at location
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	public SearchResult isValidDoubleLocation(Player player, Location location) {
+
+		Block block = location.getBlock();
+
+		// check if block at location is a ReplaceableBlock
+		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+			return SearchResult.NON_REPLACEABLE_BLOCK;
+		}
+		// check if location is adjacent to an existing chest, ignoring first placed chest
+		if (adjacentChest(location,false)) {
+			return SearchResult.ADJACENT_CHEST;
+		}
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (blockingPlugin != null) {
+			SearchResult result = SearchResult.PROTECTION_PLUGIN;
+			result.setProtectionPlugin(blockingPlugin);
+			return result;
+		}
+		return SearchResult.SUCCESS;
+	}
+
+
+	boolean adjacentChest(Location location, Boolean firstChest) {
+
+		if (firstChest) {
+			if (blockToLeft(location).getType().equals(Material.CHEST)) {
+				return true;
+			}
+		}
+		if (blockToRight(location).getType().equals(Material.CHEST)) {
+			return true;
+		}
+		if (blockInFront(location).getType().equals(Material.CHEST)) {
+			return true;
+		}
+		if (blockToRear(location).getType().equals(Material.CHEST)) {
+			return true;
+		}
+		return false;
+	}
 
 }
 

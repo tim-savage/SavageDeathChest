@@ -272,9 +272,9 @@ public class ChestManager {
 		// combine stacks of same items where possible
 		chestItems = DeathChestBlock.consolidateItems(droppedItems);
 
-		// if require-chest option is enabled
+		// check if require-chest option is enabled
 		// and player does not have permission override
-		if(plugin.getConfig().getBoolean("require-chest") &&
+		if (plugin.getConfig().getBoolean("require-chest") &&
 				!player.hasPermission("deathchest.freechest")) {
 
 			// if player does not have a chest in their inventory
@@ -341,22 +341,53 @@ public class ChestManager {
 	 */
 	private List<ItemStack> deploySingleChest(Player player, List<ItemStack> droppedItems) {
 		
-		Location location = chestUtilities.findValidSingleChestLocation(player);
+		SearchResult result = chestUtilities.findValidSingleChestLocation(player);
 
-		// null location is returned if valid location could not be found
-		if (location == null) {
+		// search result returned gives reason if valid location could not be found
+		if (result == null || !result.equals(SearchResult.SUCCESS)) {
+			
+			// use try..catch block here so a messaging error does not cause item duplication
+			try {
+				if (result.equals(SearchResult.PROTECTION_PLUGIN)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-plugin", result.getProtectionPlugin());
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by "
+							+ result.getProtectionPlugin().getPluginName() + ".");
+					}
+				}
+				else if (result.equals(SearchResult.ADJACENT_CHEST)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-adjacent");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
+					}				
+				}
+				else if (result.equals(SearchResult.NON_REPLACEABLE_BLOCK)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-block");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
+					}
+				}
+			} catch (Exception e) {
+				plugin.getLogger().info("An error occurred while sending a chest denied message.");
+				if (plugin.debug) {
+					e.printStackTrace();
+				}
+			}
 			return droppedItems;
 		}
 		
 		// actual chest creation
-		Block block = location.getBlock();
+		Block block = result.getLocation().getBlock();
 		block.setType(Material.CHEST);
 		BlockState state = block.getState();
 		Chest chest = (Chest)state;
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
+		chestData.setFacingDirection(chestUtilities.getDirection(result.getLocation().getYaw()));
 		
 		chest.update();
 		
@@ -403,20 +434,51 @@ public class ChestManager {
 	private List<ItemStack> deployDoubleChest(Player player, List<ItemStack> droppedItems) {
 		
 		// try to find a valid double chest location
-		Location location = chestUtilities.findValidDoubleChestLocation(player);
+		SearchResult result = chestUtilities.findValidDoubleChestLocation(player);
 		
 		// if no valid double chest location can be found, try to find a valid single chest location
-		if (location == null) {
-			location = chestUtilities.findValidSingleChestLocation(player);
+		if (result == null || result != SearchResult.SUCCESS) {
+			result = chestUtilities.findValidSingleChestLocation(player);
 		}
 
 		// if no valid single chest location, return droppedItems
-		if (location == null) {
+		if (result == null || result != SearchResult.SUCCESS) {
+			
+			// use try..catch block here so a messaging error does not cause item duplication
+			try {
+				if (result.equals(SearchResult.PROTECTION_PLUGIN)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-plugin", result.getProtectionPlugin());
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by "
+							+ result.getProtectionPlugin().getPluginName() + ".");
+					}
+				}
+				else if (result.equals(SearchResult.ADJACENT_CHEST)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-adjacent");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
+					}				
+				}
+				else if (result.equals(SearchResult.NON_REPLACEABLE_BLOCK)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-block");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by non-replaceable blocks.");
+					}
+				}
+			} catch (Exception e) {
+				plugin.getLogger().info("An error occurred while sending a chest denied message.");
+				if (plugin.debug) {
+					e.printStackTrace();
+				}
+			}
 			return droppedItems;
 		}
 		
 		// actual chest creation
-		Block block = location.getBlock();
+		Block block = result.getLocation().getBlock();
 		
 		// set block to chest material
 		block.setType(Material.CHEST);
@@ -426,7 +488,7 @@ public class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
+		chestData.setFacingDirection(chestUtilities.getDirection(result.getLocation().getYaw()));
 
 		chest.update();
 		
@@ -456,10 +518,11 @@ public class ChestManager {
 		createItemExpireTask(deathChestBlock);
 
 		// get location one block to right of first chest
-		location = chestUtilities.locationToRight(location);
+		Location location = chestUtilities.locationToRight(result.getLocation());
 		
 		// if block at second chest location is not valid, send message and return remaining_items
-		if (!chestUtilities.isValidDoubleLocation(player,location)) {
+		SearchResult result2 = chestUtilities.isValidDoubleLocation(player, location);
+		if (result2 == null || result2 != SearchResult.SUCCESS) {
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
 			return remaining_items;
 		}

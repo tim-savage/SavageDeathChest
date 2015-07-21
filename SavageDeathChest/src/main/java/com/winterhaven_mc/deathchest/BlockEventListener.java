@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
+//import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -40,13 +40,9 @@ public class BlockEventListener implements Listener {
 	 * checks for ownership of death chests and prevents breakage by non-owners
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOW)
+	//TODO: Make sure we're using the right priority. Use NORMAL if possible.
 	public void onBlockBreak(BlockBreakEvent event) {
-		
-		// if event is cancelled, do nothing and return
-		if (event.isCancelled()) {
-			return;
-		}
 		
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -56,44 +52,6 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 		
-		// cancel event
-		event.setCancelled(true);
-		
-		// if player is in creative mode and does not have override permission, send message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
-			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
-			return;
-		}
-		
-		// if chest-protection is enabled in config, test for ownership
-		if (plugin.getConfig().getBoolean("chest-protection")) {
-			
-			// if block is not owned by player, test for override permission or killer-looting enabled
-			if (!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
-				
-				// if player does not have deathchest.loot.other permission,
-				if (!player.hasPermission("deathchest.loot.other")) {
-
-					// if killer-looting is enabled, check if player is killer
-					if (plugin.getConfig().getBoolean("killer-looting")) { 
-						
-						// if player is not killer send message and return
-						if (!block.hasMetadata("deathchest-killer") || !block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
-
-							// player is not killer, so send not-owner player message and return
-							plugin.messageManager.sendPlayerMessage(player,"not-owner");
-							return;
-						}
-					}
-					else {
-						// killer-looting is not enabled, so send not-owner player message and return
-						plugin.messageManager.sendPlayerMessage(player,"not-owner");
-						return;						
-					}
-				}
-			}
-		}
-				
 		// if block is wall sign, set block to attached block
 		if (block.getType().equals(Material.WALL_SIGN)) {
 		    Sign sign = (Sign)block.getState().getData();
@@ -101,126 +59,70 @@ public class BlockEventListener implements Listener {
 		}
 		// if block is sign post, set block to one block below
 		else if (block.getType().equals(Material.SIGN_POST)) {
-			block = block.getRelative(0, 1, 0);
-		}
-		
-		// confirm block is a death chest 
-		if (block.getType().equals(Material.CHEST) && DeathChestBlock.isDeathChestBlock(block)) {
-			
-			// if chest inventory has any viewers, output message and return
-			// this is to prevent breaking death chests that are already open by another player
-			if (plugin.chestManager.getChestViewerCount(block) > 0) {
-
-				// send player message
-				plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
-
-				// play denied access sound
-				if (plugin.getConfig().getBoolean("sound-effects")) {
-					player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
-				}
-			}
-			else {
-				// destroy DeathChestBlock
-				plugin.chestManager.destroyDeathChestBlock(block);
-			}
-		}
-	}
-
-	
-	/**
-	 * Block damage event handler<br>
-	 * Auto-loot chest on sneak-punch if player is owner or has override permission
-	 * @param event
-	 */
-	@EventHandler
-	public void onBlockDamage(BlockDamageEvent event) {
-	
-		Player player = event.getPlayer();
-		Block block = event.getBlock();
-		
-		// if block is not a DeathChestBlock, do nothing and return
-		if (!DeathChestBlock.isDeathChestBlock(block)) {
-			return;
-		}
-		
-		// if quick-loot is not enabled in configuration, do nothing and return
-		if (!plugin.getConfig().getBoolean("quick-loot")) {
-			return;
-		}
-		
-		// if player is not sneaking, do nothing and return
-		if (!player.isSneaking()) {
-			return;
-		}
-		
-		// cancel event
-		event.setCancelled(true);
-		
-		// if player is in creative mode and does not have override permission, send message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
-			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
-			return;
-		}
-		
-		// if chest-protection is enabled in config, test for ownership
-		if (plugin.getConfig().getBoolean("chest-protection")) {
-			
-			// if player is not block owner, test for override permission or killer-looting enabled
-			if (!block.getMetadata("deathchest-owner").get(0).asString().equals(player.getUniqueId().toString())) {
-	
-				// if player does not have deathchest.loot.other permission, check if killer looting is enabled
-				if (!player.hasPermission("deathchest.loot.other")) {
-	
-					// if killer-looting is enabled check if player is killer
-					if (plugin.getConfig().getBoolean("killer-looting")) {
-						
-						// if killer metadata is not set or doesn't match player uuid, player is not killer
-						if (!block.hasMetadata("deathchest-killer") ||
-								!block.getMetadata("deathchest-killer").get(0).asString().equals(player.getUniqueId().toString())) {
-					
-							// player is not killer, so output message and return
-							plugin.messageManager.sendPlayerMessage(player, "not-owner");
-							return;
-						}
-					}
-					else {
-						// killer looting is not enabled, so output message and return
-						plugin.messageManager.sendPlayerMessage(player, "not-owner");
-						return;						
-					}
-				}
-			}
-		}
-		
-		// if player clicked attached wall sign, set block to attached block
-		if (block.getType().equals(Material.WALL_SIGN)) {
-			Sign sign = (Sign)block.getState().getData();
-			block = block.getRelative(sign.getAttachedFace());
-		}
-		// if player clicked sign post, set block to block below sign post
-		else if (block.getType().equals(Material.SIGN_POST)) {
 			block = block.getRelative(0, -1, 0);
 		}
 		
-		// confirm block is a chest
-		if (block.getType().equals(Material.CHEST)) {
+		// confirm block is a death chest
+		if (!block.getType().equals(Material.CHEST) || !DeathChestBlock.isDeathChestBlock(block)) {
+			return;
+		}
 			
-			// if chest inventory has any viewers, output message and return
-			// this is to prevent quick-looting death chests that are already open by another player
-			if (plugin.chestManager.getChestViewerCount(block) > 0) {
-
-				// send player message
-				plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
-
-				// play denied access sound
-				if (plugin.getConfig().getBoolean("sound-effects")) {
-					player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
-				}
+		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
+		if (blockingPlugin != null) {
+			if (plugin.debug) {
+				plugin.getLogger().info(blockingPlugin.getPluginName() + " is preventing access to this chest.");
 			}
-			else {
-				// loot chest
-				plugin.chestManager.lootChest(player, block);
+			return;
+		}
+		
+		// if player is in creative mode and does not have override permission: cancel event, send message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
+			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
+			event.setCancelled(true);
+			return;
+		}
+		
+		// if chest-protection option is not enabled, do nothing and return
+		if (!plugin.getConfig().getBoolean("chest-protection")) {
+			return;
+		}
+
+		// cancel event
+		event.setCancelled(true);
+		
+		// if chest is already open, send message and return
+		if (plugin.chestManager.getChestViewerCount(block) > 0) {
+
+			// send player message
+			plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
+
+			// if sound effects are enabled, play denied access sound
+			if (plugin.getConfig().getBoolean("sound-effects")) {
+				player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 			}
+			return;
+		}
+		
+		// if player is owner or has deathchest.loot.other permission, break chest and return
+		if (DeathChestBlock.isDeathChestOwner(player, block) || player.hasPermission("deathchest.loot.other")) {
+			plugin.chestManager.destroyDeathChestBlock(block);
+			return;
+		}
+		
+		// if killer looting is enabled  and player is killer, break chest and return
+		if (plugin.getConfig().getBoolean("killer-looting") 
+				&& DeathChestBlock.isDeathChestKiller(player, block)) {
+			plugin.chestManager.destroyDeathChestBlock(block);
+			return;
+		}
+		
+		// send player not-owner message
+		plugin.messageManager.sendPlayerMessage(player, "not-owner");
+
+		// if sound effects are enabled, play denied access sound
+		if (plugin.getConfig().getBoolean("sound-effects")) {
+			player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
 		}
 	}
 
