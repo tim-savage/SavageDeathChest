@@ -99,7 +99,7 @@ public class BlockEventListener implements Listener {
 
 			// if sound effects are enabled, play denied access sound
 			if (plugin.getConfig().getBoolean("sound-effects")) {
-				player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 			}
 			return;
 		}
@@ -122,7 +122,7 @@ public class BlockEventListener implements Listener {
 
 		// if sound effects are enabled, play denied access sound
 		if (plugin.getConfig().getBoolean("sound-effects")) {
-			player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
+			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 		}
 	}
 

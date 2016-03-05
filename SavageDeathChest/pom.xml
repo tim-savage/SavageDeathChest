@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven_mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.5-beta3</version>
+	<version>1.6</version>
 	<name>SavageDeathChest</name>
 	<properties>
 		<project.author>Tim Savage</project.author>
@@ -45,8 +45,8 @@
 			<url>http://maven.sk89q.com/artifactory/repo/</url>
 		</repository>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>griefprevention-repo</id>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.6.4-R2.0</version>
+			<version>1.9-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sk89q</groupId>

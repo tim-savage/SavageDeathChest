@@ -232,7 +232,7 @@ public class ChestManager {
 					playerinventory.addItem(chestinventory[i]);
 					chest.getInventory().removeItem(chestinventory[i]);
 					if (plugin.getConfig().getBoolean("sound-effects")) {
-						player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
+						player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
 					}
 				}
 			}

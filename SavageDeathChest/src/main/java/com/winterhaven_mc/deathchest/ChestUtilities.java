@@ -249,6 +249,12 @@ public class ChestUtilities {
 
 		int radius = plugin.getConfig().getInt("search-distance");
 		Location origin = player.getLocation();
+		
+		// if player died in the void, start search at y=1 if above-void configured true
+		if (origin.getY() < 1 && plugin.getConfig().getBoolean("above-void")) {
+			origin.setY(1);
+		}
+		
 		SearchResult result = null;
 		
 		for (int y = 0; y < radius; y++) {
@@ -292,6 +298,12 @@ public class ChestUtilities {
 	
 		int radius = plugin.getConfig().getInt("search-distance");
 		Location origin = player.getLocation();
+		
+		// if player died in the void, start search at y=1 if above-void configured true
+		if (origin.getY() < 1 && plugin.getConfig().getBoolean("above-void")) {
+			origin.setY(1);
+		}
+
 		SearchResult result1 = null;
 		SearchResult result2 = null;
 

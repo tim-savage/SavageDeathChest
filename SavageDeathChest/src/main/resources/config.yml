@@ -42,6 +42,9 @@ prevent-item-placement: true
 # For this reason, it is not recommended to set this value too high.
 search-distance: 5
 
+# Place chests above the void when players die below level 0
+above-void: true
+
 # Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
 expire-time: 60
 
