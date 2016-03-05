@@ -251,7 +251,7 @@ public class ChestUtilities {
 		Location origin = player.getLocation();
 		
 		// if player died in the void, start search at y=1 if above-void configured true
-		if (origin.getY() < 1 && plugin.getConfig().getBoolean("above-void")) {
+		if (origin.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
 			origin.setY(1);
 		}
 		
@@ -300,7 +300,7 @@ public class ChestUtilities {
 		Location origin = player.getLocation();
 		
 		// if player died in the void, start search at y=1 if above-void configured true
-		if (origin.getY() < 1 && plugin.getConfig().getBoolean("above-void")) {
+		if (origin.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
 			origin.setY(1);
 		}
 
