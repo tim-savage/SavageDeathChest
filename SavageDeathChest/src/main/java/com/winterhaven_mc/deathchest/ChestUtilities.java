@@ -151,6 +151,21 @@ public class ChestUtilities {
 
 
 	/**
+	 * Get location in front of location based on yaw
+	 * @param location initial location
+	 * @return location one block to right
+	 */
+	public Location locationToFront(Location location) {
+		float yaw = location.getYaw();
+		Location resultLocation = location.getBlock().getRelative(getDirection(yaw)).getLocation();
+
+		// set new location yaw to match original
+		resultLocation.setYaw(location.getYaw());
+		return resultLocation;
+	}
+
+
+	/**
 	 * Get block to left of location based on yaw
 	 * @param location initial location
 	 * @return block to left of location
@@ -250,7 +265,7 @@ public class ChestUtilities {
 		int radius = plugin.getConfig().getInt("search-distance");
 		Location origin = player.getLocation();
 		
-		// if player died in the void, start search at y=1 if above-void configured true
+		// if player died in the void, start search at y=1 if place-above-void configured true
 		if (origin.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
 			origin.setY(1);
 		}
@@ -358,9 +373,14 @@ public class ChestUtilities {
 		Block block = location.getBlock();
 
 		// check if block at location is a ReplaceableBlock
-		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+		if (!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
 			return false;
 		}
+		
+		// check if block below is grass path
+//		if (location.clone().add(0, -1, 0).getBlock().getType().equals(Material.GRASS_PATH)) {
+//			return false;
+//		}
 
 		// check all enabled protection plugins for player permission at location
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
@@ -418,6 +438,13 @@ public class ChestUtilities {
 		if (adjacentChest(location,true)) {
 			return SearchResult.ADJACENT_CHEST;
 		}
+		
+		// check if chest or sign would be above grass path
+		Block signBlock = blockToRear(location);
+		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)
+				|| signBlock.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
+			return SearchResult.NON_REPLACEABLE_BLOCK;
+		}
 
 		// check all enabled protection plugins for player permission at location
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
@@ -473,10 +500,17 @@ public class ChestUtilities {
 		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
 			return SearchResult.NON_REPLACEABLE_BLOCK;
 		}
+		
 		// check if location is adjacent to an existing chest, ignoring first placed chest
 		if (adjacentChest(location,false)) {
 			return SearchResult.ADJACENT_CHEST;
 		}
+		
+		// check if location is above grass path
+//		if (location.getBlock().getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
+//			return SearchResult.NON_REPLACEABLE_BLOCK;
+//		}
+
 		// check all enabled protection plugins for player permission at location
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 		if (blockingPlugin != null) {
