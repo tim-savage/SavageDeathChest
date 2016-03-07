@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -13,25 +12,22 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestUtilities {
 	
-    final DeathChestMain plugin;
+    final PluginMain plugin;
     
-    PermissionManager permManager;
-
-    public ChestUtilities(DeathChestMain plugin) {
+    public ChestUtilities(PluginMain plugin) {
         this.plugin = plugin;
         
-        permManager = new PermissionManager(plugin);
     }
 
 
     /**
      * Get the cardinal compass direction.<br>
-     * Converts direction in degrees to BlockFace direction (N,E,S,W)
+     * Converts direction in degrees to BlockFace cardinal direction (N,E,S,W)
      * 
      * @param yaw	Direction in degrees
      * @return BlockFace of cardinal direction
      */
-    public BlockFace getDirection(float yaw) {
+    public BlockFace getCardinalDirection(float yaw) {
     	double rot = yaw % 360;
     	if (rot < 0) {
     		rot += 360.0;
@@ -129,11 +125,17 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return location one block to left
 	 */
-	public Location locationToLeft(Location location) {
-		float yaw = location.getYaw() + 90;
-		Location resultLocation = location.getBlock().getRelative(getDirection(yaw)).getLocation();
+	public Location getLocationToLeft(Location location) {
 		
-		// set new location yaw to match original
+		float yaw = location.getYaw() + 90;
+
+		// clone location so original isn't modified
+		Location resultLocation = location.clone();
+
+		// get location that is one block to left of current location
+		resultLocation = resultLocation.getBlock().getRelative(getCardinalDirection(yaw)).getLocation();
+		
+		// set result location yaw to match original
 		resultLocation.setYaw(location.getYaw());
 		return resultLocation;
 	}
@@ -145,8 +147,35 @@ public class ChestUtilities {
 	 * @return location one block to right
 	 */
 	public Location locationToRight(Location location) {
+		
 		float yaw = location.getYaw() - 90;
-		Location resultLocation = location.getBlock().getRelative(getDirection(yaw)).getLocation();
+		
+		// clone location so original isn't modified
+		Location resultLocation = location.clone();
+		
+		// get location that is one block to right of current location
+		resultLocation = resultLocation.getBlock().getRelative(getCardinalDirection(yaw)).getLocation();
+
+		// set new location yaw to match original
+		resultLocation.setYaw(location.getYaw());
+		return resultLocation;
+	}
+
+
+	/**
+	 * Get location in front of location based on yaw
+	 * @param location initial location
+	 * @return location one block to right
+	 */
+	public Location locationToFront(Location location) {
+		
+		float yaw = location.getYaw();
+		
+		// clone location so original isn't modified
+		Location resultLocation = location.clone();
+		
+		// get location that is one block in front of current location
+		resultLocation = resultLocation.getBlock().getRelative(getCardinalDirection(yaw)).getLocation();
 
 		// set new location yaw to match original
 		resultLocation.setYaw(location.getYaw());
@@ -161,7 +190,7 @@ public class ChestUtilities {
 	 */
 	public Block blockToLeft(Location location) {
 		float yaw = location.getYaw() + 90;
-		return location.getBlock().getRelative(getDirection(yaw));
+		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
 
 
@@ -172,7 +201,7 @@ public class ChestUtilities {
 	 */
 	public Block blockToRight(Location location) {
 		float yaw = location.getYaw() - 90;
-		return location.getBlock().getRelative(getDirection(yaw));
+		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
 
 
@@ -183,7 +212,7 @@ public class ChestUtilities {
 	 */
 	public Block blockInFront(Location location) {
 		float yaw = location.getYaw() + 180;
-		return location.getBlock().getRelative(getDirection(yaw));
+		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
 
 	
@@ -194,248 +223,414 @@ public class ChestUtilities {
 	 */
 	public Block blockToRear(Location location) {
 		float yaw = location.getYaw();
-		return location.getBlock().getRelative(getDirection(yaw));
+		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
 
 
 	/**
 	 * Search for a valid location to place a single chest,
-	 * taking into account replaceable blocks, as well as 
-	 * WorldGuard regions and GriefPrevention claims if configured
+	 * taking into account replaceable blocks, grass path blocks and 
+	 * restrictions from other block protection plugins if configured
 	 * @param player Player that deathchest is being deployed for
-	 * @return location that is valid for a single chest, or null if valid location cannot be found
+	 * @return SearchResult
 	 */
-	public Location findValidSingleChestLocation(Player player) {
+	public SearchResult findValidSingleChestLocation(Player player) {
 
-		Location origin = player.getLocation();
+		// count number of tests performed, for debugging purposes
+		int testCount = 0;
 		
+		// get distance to search from config
 		int radius = plugin.getConfig().getInt("search-distance");
-
-		int ox = origin.getBlockX();
-		int oy = origin.getBlockY();
-		int oz = origin.getBlockZ();
-		float oyaw = origin.getYaw();
-		float opitch = origin.getPitch();
-		World world = origin.getWorld();
-
-		Location location = new Location(world,ox,oy,oz,oyaw,opitch);
 		
-		for (int y = 0; y < radius; y++) {
-			for (int x = 0; x < radius; x++) {
-				for (int z = 0; z < radius; z++) {
-					location = new Location(world,ox+x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+		// get clone of player death location
+		Location testLocation = player.getLocation().clone();
+		
+		// if player died in the void, start search at y=1 if place-above-void configured true
+		if (testLocation.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
+			testLocation.setY(1);
+		}
+		
+		// print player death location in log
+		if (plugin.debug) {
+			plugin.getLogger().info("Death location: " 
+					+ testLocation.getBlockX() + "," 
+					+ testLocation.getBlockY() + ","
+					+ testLocation.getBlockZ());
+		}
+		
+		// initialize search result object
+		SearchResult result = null;
+
+		// iterate over all locations with search distance until a valid location is found
+		for (int y = 0; y < radius; y = y + 1) {
+			for (int x = 0; x < radius; x = x + 1) {
+				for (int z = 0; z < radius; z = z + 1) {
+					
+					// set new test location
+					testLocation.add(x,y,z);
+					
+					// get result for test location
+					result = isValidLeftChestLocation(player,testLocation);
+					testCount = testCount + 1;
+					
+					// if test location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
 					}
+					else {
+						// reset test location
+						testLocation.add(-x,-y,-z);
+					}
+					
+					// location 0,y,0 has already been checked, so skip ahead
 					if (x == 0 && z == 0) {
 						continue;
 					}
-					location = new Location(world,ox-x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					
+					// set new test location
+					testLocation.add(-x,y,z);
+					
+					// get result for test location
+					result = isValidLeftChestLocation(player,testLocation);
+					testCount = testCount + 1;
+
+					// if location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
 					}
-					location = new Location(world,ox-x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					else {
+						// reset test location
+						testLocation.add(x,-y,-z);
 					}
-					location = new Location(world,ox+x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location)) {
-						return location;
+					
+					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
+					if (x == 0 || z == 0) {
+						continue;
+					}
+					
+					// set new test location
+					testLocation.add(-x,y,-z);
+					
+					// get result for test location
+					result = isValidLeftChestLocation(player,testLocation);
+					testCount = testCount + 1;
+
+					// if location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
+					}
+					else {
+						// reset test location
+						testLocation.add(x,-y,z);
+					}
+					
+					// set new test location
+					testLocation.add(x,y,-z);
+					
+					// get result for test location
+					result = isValidLeftChestLocation(player,testLocation);
+					testCount = testCount + 1;
+
+					// if location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
+					}
+					else {
+						// reset test location
+						testLocation.add(-x,-y,z);
 					}
 				}
 			}
 		}
 		// no valid location could be found for a single chest, so return null
-		return null;
+		if (plugin.debug) {
+			plugin.getLogger().info("Locations tested: " + testCount);
+		}
+		return result;
 	}
 
 	/**
 	 * Search for valid location to place a double chest, 
 	 * taking into account replaceable blocks, as well as 
-	 * WorldGuard regions and GriefPrevention claims if configured
+	 * protection plugin regions if configured
 	 * and adjacent existing chests
 	 * @param player Player that deathchest is being deployed for
 	 * @return location that is valid for double chest deployment, or null if valid location cannot be found
 	 */
-	public Location findValidDoubleChestLocation(Player player) {
+	public SearchResult findValidDoubleChestLocation(Player player) {
 	
-		Location origin = player.getLocation();
+		// count number of tests performed, for debugging purposes
+		int testCount = 0;
 		
+		// get search distance from config
 		int radius = plugin.getConfig().getInt("search-distance");
-	
-		int ox = origin.getBlockX();
-		int oy = origin.getBlockY();
-		int oz = origin.getBlockZ();
-		float oyaw = origin.getYaw();
-		float opitch = origin.getPitch();
-		World world = origin.getWorld();
-	
-		Location location = new Location(world,ox,oy,oz,oyaw,opitch);
 		
-		for (int y = 0; y < radius; y++) {
-			for (int x = 0; x < radius; x++) {
-				for (int z = 0; z < radius; z++) {
-					location = new Location(world,ox+x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+		// get clone of player death location
+		Location testLocation = player.getLocation().clone();
+		
+		// if player died in the void, start search at y=1 if place-above-void configured true
+		if (testLocation.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
+			testLocation.setY(1);
+		}
+
+		// print player death location in log
+		if (plugin.debug) {
+			plugin.getLogger().info("Death location: " 
+					+ testLocation.getBlockX() + "," 
+					+ testLocation.getBlockY() + ","
+					+ testLocation.getBlockZ());
+		}
+		
+		// initialize search result objects
+		SearchResult result1 = null;
+		SearchResult result2 = null;
+
+		for (int y = 0; y < radius; y = y + 1) {
+			for (int x = 0; x < radius; x = x + 1) {
+				for (int z = 0; z < radius; z = z + 1) {
+					
+					// set new test location
+					testLocation.add(x,y,z);
+					
+					// get result for test location and adjacent location for second chest
+					result1 = isValidLeftChestLocation(player,testLocation);
+					result2 = isValidRightChestLocation(player,locationToRight(testLocation));
+					testCount = testCount + 2;
+					
+					// if both results are valid, return test result object
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result1;
 					}
+					else {
+						// reset test location
+						testLocation.add(-x,-y,-z);
+					}
+					// location 0,y,0 has already been checked, so skip ahead
 					if (x == 0 && z == 0) {
 						continue;
 					}
-					location = new Location(world,ox-x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					
+					// set new test location
+					testLocation.add(-x,y,-z);
+					
+					// get result for test location and adjacent location for second chest
+					result1 = isValidLeftChestLocation(player,testLocation);
+					result2 = isValidRightChestLocation(player,locationToRight(testLocation));
+					testCount = testCount + 2;
+
+					// if both test locations are valid, return search result object
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result1;
 					}
+					else {
+						// reset test location
+						testLocation.add(x,-y,z);
+					}
+					
+					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
 					if (x == 0 || z == 0) {
 						continue;
 					}
-					location = new Location(world,ox-x,oy+y,oz+z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					
+					// set new test location
+					testLocation.add(-x,y,z);
+					
+					// get result for test location and adjacent location for second chest
+					result1 = isValidLeftChestLocation(player,testLocation);
+					result2 = isValidRightChestLocation(player,locationToRight(testLocation));
+					testCount = testCount + 2;
+
+					// if both test locations are valid, return search result object
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result1;
 					}
-					location = new Location(world,ox+x,oy+y,oz-z,oyaw,opitch);
-					if (isValidSingleLocation(player,location) &&
-							isValidSingleLocation(player,locationToRight(location))) {
-						return location;
+					else {
+						// reset test location
+						testLocation.add(x,-y,-z);
+					}
+					
+					// set new test location
+					testLocation.add(x,y,-z);
+					
+					// get result for test location and adjacent location for second chest
+					result1 = isValidLeftChestLocation(player,testLocation);
+					result2 = isValidRightChestLocation(player,locationToRight(testLocation));
+					testCount = testCount + 2;
+
+					// if both test locations are valid, return search result object
+					if (result1.equals(SearchResult.SUCCESS) &&
+							result2.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result1;
+					}
+					else {
+						// reset test location
+						testLocation.add(-x,-y,z);
 					}
 				}
 			}
 		}
-		return null;
+		if (plugin.debug) {
+			plugin.getLogger().info("Locations tested: " + testCount);
+		}
+		return result1;
 	}
 
 
 	/** Check if sign can be placed at location
-     * 
-     * @param player	Player to check permissions
-     * @param location	Location to check permissions
-     * @return boolean
-     */
-    public boolean isValidSignLocation(Player player, Location location) {
-    	
-    	Block block = location.getBlock();
-    	
-    	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
-    		return false;
-    	}
-    	// check if player has GP permission at location
-    	if (!permManager.gpPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has WG permission at location 
-    	if (!permManager.wgPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has Towny permission at location
-    	if (!permManager.townyPermission(player,location)) {
-    		return false;
-    	}
-    	return true;
-    }
-    
-    
-    /** Check if single chest can be placed at location
-     * 
-     * @param player	Player to check permissions
-     * @param location	Location to check permissions
-     * @return boolean
-     */
-    public boolean isValidSingleLocation(Player player, Location location) {
-    	
-    	Block block = location.getBlock();
-    	
-    	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
-    		return false;
-    	}
-    	// check if location is adjacent to an existing chest
-    	if (adjacentChest(location,true)) {
-    		return false;
-    	}
-    	// check if player has GP permission at location
-    	if (!permManager.gpPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has WG permission at location 
-    	if (!permManager.wgPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has Towny permission at location
-    	if (!permManager.townyPermission(player,location)) {
-    		return false;
-    	}
-    	return true;
-    }
-    
-    /** Check if second of double chest can be placed at location
-     * 
-     * @param player	Player to check permissions
-     * @param location	Location to check permissions
-     * @return boolean
-     */
-    public boolean isValidDoubleLocation(Player player, Location location) {
-    	
-    	Block block = location.getBlock();
-    	
-    	// check if block at location is a ReplaceableBlock
-    	if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
-    		return false;
-    	}
-    	// check if location is adjacent to an existing chest, ignoring first placed chest
-    	if (adjacentChest(location,false)) {
-    		return false;
-    	}
-    	// check if player has GP permission at location
-    	if (!permManager.gpPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has WG permission at location 
-    	if (!permManager.wgPermission(player,location)) {
-    		return false;
-    	}
-    	// check if player has Towny permission at location
-    	if (!permManager.townyPermission(player,location)) {
-    		return false;
-    	}
-    	return true;
-    }
-    
-    boolean adjacentChest(Location location, Boolean firstChest) {
-    	
-    	if (firstChest) {
-    		if (blockToLeft(location).getType().equals(Material.CHEST)) {
-    			return true;
-    		}
-    	}
-    	if (blockToRight(location).getType().equals(Material.CHEST)) {
-    		return true;
-    	}
-    	if (blockInFront(location).getType().equals(Material.CHEST)) {
-    		return true;
-    	}
-    	if (blockToRear(location).getType().equals(Material.CHEST)) {
-    		return true;
-    	}
-    	return false;
-    }
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	public boolean isValidSignLocation(Player player, Location location) {
 
-//    boolean adjacentChest2(Location location) {
-//    	
-//    	if (blockToRight(location).getType().equals(Material.CHEST)) {
-//    		return true;
-//    	}
-//    	if (blockInFront(location).getType().equals(Material.CHEST)) {
-//    		return true;
-//    	}
-//    	if (blockToRear(location).getType().equals(Material.CHEST)) {
-//    		return true;
-//    	}
-//    	return false;
-//    }
+		Block block = location.getBlock();
+
+		// check if block at location is a ReplaceableBlock
+		if (!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+			return false;
+		}
+		
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (blockingPlugin != null) {
+			return false;
+		}
+		return true;
+	}
+
+
+	/** Check if single chest can be placed at location
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	public SearchResult isValidLeftChestLocation(Player player, Location location) {
+
+		Block block = location.getBlock();
+		SearchResult result = null;
+
+		// check if block at location is a ReplaceableBlock
+		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+			return SearchResult.NON_REPLACEABLE_BLOCK;
+		}
+		// check if location is adjacent to an existing chest
+		if (adjacentChest(location,true)) {
+			return SearchResult.ADJACENT_CHEST;
+		}
+		
+		// check if chest or sign would be above grass path
+		if (isAboveGrassPath(block)
+				|| isAboveGrassPath(blockToRear(location))) {
+			return SearchResult.ABOVE_GRASS_PATH;
+		}
+
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (blockingPlugin != null) {
+			result = SearchResult.PROTECTION_PLUGIN;
+			result.setProtectionPlugin(blockingPlugin);
+			return result;
+		}
+		result = SearchResult.SUCCESS;
+		result.setLocation(location.clone());
+		return result;
+	}
+
+
+	/** Check if second of double chest can be placed at location
+	 * 
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	public SearchResult isValidRightChestLocation(Player player, Location location) {
+
+		Block block = location.getBlock();
+		SearchResult result = null;
+		
+		// check if block at location is a ReplaceableBlock
+		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+			return SearchResult.NON_REPLACEABLE_BLOCK;
+		}
+		
+		// check if location is adjacent to an existing chest, ignoring left chest location
+		if (adjacentChest(location,false)) {
+			return SearchResult.ADJACENT_CHEST;
+		}
+
+		// check if block is above grass path
+		if (isAboveGrassPath(block)) {
+			return SearchResult.ABOVE_GRASS_PATH;
+		}
+		
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (blockingPlugin != null) {
+			result = SearchResult.PROTECTION_PLUGIN;
+			result.setProtectionPlugin(blockingPlugin);
+			return result;
+		}
+		// don't need to set location in search result, only left chest location is used
+		return SearchResult.SUCCESS;
+	}
+
+
+	boolean adjacentChest(Location location, Boolean firstChest) {
+
+		if (firstChest) {
+			if (blockToLeft(location).getType().equals(Material.CHEST)) {
+				return true;
+			}
+		}
+		if (blockToRight(location).getType().equals(Material.CHEST)) {
+			return true;
+		}
+		if (blockInFront(location).getType().equals(Material.CHEST)) {
+			return true;
+		}
+		if (blockToRear(location).getType().equals(Material.CHEST)) {
+			return true;
+		}
+		return false;
+	}
+	
+
+	boolean isAboveGrassPath(Block block) {
+		
+		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
+			return true;
+		}
+		return false;
+	}
 
 }
 

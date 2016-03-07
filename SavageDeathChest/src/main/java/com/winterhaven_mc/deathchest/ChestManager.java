@@ -1,6 +1,5 @@
 package com.winterhaven_mc.deathchest;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,11 +20,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class ChestManager {
 
-	private DeathChestMain plugin;
+	private PluginMain plugin;
 
-	// datastore object
-	private Datastore datastore;
-	
 	// chest utilities object
 	private ChestUtilities chestUtilities;
 	
@@ -44,7 +40,7 @@ public class ChestManager {
 	 * 
 	 * @param	plugin		A reference to this plugin's main class
 	 */
-	public ChestManager(DeathChestMain plugin) {
+	public ChestManager(PluginMain plugin) {
 		
 		// create pointer to main class
 		this.plugin = plugin;
@@ -52,12 +48,6 @@ public class ChestManager {
 		// instantiate chestutilities
         chestUtilities = new ChestUtilities(plugin);
 		
-		// instantiate datastore
-        datastore = getNewDatastore();
-        
-		// convert any old datastore files to new datastore
-		convertDatastores();
- 		
 		// load material types that chests can be replace from config file
 		loadReplaceableBlocks();
 		
@@ -79,18 +69,19 @@ public class ChestManager {
 		
 		Long currentTime = System.currentTimeMillis();
 
-		for (DeathChestBlock deathChestBlock : datastore.getAllRecords()) {
+		for (DeathChestBlock deathChestBlock : plugin.dataStore.getAllRecords()) {
 			
 			// get current block at deathChestBlock location
 			Block block = deathChestBlock.getLocation().getBlock();
 			
 			// if block at location is not a DeathChestBlock type, remove from datastore
 			if (!deathChestMaterials.contains(block.getType())) {
-				datastore.deleteRecord(deathChestBlock.getLocation());
+				plugin.dataStore.deleteRecord(deathChestBlock.getLocation());
 				
 				// send debug message to log
 				if (plugin.debug) {
-					plugin.getLogger().info("Block at loaded location is not a DeathChestBlock type. Removed from datastore.");
+					plugin.getLogger().info("Block at loaded location is not a DeathChestBlock type."
+							+ " Removed from datastore.");
 				}
 				continue;
 			}
@@ -191,7 +182,7 @@ public class ChestManager {
 	public void destroyDeathChestBlock(Block block) {
 
 		// delete record from datastore
-		getCurrentDatastore().deleteRecord(block.getLocation());
+		plugin.dataStore.deleteRecord(block.getLocation());
 		
 		// if block is indeed a DeathChestBlock, break block and drop contents
 		if (deathChestMaterials.contains(block.getType()) && DeathChestBlock.isDeathChestBlock(block)) {
@@ -241,7 +232,7 @@ public class ChestManager {
 					playerinventory.addItem(chestinventory[i]);
 					chest.getInventory().removeItem(chestinventory[i]);
 					if (plugin.getConfig().getBoolean("sound-effects")) {
-						player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
+						player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
 					}
 				}
 			}
@@ -281,9 +272,9 @@ public class ChestManager {
 		// combine stacks of same items where possible
 		chestItems = DeathChestBlock.consolidateItems(droppedItems);
 
-		// if require-chest option is enabled
+		// check if require-chest option is enabled
 		// and player does not have permission override
-		if(plugin.getConfig().getBoolean("require-chest") &&
+		if (plugin.getConfig().getBoolean("require-chest") &&
 				!player.hasPermission("deathchest.freechest")) {
 
 			// if player does not have a chest in their inventory
@@ -350,22 +341,53 @@ public class ChestManager {
 	 */
 	private List<ItemStack> deploySingleChest(Player player, List<ItemStack> droppedItems) {
 		
-		Location location = chestUtilities.findValidSingleChestLocation(player);
+		SearchResult result = chestUtilities.findValidSingleChestLocation(player);
 
-		// null location is returned if valid location could not be found
-		if (location == null) {
+		// search result returned gives reason if valid location could not be found
+		if (result == null || !result.equals(SearchResult.SUCCESS)) {
+			
+			// use try..catch block here so a messaging error does not cause item duplication
+			try {
+				if (result.equals(SearchResult.PROTECTION_PLUGIN)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-plugin", result.getProtectionPlugin());
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by "
+							+ result.getProtectionPlugin().getPluginName() + ".");
+					}
+				}
+				else if (result.equals(SearchResult.ADJACENT_CHEST)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-adjacent");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
+					}				
+				}
+				else if (result.equals(SearchResult.NON_REPLACEABLE_BLOCK)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-block");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
+					}
+				}
+			} catch (Exception e) {
+				plugin.getLogger().info("An error occurred while sending a chest denied message.");
+				if (plugin.debug) {
+					e.printStackTrace();
+				}
+			}
 			return droppedItems;
 		}
 		
 		// actual chest creation
-		Block block = location.getBlock();
+		Block block = result.getLocation().getBlock();
 		block.setType(Material.CHEST);
 		BlockState state = block.getState();
 		Chest chest = (Chest)state;
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
+		chestData.setFacingDirection(chestUtilities.getCardinalDirection(result.getLocation().getYaw()));
 		
 		chest.update();
 		
@@ -386,7 +408,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
 		
 		// put DeathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock);
+		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
@@ -412,20 +434,51 @@ public class ChestManager {
 	private List<ItemStack> deployDoubleChest(Player player, List<ItemStack> droppedItems) {
 		
 		// try to find a valid double chest location
-		Location location = chestUtilities.findValidDoubleChestLocation(player);
+		SearchResult result = chestUtilities.findValidDoubleChestLocation(player);
 		
 		// if no valid double chest location can be found, try to find a valid single chest location
-		if (location == null) {
-			location = chestUtilities.findValidSingleChestLocation(player);
+		if (result == null || result != SearchResult.SUCCESS) {
+			result = chestUtilities.findValidSingleChestLocation(player);
 		}
 
 		// if no valid single chest location, return droppedItems
-		if (location == null) {
+		if (result == null || result != SearchResult.SUCCESS) {
+			
+			// use try..catch block here so a messaging error does not cause item duplication
+			try {
+				if (result.equals(SearchResult.PROTECTION_PLUGIN)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-plugin", result.getProtectionPlugin());
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by "
+							+ result.getProtectionPlugin().getPluginName() + ".");
+					}
+				}
+				else if (result.equals(SearchResult.ADJACENT_CHEST)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-adjacent");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
+					}				
+				}
+				else if (result.equals(SearchResult.NON_REPLACEABLE_BLOCK)) {
+					plugin.messageManager.sendPlayerMessage(player,
+							"chest-denied-block");
+					if (plugin.debug) {
+						plugin.getLogger().info("Chest deployment prevented by non-replaceable blocks.");
+					}
+				}
+			} catch (Exception e) {
+				plugin.getLogger().info("An error occurred while sending a chest denied message.");
+				if (plugin.debug) {
+					e.printStackTrace();
+				}
+			}
 			return droppedItems;
 		}
 		
 		// actual chest creation
-		Block block = location.getBlock();
+		Block block = result.getLocation().getBlock();
 		
 		// set block to chest material
 		block.setType(Material.CHEST);
@@ -435,7 +488,7 @@ public class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
+		chestData.setFacingDirection(chestUtilities.getCardinalDirection(result.getLocation().getYaw()));
 
 		chest.update();
 		
@@ -459,16 +512,17 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
 		
 		// put deathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock);
+		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
 
 		// get location one block to right of first chest
-		location = chestUtilities.locationToRight(location);
+		Location location = chestUtilities.locationToRight(result.getLocation());
 		
 		// if block at second chest location is not valid, send message and return remaining_items
-		if (!chestUtilities.isValidDoubleLocation(player,location)) {
+		SearchResult result2 = chestUtilities.isValidRightChestLocation(player, location);
+		if (result2 == null || result2 != SearchResult.SUCCESS) {
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
 			return remaining_items;
 		}
@@ -484,7 +538,7 @@ public class ChestManager {
 		
 		// set chest direction
 		chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
+		chestData.setFacingDirection(chestUtilities.getCardinalDirection(location.getYaw()));
 		
 		// update blockstate
 		chest.update();
@@ -506,7 +560,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock2 = new DeathChestBlock(player,block);
 		
 		// insert deathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock2);
+		plugin.dataStore.putRecord(deathChestBlock2);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock2);
@@ -536,7 +590,7 @@ public class ChestManager {
 		float yaw = player.getLocation().getYaw();
 		
 		// get block adjacent to chest facing player direction
-		Block signblock = chestblock.getRelative(chestUtilities.getDirection(yaw));
+		Block signblock = chestblock.getRelative(chestUtilities.getCardinalDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
 		if (chestUtilities.isValidSignLocation(player,signblock.getLocation())) {
@@ -571,7 +625,7 @@ public class ChestManager {
 		
 		// set sign facing direction
 		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signblockState.getData();
-		signData.setFacingDirection(chestUtilities.getDirection(yaw));
+		signData.setFacingDirection(chestUtilities.getCardinalDirection(yaw));
 		sign.setData(signData);
 		
 		// update sign block with text and direction
@@ -581,7 +635,7 @@ public class ChestManager {
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,signblock);
 
 		// insert deathChestBlock in datastore
-		getCurrentDatastore().putRecord(deathChestBlock);
+		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
 		createItemExpireTask(deathChestBlock);
@@ -651,143 +705,6 @@ public class ChestManager {
 			if (Material.matchMaterial(materialString) != null) {
 				replaceableBlocks.add(Material.matchMaterial(materialString));
 			}
-		}
-	}
-
-
-	/**
-	 * Public wrapper for datastore.close() method
-	 */
-	public void closeDatastore() {
-		getCurrentDatastore().close();
-	}
-	
-	/**
-	 * Get new datastore, converting records from old datastore if provided
-	 * @param oldDatastore
-	 * @return
-	 */
-	public Datastore getNewDatastore() {
-		
-		Datastore newDatastore;
-		
-		if (plugin.getConfig().getString("storage-type").equals("yaml")) {
-			// instantiate yaml datastore
-			newDatastore = new DatastoreYAML();
-		}
-		else {
-			// instantiate sqlite datastore
-			newDatastore = new DatastoreSQLite();
-		}
-
-		// initialize new datastore
-		try {
-			newDatastore.initialize();
-		}
-		catch (Exception e) {
-			plugin.getLogger().warning("Could not initialize "
-					+ newDatastore.getDatastoreName() + " datastore. ");
-			if (plugin.debug) {
-				plugin.getLogger().warning(e.getLocalizedMessage());
-			}
-			
-			// if new datastore that failed to initialize was not a yaml datastore, try and fallback to that
-			if (!(newDatastore instanceof DatastoreYAML)) {
-				newDatastore = new DatastoreYAML();
-				try {
-					newDatastore.initialize();
-				}
-				catch (Exception e2) {
-					plugin.getLogger().warning("Could not initialize "
-							+ newDatastore.getDatastoreName() + " datastore. "
-							+ "Death chests will not persist after server restart.");
-					return null;
-				}
-			}
-		}
-		plugin.getLogger().info(newDatastore.getDatastoreName() + " datastore initialized.");
-
-		// return new datastore
-		return newDatastore;
-	}
-
-	
-	/**
-	 * Get reference to current datastore
-	 * @return Datastore
-	 */
-	public Datastore getCurrentDatastore() {
-		return this.datastore;
-	}
-
-	
-	/**
-	 * Set new datastore
-	 * @param newDatastore
-	 */
-	public void setCurrentDatastore(Datastore newDatastore) {
-		this.datastore = newDatastore;
-	}
-
-	
-	/**
-	 * Convert existing datastore files to new datastore
-	 */
-	public void convertDatastores() {
-
-		Datastore currentDatastore = getCurrentDatastore();
-		Datastore oldDatastore;
-
-		// if current datastore is yaml, check for sqlite file to convert 
-		if (currentDatastore instanceof DatastoreYAML) {
-			oldDatastore = new DatastoreSQLite();
-		}
-		// otherwise, check for yaml file to convert
-		else {
-			oldDatastore = new DatastoreYAML();
-		}
-
-		// if old datastore is not null and filename is not null or blank...
-		if (oldDatastore != null && oldDatastore.getFilename() != null && !oldDatastore.getFilename().isEmpty()) {
-
-			// try to convert old datastore to current datastore 
-			File oldDatastoreFile = new File(plugin.getDataFolder() + File.separator + oldDatastore.getFilename());
-			if (oldDatastoreFile.exists()) {
-				try {
-					oldDatastore.initialize();
-				} catch (Exception e) {
-					plugin.getLogger().warning("Could not initialize existing " 
-							+ oldDatastore.getDatastoreName() + "  datastore for conversion.");
-					return;
-				}
-
-				// counter for records converted
-				int blockCount = 0;
-
-				// get all old datastore records
-				ArrayList<DeathChestBlock> allOldRecords = new ArrayList<DeathChestBlock>(oldDatastore.getAllRecords());
-
-				// copy each record to new datastore
-				for (DeathChestBlock deathChestBlock : allOldRecords) {
-					currentDatastore.putRecord(deathChestBlock);
-					blockCount++;
-				}
-
-				// output number of records converted to log
-				plugin.getLogger().info(blockCount + " DeathChestBlocks converted from "
-						+ oldDatastore.getDatastoreName() + " datastore.");
-
-				// close old datastore
-				oldDatastore.close();
-
-				// delete old data file
-				oldDatastoreFile.delete();
-			}
-			// dereference old datastore file
-			oldDatastoreFile = null;
-			
-			// dereference old datastore
-			oldDatastore = null;
 		}
 	}
 

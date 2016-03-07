@@ -28,6 +28,10 @@ messages:
     enabled: true
     string: '&cCould not place death chest.'
 
+  chest-denied-plugin:
+    enabled: true
+    string: '&cDeath chest deployment was prevented by %plugin%.'
+
   inventory-empty:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'

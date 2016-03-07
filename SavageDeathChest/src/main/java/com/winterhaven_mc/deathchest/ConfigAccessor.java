@@ -23,7 +23,8 @@ package com.winterhaven_mc.deathchest;
 */
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,11 +39,9 @@ public class ConfigAccessor {
     private File configFile;
     private FileConfiguration fileConfiguration;
 
-    public ConfigAccessor(JavaPlugin plugin, String fileName) {
+	public ConfigAccessor(JavaPlugin plugin, String fileName) {
         if (plugin == null)
             throw new IllegalArgumentException("plugin cannot be null");
-        if (!plugin.isInitialized())
-            throw new IllegalArgumentException("plugin must be initialized");
         this.plugin = plugin;
         this.fileName = fileName;
         File dataFolder = plugin.getDataFolder();
@@ -55,10 +54,10 @@ public class ConfigAccessor {
         fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
 
         // Look for defaults in the jar
-        InputStream defConfigStream = plugin.getResource(fileName);
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            fileConfiguration.setDefaults(defConfig);
+        Reader defConfigReader = new InputStreamReader(plugin.getResource(fileName));
+        if (defConfigReader != null) {
+        	YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigReader);
+        	fileConfiguration.setDefaults(defConfig);
         }
     }
 

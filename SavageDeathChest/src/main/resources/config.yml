@@ -6,6 +6,9 @@ language: en-US
 # Storage Type ( sqlite | yaml )
 storage-type: sqlite
 
+# Use sound effects
+sound-effects: true
+
 
 # Note: use only one enabled/disabled list, and comment out or remove the other
 # enabled worlds list (use this list for a default-deny world policy)
@@ -21,34 +24,32 @@ disabled-worlds:
   - disabled_world1
   - disabled_world2
 
-# Require players to have a chest in their inventory
-require-chest: false
 
 # Protect chests from other players
 chest-protection: true
 
+# Allow player's killer to access death chest
+killer-looting: false
+
+# Require players to have a chest in their inventory
+require-chest: false
+
 # prevent placing items in death chests
 prevent-item-placement: true
-
-# Check for container access in GriefPrevention claims
-griefprevention-enabled: true
-
-# Check for chest use permission in Towny plots
-towny-enabled: true
-
-# Check for build access in WorldGuard regions
-worldguard-enabled: true
 
 # Distance from death location to search for a valid chest location
 # NOTE: This checks exponentially more locations for each increase in distance
 # For this reason, it is not recommended to set this value too high.
 search-distance: 5
 
-# Place sign on death chests
-chest-signs: true
+# Place chests above the void when players die below level 0
+place-above-void: true
 
 # Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
 expire-time: 60
+
+# Place sign on death chests
+chest-signs: true
 
 # Drop items that don't fit in death chest
 allow-drops: true
@@ -56,14 +57,37 @@ allow-drops: true
 # Allow quick-looting of chests with sneak-punch
 quick-loot: true
 
-# Allow killers to loot chests
-killer-looting: false
-
 # Automatically remove empty chests on closing
 remove-empty: true
 
-# Use sound effects
-sound-effects: true
+# Require build permission from protection plugins when deploying a chest
+# If false, chest access permission will be checked on chest deployment
+require-build-permission: false
+
+# Check protection plugin permissions on death chest placement
+# If a plugin is in this list, its block placement restrictions will be respected when deploying a death chest.
+# If a plugin is not in this list, its block placement restrictions will be ignored when deploying a death chest.
+
+check-on-place:
+  - Factions
+  - GriefPrevention
+  - PreciousStones
+  - Towny
+  - WorldGuard
+
+
+# check protection plugin permissions on death chest access
+# If a plugin is in this list, its chest access restrictions will be respected when accessing a death chest.
+# If a plugin is not in this list, its chest access restrictions will be ignored when accessing a death chest.
+# By default, all protection plugins are ignored for death chest access. Uncomment to change this behavior.
+
+check-on-access:
+#  - Factions
+#  - GriefPrevention
+#  - PreciousStones
+#  - Towny
+#  - WorldGuard
+
 
 # List of blocks that can be replaced by a chest
 replaceable-blocks:

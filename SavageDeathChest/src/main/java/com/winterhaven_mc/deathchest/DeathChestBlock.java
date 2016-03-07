@@ -5,15 +5,20 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class DeathChestBlock {
 	
 	// reference to main class
-	private DeathChestMain plugin = DeathChestMain.plugin;
+	private PluginMain plugin = PluginMain.instance;
 	
 	// the location for this deathchest item
 	private Location location;
@@ -64,7 +69,48 @@ public class DeathChestBlock {
 		// set deathChestBlock metadata
 		this.setMetadata();
 	}
+	
+	/**
+	 * Get death chest block object from existing death chest block
+	 * @param block
+	 */
+	public DeathChestBlock(Block block) {
+		
+		// test if block is death chest block
+		if (DeathChestBlock.isDeathChestBlock(block)) {
+		
+			// set location field
+			this.setLocation(block.getLocation());
 
+			// try to set owner uuid
+			if (block.hasMetadata("deathchest-owner")) {
+				try {
+					this.setOwnerUUID(UUID.fromString(block.getMetadata("deathchest-owner").get(0).asString()));
+				}
+				catch (Exception e) {
+					this.setOwnerUUID(null);
+				}
+			}
+			else {
+				this.setOwnerUUID(null);
+			}
+
+			// try to set killer uuid
+			if (block.hasMetadata("deathchest-killer")) {
+				try {
+					this.setKillerUUID(UUID.fromString(block.getMetadata("deathchest-killer").get(0).asString()));
+				}
+				catch (Exception e) {
+					this.setKillerUUID(null);
+				}
+			}
+			else {
+				this.setKillerUUID(null);
+			}
+		}
+	}
+
+	
 	/**
 	 * Getter method for DeathChestBlock location
 	 * @return location
@@ -187,7 +233,51 @@ public class DeathChestBlock {
 	 */
 	public static boolean isDeathChestBlock(Block block) {
 		
+		if (block == null) {
+			return false;
+		}
+		
 		return block.hasMetadata("deathchest-owner");
+	}
+	
+	/**
+	 * Test if a player is a DeathChestBlockOwner
+	 * @param player
+	 * @param block
+	 * @return
+	 */
+	public static boolean isDeathChestOwner(Player player, Block block) {
+		
+		if (block == null) {
+			return false;
+		}
+		
+		if (block.hasMetadata("deathchest-owner")
+				&& block.getMetadata("deathchest-owner")
+				.get(0).asString().equals(player.getUniqueId().toString())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Test if a player is a DeathChestBlockKiller
+	 * @param player
+	 * @param block
+	 * @return
+	 */
+	public static boolean isDeathChestKiller(Player player, Block block) {
+		
+		if (block == null) {
+			return false;
+		}
+		
+		if (block.hasMetadata("deathchest-killer")
+				&& block.getMetadata("deathchest-killer")
+				.get(0).asString().equals(player.getUniqueId().toString())) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -196,8 +286,37 @@ public class DeathChestBlock {
 	 */
 	public static void removeMetadata(Block block) {
 		
-		block.removeMetadata("deathchest-owner", DeathChestMain.plugin);
-		block.removeMetadata("deathchest-killer", DeathChestMain.plugin);
+		block.removeMetadata("deathchest-owner", PluginMain.instance);
+		block.removeMetadata("deathchest-killer", PluginMain.instance);
+	}
+	
+	public static void openInventory(Player player, Block block) {
+		
+		// if block is null or not a death chest block, do nothing and return
+		if (block == null || ! isDeathChestBlock(block)) {
+			return;
+		}
+		
+		// if block is wall sign, set block to attached block
+		if (block.getType().equals(Material.WALL_SIGN)) {
+		    Sign sign = (Sign)block.getState().getData();
+		    block = block.getRelative(sign.getAttachedFace());
+		}
+		// if block is sign post, set block to one block below
+		else if (block.getType().equals(Material.SIGN_POST)) {
+			block = block.getRelative(0, 1, 0);
+		}
+		
+		// confirm block is a death chest
+		if (! block.getType().equals(Material.CHEST) || ! DeathChestBlock.isDeathChestBlock(block)) {
+			return;
+		}
+		
+		// open chest inventory
+		BlockState state = block.getState();
+		Chest chest = (Chest)state;
+		Inventory inventory = chest.getInventory();
+		player.openInventory(inventory);
 	}
 	
 }

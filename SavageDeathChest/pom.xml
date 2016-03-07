@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven_mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.4.1</version>
+	<version>1.6.1</version>
 	<name>SavageDeathChest</name>
 	<properties>
 		<project.author>Tim Savage</project.author>
@@ -45,8 +45,8 @@
 			<url>http://maven.sk89q.com/artifactory/repo/</url>
 		</repository>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>griefprevention-repo</id>
@@ -60,12 +60,17 @@
 			<id>onarandombox-repo</id>
 			<url>http://repo.onarandombox.com/content/groups/public/</url>
 		</repository>
+		<repository>
+			<id>SacredCoding Artifactory Server</id>
+			<name>SacredCoding Artifactory Server-releases</name>
+			<url>http://repo.sacredlabyrinth.net/artifactory/plugins-release-local/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.6.4-R2.0</version>
+			<version>1.9-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sk89q</groupId>
@@ -80,7 +85,9 @@
 		<dependency>
 			<groupId>me.ryanhamshire</groupId>
 			<artifactId>griefprevention</artifactId>
-			<version>8.2</version>
+			<version>11.7.4</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/GriefPrevention.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.palmergames</groupId>
@@ -88,16 +95,50 @@
 			<version>0.89.2.0</version>
 		</dependency>
 		<dependency>
+			<groupId>net.sacredlabyrinth.Phaed</groupId>
+			<artifactId>PreciousStones</artifactId>
+			<version>9.9.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.onarandombox.multiversecore</groupId>
 			<artifactId>Multiverse-Core</artifactId>
 			<version>2.5</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.bukkit</groupId>
-					<artifactId>craftbukkit</artifactId>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>roadblock</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!--Factions:-->
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <!--the name can't be the same because maven would automatically use the newer version-->
+            <artifactId>factions-2.7</artifactId>
+            <!--2.7+-->
+            <version>2.7.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Factions.jar</systemPath>
+            <optional>true</optional>
+        </dependency>
+        
+        <!--MCore must be available for factions-->
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>mcore</artifactId>
+            <version>2.7.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/MassiveCore.jar</systemPath>
+            <optional>true</optional>
+        </dependency>
+		
 	</dependencies>
 	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

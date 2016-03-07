@@ -2,30 +2,34 @@ package com.winterhaven_mc.deathchest;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class DeathChestMain extends JavaPlugin {
+public final class PluginMain extends JavaPlugin {
 
-	static DeathChestMain plugin;
+	static PluginMain instance;
 	
-	CommandHandler commandHandler;
+	CommandManager commandManager;
 	MessageManager messageManager;
-	public ChestManager chestManager;
+	DataStore dataStore;
+	ChestManager chestManager;
 
 	boolean debug = getConfig().getBoolean("debug");
 
 	public void onEnable() {
 
 		// static reference to plugin instance
-		plugin = this;
+		instance = this;
 
 		// copy default config from jar if it doesn't exist
 		saveDefaultConfig();
 
-		// register command handler
-		commandHandler = new CommandHandler(this);
+		// instantiate command manager
+		commandManager = new CommandManager(this);
 
 		// instantiate message manager
 		messageManager = new MessageManager(this);
-
+		
+		// instantiate datastore
+		dataStore = DataStoreFactory.create();
+		
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
 
@@ -33,12 +37,16 @@ public final class DeathChestMain extends JavaPlugin {
 		new PlayerEventListener(this);
 		new BlockEventListener(this);
 		new InventoryEventListener(this);
+		
+		// log detected protection plugins
+		ProtectionPlugin.reportInstalled();
+		
 	}
 	
 	public void onDisable() {
 		
 		// close datastore
-		chestManager.closeDatastore();
+		dataStore.close();
 	}
 
 }

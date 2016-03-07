@@ -6,39 +6,55 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
-public class DatastoreYAML extends Datastore {
-	
+
+public class DataStoreYAML extends DataStore {
+
 	// reference to main class
-	private DeathChestMain plugin = DeathChestMain.plugin;
-	
-	// datastore name
-	static final String NAME = "YAML";
-	
-	// data file filename
-	static final String FILENAME = "deathchests.yml";
-	
+	private PluginMain plugin;
+
 	// ConfigAccessor for yml datafile
-	private ConfigAccessor dataFile = new ConfigAccessor(plugin, FILENAME);
+	private ConfigAccessor dataFile;
 
 
+	/**
+	 * Class constructor
+	 * @param plugin
+	 */
+	DataStoreYAML (PluginMain plugin) {
+
+		// reference to main class
+		this.plugin = plugin;
+
+		// set datastore type
+		this.type = DataStoreType.YAML;
+
+		// set filename
+		this.filename = "deathchests.yml";
+	}
+
+	@Override
 	void initialize() throws Exception {
-		
+
+		// if data store is already initialized, do nothing and return
+		if (this.isInitialized()) {
+			plugin.getLogger().info(this.getName() + " datastore already initialized.");
+			return;
+		}
+
+		// instantiate config accessor for datafile
+		dataFile = new ConfigAccessor(plugin, filename);
+
 		// create default data file from embedded resource if it doesn't already exist
 		dataFile.saveDefaultConfig();
 		
+		// set initialized true
+		setInitialized(true);
+		plugin.getLogger().info(this.getName() + " datastore initialized.");
 	}
 
-
-	void close() {
-		
-		// save data file
-		dataFile.saveConfig();
-
-	}
-
-	
+	@Override
 	DeathChestBlock getRecord(Location location) {
-		
+
 		String key = locationToString(location);
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
 
@@ -46,7 +62,7 @@ public class DatastoreYAML extends Datastore {
 		if (dataFile.getConfig().get(key) == null) {
 			return null;
 		}
-		
+
 		// get ownerid from stored record, or set to null if invalid
 		UUID owneruuid = null;
 		try {
@@ -70,7 +86,7 @@ public class DatastoreYAML extends Datastore {
 			deleteRecord(location);
 			return null;
 		}
-		
+
 		// create a new DeathChestBlock object to return
 		DeathChestBlock deathChestBlock = new DeathChestBlock();
 		deathChestBlock.setOwnerUUID(owneruuid);
@@ -81,15 +97,15 @@ public class DatastoreYAML extends Datastore {
 		return deathChestBlock;
 	}
 
-
+	@Override
 	ArrayList<DeathChestBlock> getAllRecords() {
-		
+
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
 
 		ArrayList<DeathChestBlock> result = new ArrayList<DeathChestBlock>();
-		
+
 		for (String key : dataFile.getConfig().getKeys(false)) {
-			
+
 			DeathChestBlock deathChestBlock = getRecord(stringToLocation(key));
 			if (deathChestBlock != null) {
 				result.add(deathChestBlock);
@@ -105,12 +121,12 @@ public class DatastoreYAML extends Datastore {
 		return result;
 	}
 
-
+	@Override
 	void putRecord(DeathChestBlock deathChestBlock) {
-		
+
 		// create key based on block location
 		String key = locationToString(deathChestBlock.getLocation());
-		
+
 		// create string from owner uuid
 		String owneruuid = null;
 		try {
@@ -123,13 +139,13 @@ public class DatastoreYAML extends Datastore {
 			}
 			owneruuid = "";
 		}
-		
+
 		// if owneruuid is empty, this is not a valid record
 		if (owneruuid.isEmpty()) {
 			plugin.getLogger().warning("[YAML putRecord] OwnerUUID string is empty. Record not inserted.");
 			return;
 		}
-		
+
 		// create string from killer uuid, or set to empty string if no killer uuid exists
 		String killeruuid = null;
 		try {
@@ -138,14 +154,14 @@ public class DatastoreYAML extends Datastore {
 		catch (Exception e) {
 			killeruuid = "";
 		}
-		
+
 		// write record to dataFile in memory object
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
 		dataFile.getConfig().createSection(key);
 		dataFile.getConfig().set(key + pathSeparator + "owneruuid", owneruuid);
 		dataFile.getConfig().set(key + pathSeparator + "killeruuid", killeruuid);
 		dataFile.getConfig().set(key + pathSeparator + "expiration", deathChestBlock.getExpiration());
-		
+
 		// save in memory object to disk
 		dataFile.saveConfig();
 
@@ -156,40 +172,63 @@ public class DatastoreYAML extends Datastore {
 	 * Delete record by location
 	 * @param location
 	 */
+	@Override
 	void deleteRecord(Location location) {
-		
 		String key = locationToString(location);
 		dataFile.getConfig().set(key, null);
 		dataFile.saveConfig();
 	}
 
-	
+
+	@Override
+	void sync() {
+		dataFile.saveConfig();
+	}
+
+	@Override
+	void close() {
+		if (isInitialized()) {
+			// save data to file
+			dataFile.saveConfig();
+
+			// set initialized to false
+			setInitialized(false);
+
+			// output log message
+			plugin.getLogger().info(this.getName() + " datastore closed.");
+		}
+	}
+
+
+	@Override
+	void delete() {
+		// delete this datastore file
+		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + getFilename());
+		if (dataStoreFile.exists()) {
+			dataStoreFile.delete();
+		}
+	}
+
+
+	@Override
+	boolean exists() {
+		// get path name to this datastore file
+		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + getFilename());
+		return dataStoreFile.exists();
+	}
+
+
 	/**
-	 * Delete record by string
+	 * Delete record by key
 	 * @param key
 	 */
 	void deleteRecord(String key) {
-		
+
 		dataFile.getConfig().set(key, null);		
 		dataFile.saveConfig();
 	}
 
-	String getDatastoreName() {
-		return NAME;
-	}
-	
-	String getFilename() {
-		return FILENAME;
-	}
-	
-	void deleteFile() {
-		
-		File file = new File(plugin.getDataFolder() + File.separator + FILENAME);
-		file.delete();
-		
-	}
 
-	
 	/**
 	 * Create a unique key string based on a location
 	 * 
@@ -202,42 +241,42 @@ public class DatastoreYAML extends Datastore {
 		if (location == null) {
 			return null;
 		}
-		
+
 		// parse location elements into distinct variables
 		String worldname = location.getWorld().getName();
 		String x = String.valueOf(location.getBlockX());
 		String y = String.valueOf(location.getBlockY());
 		String z = String.valueOf(location.getBlockZ());
-		
+
 		// concatenate location elements into string
 		String locationString = worldname + "|" + x + "|" + y + "|" + z;
 
 		// return concatenated string
 		return locationString;
 	}
-	
-	
+
+
 	/**
 	 * create a new location object from a given key
 	 * @param locationString
 	 * @return location
 	 */
 	private Location stringToLocation(String locationString) {
-		
+
 		// split location string into distinct elements
 		String[] elements = locationString.split("\\|");
-		
+
 		// if location string did not split into 4 fields, return null location
 		if (elements.length < 4) {
 			return null;
 		}
-		
+
 		// assign location elements to variables
 		String worldname = elements[0];
 		int x = Integer.parseInt(elements[1]);
 		int y = Integer.parseInt(elements[2]);
 		int z = Integer.parseInt(elements[3]);
-		
+
 		// check that world exists
 		if (plugin.getServer().getWorld(worldname) == null) {
 			// world does not exist, so output log message and return null
