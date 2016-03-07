@@ -387,7 +387,7 @@ public class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(result.getLocation().getYaw()));
+		chestData.setFacingDirection(chestUtilities.getCardinalDirection(result.getLocation().getYaw()));
 		
 		chest.update();
 		
@@ -488,7 +488,7 @@ public class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(result.getLocation().getYaw()));
+		chestData.setFacingDirection(chestUtilities.getCardinalDirection(result.getLocation().getYaw()));
 
 		chest.update();
 		
@@ -521,7 +521,7 @@ public class ChestManager {
 		Location location = chestUtilities.locationToRight(result.getLocation());
 		
 		// if block at second chest location is not valid, send message and return remaining_items
-		SearchResult result2 = chestUtilities.isValidDoubleLocation(player, location);
+		SearchResult result2 = chestUtilities.isValidRightChestLocation(player, location);
 		if (result2 == null || result2 != SearchResult.SUCCESS) {
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
 			return remaining_items;
@@ -538,7 +538,7 @@ public class ChestManager {
 		
 		// set chest direction
 		chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestUtilities.getDirection(location.getYaw()));
+		chestData.setFacingDirection(chestUtilities.getCardinalDirection(location.getYaw()));
 		
 		// update blockstate
 		chest.update();
@@ -590,7 +590,7 @@ public class ChestManager {
 		float yaw = player.getLocation().getYaw();
 		
 		// get block adjacent to chest facing player direction
-		Block signblock = chestblock.getRelative(chestUtilities.getDirection(yaw));
+		Block signblock = chestblock.getRelative(chestUtilities.getCardinalDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
 		if (chestUtilities.isValidSignLocation(player,signblock.getLocation())) {
@@ -625,7 +625,7 @@ public class ChestManager {
 		
 		// set sign facing direction
 		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signblockState.getData();
-		signData.setFacingDirection(chestUtilities.getDirection(yaw));
+		signData.setFacingDirection(chestUtilities.getCardinalDirection(yaw));
 		sign.setData(signData);
 		
 		// update sign block with text and direction
