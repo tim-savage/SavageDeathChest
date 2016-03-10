@@ -44,7 +44,7 @@ public class ConfigAccessor {
 
 		// check if passed reference to plugin is null
 		if (plugin == null) {
-			throw new IllegalArgumentException("plugin cannot be null");
+			throw new IllegalArgumentException("plugin cannot be null.");
 		}
 
 		this.plugin = plugin;
@@ -75,13 +75,16 @@ public class ConfigAccessor {
 			defaultConfigReader = new InputStreamReader(plugin.getResource(fileName),"UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			plugin.getLogger().info("The embedded resource contained in " 
-					+ "the plugin jar file is in an unsupported encoding."
+					+ "the plugin jar file has an unsupported encoding."
 					+ "It should be encoded with UTF-8.");
 		}
 		
 		if (defaultConfigReader != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defaultConfigReader);
-			fileConfiguration.setDefaults(defConfig);
+			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultConfigReader);
+			fileConfiguration.setDefaults(defaultConfig);
+		}
+		else {
+			plugin.getLogger().warning("The default resource in the plugin jar could not be read.");
 		}
 	}
 

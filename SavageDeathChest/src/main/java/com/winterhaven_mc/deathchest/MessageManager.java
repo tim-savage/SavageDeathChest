@@ -23,6 +23,7 @@ public class MessageManager {
 	MultiverseCore mvCore;
 	Boolean mvEnabled = false;
 	private String language;
+	private final String directoryName = "language";
 
 	
 	/**
@@ -42,7 +43,7 @@ public class MessageManager {
 
 		// instantiate custom configuration manager
 		try {
-			messages = new ConfigAccessor(plugin, "language" + File.separator + language + ".yml");
+			messages = new ConfigAccessor(plugin, directoryName + File.separator + language + ".yml");
 		} catch (IOException e) {
 			plugin.getLogger().severe(e.getLocalizedMessage());
 		}
@@ -193,7 +194,7 @@ public class MessageManager {
 		// if configured language has changed, instantiate new messages object
 		if (!newLanguage.equals(this.language)) {
 			try {
-				this.messages = new ConfigAccessor(plugin, "language" + File.separator + newLanguage + ".yml");
+				this.messages = new ConfigAccessor(plugin, directoryName + File.separator + newLanguage + ".yml");
 				this.language = newLanguage;
 				plugin.getLogger().info("New language " + this.language + " enabled.");
 			} catch (IOException e) {
@@ -225,13 +226,13 @@ public class MessageManager {
 					break;
 				}
 				String name = e.getName();
-				if (name.startsWith("language" + '/') && name.endsWith(".yml")) {
+				if (name.startsWith(directoryName + '/') && name.endsWith(".yml")) {
 					// add filename to filelist, replacing / with system file separator character
 					filelist.add(name.replace('/', File.separatorChar));
 				}
 			}
 		} catch (IOException e1) {
-			plugin.getLogger().warning("Could not read language files from jar.");
+			plugin.getLogger().warning("Could not read the language resource files from the plugin jar.");
 		}
 	
 		// iterate over list of language files and install from jar if not already present
@@ -241,8 +242,8 @@ public class MessageManager {
 			if (new File(plugin.getDataFolder() + File.separator + filename).exists()) {
 				continue;
 			}
+			plugin.getLogger().info("Installing localization file: " + filename);
 			plugin.saveResource(filename, false);
-			plugin.getLogger().info("Installed localization file: " + filename);
 		}
 	}
 
@@ -250,7 +251,7 @@ public class MessageManager {
 		
 		// check if localization file for configured language exists, if not then fallback to en-US
 		File languageFile = new File(plugin.getDataFolder() 
-				+ File.separator + "language" 
+				+ File.separator + directoryName 
 				+ File.separator + language + ".yml");
 		
 		if (languageFile.exists()) {
