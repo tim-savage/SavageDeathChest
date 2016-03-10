@@ -23,6 +23,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/savage/Projects/Libraries/PreciousStones.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
