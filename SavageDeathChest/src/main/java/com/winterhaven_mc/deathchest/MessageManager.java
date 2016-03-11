@@ -227,9 +227,8 @@ public class MessageManager {
 				}
 				String name = e.getName();
 				if (name.startsWith(directoryName + '/') && name.endsWith(".yml")) {
-					// add filename to filelist, replacing / with system file separator character
-					// because embedded files always have slashes, but we want platform specific separators
-					filelist.add(name.replace('/', File.separatorChar));
+					// add filename to filelist
+					filelist.add(name);
 				}
 			}
 		} catch (IOException e1) {
@@ -240,7 +239,7 @@ public class MessageManager {
 		for (String filename : filelist) {
 
 			// this check prevents a warning message when files are already installed
-			if (new File(plugin.getDataFolder() + File.separator + filename).exists()) {
+			if (new File(plugin.getDataFolder() + File.separator + filename.replace('/', File.separatorChar)).exists()) {
 				continue;
 			}
 			plugin.getLogger().info("Installing localization file: " + filename);

@@ -40,6 +40,12 @@ public class ConfigAccessor {
 	private File configFile;
 	private FileConfiguration fileConfiguration;
 
+	/**
+	 * Class constructor
+	 * @param plugin
+	 * @param fileName (will always contain system file separator character if there are subdirectories) 
+	 * @throws IOException
+	 */
 	public ConfigAccessor(JavaPlugin plugin, String fileName) throws IOException {
 
 		// check if passed reference to plugin is null
@@ -72,7 +78,7 @@ public class ConfigAccessor {
 		Reader defaultConfigReader = null;
 		
 		try {
-			defaultConfigReader = new InputStreamReader(plugin.getResource(fileName),"UTF-8");
+			defaultConfigReader = new InputStreamReader(plugin.getResource(fileName.replace(File.separatorChar, '/')),"UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			plugin.getLogger().info("The embedded resource contained in " 
 					+ "the plugin jar file has an unsupported encoding."
@@ -86,8 +92,16 @@ public class ConfigAccessor {
 		else {
 			plugin.getLogger().warning("The default resource in the plugin jar could not be read.");
 		}
+		
+		// try to close the reader
+		try {
+			defaultConfigReader.close();
+		} catch (IOException e) {
+			plugin.getLogger().warning("An error occured while trying to close the resource file.");
+		}
 	}
 
+	
 	public FileConfiguration getConfig() {
 		if (fileConfiguration == null) {
 			this.reloadConfig();
