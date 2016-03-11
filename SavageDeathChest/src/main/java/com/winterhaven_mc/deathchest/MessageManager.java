@@ -228,6 +228,7 @@ public class MessageManager {
 				String name = e.getName();
 				if (name.startsWith(directoryName + '/') && name.endsWith(".yml")) {
 					// add filename to filelist, replacing / with system file separator character
+					// because embedded files always have slashes, but we want platform specific separators
 					filelist.add(name.replace('/', File.separatorChar));
 				}
 			}
