@@ -23,6 +23,7 @@ public class MessageManager {
 	MultiverseCore mvCore;
 	Boolean mvEnabled = false;
 	private String language;
+	private final String directoryName = "language";
 
 	
 	/**
@@ -30,6 +31,8 @@ public class MessageManager {
 	 * @param plugin
 	 */
     public MessageManager(PluginMain plugin) {
+    	
+    	// reference to main
         this.plugin = plugin;
         
 		// install localization files
@@ -39,7 +42,11 @@ public class MessageManager {
 		this.language = languageFileExists(plugin.getConfig().getString("language"));
 
 		// instantiate custom configuration manager
-		messages = new ConfigAccessor(plugin, "language" + File.separator + language + ".yml");
+		try {
+			messages = new ConfigAccessor(plugin, directoryName + File.separator + language + ".yml");
+		} catch (IOException e) {
+			plugin.getLogger().severe(e.getLocalizedMessage());
+		}
 		
 		// initialize messageCooldownMap
 		this.messageCooldownMap = new ConcurrentHashMap<UUID,ConcurrentHashMap<String,Long>>();
@@ -186,9 +193,13 @@ public class MessageManager {
 		
 		// if configured language has changed, instantiate new messages object
 		if (!newLanguage.equals(this.language)) {
-			this.messages = new ConfigAccessor(plugin, "language" + File.separator + newLanguage + ".yml");
-			this.language = newLanguage;
-			plugin.getLogger().info("New language " + this.language + " enabled.");
+			try {
+				this.messages = new ConfigAccessor(plugin, directoryName + File.separator + newLanguage + ".yml");
+				this.language = newLanguage;
+				plugin.getLogger().info("New language " + this.language + " enabled.");
+			} catch (IOException e) {
+				plugin.getLogger().severe(e.getLocalizedMessage());
+			}
 		}
 		
 		// reload language file
@@ -215,22 +226,24 @@ public class MessageManager {
 					break;
 				}
 				String name = e.getName();
-				if (name.startsWith("language" + '/') && name.endsWith(".yml")) {
+				if (name.startsWith(directoryName + '/') && name.endsWith(".yml")) {
+					// add filename to filelist
 					filelist.add(name);
 				}
 			}
 		} catch (IOException e1) {
-			plugin.getLogger().warning("Could not read language files from jar.");
+			plugin.getLogger().warning("Could not read the language resource files from the plugin jar.");
 		}
 	
 		// iterate over list of language files and install from jar if not already present
 		for (String filename : filelist) {
+
 			// this check prevents a warning message when files are already installed
-			if (new File(plugin.getDataFolder() + File.separator + filename).exists()) {
+			if (new File(plugin.getDataFolder() + File.separator + filename.replace('/', File.separatorChar)).exists()) {
 				continue;
 			}
+			plugin.getLogger().info("Installing localization file: " + filename);
 			plugin.saveResource(filename, false);
-			plugin.getLogger().info("Installed localization file:  " + filename);
 		}
 	}
 
@@ -238,7 +251,7 @@ public class MessageManager {
 		
 		// check if localization file for configured language exists, if not then fallback to en-US
 		File languageFile = new File(plugin.getDataFolder() 
-				+ File.separator + "language" 
+				+ File.separator + directoryName 
 				+ File.separator + language + ".yml");
 		
 		if (languageFile.exists()) {

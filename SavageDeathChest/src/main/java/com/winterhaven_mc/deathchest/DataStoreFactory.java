@@ -60,9 +60,9 @@ public class DataStoreFactory {
 			newDataStore = createSqlite();
 		}
 		
-		// if old data store was passed, convert to new data store
-		if (oldDataStore != null) {
-			convertDataStore(oldDataStore, newDataStore);
+		// if old data store was passed and it exists, convert to new data store
+		if (oldDataStore != null && oldDataStore.exists()) {
+				convertDataStore(oldDataStore, newDataStore);
 		}
 		else {
 			convertAll(newDataStore);
@@ -217,7 +217,7 @@ public class DataStoreFactory {
 			
 			// add additional datastore types here as they become available
 			
-			if (oldDataStore != null) {
+			if (oldDataStore != null && oldDataStore.exists()) {
 				convertDataStore(oldDataStore, newDataStore);
 			}
 		}
