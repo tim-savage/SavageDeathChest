@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven_mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.6.2</version>
+	<version>1.6.3</version>
 	<name>SavageDeathChest</name>
 	<properties>
 		<project.author>Tim Savage</project.author>
@@ -35,6 +35,7 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>plugin.yml</include>
+					<include>config.yml</include>
 				</includes>
 			</resource>
 		</resources>
@@ -135,7 +136,11 @@
             <systemPath>${project.basedir}/lib/MassiveCore.jar</systemPath>
             <optional>true</optional>
         </dependency>
-		
+        <dependency>
+        	<groupId>com.winterhaven-mc</groupId>
+        	<artifactId>ProClaim</artifactId>
+        	<version>1.0</version>
+        </dependency>
 	</dependencies>
 	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

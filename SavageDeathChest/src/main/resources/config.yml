@@ -1,4 +1,4 @@
-#This is the SavageDeathChest config file
+# This is the config file for ${project.name} v${project.version}
 
 # Localization language
 language: en-US

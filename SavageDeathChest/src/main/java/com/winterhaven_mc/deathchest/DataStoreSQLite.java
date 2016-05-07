@@ -62,18 +62,6 @@ public class DataStoreSQLite extends DataStore {
 			return;
 		}
 
-		// sql statement to create table if it doesn't already exist
-		final String createBlockTable = "CREATE TABLE IF NOT EXISTS blocks (" +
-				"blockid INTEGER PRIMARY KEY, " +
-				"ownerid VARCHAR(36) NOT NULL, " +
-				"killerid VARCHAR(36), " +
-				"worldname VARCHAR(255) NOT NULL, " +
-				"x INTEGER, " +
-				"y INTEGER, " +
-				"z INTEGER, " +
-				"expiration INTEGER, " +
-				"UNIQUE (worldname,x,y,z) )";
-
 		// register the driver 
 		final String jdbcDriverName = "org.sqlite.JDBC";
 
@@ -89,7 +77,7 @@ public class DataStoreSQLite extends DataStore {
 		Statement statement = connection.createStatement();
 
 		// execute table creation statement
-		statement.executeUpdate(createBlockTable);
+		statement.executeUpdate(Queries.getQuery("CreateBlockTable"));
 
 		// set initialized true
 		setInitialized(true);
@@ -101,17 +89,12 @@ public class DataStoreSQLite extends DataStore {
 	@Override
 	DeathChestBlock getRecord(Location location) {
 
-		final String sqlGetDeathChestBlock = "SELECT * FROM blocks "
-				+ "WHERE worldname = ? "
-				+ "AND x = ? "
-				+ "AND y = ? "
-				+ "AND z = ?";
-
 		DeathChestBlock deathChestBlock = new DeathChestBlock();
 
 		try {
 
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlGetDeathChestBlock);
+			PreparedStatement preparedStatement = 
+					connection.prepareStatement(Queries.getQuery("SelectDeathChestBlock"));
 
 			preparedStatement.setString(1, location.getWorld().getName());
 			preparedStatement.setInt(2, location.getBlockX());
@@ -171,12 +154,10 @@ public class DataStoreSQLite extends DataStore {
 
 		ArrayList<DeathChestBlock> results = new ArrayList<DeathChestBlock>();
 
-		// sql statement to retrieve all records
-		final String sqlSelectAllRecords = "SELECT * FROM blocks";
-
 		try {
 
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectAllRecords);
+			PreparedStatement preparedStatement = 
+					connection.prepareStatement(Queries.getQuery("SelectAllDeathChestBlocks"));
 
 			// execute sql query
 			ResultSet rs = preparedStatement.executeQuery();
@@ -252,11 +233,6 @@ public class DataStoreSQLite extends DataStore {
 	@Override
 	void putRecord(final DeathChestBlock deathChestBlock) {
 
-		// sql statement to insert or replace record
-		final String sqlInsertDeathChestBlock = "INSERT OR REPLACE INTO blocks "
-				+ "(ownerid,killerid,worldname,x,y,z,expiration) "
-				+ "values(?,?,?,?,?,?,?)";
-
 		// catch invalid uuid exceptions, and set to null
 		String ownerid = null;
 		String killerid = null;
@@ -277,7 +253,8 @@ public class DataStoreSQLite extends DataStore {
 
 		try {
 			// create prepared statement
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertDeathChestBlock);
+			PreparedStatement preparedStatement = 
+					connection.prepareStatement(Queries.getQuery("InsertDeathChestBlock"));
 
 			preparedStatement.setString(1, ownerid);
 			preparedStatement.setString(2, killerid);
@@ -312,12 +289,10 @@ public class DataStoreSQLite extends DataStore {
 	@Override
 	void deleteRecord(Location location) {
 
-		final String sqlDeleteDeathChestBlock = "DELETE FROM blocks "
-				+ "WHERE worldname = ? AND x = ? AND y = ? and z =?";
-
 		try {
 			// create prepared statement
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteDeathChestBlock);
+			PreparedStatement preparedStatement = 
+					connection.prepareStatement(Queries.getQuery("DeleteDeathChestBlock"));
 
 			preparedStatement.setString(1, location.getWorld().getName());
 			preparedStatement.setInt(2, location.getBlockX());
@@ -338,6 +313,45 @@ public class DataStoreSQLite extends DataStore {
 			plugin.getLogger().warning("An error occurred while attempting to delete a record from the SQLite database.");
 			plugin.getLogger().warning(e.getMessage());
 
+			// if debugging is enabled, output stack trace
+			if (plugin.debug) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	/**
+	 * Delete expired records in world <i>worldName</i>
+	 * @param worldName
+	 */
+	void deleteExpiredRecords(String worldName) {
+	
+		// current time in milliseconds
+		final Long currentTime = System.currentTimeMillis();
+	
+		try {
+			// create prepared statement
+			PreparedStatement preparedStatement = 
+					connection.prepareStatement(Queries.getQuery("DeleteExpiredDeathChestBlock"));
+	
+			preparedStatement.setString(1, worldName);
+			preparedStatement.setLong(2, currentTime);
+	
+			// execute prepared statement
+			int rowsAffected = preparedStatement.executeUpdate();
+	
+			// output debugging information
+			if (plugin.debug) {
+				plugin.getLogger().info(rowsAffected + " rows deleted.");
+			}
+		}
+		catch (SQLException e) {
+	
+			// output simple error message
+			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
+			plugin.getLogger().warning(e.getMessage());
+	
 			// if debugging is enabled, output stack trace
 			if (plugin.debug) {
 				e.printStackTrace();
@@ -393,47 +407,6 @@ public class DataStoreSQLite extends DataStore {
 		// get path name to old data store file
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		return dataStoreFile.exists();
-	}
-
-
-	/**
-	 * Delete expired records in world <i>worldName</i>
-	 * @param worldName
-	 */
-	void deleteExpiredRecords(String worldName) {
-
-		final String sqlDeleteDeathChestBlock = "DELETE FROM blocks "
-				+ "WHERE worldname = ? AND expiration > ?";
-
-		// current time in milliseconds
-		final Long currentTime = System.currentTimeMillis();
-
-		try {
-			// create prepared statement
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteDeathChestBlock);
-
-			preparedStatement.setString(1, worldName);
-			preparedStatement.setLong(2, currentTime);
-
-			// execute prepared statement
-			int rowsAffected = preparedStatement.executeUpdate();
-
-			// output debugging information
-			if (plugin.debug) {
-				plugin.getLogger().info(rowsAffected + " rows deleted.");
-			}
-		}
-		catch (SQLException e) {
-
-			// output simple error message
-			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
-			plugin.getLogger().warning(e.getMessage());
-
-			// if debugging is enabled, output stack trace
-			if (plugin.debug) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 }

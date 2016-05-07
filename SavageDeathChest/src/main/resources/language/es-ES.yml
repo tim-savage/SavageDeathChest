@@ -3,6 +3,8 @@ hour: 'hora'
 hour_plural: 'horas'
 minute: 'minuto'
 minute_plural: 'minutos'
+second: 'segundo'
+second_plural: 'segundos'
 unlimited: 'tiempo ilimitado'
 
 # Custom Messages
