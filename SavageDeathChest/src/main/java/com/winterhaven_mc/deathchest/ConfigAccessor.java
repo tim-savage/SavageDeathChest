@@ -46,7 +46,7 @@ public class ConfigAccessor {
 	 * @param fileName (will always contain system file separator character if there are subdirectories) 
 	 * @throws IOException
 	 */
-	public ConfigAccessor(JavaPlugin plugin, String fileName) throws IOException {
+	public ConfigAccessor(final JavaPlugin plugin, final String fileName) {
 
 		// check if passed reference to plugin is null
 		if (plugin == null) {
@@ -60,7 +60,7 @@ public class ConfigAccessor {
 		File dataFolder = plugin.getDataFolder();
 		
 		if (dataFolder == null) {
-			throw new IOException("The plugin data folder does not exist or cannot be accessed.");
+			throw new IllegalStateException();
 		}
 
 		// create new file object

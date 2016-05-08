@@ -42,11 +42,7 @@ public class MessageManager {
 		this.language = languageFileExists(plugin.getConfig().getString("language"));
 
 		// instantiate custom configuration manager
-		try {
-			messages = new ConfigAccessor(plugin, directoryName + File.separator + language + ".yml");
-		} catch (IOException e) {
-			plugin.getLogger().severe(e.getLocalizedMessage());
-		}
+		messages = new ConfigAccessor(plugin, directoryName + File.separator + language + ".yml");
 		
 		// initialize messageCooldownMap
 		this.messageCooldownMap = new ConcurrentHashMap<UUID,ConcurrentHashMap<String,Long>>();
@@ -193,13 +189,9 @@ public class MessageManager {
 		
 		// if configured language has changed, instantiate new messages object
 		if (!newLanguage.equals(this.language)) {
-			try {
-				this.messages = new ConfigAccessor(plugin, directoryName + File.separator + newLanguage + ".yml");
-				this.language = newLanguage;
-				plugin.getLogger().info("New language " + this.language + " enabled.");
-			} catch (IOException e) {
-				plugin.getLogger().severe(e.getLocalizedMessage());
-			}
+			this.messages = new ConfigAccessor(plugin, directoryName + File.separator + newLanguage + ".yml");
+			this.language = newLanguage;
+			plugin.getLogger().info("New language " + this.language + " enabled.");
 		}
 		
 		// reload language file
@@ -226,27 +218,26 @@ public class MessageManager {
 					break;
 				}
 				String name = e.getName();
-				if (name.startsWith(directoryName + '/') && name.endsWith(".yml")) {
-					// add filename to filelist
+				if (name.startsWith("language" + '/') && name.endsWith(".yml")) {
 					filelist.add(name);
 				}
 			}
 		} catch (IOException e1) {
-			plugin.getLogger().warning("Could not read the language resource files from the plugin jar.");
+			plugin.getLogger().warning("Could not read language files from jar.");
 		}
 	
 		// iterate over list of language files and install from jar if not already present
 		for (String filename : filelist) {
-
 			// this check prevents a warning message when files are already installed
-			if (new File(plugin.getDataFolder() + File.separator + filename.replace('/', File.separatorChar)).exists()) {
+			if (new File(plugin.getDataFolder() + File.separator + filename).exists()) {
 				continue;
 			}
-			plugin.getLogger().info("Installing localization file: " + filename);
 			plugin.saveResource(filename, false);
+			plugin.getLogger().info("Installed localization file:  " + filename);
 		}
 	}
 
+	
 	private String languageFileExists(String language) {
 		
 		// check if localization file for configured language exists, if not then fallback to en-US

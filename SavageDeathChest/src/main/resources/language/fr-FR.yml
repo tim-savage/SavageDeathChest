@@ -1,0 +1,70 @@
+# Traduction des chaînes de temps
+hour: 'heure'
+hour_plural: 'heures'
+minute: 'minute'
+minute_plural: 'minutes'
+unlimited: 'temps illimité'
+
+# Messages personnalisés
+#
+# Substitutions de variables:
+# %itemname%			Nom de l'item configuré auparavant
+# %playername%          Nom du joueur
+# %playernickname%      Pseudo du joueur
+# %playerdisplayname%   Nom d'affichage du joueur, incluant préfix/suffix
+# %worldname%           Nom du monde dans lequel le joueur est mort
+# %expiretime%			Temps restant avant la disparition du coffre
+
+messages:
+  chest-success:
+    enabled: true
+    string: '&cUn coffre contenant votre inventaire a été placé. Vous avez %expiretime% avant sa disparition'
+
+  doublechest-partial-success:
+    enabled: true
+    string: '&cSeul un coffre peut être placé à l''endroit de votre mort. Certains items ont donc été éparpillés à terre.'
+
+  chest-denied:
+    enabled: true
+    string: '&cImpossible de placer le coffre contenant l''inventaire lors de votre mort'
+
+  chest-denied-plugin:
+    enabled: true
+    string: '&cL''apparition du coffre contenant l''inventaire de votre mort a été empéché par %plugin%'
+
+  inventory-empty:
+    enabled: true
+    string: '&cVous aviez votre inventaire vide, aucun coffre n''a donc été placé'
+
+  no-room:
+    enabled: true
+    string: '&cIl n''y avait pas d''endroit où placer le coffre contenant votre inventaire'
+
+  no-chest-in-inventory:
+    enabled: true
+    string: '&cLors de votre mort, vous n''aviez pas de coffre dans votre inventaire'
+
+  death-broadcast:
+    enabled: true
+    string: '&4%playername%&r est mort. Un coffre contenant son inventaire est apparu'
+
+  not-owner:
+    enabled: true
+    string: '&cCe coffre de joueur mort ne vous appartient pas'
+
+  chest-expired:
+    enabled: true
+    string: '&cVotre coffre contenant l''inventaire lors de votre mort vient de disparaître'
+
+  creative-mode:
+    enabled: true
+    string: '&cVotre inventaire du mode créatif n''est pas sauvegardé dans un coffre lors de votre mort'
+  
+  no-creative-access:
+    enabled: true
+    string: '&cImpossible d''accéder aux coffres de joueurs mort en mode créatif'
+  
+  chest-currently-open:
+    enabled: true
+    string: '&cLe coffre contenant votre inventaire lors de votre mort est en train d''être ouvert par un autre joueur!'
+
