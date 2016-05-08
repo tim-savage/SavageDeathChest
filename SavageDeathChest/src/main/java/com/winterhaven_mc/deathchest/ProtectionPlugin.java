@@ -1,10 +1,5 @@
 package com.winterhaven_mc.deathchest;
 
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,15 +8,21 @@ import org.bukkit.plugin.Plugin;
 
 import com.massivecraft.factions.engine.EngineMain;
 import com.massivecraft.massivecore.ps.PS;
+
 import com.palmergames.bukkit.towny.object.TownyPermission;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.winterhaven_mc.proclaim.SimpleAPI;
-import com.winterhaven_mc.roadblock.PublicAPI;
+
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 public enum ProtectionPlugin {
 	
@@ -174,7 +175,7 @@ public enum ProtectionPlugin {
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
 				try {
-					return SimpleAPI.hasBuildTrust(player, location);
+					return com.winterhaven_mc.proclaim.SimpleAPI.hasBuildTrust(player, location);
 				}
 				catch (Exception e) {
 					if (plugin.debug) {
@@ -192,7 +193,7 @@ public enum ProtectionPlugin {
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
 				try {
-					return SimpleAPI.hasContainerTrust(player, location);
+					return com.winterhaven_mc.proclaim.SimpleAPI.hasContainerTrust(player, location);
 				}
 				catch (Exception e) {
 					if (plugin.debug) {
@@ -217,7 +218,7 @@ public enum ProtectionPlugin {
 				try {
 					int maxDepth = plugin.getConfig().getInt("search-distance");
 					
-					if (PublicAPI.isRoadBelow(location, maxDepth)) {
+					if (com.winterhaven_mc.roadblock.SimpleAPI.isRoadBelow(location, maxDepth)) {
 						return false;
 					}
 				}
@@ -240,7 +241,7 @@ public enum ProtectionPlugin {
 				try {
 					int maxDepth = plugin.getConfig().getInt("search-distance");
 					
-					if (PublicAPI.isRoadBelow(location, maxDepth)) {
+					if (com.winterhaven_mc.roadblock.SimpleAPI.isRoadBelow(location, maxDepth)) {
 						return false;
 					}
 				}

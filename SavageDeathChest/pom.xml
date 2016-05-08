@@ -110,9 +110,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>roadblock</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<artifactId>RoadBlock</artifactId>
+			<version>1.0</version>
 		</dependency>
 		
 		<!--Factions:-->
