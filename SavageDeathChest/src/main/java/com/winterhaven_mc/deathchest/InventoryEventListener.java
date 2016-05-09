@@ -22,15 +22,19 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryEventListener implements Listener {
 
 	// reference to main class
-	private PluginMain plugin;
+	private final PluginMain plugin;
 
 	
 	/** class constructor
 	 * 
 	 * @param plugin reference to main class
 	 */
-	public InventoryEventListener(PluginMain plugin) {
+	public InventoryEventListener(final PluginMain plugin) {
+		
+		// set reference to main class
 		this.plugin = plugin;
+		
+		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -43,7 +47,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onInventoryOpen(InventoryOpenEvent event) {
+	public void onInventoryOpen(final InventoryOpenEvent event) {
 
 		// if event is not cancelled, do nothing and return
 		if (!event.isCancelled()) {
@@ -106,7 +110,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent event) {
+	public void onInventoryClose(final InventoryCloseEvent event) {
 		
 		// if remove-empty option is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("remove-empty")) {
@@ -161,7 +165,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryMoveItemEvent(InventoryMoveItemEvent event) {
+	public void onInventoryMoveItemEvent(final InventoryMoveItemEvent event) {
 
 		// get inventories involved in event
 		Inventory destination = event.getDestination();
@@ -186,7 +190,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryClickEvent(InventoryClickEvent event) {
+	public void onInventoryClickEvent(final InventoryClickEvent event) {
 		
 		Inventory inventory = event.getInventory();
 		InventoryAction action = event.getAction();
@@ -265,7 +269,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryDragEvent(InventoryDragEvent event) {
+	public void onInventoryDragEvent(final InventoryDragEvent event) {
 		
 		Inventory inventory = event.getInventory();
 		
@@ -309,7 +313,7 @@ public class InventoryEventListener implements Listener {
 	 * @param chest
 	 * @return true if chest is empty, false if chest has any contents
 	 */
-	private boolean emptyChest(Chest chest) {
+	private boolean emptyChest(final Chest chest) {
 	    ItemStack[] items = chest.getInventory().getContents();
 	    for (ItemStack item : items) {
 	    	if (item != null) {
@@ -325,7 +329,7 @@ public class InventoryEventListener implements Listener {
 	 * @param inventory
 	 * @return
 	 */
-	private boolean inventoryIsDeathChest(Inventory inventory) {
+	private boolean inventoryIsDeathChest(final Inventory inventory) {
 		
 		// if inventory is not a chest, return false
 	    if (!inventory.getType().equals(InventoryType.CHEST)) {

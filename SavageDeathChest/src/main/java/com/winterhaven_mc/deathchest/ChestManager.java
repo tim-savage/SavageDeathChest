@@ -20,7 +20,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class ChestManager {
 
-	private PluginMain plugin;
+	// reference to main class
+	private final PluginMain plugin;
 
 	// chest utilities object
 	private ChestUtilities chestUtilities;
@@ -40,12 +41,12 @@ public class ChestManager {
 	 * 
 	 * @param	plugin		A reference to this plugin's main class
 	 */
-	public ChestManager(PluginMain plugin) {
+	public ChestManager(final PluginMain plugin) {
 		
-		// create pointer to main class
+		// set reference to main class
 		this.plugin = plugin;
 		
-		// instantiate chestutilities
+		// instantiate chestUtilities
         chestUtilities = new ChestUtilities(plugin);
 		
 		// load material types that chests can be replace from config file
@@ -139,7 +140,7 @@ public class ChestManager {
 	}
 	
 
-	private void expireDeathChestBlock(Block block) {
+	private void expireDeathChestBlock(final Block block) {
 
 		// if block is not a DeathChestBlock, do nothing and return
 		if (!DeathChestBlock.isDeathChestBlock(block)) {
@@ -179,7 +180,7 @@ public class ChestManager {
 	 * Remove DeathChestBlock from datastore, remove block metadata, and delete from world, dropping items
 	 * @param block
 	 */
-	public void destroyDeathChestBlock(Block block) {
+	public void destroyDeathChestBlock(final Block block) {
 
 		// delete record from datastore
 		plugin.dataStore.deleteRecord(block.getLocation());
@@ -206,7 +207,7 @@ public class ChestManager {
 	 * @param player	Player doing the looting
 	 * @param block		block to attempt to loot
 	 */
-	public void lootChest(Player player, Block block) {
+	public void lootChest(final Player player, final Block block) {
 		lootChest(player,block,0);
 	}
 
@@ -217,7 +218,7 @@ public class ChestManager {
 	 * @param block			block to attempt to loot
 	 * @param iterations	depth of recursion
 	 */
-	private void lootChest(Player player, Block block, int iterations) {
+	private void lootChest(final Player player, final Block block, int iterations) {
 		
 		// increment iteration count for recursion
 		iterations++;
@@ -264,7 +265,7 @@ public class ChestManager {
 	 * @param droppedItems			Items player had in inventory on death
 	 * @return List of ItemStack	items that didn't fit in chest
 	 */
-	public List<ItemStack> deployChest(Player player, List<ItemStack> droppedItems) {
+	public List<ItemStack> deployChest(final Player player, final List<ItemStack> droppedItems) {
 		
 		List<ItemStack> remainingItems = new ArrayList<ItemStack>();
 		List<ItemStack> chestItems = new ArrayList<ItemStack>();
@@ -339,7 +340,7 @@ public class ChestManager {
 	 * @param droppedItems		items to place in chest
 	 * @return Items that did not fit in chest, as List of ItemStacks
 	 */
-	private List<ItemStack> deploySingleChest(Player player, List<ItemStack> droppedItems) {
+	private List<ItemStack> deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
 		
 		SearchResult result = chestUtilities.findValidSingleChestLocation(player);
 
@@ -431,7 +432,7 @@ public class ChestManager {
 	 * @param droppedItems		items to place in chest
 	 * @return Any items that could not be placed in chest, as List of ItemStack
 	 */
-	private List<ItemStack> deployDoubleChest(Player player, List<ItemStack> droppedItems) {
+	private List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 		
 		// try to find a valid double chest location
 		SearchResult result = chestUtilities.findValidDoubleChestLocation(player);
@@ -579,7 +580,7 @@ public class ChestManager {
 	 * @param chestblock	Chest block
 	 * @return boolean		Success or failure to place sign
 	 */
-	private boolean placeChestSign(Player player, Block chestblock) {
+	private boolean placeChestSign(final Player player, final Block chestblock) {
 		
 		// if chest-signs are turned off in configuration, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-signs")) {
@@ -650,7 +651,7 @@ public class ChestManager {
 	 * @param block
 	 * @return
 	 */
-	public int getChestViewerCount(Block block) {
+	public int getChestViewerCount(final Block block) {
 		
 		int count = 0;
 		

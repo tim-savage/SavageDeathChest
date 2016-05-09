@@ -29,7 +29,7 @@ public enum ProtectionPlugin {
 	FACTIONS("Factions") {
 		
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -50,7 +50,7 @@ public enum ProtectionPlugin {
 		}
 		
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -74,7 +74,7 @@ public enum ProtectionPlugin {
 	GRIEFPREVENTION("GriefPrevention") {
 		
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -98,7 +98,7 @@ public enum ProtectionPlugin {
 		}
 		
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -126,7 +126,7 @@ public enum ProtectionPlugin {
 	PRECIOUSSTONES("PreciousStones") {
 	
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -146,7 +146,7 @@ public enum ProtectionPlugin {
 		}
 		
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -170,7 +170,7 @@ public enum ProtectionPlugin {
 	PROCLAIM("ProClaim") {
 		
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -188,7 +188,7 @@ public enum ProtectionPlugin {
 		}
 		
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -210,7 +210,7 @@ public enum ProtectionPlugin {
 	ROADBLOCK("RoadBlock") {
 		
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -233,7 +233,7 @@ public enum ProtectionPlugin {
 		}
 		
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -261,7 +261,7 @@ public enum ProtectionPlugin {
 		
 		@SuppressWarnings("deprecation")
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -283,7 +283,7 @@ public enum ProtectionPlugin {
 
 		@SuppressWarnings("deprecation")
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -308,7 +308,7 @@ public enum ProtectionPlugin {
 	WORLDGUARD("WorldGuard") {
 		
 		@Override
-		public boolean hasPlacePermission(Player player, Location location) {
+		public boolean hasPlacePermission(final Player player, final Location location) {
 
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -345,7 +345,7 @@ public enum ProtectionPlugin {
 		
 		@SuppressWarnings("deprecation")
 		@Override
-		public boolean hasChestPermission(Player player, Location location) {
+		public boolean hasChestPermission(final Player player, final Location location) {
 			
 			// only perform check if plugin is enabled
 			if (this.isEnabled()) {
@@ -395,7 +395,7 @@ public enum ProtectionPlugin {
 	 * Enum constructor
 	 * @param pluginName
 	 */
-	private ProtectionPlugin(String pluginName) {
+	private ProtectionPlugin(final String pluginName) {
 		
 		// set plugin name field
 		this.pluginName = pluginName;
@@ -408,7 +408,7 @@ public enum ProtectionPlugin {
 	 * @param location
 	 * @return
 	 */
-	public abstract boolean hasPlacePermission(Player player, Location location);
+	public abstract boolean hasPlacePermission(final Player player, final Location location);
 	
 	
 	/**
@@ -417,7 +417,7 @@ public enum ProtectionPlugin {
 	 * @param location
 	 * @return
 	 */
-	public abstract boolean hasChestPermission(Player player, Location location);	
+	public abstract boolean hasChestPermission(final Player player, final Location location);	
 	
 	/**
 	 * Get plugin name
@@ -442,7 +442,7 @@ public enum ProtectionPlugin {
 	}
 
 	
-	public static ProtectionPlugin allowChestPlacement(Player player, Block block) {
+	public static ProtectionPlugin allowChestPlacement(final Player player, final Block block) {
 		
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
@@ -471,7 +471,7 @@ public enum ProtectionPlugin {
 	}
 
 	
-	public static ProtectionPlugin allowChestAccess(Player player, Block block) {
+	public static ProtectionPlugin allowChestAccess(final Player player, final Block block) {
 		
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {

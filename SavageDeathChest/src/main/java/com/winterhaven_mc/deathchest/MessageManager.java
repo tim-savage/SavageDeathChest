@@ -17,11 +17,13 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 
 
 public class MessageManager {
+	
+	// reference to main class
     private final PluginMain plugin;
     private ConfigAccessor messages;
 	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
-	MultiverseCore mvCore;
-	Boolean mvEnabled = false;
+	private final MultiverseCore mvCore;
+	private Boolean mvEnabled = false;
 	private String language;
 	private final String directoryName = "language";
 
@@ -30,9 +32,9 @@ public class MessageManager {
 	 * Class constructor
 	 * @param plugin
 	 */
-    public MessageManager(PluginMain plugin) {
+    public MessageManager(final PluginMain plugin) {
     	
-    	// reference to main
+    	// set reference to main
         this.plugin = plugin;
         
 		// install localization files
@@ -60,7 +62,7 @@ public class MessageManager {
      * @param player
      * @param messageId
      */
-    public void sendPlayerMessage(Player player, String messageId) {
+    public void sendPlayerMessage(final Player player, final String messageId) {
     	sendPlayerMessage(player,messageId,null);
     }
     
@@ -70,7 +72,13 @@ public class MessageManager {
      * @param messageId
      * @param plugin
      */
-    public void sendPlayerMessage(Player player, String messageId, ProtectionPlugin protectionPlugin) {
+    public void sendPlayerMessage(final Player player, final String messageId, 
+    		final ProtectionPlugin protectionPlugin) {
+    	
+    	if (messages.getConfig().getConfigurationSection("messages." + messageId) == null) {
+    		plugin.getLogger().warning("Could not read message '" + messageId + "' from language file.");
+    		return;
+    	}
     	
     	// if message is not enabled, do nothing and return
 		if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
@@ -159,7 +167,7 @@ public class MessageManager {
      * @param player
      * @param messageId
      */
-    public void broadcastMessage(Player player, String messageId) {
+    public void broadcastMessage(final Player player, final String messageId) {
         if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
         	return;
         }
@@ -238,7 +246,7 @@ public class MessageManager {
 	}
 
 	
-	private String languageFileExists(String language) {
+	private String languageFileExists(final String language) {
 		
 		// check if localization file for configured language exists, if not then fallback to en-US
 		File languageFile = new File(plugin.getDataFolder() 
@@ -262,7 +270,7 @@ public class MessageManager {
 	 * @param player
 	 * @param messageId
 	 */
-	private void putMessageCooldown(Player player, String messageId) {
+	private void putMessageCooldown(final Player player, final String messageId) {
 		
     	ConcurrentHashMap<String, Long> tempMap = new ConcurrentHashMap<String, Long>();
     	tempMap.put(messageId, System.currentTimeMillis());
@@ -276,7 +284,7 @@ public class MessageManager {
 	 * @param messageId
 	 * @return cooldown expire time
 	 */
-	private long getMessageCooldown(Player player, String messageId) {
+	private long getMessageCooldown(final Player player, final String messageId) {
 		
 		// check if player is in message cooldown hashmap
 		if (messageCooldownMap.containsKey(player.getUniqueId())) {
@@ -296,7 +304,7 @@ public class MessageManager {
 	 * Remove player from message cooldown map
 	 * @param player
 	 */
-	void removePlayerCooldown(Player player) {
+	void removePlayerCooldown(final Player player) {
 		messageCooldownMap.remove(player.getUniqueId());
 	}
 

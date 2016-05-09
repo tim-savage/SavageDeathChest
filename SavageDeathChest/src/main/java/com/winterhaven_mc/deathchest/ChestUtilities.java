@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -12,11 +13,18 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestUtilities {
 	
-    final PluginMain plugin;
+	// reference to main class
+    private final PluginMain plugin;
     
-    public ChestUtilities(PluginMain plugin) {
+    
+    /**
+     * Class constructor
+     * @param plugin
+     */
+    public ChestUtilities(final PluginMain plugin) {
+    	
+    	// set reference to main class
         this.plugin = plugin;
-        
     }
 
 
@@ -27,7 +35,7 @@ public class ChestUtilities {
      * @param yaw	Direction in degrees
      * @return BlockFace of cardinal direction
      */
-    public BlockFace getCardinalDirection(float yaw) {
+    public BlockFace getCardinalDirection(final float yaw) {
     	double rot = yaw % 360;
     	if (rot < 0) {
     		rot += 360.0;
@@ -49,10 +57,10 @@ public class ChestUtilities {
 	
 	/**
 	 * Combine item stacks of same material up to max stack size
-	 * @param itemlist	List of itemstacks to combine
+	 * @param itemlist	Collection of itemstacks to combine
 	 * @return List of ItemStack with same materials combined
 	 */
-	public List<ItemStack> consolidateItems(List<ItemStack> itemlist) {
+	public List<ItemStack> consolidateItems(final Collection<ItemStack> itemlist) {
 
 		List<ItemStack> returnlist = new ArrayList<ItemStack>();
 		
@@ -105,10 +113,10 @@ public class ChestUtilities {
 
 	/**
 	 * Check if list of item stacks contains at least one chest
-	 * @param list List of itemstacks to check for chest
+	 * @param list Collection of ItemStack to check for chest
 	 * @return boolean
 	 */
-	public boolean hasChest(List<ItemStack> list) {
+	public boolean hasChest(final Collection<ItemStack> list) {
 		boolean haschest = false;
 		for (ItemStack item : list) {
 			if (item.getType().equals(Material.CHEST)) {
@@ -125,7 +133,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return location one block to left
 	 */
-	public Location getLocationToLeft(Location location) {
+	public Location getLocationToLeft(final Location location) {
 		
 		float yaw = location.getYaw() + 90;
 
@@ -146,7 +154,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return location one block to right
 	 */
-	public Location locationToRight(Location location) {
+	public Location locationToRight(final Location location) {
 		
 		float yaw = location.getYaw() - 90;
 		
@@ -167,7 +175,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return location one block to right
 	 */
-	public Location locationToFront(Location location) {
+	public Location locationToFront(final Location location) {
 		
 		float yaw = location.getYaw();
 		
@@ -188,7 +196,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return block to left of location
 	 */
-	public Block blockToLeft(Location location) {
+	public Block blockToLeft(final Location location) {
 		float yaw = location.getYaw() + 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -199,7 +207,7 @@ public class ChestUtilities {
 	 * @param location inital location
 	 * @return block to right of initial location
 	 */
-	public Block blockToRight(Location location) {
+	public Block blockToRight(final Location location) {
 		float yaw = location.getYaw() - 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -210,7 +218,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return block in front of initial location
 	 */
-	public Block blockInFront(Location location) {
+	public Block blockInFront(final Location location) {
 		float yaw = location.getYaw() + 180;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -221,7 +229,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return block behind inital location
 	 */
-	public Block blockToRear(Location location) {
+	public Block blockToRear(final Location location) {
 		float yaw = location.getYaw();
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -234,7 +242,7 @@ public class ChestUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return SearchResult
 	 */
-	public SearchResult findValidSingleChestLocation(Player player) {
+	public SearchResult findValidSingleChestLocation(final Player player) {
 
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -369,7 +377,7 @@ public class ChestUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return location that is valid for double chest deployment, or null if valid location cannot be found
 	 */
-	public SearchResult findValidDoubleChestLocation(Player player) {
+	public SearchResult findValidDoubleChestLocation(final Player player) {
 	
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -509,7 +517,7 @@ public class ChestUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public boolean isValidSignLocation(Player player, Location location) {
+	public boolean isValidSignLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 
@@ -533,7 +541,7 @@ public class ChestUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public SearchResult isValidLeftChestLocation(Player player, Location location) {
+	public SearchResult isValidLeftChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 		SearchResult result = null;
@@ -572,7 +580,7 @@ public class ChestUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public SearchResult isValidRightChestLocation(Player player, Location location) {
+	public SearchResult isValidRightChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 		SearchResult result = null;
@@ -604,7 +612,7 @@ public class ChestUtilities {
 	}
 
 
-	boolean adjacentChest(Location location, Boolean firstChest) {
+	boolean adjacentChest(final Location location, final Boolean firstChest) {
 
 		if (firstChest) {
 			if (blockToLeft(location).getType().equals(Material.CHEST)) {
@@ -624,7 +632,7 @@ public class ChestUtilities {
 	}
 	
 
-	boolean isAboveGrassPath(Block block) {
+	boolean isAboveGrassPath(final Block block) {
 		
 		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
 			return true;

@@ -10,7 +10,7 @@ import org.bukkit.Location;
 public class DataStoreYAML extends DataStore {
 
 	// reference to main class
-	private PluginMain plugin;
+	private final PluginMain plugin;
 
 	// ConfigAccessor for yml datafile
 	private ConfigAccessor dataFile;
@@ -20,9 +20,9 @@ public class DataStoreYAML extends DataStore {
 	 * Class constructor
 	 * @param plugin
 	 */
-	DataStoreYAML (PluginMain plugin) {
+	DataStoreYAML (final PluginMain plugin) {
 
-		// reference to main class
+		// set reference to main class
 		this.plugin = plugin;
 
 		// set datastore type
@@ -53,7 +53,7 @@ public class DataStoreYAML extends DataStore {
 	}
 
 	@Override
-	DeathChestBlock getRecord(Location location) {
+	DeathChestBlock getRecord(final Location location) {
 
 		String key = locationToString(location);
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
@@ -122,7 +122,7 @@ public class DataStoreYAML extends DataStore {
 	}
 
 	@Override
-	void putRecord(DeathChestBlock deathChestBlock) {
+	void putRecord(final DeathChestBlock deathChestBlock) {
 
 		// create key based on block location
 		String key = locationToString(deathChestBlock.getLocation());
@@ -173,7 +173,7 @@ public class DataStoreYAML extends DataStore {
 	 * @param location
 	 */
 	@Override
-	void deleteRecord(Location location) {
+	void deleteRecord(final Location location) {
 		String key = locationToString(location);
 		dataFile.getConfig().set(key, null);
 		dataFile.saveConfig();
@@ -222,7 +222,7 @@ public class DataStoreYAML extends DataStore {
 	 * Delete record by key
 	 * @param key
 	 */
-	void deleteRecord(String key) {
+	void deleteRecord(final String key) {
 
 		dataFile.getConfig().set(key, null);		
 		dataFile.saveConfig();
@@ -235,7 +235,7 @@ public class DataStoreYAML extends DataStore {
 	 * @param location Location to create unique location key string
 	 * @return String key
 	 */
-	private String locationToString(Location location) {
+	private String locationToString(final Location location) {
 
 		// if location is null, return null string
 		if (location == null) {
@@ -261,7 +261,7 @@ public class DataStoreYAML extends DataStore {
 	 * @param locationString
 	 * @return location
 	 */
-	private Location stringToLocation(String locationString) {
+	private Location stringToLocation(final String locationString) {
 
 		// split location string into distinct elements
 		String[] elements = locationString.split("\\|");

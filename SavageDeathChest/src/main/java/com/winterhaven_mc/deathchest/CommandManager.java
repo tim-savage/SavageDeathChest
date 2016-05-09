@@ -11,19 +11,20 @@ import org.bukkit.command.CommandSender;
 
 public class CommandManager implements CommandExecutor {
 	
-	private PluginMain plugin;
-	private ArrayList<String> enabledWorlds;
+	private final PluginMain plugin;
 	private final String pluginName;
+	private ArrayList<String> enabledWorlds;
 
-	public CommandManager(PluginMain plugin) {
+	public CommandManager(final PluginMain plugin) {
 		
-		this.plugin = plugin;		
+		this.plugin = plugin;	
 		plugin.getCommand("deathchest").setExecutor(this);
 		pluginName = "[" + this.plugin.getName() + "] ";
 		updateEnabledWorlds();
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(final CommandSender sender, final Command cmd, 
+			final String label, final String[] args) {
 
 
 		int maxArgs = 1;
@@ -56,10 +57,11 @@ public class CommandManager implements CommandExecutor {
 	}
 	
 	
-	boolean statusCommand(CommandSender sender) {
+	boolean statusCommand(final CommandSender sender) {
 		
 		String versionString = this.plugin.getDescription().getVersion();
-		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " + ChatColor.RESET + versionString);
+		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " 
+				+ ChatColor.RESET + versionString);
 		if (plugin.debug) {
 			sender.sendMessage(ChatColor.DARK_RED + "DEBUG: true");
 		}
@@ -101,7 +103,7 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	
-	boolean reloadCommand(CommandSender sender) {
+	boolean reloadCommand(final CommandSender sender) {
 		
 		// copy default config from jar if it doesn't exist
 		plugin.saveDefaultConfig();

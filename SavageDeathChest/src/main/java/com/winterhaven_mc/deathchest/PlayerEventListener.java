@@ -19,15 +19,19 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class PlayerEventListener implements Listener {
 
 	// reference to main class
-	private PluginMain plugin;
+	private final PluginMain plugin;
 
 	
 	/** class constructor
 	 * 
 	 * @param plugin reference to main class
 	 */
-	public PlayerEventListener(PluginMain plugin) {
+	public PlayerEventListener(final PluginMain plugin) {
+		
+		// set reference to main class
 		this.plugin = plugin;
+		
+		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 	
@@ -38,7 +42,7 @@ public class PlayerEventListener implements Listener {
 	 * @param event	PlayerDeathEvent
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerDeath(PlayerDeathEvent event) {
+	public void onPlayerDeath(final PlayerDeathEvent event) {
 		
 		Player player = (Player)event.getEntity();
 		List<ItemStack> droppedItems = event.getDrops();
@@ -86,7 +90,7 @@ public class PlayerEventListener implements Listener {
 	 * @return	void
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(final PlayerInteractEvent event) {
 		
 		final Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
@@ -220,7 +224,7 @@ public class PlayerEventListener implements Listener {
 	 * @param player	Player to test world enabled.
 	 * @return true if player world is enabled, false if not enabled 
 	 */
-	private boolean playerWorldEnabled(Player player) {
+	private boolean playerWorldEnabled(final Player player) {
 		
 		if (plugin.commandManager.getEnabledWorlds().contains(player.getWorld().getName())) {
 			return true;

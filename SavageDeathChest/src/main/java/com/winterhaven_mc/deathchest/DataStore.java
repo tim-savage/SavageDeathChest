@@ -25,7 +25,7 @@ public abstract class DataStore {
 	 * @param location
 	 * @return DeathChestBlock
 	 */
-	abstract DeathChestBlock getRecord(Location location);
+	abstract DeathChestBlock getRecord(final Location location);
 
 
 	/**
@@ -39,14 +39,14 @@ public abstract class DataStore {
 	 * Insert a record in the datastore
 	 * @param deathChestBlock
 	 */
-	abstract void putRecord(DeathChestBlock deathChestBlock);
+	abstract void putRecord(final DeathChestBlock deathChestBlock);
 
 
 	/**
 	 * Delete a record from the datastore
 	 * @param location
 	 */
-	abstract void deleteRecord(Location location);
+	abstract void deleteRecord(final Location location);
 
 
 	/**
@@ -87,7 +87,7 @@ public abstract class DataStore {
 	 * Set datastore initialized value
 	 * @param initialized
 	 */
-	void setInitialized(boolean initialized) {
+	void setInitialized(final boolean initialized) {
 		this.initialized = initialized;
 	}
 

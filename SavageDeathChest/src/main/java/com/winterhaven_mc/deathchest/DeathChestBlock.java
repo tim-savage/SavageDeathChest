@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class DeathChestBlock {
 	
 	// reference to main class
-	private PluginMain plugin = PluginMain.instance;
+	private static final PluginMain plugin = PluginMain.instance;
 	
 	// the location for this deathchest item
 	private Location location;
@@ -44,7 +45,7 @@ public class DeathChestBlock {
 	 * @param player
 	 * @param block
 	 */
-	public DeathChestBlock(Player player, Block block) {
+	public DeathChestBlock(final Player player, final Block block) {
 
 		// set location field
 		this.setLocation(block.getLocation());
@@ -74,7 +75,7 @@ public class DeathChestBlock {
 	 * Get death chest block object from existing death chest block
 	 * @param block
 	 */
-	public DeathChestBlock(Block block) {
+	public DeathChestBlock(final Block block) {
 		
 		// test if block is death chest block
 		if (DeathChestBlock.isDeathChestBlock(block)) {
@@ -123,7 +124,7 @@ public class DeathChestBlock {
 	 * Setter method for DeathChestBlock location
 	 * @param location
 	 */
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
@@ -171,7 +172,7 @@ public class DeathChestBlock {
 	 * Setter method for DeathChestBlock expiration
 	 * @param expiration
 	 */
-	public void setExpiration(long expiration) {
+	public void setExpiration(final long expiration) {
 		this.expiration = expiration;
 	}
 
@@ -197,10 +198,10 @@ public class DeathChestBlock {
 	
 	/** Combine item stacks of same material up to max stack size
 	 * 
-	 * @param itemlist	List of itemstacks to combine
+	 * @param itemlist	Collection of ItemStack to combine
 	 * @return List of ItemStack with same materials combined
 	 */
-	public static List<ItemStack> consolidateItems(List<ItemStack> itemlist) {
+	public static List<ItemStack> consolidateItems(final Collection<ItemStack> itemlist) {
 
 		List<ItemStack> returnlist = new ArrayList<ItemStack>();
 		
@@ -231,7 +232,7 @@ public class DeathChestBlock {
 	 * @param block
 	 * @return boolean True if block has deathchest-owner metadata, false if it does not
 	 */
-	public static boolean isDeathChestBlock(Block block) {
+	public static boolean isDeathChestBlock(final Block block) {
 		
 		if (block == null) {
 			return false;
@@ -246,7 +247,7 @@ public class DeathChestBlock {
 	 * @param block
 	 * @return
 	 */
-	public static boolean isDeathChestOwner(Player player, Block block) {
+	public static boolean isDeathChestOwner(final Player player, final Block block) {
 		
 		if (block == null) {
 			return false;
@@ -266,7 +267,7 @@ public class DeathChestBlock {
 	 * @param block
 	 * @return
 	 */
-	public static boolean isDeathChestKiller(Player player, Block block) {
+	public static boolean isDeathChestKiller(final Player player, final Block block) {
 		
 		if (block == null) {
 			return false;
@@ -284,18 +285,20 @@ public class DeathChestBlock {
 	 * Remove DeathChestBlock metadata from a block
 	 * @param block
 	 */
-	public static void removeMetadata(Block block) {
+	public static void removeMetadata(final Block block) {
 		
 		block.removeMetadata("deathchest-owner", PluginMain.instance);
 		block.removeMetadata("deathchest-killer", PluginMain.instance);
 	}
 	
-	public static void openInventory(Player player, Block block) {
+	public static void openInventory(final Player player, final Block passedBlock) {
 		
 		// if block is null or not a death chest block, do nothing and return
-		if (block == null || ! isDeathChestBlock(block)) {
+		if (passedBlock == null || ! isDeathChestBlock(passedBlock)) {
 			return;
 		}
+		
+		Block block = passedBlock;
 		
 		// if block is wall sign, set block to attached block
 		if (block.getType().equals(Material.WALL_SIGN)) {

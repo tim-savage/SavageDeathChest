@@ -21,15 +21,20 @@ import org.bukkit.material.Sign;
 
 public class BlockEventListener implements Listener {
 
-	PluginMain plugin;  // pointer to main class
+	// reference to main class
+	private final PluginMain plugin;
 
 	
 	/**
 	 * Class constructor
 	 * @param plugin
 	 */
-	public BlockEventListener(PluginMain plugin) {
+	public BlockEventListener(final PluginMain plugin) {
+		
+		// set reference to main class
 		this.plugin = plugin;
+		
+		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -41,7 +46,7 @@ public class BlockEventListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	//TODO: Make sure we're using the right priority. Use NORMAL if possible.
-	public void onBlockBreak(BlockBreakEvent event) {
+	public void onBlockBreak(final BlockBreakEvent event) {
 		
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -132,7 +137,7 @@ public class BlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onEntityExplode(EntityExplodeEvent event) {
+	public void onEntityExplode(final EntityExplodeEvent event) {
 		
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
@@ -155,7 +160,7 @@ public class BlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onBlockExplode(BlockExplodeEvent event) {
+	public void onBlockExplode(final BlockExplodeEvent event) {
 		
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
@@ -178,7 +183,7 @@ public class BlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void signDetachCheck(BlockPhysicsEvent event) {
+	public void signDetachCheck(final BlockPhysicsEvent event) {
 	
 		Block block = event.getBlock();
 	

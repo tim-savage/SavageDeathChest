@@ -32,7 +32,7 @@ public class Queries {
 		return properties;
 	}
 
-	public static String getQuery(String query) throws SQLException {
+	public static String getQuery(final String query) throws SQLException {
 		return getQueries().getProperty(query);
 	}
 	

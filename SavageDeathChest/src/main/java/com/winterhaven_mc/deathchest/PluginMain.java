@@ -4,14 +4,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PluginMain extends JavaPlugin {
 
-	static PluginMain instance;
+	public static PluginMain instance;
 	
-	CommandManager commandManager;
-	MessageManager messageManager;
-	DataStore dataStore;
-	ChestManager chestManager;
+	public CommandManager commandManager;
+	public MessageManager messageManager;
+	public DataStore dataStore;
+	public ChestManager chestManager;
 
-	boolean debug = getConfig().getBoolean("debug");
+	public boolean debug = getConfig().getBoolean("debug");
 
 	public void onEnable() {
 

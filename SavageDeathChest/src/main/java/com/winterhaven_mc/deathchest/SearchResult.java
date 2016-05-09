@@ -18,7 +18,7 @@ public enum SearchResult {
 		return location;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
@@ -26,7 +26,7 @@ public enum SearchResult {
 		return protectionPlugin;
 	}
 
-	public void setProtectionPlugin(ProtectionPlugin protectionPlugin) {
+	public void setProtectionPlugin(final ProtectionPlugin protectionPlugin) {
 		this.protectionPlugin = protectionPlugin;
 	}
 	

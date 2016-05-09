@@ -23,7 +23,7 @@ import org.bukkit.Location;
 public class DataStoreSQLite extends DataStore {
 
 	// reference to main class
-	private PluginMain plugin;
+	private final PluginMain plugin;
 
 	// database connection object
 	private Connection connection;
@@ -33,9 +33,9 @@ public class DataStoreSQLite extends DataStore {
 	 * Class constructor
 	 * @param plugin
 	 */
-	DataStoreSQLite (PluginMain plugin) {
+	DataStoreSQLite (final PluginMain plugin) {
 
-		// reference to main class
+		// set reference to main class
 		this.plugin = plugin;
 
 		// set datastore type
@@ -87,7 +87,7 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	DeathChestBlock getRecord(Location location) {
+	DeathChestBlock getRecord(final Location location) {
 
 		DeathChestBlock deathChestBlock = new DeathChestBlock();
 
@@ -287,7 +287,7 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	void deleteRecord(Location location) {
+	void deleteRecord(final Location location) {
 
 		try {
 			// create prepared statement
@@ -325,7 +325,7 @@ public class DataStoreSQLite extends DataStore {
 	 * Delete expired records in world <i>worldName</i>
 	 * @param worldName
 	 */
-	void deleteExpiredRecords(String worldName) {
+	void deleteExpiredRecords(final String worldName) {
 	
 		// current time in milliseconds
 		final Long currentTime = System.currentTimeMillis();
