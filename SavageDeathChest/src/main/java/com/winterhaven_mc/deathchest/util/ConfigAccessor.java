@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.util;
 
 /*
  * Copyright (C) 2012

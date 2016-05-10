@@ -37,6 +37,12 @@ require-chest: false
 # prevent placing items in death chests
 prevent-item-placement: true
 
+# deploy chests for players in creative mode
+creative-deploy: false
+
+# allow access to chests for players in creative mode
+creative-access: false
+
 # Distance from death location to search for a valid chest location
 # NOTE: This checks exponentially more locations for each increase in distance
 # For this reason, it is not recommended to set this value too high.

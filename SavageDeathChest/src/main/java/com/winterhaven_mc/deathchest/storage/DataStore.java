@@ -1,8 +1,10 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.storage;
 
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+
+import com.winterhaven_mc.deathchest.DeathChestBlock;
 
 
 public abstract class DataStore {
@@ -52,7 +54,7 @@ public abstract class DataStore {
 	/**
 	 * Close the datastore
 	 */
-	abstract void close();
+	public abstract void close();
 
 	
 	/**
@@ -105,8 +107,8 @@ public abstract class DataStore {
 	 * Get the datastore name
 	 * @return
 	 */
-	String getName() {
-		return this.getType().getName();
+	public String getName() {
+		return this.getType().toString();
 	}
 
 	

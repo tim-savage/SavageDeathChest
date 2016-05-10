@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,8 @@ import java.util.zip.ZipInputStream;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 
 
 public class MessageManager {
@@ -22,8 +23,6 @@ public class MessageManager {
     private final PluginMain plugin;
     private ConfigAccessor messages;
 	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
-	private final MultiverseCore mvCore;
-	private Boolean mvEnabled = false;
 	private String language;
 	private final String directoryName = "language";
 
@@ -48,13 +47,6 @@ public class MessageManager {
 		
 		// initialize messageCooldownMap
 		this.messageCooldownMap = new ConcurrentHashMap<UUID,ConcurrentHashMap<String,Long>>();
-		
-		// get reference to Multiverse-Core if installed
-		mvCore = (MultiverseCore) plugin.getServer().getPluginManager().getPlugin("Multiverse-Core");
-		if (mvCore != null && mvCore.isEnabled()) {
-			plugin.getLogger().info("Multiverse-Core detected.");
-			this.mvEnabled = true;
-		}
     }
 
     /**
@@ -117,20 +109,12 @@ public class MessageManager {
 		playerName = player.getName();
 		playerNickname = player.getPlayerListName();
 		playerDisplayName = player.getDisplayName();
-		worldName = player.getWorld().getName();
 
+		// get player world name from world manager
+		worldName = plugin.worldManager.getWorldName(player.getWorld());
 		
 		// get message string
 		String message = messages.getConfig().getString("messages." + messageId + ".string");
-
-		// if Multiverse is installed, use Multiverse world alias for world name
-		if (mvEnabled && mvCore.getMVWorldManager().getMVWorld(worldName) != null) {
-
-			// if Multiverse alias is not blank, set world name to alias
-			if (!mvCore.getMVWorldManager().getMVWorld(worldName).getAlias().isEmpty()) {
-				worldName = mvCore.getMVWorldManager().getMVWorld(worldName).getAlias();
-			}
-		}
 
 		// get time to expire formatted string
 		String expireTime = getExpireTimeString();
@@ -187,7 +171,7 @@ public class MessageManager {
     /**
      * Reload language files
      */
-	void reload() {
+	public void reload() {
 		
 		// reinstall message files if necessary
 		installLocalizationFiles();

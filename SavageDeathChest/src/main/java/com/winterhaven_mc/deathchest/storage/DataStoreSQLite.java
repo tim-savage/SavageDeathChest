@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.storage;
 
 import java.io.File;
 import java.sql.Connection;
@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Location;
+
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
 
 
 /**
@@ -88,7 +91,13 @@ public class DataStoreSQLite extends DataStore {
 
 	@Override
 	DeathChestBlock getRecord(final Location location) {
+		
+		// if location is null, return null object
+		if (location == null) {
+			return null;
+		}
 
+		// create new DeathChestBlock object for return
 		DeathChestBlock deathChestBlock = new DeathChestBlock();
 
 		try {
@@ -310,7 +319,8 @@ public class DataStoreSQLite extends DataStore {
 		catch (SQLException e) {
 
 			// output simple error message
-			plugin.getLogger().warning("An error occurred while attempting to delete a record from the SQLite database.");
+			plugin.getLogger().warning("An error occurred while attempting to "
+					+ "delete a record from the " + toString() + " datastore.");
 			plugin.getLogger().warning(e.getMessage());
 
 			// if debugging is enabled, output stack trace
@@ -364,7 +374,7 @@ public class DataStoreSQLite extends DataStore {
 	 * Close database connection
 	 */
 	@Override
-	void close() {
+	public void close() {
 
 		if (isInitialized()) {
 			try {

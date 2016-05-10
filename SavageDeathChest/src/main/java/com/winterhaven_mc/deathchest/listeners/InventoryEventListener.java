@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.listeners;
 
 import java.util.Set;
 
@@ -18,6 +18,10 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 
 public class InventoryEventListener implements Listener {
 

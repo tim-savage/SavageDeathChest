@@ -1,10 +1,14 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.storage;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Location;
+
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.util.ConfigAccessor;
 
 
 public class DataStoreYAML extends DataStore {
@@ -186,7 +190,7 @@ public class DataStoreYAML extends DataStore {
 	}
 
 	@Override
-	void close() {
+	public void close() {
 		if (isInitialized()) {
 			// save data to file
 			dataFile.saveConfig();

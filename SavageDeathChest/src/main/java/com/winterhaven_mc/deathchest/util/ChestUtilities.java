@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.SearchResult;
 
 public class ChestUtilities {
 	

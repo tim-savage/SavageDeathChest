@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.storage;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +17,11 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.SearchResult;
+import com.winterhaven_mc.deathchest.util.ChestUtilities;
 
 public class ChestManager {
 

@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.listeners;
 
 import java.util.List;
 
@@ -14,6 +14,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
+
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
+
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerEventListener implements Listener {
@@ -47,9 +52,9 @@ public class PlayerEventListener implements Listener {
 		Player player = (Player)event.getEntity();
 		List<ItemStack> droppedItems = event.getDrops();
 		
-		// If player's current world is not enabled in config, do nothing
+		// if player's current world is not enabled in config, do nothing
 		// and allow inventory items to drop on ground
-		if (!playerWorldEnabled(player)) {
+		if (!plugin.worldManager.isEnabled(player.getWorld())) {
 			return;
 		}
 		
@@ -216,20 +221,5 @@ public class PlayerEventListener implements Listener {
 			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 		}
 	}
-
 	
-	/**
-	 * Test if plugin is enabled in player's current world.
-	 * 
-	 * @param player	Player to test world enabled.
-	 * @return true if player world is enabled, false if not enabled 
-	 */
-	private boolean playerWorldEnabled(final Player player) {
-		
-		if (plugin.commandManager.getEnabledWorlds().contains(player.getWorld().getName())) {
-			return true;
-		}
-		return false;
-	}
-
 }
