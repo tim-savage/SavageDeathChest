@@ -1,12 +1,28 @@
+#################################
 # Traduction des chaînes de temps
+#################################
 hour: 'heure'
 hour_plural: 'heures'
 minute: 'minute'
 minute_plural: 'minutes'
 unlimited: 'temps illimité'
 
+
+##########################
+# Signe texte personnalisé
+##########################
+sign-text:
+  - '&lR.I.P.&r'
+  - '%playername%'
+  - ''
+  - 'D: %date%'
+
+date-format: "MMM d, yyyy"
+
+
+########################
 # Messages personnalisés
-#
+########################
 # Substitutions de variables:
 # %itemname%			Nom de l'item configuré auparavant
 # %playername%          Nom du joueur

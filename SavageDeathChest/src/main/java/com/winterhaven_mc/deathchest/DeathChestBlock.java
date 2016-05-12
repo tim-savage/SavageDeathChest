@@ -186,12 +186,12 @@ public class DeathChestBlock {
 
 		// set owner uuid metadata
 		if (this.ownerUUID != null) {
-			block.setMetadata("deathchest-owner", new FixedMetadataValue(plugin, this.ownerUUID.toString()));
+			block.setMetadata("deathchest-owner", new FixedMetadataValue(plugin, this.ownerUUID));
 		}
 		
 		// set killer uuid metadata
 		if (this.killerUUID != null) {
-			block.setMetadata("deathchest-killer", new FixedMetadataValue(plugin, this.killerUUID.toString()));			
+			block.setMetadata("deathchest-killer", new FixedMetadataValue(plugin, this.killerUUID));
 		}
 	}
 
@@ -227,19 +227,92 @@ public class DeathChestBlock {
 		return returnlist;
 	}
 	
+	
 	/**
-	 * Test if a block is a DeathChestBlock
+	 * Test if a block is a DeathChestBlock; either signs or chests with death chest metadata
 	 * @param block
 	 * @return boolean True if block has deathchest-owner metadata, false if it does not
 	 */
 	public static boolean isDeathChestBlock(final Block block) {
 		
+		// if passed block is null return false 
 		if (block == null) {
 			return false;
 		}
 		
+		// return true if block is a death chest or death sign
+		return (isDeathChest(block) || isDeathSign(block));
+	}
+	
+	
+	public static boolean isDeathSign(final Block block) {
+		
+		// if passed block is null return false
+		if (block == null) {
+			return false;
+		}
+		
+		// if passed block is not a wall sign and is not a sign post, return false
+		if (!block.getType().equals(Material.WALL_SIGN) && !block.getType().equals(Material.SIGN_POST)) {
+			return false;
+		}
+
+		// if passed block does not have death chest metadata, return false
+		if (!block.hasMetadata("deathchest-owner")) {
+			return false;
+		}		
+		return true;
+	}
+
+	
+	public static boolean isDeathChest(final Block block) {
+		
+		// if passed block is null return false
+		if (block == null) {
+			return false;
+		}
+		
+		// if passed block is not a chest return false
+		if (!block.getType().equals(Material.CHEST)) {
+			return false;
+		}
+		
+		// if passed block has death chest metadata return true, otherwise false
 		return block.hasMetadata("deathchest-owner");
 	}
+
+	public static Block getSignAttachedBlock(final Block passedBlock) {
+		
+		// if passed block is null return null
+		if (passedBlock == null) {
+			return null;
+		}
+		
+		// if passed block is not a DeathSign, return null
+		if (!isDeathSign(passedBlock)) {
+			return null;
+		}
+//		// if passed block is not a wall sign and is not a sign post, return null
+//		if (!passedBlock.getType().equals(Material.WALL_SIGN) && !passedBlock.getType().equals(Material.SIGN_POST)) {
+//			return null;
+//		}
+
+		// initialize return block
+		Block returnBlock = null;
+		
+		// if block is wall sign, set block to attached block
+		if (passedBlock.getType().equals(Material.WALL_SIGN)) {
+		    Sign sign = (Sign)passedBlock.getState().getData();
+		    returnBlock = passedBlock.getRelative(sign.getAttachedFace());
+		}
+		// else if block is sign post, set block to one block below
+		else if (passedBlock.getType().equals(Material.SIGN_POST)) {
+			returnBlock = passedBlock.getRelative(0, -1, 0);
+		}
+		
+		return returnBlock;
+	}
+	
 	
 	/**
 	 * Test if a player is a DeathChestBlockOwner
@@ -255,7 +328,7 @@ public class DeathChestBlock {
 		
 		if (block.hasMetadata("deathchest-owner")
 				&& block.getMetadata("deathchest-owner")
-				.get(0).asString().equals(player.getUniqueId().toString())) {
+				.get(0).equals(player.getUniqueId())) {
 			return true;
 		}
 		return false;
@@ -275,7 +348,7 @@ public class DeathChestBlock {
 		
 		if (block.hasMetadata("deathchest-killer")
 				&& block.getMetadata("deathchest-killer")
-				.get(0).asString().equals(player.getUniqueId().toString())) {
+				.get(0).equals(player.getUniqueId())) {
 			return true;
 		}
 		return false;
@@ -291,10 +364,16 @@ public class DeathChestBlock {
 		block.removeMetadata("deathchest-killer", PluginMain.instance);
 	}
 	
+	
+	/**
+	 * Open inventory associated with a death chest for player
+	 * @param player
+	 * @param passedBlock
+	 */
 	public static void openInventory(final Player player, final Block passedBlock) {
 		
-		// if block is null or not a death chest block, do nothing and return
-		if (passedBlock == null || ! isDeathChestBlock(passedBlock)) {
+		// if block is not a death chest block, do nothing and return
+		if (!isDeathChestBlock(passedBlock)) {
 			return;
 		}
 		
@@ -307,7 +386,7 @@ public class DeathChestBlock {
 		}
 		// if block is sign post, set block to one block below
 		else if (block.getType().equals(Material.SIGN_POST)) {
-			block = block.getRelative(0, 1, 0);
+			block = block.getRelative(0, -1, 0);
 		}
 		
 		// confirm block is a death chest

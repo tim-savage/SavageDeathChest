@@ -428,6 +428,14 @@ public enum ProtectionPlugin {
 	}
 
 	
+	public String getVersion() {
+		
+		if (plugin.getServer().getPluginManager().getPlugin(this.getPluginName()) != null) {
+			return plugin.getServer().getPluginManager().getPlugin(this.getPluginName()).getDescription().getVersion();
+		}
+		return "unknown";
+	}
+
 	/**
 	 * Check if protection plugin is enabled
 	 * @return
@@ -442,6 +450,15 @@ public enum ProtectionPlugin {
 	}
 
 	
+	public static void reportInstalled() {
+		
+		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
+			if (pp.isEnabled()) {
+				plugin.getLogger().info(pp.getPluginName() + " v" + pp.getVersion() + " detected.");
+			}
+		}		
+	}
+
 	public static ProtectionPlugin allowChestPlacement(final Player player, final Block block) {
 		
 		// iterate through protection plugins
@@ -483,23 +500,6 @@ public enum ProtectionPlugin {
 			}
 		}
 		return null;
-	}
-	
-	public static void reportInstalled() {
-		
-		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
-			if (pp.isEnabled()) {
-				plugin.getLogger().info(pp.getPluginName() + " v" + pp.getVersion() + " detected.");
-			}
-		}		
-	}
-	
-	public String getVersion() {
-		
-		if (plugin.getServer().getPluginManager().getPlugin(this.getPluginName()) != null) {
-			return plugin.getServer().getPluginManager().getPlugin(this.getPluginName()).getDescription().getVersion();
-		}
-		return "unknown";
 	}
 
 }

@@ -3,7 +3,6 @@ package com.winterhaven_mc.deathchest.listeners;
 import java.util.List;
 
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,8 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Sign;
-
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
@@ -49,7 +46,7 @@ public class PlayerEventListener implements Listener {
 	@EventHandler(priority=EventPriority.HIGH)
 	public void onPlayerDeath(final PlayerDeathEvent event) {
 		
-		Player player = (Player)event.getEntity();
+		final Player player = (Player)event.getEntity();
 		List<ItemStack> droppedItems = event.getDrops();
 		
 		// if player's current world is not enabled in config, do nothing
@@ -65,8 +62,13 @@ public class PlayerEventListener implements Listener {
 			return;
 		}
 		
-		// if player is in creative mode, output message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE)) {
+		// if player is in creative mode,
+		// and creative-deploy is configured false,
+		// and player does not have creative-deploy permission override:
+		// output message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE)
+				&& !plugin.getConfig().getBoolean("creative-deploy")
+				&& !player.hasPermission("deathchest.creative-deploy")) {
 			plugin.messageManager.sendPlayerMessage(player, "creative-mode");
 			return;
 		}
@@ -100,29 +102,28 @@ public class PlayerEventListener implements Listener {
 		final Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
 		
-		// if block is not a DeathChestBlock, do nothing and return
+		// if block is not a DeathChestBlock (sign or chest), do nothing and return
 		if (!DeathChestBlock.isDeathChestBlock(block)) {
 			return;
 		}
 		
-		// if block is wall sign, set block to attached block
-		if (block.getType().equals(Material.WALL_SIGN)) {
-		    Sign sign = (Sign)block.getState().getData();
-		    block = block.getRelative(sign.getAttachedFace());
+		// if block is a death sign, get attached block
+		if (DeathChestBlock.isDeathSign(block)) {
+			block = DeathChestBlock.getSignAttachedBlock(block);
 		}
 		
-		// if block is sign post, set block to one block below
-		else if (block.getType().equals(Material.SIGN_POST)) {
-			block = block.getRelative(0, -1, 0);
-		}
-		
-		// confirm block is a death chest
-		if (!block.getType().equals(Material.CHEST) || !DeathChestBlock.isDeathChestBlock(block)) {
+		// if block is not a death chest, do nothing and return
+		if (!DeathChestBlock.isDeathChest(block)) {
 			return;
 		}
 
-		// if player is in creative mode and does not have override permission, cancel event, send message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
+		// if player is in creative mode,
+		// and creative-access is configured false,
+		// and player does not have override permission,
+		// then cancel event, send message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE) 
+				&& !plugin.getConfig().getBoolean("creative-access")
+				&& !player.hasPermission("deathchest.creative-access")) {
 			event.setCancelled(true);
 			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
 			return;

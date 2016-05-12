@@ -117,7 +117,7 @@ public class WorldManager {
 	 * @param worldUID
 	 * @return
 	 */
-	public boolean isEnabled(UUID worldUID) {
+	public boolean isEnabled(final UUID worldUID) {
 		
 		// if worldUID is null return false
 		if (worldUID == null) {
@@ -133,7 +133,7 @@ public class WorldManager {
 	 * @param world
 	 * @return
 	 */
-	public boolean isEnabled(World world) {
+	public boolean isEnabled(final World world) {
 		
 		// if world is null return false
 		if (world == null) {
@@ -149,7 +149,7 @@ public class WorldManager {
 	 * @param worldName
 	 * @return
 	 */
-	public boolean isEnabled(String worldName) {
+	public boolean isEnabled(final String worldName) {
 		
 		// if worldName is null or empty, return false
 		if (worldName == null || worldName.isEmpty()) {
@@ -169,11 +169,54 @@ public class WorldManager {
 	
 	
 	/**
-	 * Get world name from, using Multiverse alias if available
+	 * Get world name from world UID, using Multiverse alias if available
 	 * @param world
 	 * @return world name or multiverse alias as String
 	 */
-	public String getWorldName(World world) {
+	public String getWorldName(final UUID worldUID) {
+		
+		// if worldUID is null, return null
+		if (worldUID == null) {
+			return null;
+		}
+		
+		// get world
+		World world = plugin.getServer().getWorld(worldUID);
+		
+		// if world is null, return null
+		if (world == null) {
+			return null;
+		}
+		
+		// get bukkit world name
+		String worldName = world.getName();
+		
+		// if Multiverse is enabled, get MultiverseWorld object
+		if (mvCore != null && mvCore.isEnabled()) {
+			
+			MultiverseWorld mvWorld = mvCore.getMVWorldManager().getMVWorld(world);
+	
+			// if Multiverse alias is not null or empty, set world name to alias
+			if (mvWorld != null  && mvWorld.getAlias() != null && !mvWorld.getAlias().isEmpty()) {
+				worldName = mvCore.getMVWorldManager().getMVWorld(worldName).getAlias();
+			}
+		}
+	
+		// return the bukkit world name or Multiverse world alias
+		return worldName;
+	}
+
+	/**
+	 * Get world name from world object, using Multiverse alias if available
+	 * @param world
+	 * @return world name or multiverse alias as String
+	 */
+	public String getWorldName(final World world) {
+		
+		// if world is null, return null
+		if (world == null) {
+			return null;
+		}
 		
 		// get bukkit world name
 		String worldName = world.getName();
@@ -192,4 +235,44 @@ public class WorldManager {
 		// return the bukkit world name or Multiverse world alias
 		return worldName;
 	}
+
+	
+	/**
+	 * Get world name from world name, using Multiverse alias if available
+	 * @param world
+	 * @return world name or multiverse alias as String
+	 */
+	public String getWorldName(final String passedName) {
+		
+		// if passedName is null or empty, return null
+		if (passedName == null || passedName.isEmpty()) {
+			return null;
+		}
+		
+		// get world
+		World world = plugin.getServer().getWorld(passedName);
+		
+		// if world is null, return null
+		if (world == null) {
+			return null;
+		}
+		
+		// get bukkit world name
+		String worldName = world.getName();
+		
+		// if Multiverse is enabled, get MultiverseWorld object
+		if (mvCore != null && mvCore.isEnabled()) {
+			
+			MultiverseWorld mvWorld = mvCore.getMVWorldManager().getMVWorld(world);
+
+			// if Multiverse alias is not null or empty, set world name to alias
+			if (mvWorld != null  && mvWorld.getAlias() != null && !mvWorld.getAlias().isEmpty()) {
+				worldName = mvCore.getMVWorldManager().getMVWorld(worldName).getAlias();
+			}
+		}
+
+		// return the bukkit world name or Multiverse world alias
+		return worldName;
+	}
+
 }

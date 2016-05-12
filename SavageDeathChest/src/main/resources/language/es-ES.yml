@@ -1,4 +1,6 @@
+##############
 # Time strings
+##############
 hour: 'hora'
 hour_plural: 'horas'
 minute: 'minuto'
@@ -7,8 +9,22 @@ second: 'segundo'
 second_plural: 'segundos'
 unlimited: 'tiempo ilimitado'
 
+
+##################
+# Custom sign text
+##################
+sign-text:
+  - '&lR.I.P.&r'
+  - '%playername%'
+  - ''
+  - 'D: %date%'
+
+date-format: "MMM d, yyyy"
+
+
+#################
 # Custom Messages
-#
+#################
 # Variable substitutions:
 # %itemname%			item name as configured above
 # %playername%          Player's name

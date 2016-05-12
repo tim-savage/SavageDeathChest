@@ -58,18 +58,13 @@ public class BlockEventListener implements Listener {
 			return;
 		}
 		
-		// if block is wall sign, set block to attached block
-		if (block.getType().equals(Material.WALL_SIGN)) {
-		    Sign sign = (Sign)block.getState().getData();
-		    block = block.getRelative(sign.getAttachedFace());
-		}
-		// if block is sign post, set block to one block below
-		else if (block.getType().equals(Material.SIGN_POST)) {
-			block = block.getRelative(0, -1, 0);
+		// if block is a death sign, get attached block
+		if (DeathChestBlock.isDeathSign(block)) {
+			block = DeathChestBlock.getSignAttachedBlock(block);
 		}
 		
-		// confirm block is a death chest
-		if (!block.getType().equals(Material.CHEST) || !DeathChestBlock.isDeathChestBlock(block)) {
+		// confirm block is a death chest, in case original block was a sign
+		if (!DeathChestBlock.isDeathChest(block)) {
 			return;
 		}
 			
@@ -77,13 +72,18 @@ public class BlockEventListener implements Listener {
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
 			if (plugin.debug) {
-				plugin.getLogger().info(blockingPlugin.getPluginName() + " is preventing access to this chest.");
+				plugin.getLogger().info(blockingPlugin.getPluginName() + " prevented access to a chest.");
 			}
 			return;
 		}
 		
-		// if player is in creative mode and does not have override permission: cancel event, send message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE) && !player.hasPermission("deathchest.creative-access")) {
+		// if player is in creative mode 
+		// and creative-access is configured false
+		// and player does not have override permission:
+		// cancel event, send message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE) 
+				&& !plugin.getConfig().getBoolean("creative-access")
+				&& !player.hasPermission("deathchest.creative-access")) {
 			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
 			event.setCancelled(true);
 			return;
@@ -97,7 +97,7 @@ public class BlockEventListener implements Listener {
 		// cancel event
 		event.setCancelled(true);
 		
-		// if chest is already open, send message and return
+		// if chest is already open, disallow breakage; send message and return
 		if (plugin.chestManager.getChestViewerCount(block) > 0) {
 
 			// send player message
@@ -189,18 +189,13 @@ public class BlockEventListener implements Listener {
 	
 		Block block = event.getBlock();
 	
-		// if event is cancelled, do nothing and return
+		// if event is already cancelled, do nothing and return
 		if (event.isCancelled()) {
 			return;
 		}
 		
-		// if block is not a DeathChestBlock, do nothing and return
-		if (!DeathChestBlock.isDeathChestBlock(block)) {
-			return;
-		}
-		
-		// if block is not a sign, do nothing and return
-		if (block.getType() != Material.WALL_SIGN && block.getType() != Material.SIGN_POST) {
+		// if block is not a DeathSign, do nothing and return
+		if (!DeathChestBlock.isDeathSign(block)) {
 			return;
 		}
 		
@@ -215,7 +210,7 @@ public class BlockEventListener implements Listener {
 		// cancel event
 		event.setCancelled(true);
 		
-		// destroy DeathChestBlock
+		// destroy the block
 		plugin.chestManager.destroyDeathChestBlock(block);
 	}
 	

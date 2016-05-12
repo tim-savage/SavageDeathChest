@@ -325,5 +325,13 @@ public class MessageManager {
 		}
 		return expireTime;
 	}
+
+	public List<String> getSignText() {
+		return this.messages.getConfig().getStringList("sign-text");
+	}
+
+	public String getDateFormat() {
+		return this.messages.getConfig().getString("date-format");
+	}
 	
 }

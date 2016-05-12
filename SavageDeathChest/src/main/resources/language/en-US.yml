@@ -1,4 +1,6 @@
+##############
 # Time strings
+##############
 hour: 'hour'
 hour_plural: 'hours'
 minute: 'minute'
@@ -7,8 +9,29 @@ second: 'second'
 second_pluaral: 'seconds'
 unlimited: 'unlimited time'
 
+
+##################
+# Custom sign text
+##################
+# Variable substitutions:
+# %playername%	Player's name
+# %worldname%	World name
+# %date%		Death date
+
+sign-text:
+  - '&lR.I.P.&r'
+  - '%playername%'
+  - ''
+  - 'D: %date%'
+
+# Date format documentation:
+# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+date-format: "MMM d, yyyy"
+
+
+#################
 # Custom Messages
-#
+#################
 # Variable substitutions:
 # %itemname%			item name as configured above
 # %playername%          Player's name

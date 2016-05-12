@@ -624,10 +624,36 @@ public class ChestManager {
 		
 		// Place text on sign with player name and death date
 		Sign sign = (Sign)signblockState;
-		String datestring = new SimpleDateFormat("MMM d, yyyy").format(System.currentTimeMillis());
-		sign.setLine(0, ChatColor.BOLD + "R.I.P.");
-		sign.setLine(1, ChatColor.RESET + player.getName());
-		sign.setLine(3, "D: " + datestring);
+		String dateFormat = plugin.messageManager.getDateFormat();
+		String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
+
+		// get sign text from language file
+		List<String> lines = plugin.messageManager.getSignText();
+		
+		if (lines.isEmpty()) {
+			sign.setLine(0, ChatColor.BOLD + "R.I.P.");
+			sign.setLine(1, ChatColor.RESET + player.getName());
+			sign.setLine(3, "D: " + dateString);
+		}
+		else {
+			// use try..catch block so chest will still deploy even if error exists in yaml
+			try {
+				int lineCount = 0;
+				for (String line : lines) {
+					line = line.replace("%playername%", player.getName());
+					line = line.replace("%date%", dateString);
+					line = line.replace("%worldname%", plugin.worldManager.getWorldName(player.getWorld()));
+					line = ChatColor.translateAlternateColorCodes('&', line);
+					sign.setLine(lineCount, line);
+					lineCount++;
+				}
+			}
+			catch (Exception e) {
+				sign.setLine(0, ChatColor.BOLD + "R.I.P.");
+				sign.setLine(1, ChatColor.RESET + player.getName());
+				sign.setLine(3, "D: " + dateString);
+			}
+		}
 		
 		// set sign facing direction
 		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signblockState.getData();
