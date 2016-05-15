@@ -48,7 +48,7 @@ public abstract class DataStore {
 	 * Delete a record from the datastore
 	 * @param location
 	 */
-	abstract void deleteRecord(final Location location);
+	public abstract void deleteRecord(final Location location);
 
 
 	/**

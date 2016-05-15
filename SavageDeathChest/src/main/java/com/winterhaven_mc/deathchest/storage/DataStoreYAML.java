@@ -177,7 +177,7 @@ public class DataStoreYAML extends DataStore {
 	 * @param location
 	 */
 	@Override
-	void deleteRecord(final Location location) {
+	public void deleteRecord(final Location location) {
 		String key = locationToString(location);
 		dataFile.getConfig().set(key, null);
 		dataFile.saveConfig();

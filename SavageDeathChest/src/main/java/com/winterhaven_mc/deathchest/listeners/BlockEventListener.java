@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,10 +17,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.material.Sign;
 
 
-public class BlockEventListener implements Listener {
+public final class BlockEventListener implements Listener {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -48,26 +46,19 @@ public class BlockEventListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	//TODO: Make sure we're using the right priority. Use NORMAL if possible.
-	public void onBlockBreak(final BlockBreakEvent event) {
+	public final void onBlockBreak(final BlockBreakEvent event) {
 		
-		Block block = event.getBlock();
-		Player player = event.getPlayer();
+		final Block block = event.getBlock();
+		final Player player = event.getPlayer();
 		
-		// if block is not a DeathChestBlock, we're not concerned with it, so do nothing and return
-		if (!DeathChestBlock.isDeathChestBlock(block)) {
+		// get instance of DeathChestBlock from event block
+		final DeathChestBlock deathChestBlock = DeathChestBlock.getChestInstance(block);
+
+		// if event block is not a DeathChestBlock, do nothing and return
+		if (deathChestBlock == null) {
 			return;
 		}
 		
-		// if block is a death sign, get attached block
-		if (DeathChestBlock.isDeathSign(block)) {
-			block = DeathChestBlock.getSignAttachedBlock(block);
-		}
-		
-		// confirm block is a death chest, in case original block was a sign
-		if (!DeathChestBlock.isDeathChest(block)) {
-			return;
-		}
-			
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
@@ -98,38 +89,35 @@ public class BlockEventListener implements Listener {
 		event.setCancelled(true);
 		
 		// if chest is already open, disallow breakage; send message and return
-		if (plugin.chestManager.getChestViewerCount(block) > 0) {
+		if (deathChestBlock.getViewerCount() > 0) {
 
 			// send player message
 			plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
-			// if sound effects are enabled, play denied access sound
-			if (plugin.getConfig().getBoolean("sound-effects")) {
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-			}
+			// play denied access sound
+			plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
 			return;
 		}
 		
 		// if player is owner or has deathchest.loot.other permission, break chest and return
-		if (DeathChestBlock.isDeathChestOwner(player, block) || player.hasPermission("deathchest.loot.other")) {
-			plugin.chestManager.destroyDeathChestBlock(block);
+		if (deathChestBlock.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
+			deathChestBlock.destroy();
 			return;
 		}
 		
 		// if killer looting is enabled  and player is killer, break chest and return
+		// TODO: this will need to be removed when items taken limit is implemented
 		if (plugin.getConfig().getBoolean("killer-looting") 
-				&& DeathChestBlock.isDeathChestKiller(player, block)) {
-			plugin.chestManager.destroyDeathChestBlock(block);
+				&& deathChestBlock.isKiller(player)) {
+			deathChestBlock.destroy();
 			return;
 		}
 		
 		// send player not-owner message
 		plugin.messageManager.sendPlayerMessage(player, "not-owner");
 
-		// if sound effects are enabled, play denied access sound
-		if (plugin.getConfig().getBoolean("sound-effects")) {
-			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-		}
+		// play denied access sound
+		plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
 	}
 
 
@@ -139,7 +127,7 @@ public class BlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onEntityExplode(final EntityExplodeEvent event) {
+	public final void onEntityExplode(final EntityExplodeEvent event) {
 		
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
@@ -162,7 +150,7 @@ public class BlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onBlockExplode(final BlockExplodeEvent event) {
+	public final void onBlockExplode(final BlockExplodeEvent event) {
 		
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
@@ -185,33 +173,34 @@ public class BlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void signDetachCheck(final BlockPhysicsEvent event) {
-	
-		Block block = event.getBlock();
+	public final void signDetachCheck(final BlockPhysicsEvent event) {
 	
 		// if event is already cancelled, do nothing and return
 		if (event.isCancelled()) {
 			return;
 		}
-		
-		// if block is not a DeathSign, do nothing and return
-		if (!DeathChestBlock.isDeathSign(block)) {
+
+		// get instance of DeathChestBlock representing the event block
+		final DeathChestBlock deathSign = DeathChestBlock.getSignInstance(event.getBlock());
+
+		// if block is not a death chest sign, do nothing and return
+		if (deathSign == null) {
 			return;
 		}
 		
-	    Sign sign = (Sign)block.getState().getData();
-		Block attached_block = block.getRelative(sign.getAttachedFace());
+		// get block that sign is attached to
+		final Block attachedBlock = deathSign.getAttachedBlock();
 	    
 		// if attached block is still there, do nothing and return
-		if (attached_block.getType() != Material.AIR) {
+		if (attachedBlock != null && attachedBlock.getType() != Material.AIR) {
 			return;
 		}
 		
 		// cancel event
 		event.setCancelled(true);
 		
-		// destroy the block
-		plugin.chestManager.destroyDeathChestBlock(block);
+		// destroy the death sign
+		deathSign.destroy();
 	}
-	
+
 }

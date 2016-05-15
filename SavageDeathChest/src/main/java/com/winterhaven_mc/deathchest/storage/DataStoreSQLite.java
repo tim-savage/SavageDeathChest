@@ -296,7 +296,7 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	void deleteRecord(final Location location) {
+	public void deleteRecord(final Location location) {
 
 		try {
 			// create prepared statement

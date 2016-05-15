@@ -80,6 +80,7 @@ messages:
   chest-expired:
     enabled: true
     string: '&cYour death chest has expired.'
+    repeat-delay: 1
 
   creative-mode:
     enabled: true

@@ -10,7 +10,7 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import com.winterhaven_mc.deathchest.PluginMain;
 
-public class WorldManager {
+public final class WorldManager {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -42,9 +42,9 @@ public class WorldManager {
 	}
 
 	/**
-	 * update enabledWorlds ArrayList field from config file settings
+	 * update enabledWorldUIDs List field from config file settings
 	 */
-	public void reload() {
+	public final void reload() {
 		
 		// create empty list for enabled world UIDs
 		List<UUID> list = new ArrayList<UUID>();
@@ -90,7 +90,7 @@ public class WorldManager {
 	 * get list of enabled world names
 	 * @return ArrayList of String enabledWorlds
 	 */
-	public List<String> getEnabledWorldNames() {
+	public final List<String> getEnabledWorldNames() {
 		
 		// create empty list of string for return
 		List<String> resultList = new ArrayList<String>();
@@ -117,7 +117,7 @@ public class WorldManager {
 	 * @param worldUID
 	 * @return
 	 */
-	public boolean isEnabled(final UUID worldUID) {
+	public final boolean isEnabled(final UUID worldUID) {
 		
 		// if worldUID is null return false
 		if (worldUID == null) {
@@ -133,7 +133,7 @@ public class WorldManager {
 	 * @param world
 	 * @return
 	 */
-	public boolean isEnabled(final World world) {
+	public final boolean isEnabled(final World world) {
 		
 		// if world is null return false
 		if (world == null) {
@@ -149,7 +149,7 @@ public class WorldManager {
 	 * @param worldName
 	 * @return
 	 */
-	public boolean isEnabled(final String worldName) {
+	public final boolean isEnabled(final String worldName) {
 		
 		// if worldName is null or empty, return false
 		if (worldName == null || worldName.isEmpty()) {
@@ -173,7 +173,7 @@ public class WorldManager {
 	 * @param world
 	 * @return world name or multiverse alias as String
 	 */
-	public String getWorldName(final UUID worldUID) {
+	public final String getWorldName(final UUID worldUID) {
 		
 		// if worldUID is null, return null
 		if (worldUID == null) {
@@ -211,7 +211,7 @@ public class WorldManager {
 	 * @param world
 	 * @return world name or multiverse alias as String
 	 */
-	public String getWorldName(final World world) {
+	public final String getWorldName(final World world) {
 		
 		// if world is null, return null
 		if (world == null) {
@@ -242,7 +242,7 @@ public class WorldManager {
 	 * @param world
 	 * @return world name or multiverse alias as String
 	 */
-	public String getWorldName(final String passedName) {
+	public final String getWorldName(final String passedName) {
 		
 		// if passedName is null or empty, return null
 		if (passedName == null || passedName.isEmpty()) {

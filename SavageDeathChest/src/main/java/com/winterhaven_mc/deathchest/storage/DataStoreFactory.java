@@ -8,7 +8,7 @@ import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 
 
-public class DataStoreFactory {
+public final class DataStoreFactory {
 
 	// static reference to main class instance
 	private final static PluginMain plugin = PluginMain.instance;
@@ -20,7 +20,7 @@ public class DataStoreFactory {
 	 * and datastore type should be read from configuration
 	 * @return new datastore of configured type
 	 */
-	public static DataStore create() {
+	public final static DataStore create() {
 		
 		// get data store type from config
 		DataStoreType dataStoreType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
@@ -38,7 +38,7 @@ public class DataStoreFactory {
 	 * @param dataStoreType
 	 * @return
 	 */
-	static DataStore create(final DataStoreType dataStoreType) {
+	static final DataStore create(final DataStoreType dataStoreType) {
 		return create(dataStoreType, null);
 	}
 	
@@ -50,7 +50,7 @@ public class DataStoreFactory {
 	 * @param oldDataStore		existing datastore reference
 	 * @return
 	 */
-	static DataStore create(final DataStoreType dataStoreType, final DataStore oldDataStore) {
+	static final DataStore create(final DataStoreType dataStoreType, final DataStore oldDataStore) {
 	
 		// get new data store of specified type
 		DataStore newDataStore = dataStoreType.create();
@@ -81,7 +81,7 @@ public class DataStoreFactory {
 	 * Check if a new datastore type has been configured, and
 	 * convert old datastore to new type if necessary
 	 */
-	public static void reload() {
+	public final static void reload() {
 		
 		// get current datastore type
 		DataStoreType currentType = plugin.dataStore.getType();
@@ -104,7 +104,7 @@ public class DataStoreFactory {
 	 * @param oldDataStore
 	 * @param newDataStore
 	 */
-	private static void convertDataStore(final DataStore oldDataStore, final DataStore newDataStore) {
+	private final static void convertDataStore(final DataStore oldDataStore, final DataStore newDataStore) {
 
 		// if datastores are same type, do not convert
 		if (oldDataStore.getType().equals(newDataStore.getType())) {
@@ -152,7 +152,7 @@ public class DataStoreFactory {
 	 * convert all existing data stores to new data store
 	 * @param newDataStore
 	 */
-	private static void convertAll(final DataStore newDataStore) {
+	private final static void convertAll(final DataStore newDataStore) {
 		
 		// get array list of all data store types
 		ArrayList<DataStoreType> dataStores = new ArrayList<DataStoreType>(Arrays.asList(DataStoreType.values()));

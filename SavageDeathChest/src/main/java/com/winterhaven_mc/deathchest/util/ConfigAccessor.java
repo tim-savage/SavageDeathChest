@@ -32,7 +32,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ConfigAccessor {
+public final class ConfigAccessor {
 
 	private final String fileName;
 	private final JavaPlugin plugin;
@@ -70,7 +70,7 @@ public class ConfigAccessor {
 	/**
 	 * Reload the config file
 	 */
-	public void reloadConfig() {
+	public final void reloadConfig() {
 
 		fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
 
@@ -102,14 +102,14 @@ public class ConfigAccessor {
 	}
 
 	
-	public FileConfiguration getConfig() {
+	public final FileConfiguration getConfig() {
 		if (fileConfiguration == null) {
 			this.reloadConfig();
 		}
 		return fileConfiguration;
 	}
 
-	public void saveConfig() {
+	public final void saveConfig() {
 		if (fileConfiguration == null || configFile == null) {
 			return;
 		} else {
@@ -121,7 +121,7 @@ public class ConfigAccessor {
 		}
 	}
 
-	public void saveDefaultConfig() {
+	public final void saveDefaultConfig() {
 		if (!configFile.exists()) {            
 			this.plugin.saveResource(fileName, false);
 		}

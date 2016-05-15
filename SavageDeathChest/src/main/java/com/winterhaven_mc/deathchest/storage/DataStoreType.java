@@ -43,12 +43,12 @@ public enum DataStoreType {
 
 	
 	@Override
-	public String toString() {
+	public final String toString() {
 		return this.displayName;
 	}
 
 	
-	public static DataStoreType match(final String name) {
+	public final static DataStoreType match(final String name) {
 		for (DataStoreType type : DataStoreType.values()) {
 			if (type.toString().equalsIgnoreCase(name)) {
 				return type;
@@ -59,7 +59,7 @@ public enum DataStoreType {
 	}
 	
 	
-	public static DataStoreType getDefaultType() {
+	public final static DataStoreType getDefaultType() {
 		return defaultType;
 	}
 }

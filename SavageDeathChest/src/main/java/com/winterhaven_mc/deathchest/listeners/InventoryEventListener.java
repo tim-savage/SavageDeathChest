@@ -15,7 +15,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,7 +22,7 @@ import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 
-public class InventoryEventListener implements Listener {
+public final class InventoryEventListener implements Listener {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -51,7 +50,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onInventoryOpen(final InventoryOpenEvent event) {
+	public final void onInventoryOpen(final InventoryOpenEvent event) {
 
 		// if event is not cancelled, do nothing and return
 		if (!event.isCancelled()) {
@@ -59,10 +58,10 @@ public class InventoryEventListener implements Listener {
 		}
 
 		// get event inventory
-		Inventory inventory = event.getInventory();
+		final Inventory inventory = event.getInventory();
 
 		// if inventory holder is not a death chest, do nothing and return		
-		if (!isDeathChest(inventory)) {
+		if (!DeathChestBlock.isDeathChest(inventory)) {
 			return;
 		}
 
@@ -72,7 +71,7 @@ public class InventoryEventListener implements Listener {
 		}
 
 		// get event player
-		Player player = (Player) event.getPlayer();
+		final Player player = (Player) event.getPlayer();
 
 		// get inventory holder block (death chest)
 		Block block = null;
@@ -114,7 +113,7 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryClose(final InventoryCloseEvent event) {
+	public final void onInventoryClose(final InventoryCloseEvent event) {
 		
 		// if remove-empty option is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("remove-empty")) {
@@ -122,44 +121,23 @@ public class InventoryEventListener implements Listener {
 		}
 		
 		if (event.getPlayer() instanceof Player) {
-			Player player = (Player)event.getPlayer();
-			Inventory inventory = event.getInventory();
+			
+			final Player player = (Player)event.getPlayer();
+			final Inventory inventory = event.getInventory();
 	
-			// if inventory is a single chest
-	        if (inventory.getHolder() instanceof Chest) {
-	            Chest chest = (Chest) inventory.getHolder();
-	            Block block = chest.getBlock();
-	            
-	    		// if block is not a DeathChestBlock, do nothing and return
-	    		if (!DeathChestBlock.isDeathChestBlock(block)) {
-	    			return;
-	    		}
-	    		
-	            // if chest is empty, call lootChest method to remove chest and sign
-	            if (isEmpty(chest)) {
-	            	plugin.chestManager.lootChest(player, block);
-	            	return;
-	            }
-	        }
-	        
-	        // if inventory is a double chest
-	        if (inventory.getHolder() instanceof DoubleChest) {
-	            DoubleChest chest = (DoubleChest) inventory.getHolder();
-	            Chest leftChest = (Chest) chest.getLeftSide();
-	            Chest rightChest = (Chest) chest.getRightSide();
-	            Block block = leftChest.getBlock();
-	            
-	    		// if block is not a DeathChestBlock, do nothing and return
-	    		if (!DeathChestBlock.isDeathChestBlock(block)) {
-	    			return;
-	    		}
-	    		
-	            // if both chests are empty, call lootChest method to remove chests and sign
-	            if (isEmpty(leftChest) && isEmpty(rightChest)) {
-	            	plugin.chestManager.lootChest(player, block);
-	            	return;
-	            }
-	        }
+			// get DeathChestBlock instance from inventory
+			final DeathChestBlock deathChestBlock = DeathChestBlock.getChestInstance(inventory);
+
+			// if inventory is not a DeathChest inventory, return
+			if (deathChestBlock == null) {
+				return;
+			}
+			
+			// if inventory is empty, loot chest to destroy chest(s) and sign
+			// TODO: create a method to destroy chest(s) and sign, and we won't need to deal with player here
+			if (isEmpty(inventory)) {
+				deathChestBlock.autoLoot(player);
+			}
 		}
 	}
 
@@ -169,20 +147,20 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryMoveItemEvent(final InventoryMoveItemEvent event) {
+	public final void onInventoryMoveItem(final InventoryMoveItemEvent event) {
 
 		// get inventories involved in event
-		Inventory destination = event.getDestination();
-		Inventory source = event.getSource();
+		final Inventory destination = event.getDestination();
+		final Inventory source = event.getSource();
 		
 		// if source inventory is a death chest, cancel event and return
-		if (isDeathChest(source)) {
+		if (DeathChestBlock.isDeathChest(source)) {
 			event.setCancelled(true);
 			return;
 		}
 		
 		// if destination is a death chest and prevent-item-placement is true, cancel event and return
-		if (isDeathChest(destination) && plugin.getConfig().getBoolean("prevent-item-placement")) {
+		if (DeathChestBlock.isDeathChest(destination) && plugin.getConfig().getBoolean("prevent-item-placement")) {
 			event.setCancelled(true);
 			return;
 		}
@@ -194,13 +172,13 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryClickEvent(final InventoryClickEvent event) {
+	public final void onInventoryClick(final InventoryClickEvent event) {
 		
-		Inventory inventory = event.getInventory();
-		InventoryAction action = event.getAction();
+		final Inventory inventory = event.getInventory();
+		final InventoryAction action = event.getAction();
 		
 		// if inventory is a death chest inventory
-	    if (isDeathChest(inventory)) {
+	    if (DeathChestBlock.isDeathChest(inventory)) {
 	    	
 			// if prevent-item-placement is configured false, do nothing and return
 			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
@@ -273,12 +251,12 @@ public class InventoryEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onInventoryDragEvent(final InventoryDragEvent event) {
+	public final void onInventoryDrag(final InventoryDragEvent event) {
 		
-		Inventory inventory = event.getInventory();
+		final Inventory inventory = event.getInventory();
 		
 		// if inventory is a death chest inventory
-	    if (isDeathChest(inventory)) {
+	    if (DeathChestBlock.isDeathChest(inventory)) {
 	
 			// if prevent-item-placement is configured false, do nothing and return
 			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
@@ -312,62 +290,20 @@ public class InventoryEventListener implements Listener {
 
 
 	/**
-	 * Test if chest is empty
+	 * Test if inventory is empty
 	 * 
 	 * @param chest
-	 * @return true if chest is empty, false if chest has any contents
+	 * @return true if inventory is empty, false if inventory has any contents
 	 */
-	private boolean isEmpty(final Chest chest) {
-	    ItemStack[] items = chest.getInventory().getContents();
+	private final boolean isEmpty(final Inventory inventory) {
+		
+	    final ItemStack[] items = inventory.getContents();
 	    for (ItemStack item : items) {
 	    	if (item != null) {
 	    		return false;
 	    	}
 	    }
 	    return true;
-	}
-	
-	
-	/**
-	 * Test that inventory is a death chest inventory
-	 * @param inventory
-	 * @return
-	 */
-	private boolean isDeathChest(final Inventory inventory) {
-		
-		// if inventory is not a chest, return false
-	    if (!inventory.getType().equals(InventoryType.CHEST)) {
-	    	return false;
-	    }
-	    
-	    // if inventory holder is null, return false
-	    if (inventory.getHolder() == null) {
-	    	return false;
-	    }
-	    
-	    // try to get inventory holder block
-    	Block block = null;
-    	
-    	try {
-			if (inventory.getHolder() instanceof DoubleChest) {
-				DoubleChest doubleChest;
-				doubleChest = (DoubleChest) inventory.getHolder();
-				block = doubleChest.getLocation().getBlock();
-			}
-			else {
-				Chest chest;
-				chest = (Chest) inventory.getHolder();
-				block = chest.getBlock();
-			}
-		} catch (Exception e) {
-			return false;
-		}
-
-		// if inventory holder block is not a DeathChest, return false
-		if (!DeathChestBlock.isDeathChest(block)) {
-			return false;
-		}
-		return true;
 	}
 
 }

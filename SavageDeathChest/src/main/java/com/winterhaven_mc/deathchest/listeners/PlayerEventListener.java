@@ -3,7 +3,6 @@ package com.winterhaven_mc.deathchest.listeners;
 import java.util.List;
 
 import org.bukkit.GameMode;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +17,7 @@ import com.winterhaven_mc.deathchest.ProtectionPlugin;
 
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class PlayerEventListener implements Listener {
+public final class PlayerEventListener implements Listener {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -44,7 +43,7 @@ public class PlayerEventListener implements Listener {
 	 * @param event	PlayerDeathEvent
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerDeath(final PlayerDeathEvent event) {
+	public final void onPlayerDeath(final PlayerDeathEvent event) {
 		
 		final Player player = (Player)event.getEntity();
 		List<ItemStack> droppedItems = event.getDrops();
@@ -97,23 +96,18 @@ public class PlayerEventListener implements Listener {
 	 * @return	void
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerInteract(final PlayerInteractEvent event) {
+	public final void onPlayerInteract(final PlayerInteractEvent event) {
 		
 		final Player player = event.getPlayer();
-		Block block = event.getClickedBlock();
 		
-		// if block is not a DeathChestBlock (sign or chest), do nothing and return
-		if (!DeathChestBlock.isDeathChestBlock(block)) {
-			return;
-		}
+		// get event block 
+		final Block block = event.getClickedBlock();
+
+		// get deathChestBlock instance from block
+		final DeathChestBlock deathChestBlock = DeathChestBlock.getChestInstance(event.getClickedBlock());
 		
-		// if block is a death sign, get attached block
-		if (DeathChestBlock.isDeathSign(block)) {
-			block = DeathChestBlock.getSignAttachedBlock(block);
-		}
-		
-		// if block is not a death chest, do nothing and return
-		if (!DeathChestBlock.isDeathChest(block)) {
+		// if getInstance returned null object, block is not a DeathChestBlock so do nothing and return
+		if (deathChestBlock == null) {
 			return;
 		}
 
@@ -138,8 +132,8 @@ public class PlayerEventListener implements Listener {
 			return;
 		}
 		
-		// if chest is already open: cancel event, send message and return
-		if (plugin.chestManager.getChestViewerCount(block) > 0) {
+		// if chest inventory is already being viewed: cancel event, send message and return
+		if (deathChestBlock.getViewerCount() > 0 ) {
 
 			// cancel event
 			event.setCancelled(true);
@@ -147,10 +141,8 @@ public class PlayerEventListener implements Listener {
 			// send player message
 			plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
-			// if sound effects are enabled, play denied access sound
-			if (plugin.getConfig().getBoolean("sound-effects")) {
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-			}
+			// play denied access sound
+			plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
 			return;
 		}
 		
@@ -162,30 +154,28 @@ public class PlayerEventListener implements Listener {
 			
 			// if chest protection is not enabled, loot chest and return
 			if (!plugin.getConfig().getBoolean("chest-protection")) {
-				plugin.chestManager.lootChest(player, block);
+				deathChestBlock.autoLoot(player);
 				return;
 			}
 			
 			// if player is owner or has deathchest.loot.other permission, loot chest and return
-			if (DeathChestBlock.isDeathChestOwner(player, block) || player.hasPermission("deathchest.loot.other")) {
-				plugin.chestManager.lootChest(player, block);
+			if (deathChestBlock.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
+				deathChestBlock.autoLoot(player);
 				return;
 			}
 			
 			// if killer looting is enabled  and player is killer, loot chest and return
 			if (plugin.getConfig().getBoolean("killer-looting") 
-					&& DeathChestBlock.isDeathChestKiller(player, block)) {
-				plugin.chestManager.lootChest(player, block);
+					&& deathChestBlock.isKiller(player)) {
+				deathChestBlock.autoLoot(player);
 				return;
 			}
 			
 			// send player not-owner message
 			plugin.messageManager.sendPlayerMessage(player, "not-owner");
 
-			// if sound effects are enabled, play denied access sound
-			if (plugin.getConfig().getBoolean("sound-effects")) {
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-			}
+			// play denied access sound
+			plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
 		}
 
 		// if player did not right click block, do nothing and return 
@@ -202,25 +192,23 @@ public class PlayerEventListener implements Listener {
 		event.setCancelled(true);
 		
 		// if player is owner or has deathchest.loot.other permission, open chest inventory and return
-		if (DeathChestBlock.isDeathChestOwner(player, block) || player.hasPermission("deathchest.loot.other")) {
-			DeathChestBlock.openInventory(player, block);
+		if (deathChestBlock.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
+			deathChestBlock.openInventory(player);
 			return;
 		}
 		
 		// if killer looting is enabled  and player is killer, open chest inventory and return
 		if (plugin.getConfig().getBoolean("killer-looting") 
-				&& DeathChestBlock.isDeathChestKiller(player, block)) {
-			DeathChestBlock.openInventory(player, block);
+				&& deathChestBlock.isKiller(player)) {
+			deathChestBlock.openInventory(player);
 			return;
 		}
 		
 		// send player not-owner message
 		plugin.messageManager.sendPlayerMessage(player, "not-owner");
 
-		// if sound effects are enabled, play denied access sound
-		if (plugin.getConfig().getBoolean("sound-effects")) {
-			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-		}
+		// play denied access sound
+		plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
 	}
 	
 }

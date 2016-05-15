@@ -2,6 +2,7 @@ package com.winterhaven_mc.deathchest.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -15,20 +16,26 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.SearchResult;
 
-public class ChestUtilities {
+public final class LocationUtilities {
 	
 	// reference to main class
     private final PluginMain plugin;
     
-    
+	// material types that can be replaced by death chests
+	private HashSet<Material> replaceableBlocks = new HashSet<Material>();
+
+
     /**
      * Class constructor
      * @param plugin
      */
-    public ChestUtilities(final PluginMain plugin) {
+    public LocationUtilities(final PluginMain plugin) {
     	
     	// set reference to main class
         this.plugin = plugin;
+        
+		// load material types that chests can be replace from config file
+		loadReplaceableBlocks();
     }
 
 
@@ -39,7 +46,7 @@ public class ChestUtilities {
      * @param yaw	Direction in degrees
      * @return BlockFace of cardinal direction
      */
-    public BlockFace getCardinalDirection(final float yaw) {
+    public final BlockFace getCardinalDirection(final float yaw) {
     	double rot = yaw % 360;
     	if (rot < 0) {
     		rot += 360.0;
@@ -64,7 +71,7 @@ public class ChestUtilities {
 	 * @param itemlist	Collection of itemstacks to combine
 	 * @return List of ItemStack with same materials combined
 	 */
-	public List<ItemStack> consolidateItems(final Collection<ItemStack> itemlist) {
+	public final List<ItemStack> consolidateItems(final Collection<ItemStack> itemlist) {
 
 		List<ItemStack> returnlist = new ArrayList<ItemStack>();
 		
@@ -95,49 +102,11 @@ public class ChestUtilities {
 
 	
 	/**
-	 * Remove one chest from list of item stacks
-	 * @param list	List of itemstacks to remove chest
-	 * @return List of itemstacks with one chest removed
-	 */
-	public List<ItemStack> removeOneChest(List<ItemStack> list) {
-		
-		for (ItemStack stack : list) {
-			if (stack.isSimilar(new ItemStack(Material.CHEST))) {
-				list.remove(stack);
-				stack.setAmount(stack.getAmount() - 1);
-				if (stack.getAmount() > 0) {
-					list.add(stack);
-				}
-			break;
-			}
-		}
-		return list;
-	}
-
-
-	/**
-	 * Check if list of item stacks contains at least one chest
-	 * @param list Collection of ItemStack to check for chest
-	 * @return boolean
-	 */
-	public boolean hasChest(final Collection<ItemStack> list) {
-		boolean haschest = false;
-		for (ItemStack item : list) {
-			if (item.getType().equals(Material.CHEST)) {
-				haschest = true;
-				break;
-			}
-		}
-		return haschest;	
-	}
-
-
-	/**
 	 * Get location to left of location based on yaw
 	 * @param location initial location
 	 * @return location one block to left
 	 */
-	public Location getLocationToLeft(final Location location) {
+	public final Location getLocationToLeft(final Location location) {
 		
 		float yaw = location.getYaw() + 90;
 
@@ -158,7 +127,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return location one block to right
 	 */
-	public Location locationToRight(final Location location) {
+	public final Location locationToRight(final Location location) {
 		
 		float yaw = location.getYaw() - 90;
 		
@@ -179,7 +148,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return location one block to right
 	 */
-	public Location locationToFront(final Location location) {
+	public final Location locationToFront(final Location location) {
 		
 		float yaw = location.getYaw();
 		
@@ -200,7 +169,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return block to left of location
 	 */
-	public Block blockToLeft(final Location location) {
+	public final Block blockToLeft(final Location location) {
 		float yaw = location.getYaw() + 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -211,7 +180,7 @@ public class ChestUtilities {
 	 * @param location inital location
 	 * @return block to right of initial location
 	 */
-	public Block blockToRight(final Location location) {
+	public final Block blockToRight(final Location location) {
 		float yaw = location.getYaw() - 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -222,7 +191,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return block in front of initial location
 	 */
-	public Block blockInFront(final Location location) {
+	public final Block blockInFront(final Location location) {
 		float yaw = location.getYaw() + 180;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -233,7 +202,7 @@ public class ChestUtilities {
 	 * @param location initial location
 	 * @return block behind inital location
 	 */
-	public Block blockToRear(final Location location) {
+	public final Block blockToRear(final Location location) {
 		float yaw = location.getYaw();
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -246,7 +215,7 @@ public class ChestUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return SearchResult
 	 */
-	public SearchResult findValidSingleChestLocation(final Player player) {
+	public final SearchResult findValidSingleChestLocation(final Player player) {
 
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -381,7 +350,7 @@ public class ChestUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return location that is valid for double chest deployment, or null if valid location cannot be found
 	 */
-	public SearchResult findValidDoubleChestLocation(final Player player) {
+	public final SearchResult findValidDoubleChestLocation(final Player player) {
 	
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -521,12 +490,12 @@ public class ChestUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public boolean isValidSignLocation(final Player player, final Location location) {
+	public final boolean isValidSignLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 
 		// check if block at location is a ReplaceableBlock
-		if (!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+		if (!this.getReplaceableBlocks().contains(block.getType())) {
 			return false;
 		}
 		
@@ -545,13 +514,13 @@ public class ChestUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public SearchResult isValidLeftChestLocation(final Player player, final Location location) {
+	public final SearchResult isValidLeftChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 		SearchResult result = null;
 
 		// check if block at location is a ReplaceableBlock
-		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+		if(!this.getReplaceableBlocks().contains(block.getType())) {
 			return SearchResult.NON_REPLACEABLE_BLOCK;
 		}
 		// check if location is adjacent to an existing chest
@@ -584,13 +553,13 @@ public class ChestUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public SearchResult isValidRightChestLocation(final Player player, final Location location) {
+	public final SearchResult isValidRightChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 		SearchResult result = null;
 		
 		// check if block at location is a ReplaceableBlock
-		if(!plugin.chestManager.getReplaceableBlocks().contains(block.getType())) {
+		if(!this.getReplaceableBlocks().contains(block.getType())) {
 			return SearchResult.NON_REPLACEABLE_BLOCK;
 		}
 		
@@ -616,7 +585,7 @@ public class ChestUtilities {
 	}
 
 
-	boolean adjacentChest(final Location location, final Boolean firstChest) {
+	final boolean adjacentChest(final Location location, final Boolean firstChest) {
 
 		if (firstChest) {
 			if (blockToLeft(location).getType().equals(Material.CHEST)) {
@@ -636,12 +605,40 @@ public class ChestUtilities {
 	}
 	
 
-	boolean isAboveGrassPath(final Block block) {
+	final boolean isAboveGrassPath(final Block block) {
 		
 		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
 			return true;
 		}
 		return false;
+	}
+
+
+	/**
+	 * Get HashSet of replaceable blocks
+	 * @return
+	 */
+	public final HashSet<Material> getReplaceableBlocks() {
+		return replaceableBlocks;
+	}
+
+
+	/**
+	 * Load list of replaceable blocks from config file
+	 */
+	private final void loadReplaceableBlocks() {
+	
+		// get string list of materials from config file
+		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
+		
+		// iterate over string list
+		for (String materialString : materialStringList) {
+			
+			// if material string matches a valid material type, add to replaceableBlocks HashSet
+			if (Material.matchMaterial(materialString) != null) {
+				replaceableBlocks.add(Material.matchMaterial(materialString));
+			}
+		}
 	}
 
 }

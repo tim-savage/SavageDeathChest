@@ -11,7 +11,7 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 
-public class CommandManager implements CommandExecutor {
+public final class CommandManager implements CommandExecutor {
 	
 	private final PluginMain plugin;
 	private final String pluginName;
@@ -22,7 +22,7 @@ public class CommandManager implements CommandExecutor {
 		pluginName = "[" + this.plugin.getName() + "] ";
 	}
 
-	public boolean onCommand(final CommandSender sender, final Command cmd, 
+	public final boolean onCommand(final CommandSender sender, final Command cmd, 
 			final String label, final String[] args) {
 
 
@@ -56,7 +56,7 @@ public class CommandManager implements CommandExecutor {
 	}
 	
 	
-	boolean statusCommand(final CommandSender sender) {
+	private final boolean statusCommand(final CommandSender sender) {
 		
 		String versionString = this.plugin.getDescription().getVersion();
 		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " 
@@ -103,7 +103,7 @@ public class CommandManager implements CommandExecutor {
 	}
 
 	
-	boolean reloadCommand(final CommandSender sender) {
+	private final boolean reloadCommand(final CommandSender sender) {
 		
 		// copy default config from jar if it doesn't exist
 		plugin.saveDefaultConfig();
