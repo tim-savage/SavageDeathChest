@@ -1,0 +1,22 @@
+# post 1.9 sound configuration
+sounds:
+  COMMAND_FAIL:
+    enabled: true
+    player-only: true
+    sound: ENTITY_VILLAGER_NO
+    volume: 1
+    pitch: 1
+
+  CHEST_DENIED_ACCESS:
+    enabled: true
+    player-only: true
+    sound: ENTITY_VILLAGER_NO
+    volume: 1
+    pitch: 1
+
+  INVENTORY_ADD_ITEM:
+    enabled: true
+    player-only: true
+    sound: ENTITY_ITEM_PICKUP
+    volume: 1
+    pitch: 1
