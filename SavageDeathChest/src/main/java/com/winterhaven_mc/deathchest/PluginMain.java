@@ -11,7 +11,7 @@ import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.CommandManager;
 import com.winterhaven_mc.deathchest.util.MessageManager;
-import com.winterhaven_mc.deathchest.util.WorldManager;
+import com.winterhaven_mc.util.WorldManager;
 
 public final class PluginMain extends JavaPlugin {
 

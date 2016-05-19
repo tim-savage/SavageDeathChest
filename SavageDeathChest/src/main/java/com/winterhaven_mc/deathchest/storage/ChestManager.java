@@ -30,9 +30,6 @@ public final class ChestManager {
 	// reference to main class
 	private final PluginMain plugin;
 
-	// chest utilities object
-	private LocationUtilities locationUtilities;
-	
     // ItemStack of Chest for comparisons
     private final ItemStack CHEST_STACK = new ItemStack(Material.CHEST);
     
@@ -54,9 +51,6 @@ public final class ChestManager {
 		
 		// set reference to main class
 		this.plugin = plugin;
-		
-		// instantiate chestUtilities
-        locationUtilities = new LocationUtilities(plugin);
 		
 		// load death chest blocks from datastore
 		loadAllDeathChestBlocks();
@@ -191,7 +185,7 @@ public final class ChestManager {
 	 */
 	private final List<ItemStack> deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
 		
-		SearchResult result = locationUtilities.findValidSingleChestLocation(player);
+		SearchResult result = LocationUtilities.findValidSingleChestLocation(player);
 
 		// search result returned gives reason if valid location could not be found
 		if (result == null || !result.equals(SearchResult.SUCCESS)) {
@@ -235,7 +229,7 @@ public final class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(locationUtilities.getCardinalDirection(result.getLocation().getYaw()));
+		chestData.setFacingDirection(LocationUtilities.getCardinalDirection(result.getLocation().getYaw()));
 		
 		chest.update();
 		
@@ -282,11 +276,11 @@ public final class ChestManager {
 	private final List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 		
 		// try to find a valid double chest location
-		SearchResult result = locationUtilities.findValidDoubleChestLocation(player);
+		SearchResult result = LocationUtilities.findValidDoubleChestLocation(player);
 		
 		// if no valid double chest location can be found, try to find a valid single chest location
 		if (result == null || result != SearchResult.SUCCESS) {
-			result = locationUtilities.findValidSingleChestLocation(player);
+			result = LocationUtilities.findValidSingleChestLocation(player);
 		}
 
 		// if no valid single chest location, return droppedItems
@@ -336,7 +330,7 @@ public final class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(locationUtilities.getCardinalDirection(result.getLocation().getYaw()));
+		chestData.setFacingDirection(LocationUtilities.getCardinalDirection(result.getLocation().getYaw()));
 
 		chest.update();
 		
@@ -366,10 +360,10 @@ public final class ChestManager {
 		plugin.taskManager.createExpireBlockTask(deathChestBlock);
 
 		// get location one block to right of first chest
-		Location location = locationUtilities.locationToRight(result.getLocation());
+		Location location = LocationUtilities.locationToRight(result.getLocation());
 		
 		// if block at second chest location is not valid, send message and return remaining_items
-		SearchResult result2 = locationUtilities.isValidRightChestLocation(player, location);
+		SearchResult result2 = LocationUtilities.isValidRightChestLocation(player, location);
 		if (result2 == null || result2 != SearchResult.SUCCESS) {
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
 			return remaining_items;
@@ -386,7 +380,7 @@ public final class ChestManager {
 		
 		// set chest direction
 		chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(locationUtilities.getCardinalDirection(location.getYaw()));
+		chestData.setFacingDirection(LocationUtilities.getCardinalDirection(location.getYaw()));
 		
 		// update blockstate
 		chest.update();
@@ -438,16 +432,16 @@ public final class ChestManager {
 		float yaw = player.getLocation().getYaw();
 		
 		// get block adjacent to chest facing player direction
-		Block signblock = chestblock.getRelative(locationUtilities.getCardinalDirection(yaw));
+		Block signblock = chestblock.getRelative(LocationUtilities.getCardinalDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
-		if (locationUtilities.isValidSignLocation(player,signblock.getLocation())) {
+		if (LocationUtilities.isValidSignLocation(player,signblock.getLocation())) {
 			signblock.setType(Material.WALL_SIGN);
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
 			signblock = chestblock.getRelative(BlockFace.UP);
-			if (locationUtilities.isValidSignLocation(player,signblock.getLocation())) {
+			if (LocationUtilities.isValidSignLocation(player,signblock.getLocation())) {
 				signblock.setType(Material.SIGN_POST);
 			}
 			else {
@@ -499,7 +493,7 @@ public final class ChestManager {
 		
 		// set sign facing direction
 		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signblockState.getData();
-		signData.setFacingDirection(locationUtilities.getCardinalDirection(yaw));
+		signData.setFacingDirection(LocationUtilities.getCardinalDirection(yaw));
 		sign.setData(signData);
 		
 		// update sign block with text and direction

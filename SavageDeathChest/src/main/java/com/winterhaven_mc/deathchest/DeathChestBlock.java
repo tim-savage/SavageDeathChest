@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -20,6 +19,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+
+import com.winterhaven_mc.deathchest.util.LocationUtilities;
 
 public final class DeathChestBlock {
 
@@ -129,30 +130,23 @@ public final class DeathChestBlock {
 	 * is not a DeathChest.
 	 */
 	public final static DeathChestBlock getChestInstance(final Block block) {
-		
+
 		// if passed block is null, return null
 		if (block == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Could not get DeathChestBlock instance from block because block is null.");
-			}
 			return null;
 		}
-		
+
 		// if passed block is not a death chest block, return null
 		if (!isDeathChestBlock(block)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Could not get DeathChestBlock instance from block because "
-						+ "block is not a DeathChestBlock.");
-			}
 			return null;
 		}
-		
+
 		// if passed block is a death sign, try to get attached chest
 		if (isDeathSign(block)) {
-			
+
 			// get attached block
-			Block attachedBlock = getAttachedBlock(block);
-			
+			final Block attachedBlock = getAttachedBlock(block);
+
 			// if attached block is null or not a death chest, return null
 			if (attachedBlock == null || !isDeathChest(attachedBlock)) {
 				return null;
@@ -162,7 +156,7 @@ public final class DeathChestBlock {
 				return new DeathChestBlock(attachedBlock);
 			}
 		}
-		
+
 		// return DeathChestBlock (chest) with attributes set from block
 		return new DeathChestBlock(block);
 	}
@@ -178,9 +172,6 @@ public final class DeathChestBlock {
 		
 		// if passed block is null, return null
 		if (block == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Could not get DeathChestBlock instance from block because block is null.");
-			}
 			return null;
 		}
 		
@@ -217,7 +208,7 @@ public final class DeathChestBlock {
 		}
 
 		// get inventory holder block
-		Block block = (Block)inventory.getHolder();
+		final Block block = (Block)inventory.getHolder();
 
 		// if inventory holder block is not a DeathChest, return null
 		if (!DeathChestBlock.isDeathChest(block)) {
@@ -259,7 +250,7 @@ public final class DeathChestBlock {
 	 * Setter method for DeathChestBlock ownerUUID
 	 * @param ownerUUID
 	 */
-	public final void setOwnerUUID(UUID ownerUUID) {
+	public final void setOwnerUUID(final UUID ownerUUID) {
 		this.ownerUUID = ownerUUID;
 	}
 
@@ -277,7 +268,7 @@ public final class DeathChestBlock {
 	 * Setter method for DeathChestBlock killerUUID
 	 * @param killerUUID
 	 */
-	public final void setKillerUUID(UUID killerUUID) {
+	public final void setKillerUUID(final UUID killerUUID) {
 		this.killerUUID = killerUUID;
 	}
 
@@ -300,18 +291,22 @@ public final class DeathChestBlock {
 	}
 
 	
+	/**
+	 * Getter method for DeathChestBlock expireTaskId
+	 * @return
+	 */
 	public final int getExpireTaskId() {
 		return this.expireTaskId;
 	}
 	
 
-	public final void setExpireTaskId(int expireTaskId) {
+	public final void setExpireTaskId(final int expireTaskId) {
 
 		// set expire task id in this DeathChestBlock object
 		this.expireTaskId = expireTaskId;
 		
 		// get block represented by this DeathChestBlock object
-		Block block = this.location.getBlock();
+		final Block block = this.location.getBlock();
 
 		// set expire task id metadata in block metadata
 		block.setMetadata("deathchest-expire-task", new FixedMetadataValue(plugin, this.expireTaskId));
@@ -322,7 +317,7 @@ public final class DeathChestBlock {
 	 */
 	public final void setBlockMetadata() {
 
-		Block block = this.location.getBlock();
+		final Block block = this.location.getBlock();
 
 		// set owner uuid metadata
 		if (this.ownerUUID != null) {
@@ -339,7 +334,7 @@ public final class DeathChestBlock {
 	}
 
 
-	private final UUID getBlockMetadataUUID(Block block, String string) {
+	private final UUID getBlockMetadataUUID(final Block block, final String string) {
 		
 		if (block == null) {
 			return null;
@@ -365,7 +360,7 @@ public final class DeathChestBlock {
 	}
 
 
-	private final Integer getBlockMetadataInteger(Block block, String string) {
+	private final Integer getBlockMetadataInteger(final Block block, final String string) {
 		
 		if (block == null) {
 			return null;
@@ -424,25 +419,26 @@ public final class DeathChestBlock {
 	 */
 	public final static List<ItemStack> consolidateItems(final Collection<ItemStack> itemStacks) {
 
-		List<ItemStack> returnList = new ArrayList<ItemStack>();
+		final List<ItemStack> returnList = new ArrayList<ItemStack>();
 
-		for (ItemStack itemstack : itemStacks) {
-			if (itemstack == null) {
+		for (ItemStack itemStack : itemStacks) {
+			if (itemStack == null) {
 				continue;
 			}
 
-			for (ItemStack checkstack : returnList) {
-				if (checkstack == null) {
+			for (ItemStack checkStack : returnList) {
+				if (checkStack == null) {
 					continue;
 				}
-				if (checkstack.isSimilar(itemstack)) {
-					int transfer = Math.min(itemstack.getAmount(),checkstack.getMaxStackSize() - checkstack.getAmount());
-					itemstack.setAmount(itemstack.getAmount() - transfer);
-					checkstack.setAmount(checkstack.getAmount()	+ transfer);
+				if (checkStack.isSimilar(itemStack)) {
+					int transferAmount = 
+							Math.min(itemStack.getAmount(),checkStack.getMaxStackSize() - checkStack.getAmount());
+					itemStack.setAmount(itemStack.getAmount() - transferAmount);
+					checkStack.setAmount(checkStack.getAmount()	+ transferAmount);
 				}
 			}
-			if (itemstack.getAmount() > 0) {
-				returnList.add(itemstack);
+			if (itemStack.getAmount() > 0) {
+				returnList.add(itemStack);
 			}
 		}
 		return returnList;
@@ -567,7 +563,7 @@ public final class DeathChestBlock {
 	public final Block getAttachedBlock() {
 
 		// get block represented by this DeathChestBlock
-		Block block = this.getLocation().getBlock();
+		final Block block = this.getLocation().getBlock();
 		
 		// if block is null return null
 		if (block == null) {
@@ -641,12 +637,12 @@ public final class DeathChestBlock {
 	}
 
 
-	public final boolean isOwner(Player player) {
+	public final boolean isOwner(final Player player) {
 		return this.getOwnerUUID().equals(player.getUniqueId());
 	}
 
 
-	public final boolean isKiller(Player player) {
+	public final boolean isKiller(final Player player) {
 		return this.getKillerUUID().equals(player.getUniqueId());
 	}
 
@@ -657,7 +653,7 @@ public final class DeathChestBlock {
 	public final void destroy() {
 
 		// get block represented by this DeathChestBlock
-		Block block = this.getLocation().getBlock();
+		final Block block = this.getLocation().getBlock();
 		
 		// delete record from datastore
 		plugin.dataStore.deleteRecord(block.getLocation());
@@ -690,7 +686,7 @@ public final class DeathChestBlock {
 	public final void expire() {
 	
 		// get player from ownerUUID
-		Player player = plugin.getServer().getPlayer(this.ownerUUID);
+		final Player player = plugin.getServer().getPlayer(this.ownerUUID);
 		
 		// if deathChest no longer exists at location, do nothing and return
 		if (!isDeathChest(this.getLocation().getBlock())) {
@@ -709,7 +705,7 @@ public final class DeathChestBlock {
 
 	public final int getViewerCount() {
 		
-		Block block = this.getLocation().getBlock();
+		final Block block = this.getLocation().getBlock();
 		
 		int count = 0;
 		
@@ -729,43 +725,106 @@ public final class DeathChestBlock {
 	}
 
 
-	public final void openInventory(Player player) {
+	/**
+	 * Open the inventory of this DeathChestBlock for player
+	 * @param player
+	 */
+	public final void openInventory(final Player player) {
 
 		// get the block state of block represented by this DeathChestBlock
-		BlockState blockState = this.getLocation().getBlock().getState();
+		final BlockState blockState = this.getLocation().getBlock().getState();
 
+		// if block state is not a chest block, do nothing and return
+		if (!blockState.getType().equals(Material.CHEST)) {
+			return;
+		}
+		
 		// open chest inventory
-		Chest chest = (Chest)blockState;
-		Inventory inventory = chest.getInventory();
+		final Chest chest = (Chest)blockState;
+		final Inventory inventory = chest.getInventory();
 		player.openInventory(inventory);
 	}
 
 
+	/**
+	 * Transfer all chest contents to player inventory and remove in-game chest.
+	 * Items that do not fit in player inventory will be dropped on ground.
+	 * @param player
+	 */
 	public final void autoLoot(Player player) {
-		this.lootChest(player,0);
+
+		// if passed player is null, do nothing and return
+		if (player == null) {
+			return;
+		}
+
+		// get reference to this deathChestBlock
+		DeathChestBlock initialDeathChest = this;
+		
+		// if this deathChestBlock is a DeathSign, get attached chest
+		if (isDeathSign(this.getLocation().getBlock())) {
+			initialDeathChest = getChestInstance(this.getLocation().getBlock());
+		}
+		
+		// if deathChestBlock is null (sign not attached to deathChest), do nothing and return
+		if (initialDeathChest == null) {
+			return;
+		}
+
+		DeathChestBlock secondDeathChest = null;
+		
+		// check for adjacent chests
+		if (isDeathChest(LocationUtilities.blockToLeft(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(LocationUtilities.blockToLeft(initialDeathChest.getLocation()));
+		}
+		else if (isDeathChest(LocationUtilities.blockToRight(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(LocationUtilities.blockToRight(initialDeathChest.getLocation()));
+		}
+		else if (isDeathChest(LocationUtilities.blockInFront(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(LocationUtilities.blockInFront(initialDeathChest.getLocation()));
+		}
+		else if (isDeathChest(LocationUtilities.blockToRear(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(LocationUtilities.blockToRear(initialDeathChest.getLocation()));
+		}
+		
+		// transfer contents and destroy chest
+		initialDeathChest.transferChestContents(player);
+		initialDeathChest.destroy();
+		
+		// if adjacent chest was found, transfer contents and destroy chest
+		if (secondDeathChest != null) {
+			secondDeathChest.transferChestContents(player);
+			secondDeathChest.destroy();
+		}
 	}
 
 	
-	/**
-	 * @param player		player doing the looting
-	 * @param block			block to attempt to loot
-	 * @param iterations	depth of recursion
-	 */
-	private final void lootChest(final Player player, int iterations) {
+	private final void transferChestContents(final Player player) {
 		
-		// increment iteration count for recursion
-		iterations++;
-		
+		// get in-game block represented by this DeathChestBlock object
 		Block block = this.getLocation().getBlock();
 		
-		if (block.getType().equals(Material.CHEST)) {
-			PlayerInventory playerinventory = player.getInventory();
-			BlockState state = block.getState();
-			Chest chest = (Chest)state;
-			ItemStack[] chestinventory = chest.getInventory().getContents();
-			for(int i = 0; i < chestinventory.length && playerinventory.firstEmpty() != -1; i++) {
-				if(chestinventory[i] != null) {
+		if (block != null && isDeathChest(block)) {
+			
+			// get player inventory object
+			final PlayerInventory playerinventory = player.getInventory();
+			
+			// get chest inventory object
+			final Chest chest = (Chest)block.getState();
+			
+			// get array of ItemStack for chest inventory
+			final ItemStack[] chestinventory = chest.getInventory().getContents();
+			
+			// iterate through all inventory slots in chest inventory
+			for (int i = 0; i < chestinventory.length && playerinventory.firstEmpty() != -1; i++) {
+				
+				// if inventory slot item is not null...
+				if (chestinventory[i] != null) {
+					
+					// add item to player inventory
 					playerinventory.addItem(chestinventory[i]);
+					
+					// remove item from chest inventory
 					chest.getInventory().removeItem(chestinventory[i]);
 					
 					// play inventory add sound
@@ -773,24 +832,5 @@ public final class DeathChestBlock {
 				}
 			}
 		}
-
-		// destroy DeathChestBlock
-		this.destroy();
-		
-		// if less than two chests have been detected,
-		// check surrounding blocks for another chest
-		if (iterations < 2) {
-			
-			final BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
-		
-			for (BlockFace face : faces) {
-				Block testBlock = block.getRelative(face);
-				if (isDeathChest(testBlock)) {
-					DeathChestBlock deathChestBlock = new DeathChestBlock(testBlock);
-					deathChestBlock.lootChest(player, iterations);
-				}
-			}
-		}
 	}
-
 }

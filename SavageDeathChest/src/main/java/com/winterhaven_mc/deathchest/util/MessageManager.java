@@ -18,6 +18,9 @@ import org.bukkit.entity.Player;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 
+import com.winterhaven_mc.util.StringUtil;
+import com.winterhaven_mc.util.ConfigAccessor;
+
 
 public final class MessageManager {
 
@@ -99,12 +102,12 @@ public final class MessageManager {
 	 */
 	public void sendPlayerMessage(final Player player, final String messageId, 
 			final ProtectionPlugin protectionPlugin) {
-		
+
 		// if player is null, do nothing and return
 		if (player == null) {
 			return;
 		}
-		
+
 		// if messageId does not exist in language file, do nothing and return
 		if (messages.getConfig().getConfigurationSection("messages." + messageId) == null) {
 			plugin.getLogger().warning("Could not read message '" + messageId + "' from language file.");
@@ -159,25 +162,27 @@ public final class MessageManager {
 		String expireTime = getExpireTimeString();
 
 		// do variable substitutions
-		message = message.replaceAll("%playername%", playerName);
-		message = message.replaceAll("%playerdisplayname%", playerDisplayName);
-		message = message.replaceAll("%playernickname%", playerNickname);
-		message = message.replaceAll("%worldname%", worldName);
-		message = message.replaceAll("%expiretime%", expireTime);
-		message = message.replaceAll("%plugin%", protectionPluginName);
+		if (message.contains("%")) {
+			message = StringUtil.replace(message,"%playername%", playerName);
+			message = StringUtil.replace(message,"%playerdisplayname%", playerDisplayName);
+			message = StringUtil.replace(message,"%playernickname%", playerNickname);
+			message = StringUtil.replace(message,"%worldname%", worldName);
+			message = StringUtil.replace(message,"%expiretime%", expireTime);
+			message = StringUtil.replace(message,"%plugin%", protectionPluginName);
 
-		// do variable substitutions, stripping color codes from all caps variables
-		message = message.replace("%PLAYERNAME%", 
-				ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerName)));
-		message = message.replace("%PLAYERNICKNAME%", 
-				ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerNickname)));
-		message = message.replace("%WORLDNAME%", 
-				ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',worldName)));
+			// do variable substitutions, stripping color codes from all caps variables
+			message = StringUtil.replace(message,"%PLAYERNAME%", 
+					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerName)));
+			message = StringUtil.replace(message,"%PLAYERNICKNAME%", 
+					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerNickname)));
+			message = StringUtil.replace(message,"%WORLDNAME%", 
+					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',worldName)));
 
-		// no stripping of color codes necessary, but do variable substitutions anyhow
-		// in case all caps variables were used
-		message = message.replace("%PLAYERDISPLAYNAME%", playerDisplayName);
-		message = message.replace("%PLUGIN%", protectionPluginName);
+			// no stripping of color codes necessary, but do variable substitutions anyhow
+			// in case all caps variables were used
+			message = StringUtil.replace(message,"%PLAYERDISPLAYNAME%", playerDisplayName);
+			message = StringUtil.replace(message,"%PLUGIN%", protectionPluginName);
+		}
 
 		// send message to player
 		player.sendMessage(ChatColor.translateAlternateColorCodes((char)'&', (String)message));
@@ -262,7 +267,7 @@ public final class MessageManager {
 		}
 	}
 
-	
+
 	/**
 	 * Reload language files
 	 */
@@ -285,7 +290,7 @@ public final class MessageManager {
 		messages.reloadConfig();
 	}
 
-	
+
 	/**
 	 * Install localization files from language directory in jar 
 	 */
@@ -345,7 +350,7 @@ public final class MessageManager {
 		return "en-US";
 	}
 
-	
+
 	/**
 	 * Add entry to message cooldown map
 	 * @param player
@@ -418,12 +423,12 @@ public final class MessageManager {
 		return expireTime;
 	}
 
-	
+
 	public List<String> getSignText() {
 		return this.messages.getConfig().getStringList("sign-text");
 	}
 
-	
+
 	public String getDateFormat() {
 		return this.messages.getConfig().getString("date-format");
 	}

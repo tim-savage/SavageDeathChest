@@ -8,7 +8,8 @@ import org.bukkit.Location;
 
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.util.ConfigAccessor;
+
+import com.winterhaven_mc.util.ConfigAccessor;
 
 
 public class DataStoreYAML extends DataStore {

@@ -23,7 +23,7 @@ import com.winterhaven_mc.deathchest.PluginMain;
  *
  */
 
-public class DataStoreSQLite extends DataStore {
+public final class DataStoreSQLite extends DataStore {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -46,7 +46,6 @@ public class DataStoreSQLite extends DataStore {
 
 		// set filename
 		this.filename = "deathchests.db";
-
 	}
 
 
@@ -57,7 +56,7 @@ public class DataStoreSQLite extends DataStore {
 	 * @throws ClassNotFoundException 
 	 */
 	@Override
-	void initialize() throws SQLException, ClassNotFoundException {
+	final void initialize() throws SQLException, ClassNotFoundException {
 		
 		// if data store is already initialized, do nothing and return
 		if (this.isInitialized()) {
@@ -77,7 +76,7 @@ public class DataStoreSQLite extends DataStore {
 
 		// create a database connection
 		connection = DriverManager.getConnection(dbUrl);
-		Statement statement = connection.createStatement();
+		final Statement statement = connection.createStatement();
 
 		// execute table creation statement
 		statement.executeUpdate(Queries.getQuery("CreateBlockTable"));
@@ -90,7 +89,7 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	DeathChestBlock getRecord(final Location location) {
+	final DeathChestBlock getRecord(final Location location) {
 		
 		// if location is null, return null object
 		if (location == null) {
@@ -98,7 +97,7 @@ public class DataStoreSQLite extends DataStore {
 		}
 
 		// create new DeathChestBlock object for return
-		DeathChestBlock deathChestBlock = new DeathChestBlock();
+		final DeathChestBlock deathChestBlock = new DeathChestBlock();
 
 		try {
 
@@ -137,9 +136,9 @@ public class DataStoreSQLite extends DataStore {
 				deathChestBlock.setExpiration(rs.getLong("expiration"));
 			}
 
-			// return null DeathChestBlock object if no matching location exists in database
+			// return null if no matching location exists in database
 			else {
-				deathChestBlock = null;
+				return null;
 			}
 
 		}
@@ -159,9 +158,9 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	ArrayList<DeathChestBlock> getAllRecords() {
+	final ArrayList<DeathChestBlock> getAllRecords() {
 
-		ArrayList<DeathChestBlock> results = new ArrayList<DeathChestBlock>();
+		final ArrayList<DeathChestBlock> results = new ArrayList<DeathChestBlock>();
 
 		try {
 
@@ -240,7 +239,7 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	void putRecord(final DeathChestBlock deathChestBlock) {
+	final void putRecord(final DeathChestBlock deathChestBlock) {
 
 		// catch invalid uuid exceptions, and set to null
 		String ownerid = null;
@@ -296,7 +295,7 @@ public class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	public void deleteRecord(final Location location) {
+	public final void deleteRecord(final Location location) {
 
 		try {
 			// create prepared statement
@@ -335,7 +334,7 @@ public class DataStoreSQLite extends DataStore {
 	 * Delete expired records in world <i>worldName</i>
 	 * @param worldName
 	 */
-	void deleteExpiredRecords(final String worldName) {
+	final void deleteExpiredRecords(final String worldName) {
 	
 		// current time in milliseconds
 		final Long currentTime = System.currentTimeMillis();
@@ -374,7 +373,7 @@ public class DataStoreSQLite extends DataStore {
 	 * Close database connection
 	 */
 	@Override
-	public void close() {
+	public final void close() {
 
 		if (isInitialized()) {
 			try {
@@ -398,13 +397,13 @@ public class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	void sync() {
+	final void sync() {
 		// no action necessary for this storage type
 	}
 
 
 	@Override
-	void delete() {
+	final void delete() {
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		if (dataStoreFile.exists()) {
 			dataStoreFile.delete();
@@ -413,7 +412,7 @@ public class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	boolean exists() {		
+	final boolean exists() {
 		// get path name to old data store file
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		return dataStoreFile.exists();

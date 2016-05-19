@@ -21,8 +21,8 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 
 public enum ProtectionPlugin {
 	
@@ -31,8 +31,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 				try {
 					if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(location), false)) {
 						return false;
@@ -52,8 +52,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && isConfigEnabledAccess()) {
 				try {
 					if (!EngineMain.playerCanUseItemHere(player, PS.valueOf(location), Material.CHEST, false)) {
 						return false;
@@ -76,8 +76,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 				try {
 					Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 					if (claim != null) {
@@ -100,8 +100,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledAccess()) {
 				try {
 					Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
 					if (claim != null) {
@@ -128,10 +128,10 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 				try {
-					if (! PreciousStones.API().canPlace(player, location)) {
+					if (! PreciousStones.API().canPlace(player,location)) {
 						return false;
 					}
 				}
@@ -148,10 +148,10 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledAccess()) {
 				try {
-					if (PreciousStones.API().flagAppliesToPlayer(player, FieldFlag.PROTECT_INVENTORIES, location)) {
+					if (PreciousStones.API().flagAppliesToPlayer(player,FieldFlag.PROTECT_INVENTORIES,location)) {
 						return false;
 					}
 				}
@@ -172,8 +172,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 				try {
 					return com.winterhaven_mc.proclaim.SimpleAPI.hasBuildTrust(player, location);
 				}
@@ -190,8 +190,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledAccess()) {
 				try {
 					return com.winterhaven_mc.proclaim.SimpleAPI.hasContainerTrust(player, location);
 				}
@@ -212,8 +212,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 				
 				try {
 					int maxDepth = plugin.getConfig().getInt("search-distance");
@@ -235,8 +235,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledAccess()) {
 				
 				try {
 					int maxDepth = plugin.getConfig().getInt("search-distance");
@@ -263,8 +263,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 				try {
 					if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(),
 							(byte)0, TownyPermission.ActionType.BUILD)) {
@@ -285,8 +285,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledAccess()) {
 				try {
 					if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(),
 							(byte)0, TownyPermission.ActionType.SWITCH)) {
@@ -310,8 +310,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledPlace()) {
 
 				try {
 					// get worldguard version string
@@ -347,8 +347,8 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 			
-			// only perform check if plugin is enabled
-			if (this.isEnabled()) {
+			// only perform check if plugin is installed and enabled
+			if (this.isInstalled() && this.isConfigEnabledAccess()) {
 				
 				try {
 					// get worldguard version string
@@ -439,23 +439,54 @@ public enum ProtectionPlugin {
 
 	
 	/**
-	 * Check if protection plugin is enabled
+	 * Check if protection plugin is enabled in config
+	 */
+	public final boolean isConfigEnabled() {
+		
+		// if plugin is not enabled in config, return false
+		return (plugin.getConfig().getStringList("check-on-place").contains(this.getPluginName())
+			|| plugin.getConfig().getStringList("check-on-access").contains(this.getPluginName()));
+	}
+	
+	
+	/**
+	 * Check if protection plugin is enabled for check on place in config
+	 */
+	public final boolean isConfigEnabledPlace() {
+		
+		// if plugin is not enabled in config, return false
+		return (plugin.getConfig().getStringList("check-on-place").contains(this.getPluginName()));
+	}
+	
+	
+	/**
+	 * Check if protection plugin is enabled for check on access in config
+	 */
+	public final boolean isConfigEnabledAccess() {
+		
+		// if plugin is not enabled in config, return false
+		return (plugin.getConfig().getStringList("check-on-access").contains(this.getPluginName()));
+	}
+	
+	
+	/**
+	 * Check if protection plugin is installed and operational
 	 * @return
 	 */
-	public final boolean isEnabled() {
+	public final boolean isInstalled() {
 		
+		// get reference to plugin
 		Plugin testPlugin = plugin.getServer().getPluginManager().getPlugin(this.getPluginName());
-		if (testPlugin != null && testPlugin.isEnabled()) {
-			return true;
-		}
-		return false;
+	
+		// if plugin reference is not null and plugin is enabled, return true; else false
+		return (testPlugin != null && testPlugin.isEnabled());
 	}
 
 	
 	public final static void reportInstalled() {
 		
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
-			if (pp.isEnabled()) {
+			if (pp.isInstalled()) {
 				plugin.getLogger().info(pp.getPluginName() + " v" + pp.getVersion() + " detected.");
 			}
 		}		

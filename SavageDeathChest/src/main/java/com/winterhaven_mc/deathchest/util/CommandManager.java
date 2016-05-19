@@ -75,7 +75,7 @@ public final class CommandManager implements CommandExecutor {
 		int count = 0;
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
 			
-			if (pp.isEnabled()) {
+			if (pp.isInstalled()) {
 				
 				List<String> pluginSettings = new ArrayList<String>();
 				
