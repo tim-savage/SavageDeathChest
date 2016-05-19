@@ -82,10 +82,10 @@ public final class CommandManager implements CommandExecutor {
 				count++;
 				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
 				
-				if (plugin.getConfig().getStringList("check-on-place").contains(pp.getPluginName())) {
+				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".check-on-place")) {
 					pluginSettings.add("check-on-place");
 				}
-				if (plugin.getConfig().getStringList("check-on-access").contains(pp.getPluginName())) {
+				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".check-on-access")) {
 					pluginSettings.add("check-on-access");
 				}
 				statusString = statusString + ChatColor.RESET + pluginSettings.toString();
@@ -110,6 +110,9 @@ public final class CommandManager implements CommandExecutor {
 		
 		// reload config file
 		plugin.reloadConfig();
+		
+		// reload replaceable blocks
+		LocationUtilities.loadReplaceableBlocks();
 		
 		// update debug field
 		plugin.debug = plugin.getConfig().getBoolean("debug");

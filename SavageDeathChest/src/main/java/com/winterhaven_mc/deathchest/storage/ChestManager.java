@@ -233,19 +233,9 @@ public final class ChestManager {
 		
 		chest.update();
 		
-		// put items into chest, items that don't fit are put in remaining_items list
-		List<ItemStack> remainingItems = new ArrayList<ItemStack>(droppedItems);
-		int chestsize = chest.getInventory().getSize();
-		int itemcount = 0;
-		for (ItemStack item : droppedItems) {
-			chest.getInventory().addItem(item);
-			remainingItems.remove(item);
-			itemcount++;
-			if (itemcount >= chestsize) {
-				break;
-			}
-		}
-
+		// put items into chest, items that don't fit are put in noFit list
+		List<ItemStack> noFit = fillChest(chest,droppedItems);
+		
 		// create DeathChestBlock object
 		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
 		
@@ -262,7 +252,7 @@ public final class ChestManager {
 		plugin.messageManager.sendPlayerMessage(player, "chest-success");
 		
 		// return list of items that did not fit in chest
-		return remainingItems;
+		return noFit;
 	}
 	
 	
@@ -275,12 +265,22 @@ public final class ChestManager {
 	 */
 	private final List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 		
+		// get chest facing direction based on player yaw
+		BlockFace chestDirection = LocationUtilities.getCardinalDirection(player.getLocation().getYaw());
+		
 		// try to find a valid double chest location
 		SearchResult result = LocationUtilities.findValidDoubleChestLocation(player);
+		
+		if (plugin.debug) {
+			plugin.getLogger().info("First Chest Search Result: " + result.toString());
+		}
 		
 		// if no valid double chest location can be found, try to find a valid single chest location
 		if (result == null || result != SearchResult.SUCCESS) {
 			result = LocationUtilities.findValidSingleChestLocation(player);
+			if (plugin.debug) {
+				plugin.getLogger().info("Double Chest (single) Search Result: " + result.toString());
+			}
 		}
 
 		// if no valid single chest location, return droppedItems
@@ -330,23 +330,13 @@ public final class ChestManager {
 		
 		// set chest direction
 		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(LocationUtilities.getCardinalDirection(result.getLocation().getYaw()));
+		chestData.setFacingDirection(chestDirection);
 
+		// update chest to set direction
 		chest.update();
 		
-		// put items into first chest, items that don't fit are put in remaining_items list
-		List<ItemStack> remaining_items = new ArrayList<ItemStack>(droppedItems);
-		int chestsize = chest.getInventory().getSize();
-		int itemcount = 0;
-		for (ItemStack item : droppedItems) {
-			chest.getInventory().addItem(item);
-			remaining_items.remove(item);
-			itemcount++;
-			if (itemcount >= chestsize) {
-				break;
-			}
-		}
-		
+		List<ItemStack> remainingItems = fillChest(chest,droppedItems);
+
 		// place sign on chest
 		placeChestSign(player,block);
 	
@@ -361,12 +351,14 @@ public final class ChestManager {
 
 		// get location one block to right of first chest
 		Location location = LocationUtilities.locationToRight(result.getLocation());
+
+		// check that second chest location is valid
+		SearchResult result2 = LocationUtilities.isValidRightChestLocation(player, location);
 		
 		// if block at second chest location is not valid, send message and return remaining_items
-		SearchResult result2 = LocationUtilities.isValidRightChestLocation(player, location);
 		if (result2 == null || result2 != SearchResult.SUCCESS) {
 			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
-			return remaining_items;
+			return remainingItems;
 		}
 		
 		// get block at location to the right of first chest
@@ -380,24 +372,13 @@ public final class ChestManager {
 		
 		// set chest direction
 		chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(LocationUtilities.getCardinalDirection(location.getYaw()));
+		chestData.setFacingDirection(chestDirection);
 		
-		// update blockstate
+		// update chest blockstate
 		chest.update();
 	
-		// put items into chest, items that don't fit are put in remaining_items list
-		List<ItemStack> remaining_items2 = new ArrayList<ItemStack>(remaining_items);
-		chestsize = chest.getInventory().getSize();
-		itemcount = 0;
-		for (ItemStack item : remaining_items) {
-			chest.getInventory().addItem(item);
-			remaining_items2.remove(item);
-			itemcount++;
-			if (itemcount >= chestsize) {
-				break;
-			}
-		}
-	
+		List<ItemStack> noFitItems = fillChest(chest,remainingItems);
+		
 		// create DeathChestBlock object
 		DeathChestBlock deathChestBlock2 = new DeathChestBlock(player,block);
 		
@@ -411,7 +392,7 @@ public final class ChestManager {
 		plugin.messageManager.sendPlayerMessage(player, "chest-success");
 		
 		// return list of items that did not fit in chest
-		return remaining_items2;
+		return noFitItems;
 	}
 
 	
@@ -548,6 +529,17 @@ public final class ChestManager {
 			}
 		}
 		return itemStacks;
+	}
+	
+	
+	private final List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
+		
+		// convert itemStacks list to array
+		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
+		stackArray = itemStacks.toArray(stackArray);
+		
+		// return list of items that did not fit in chest
+		return new ArrayList<ItemStack>(chest.getInventory().addItem(stackArray).values());
 	}
 	
 }

@@ -9,9 +9,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.SearchResult;
+
 
 public final class LocationUtilities {
 
@@ -39,18 +41,16 @@ public final class LocationUtilities {
 	 */
 	public static final BlockFace getCardinalDirection(final float yaw) {
 
-		double rot = yaw % 360;
+		// ensure yaw is between 0 and 360 (in case of negative yaw)
+		double rotation = (yaw + 360) % 360;
 
-		if (rot < 0) {
-			rot += 360.0;
-		}
-		if (45 <= rot && rot < 135) {
+		if (45 <= rotation && rotation < 135) {
 			return BlockFace.EAST;
 		}
-		else if (135 <= rot && rot < 225) {
+		else if (135 <= rotation && rotation < 225) {
 			return BlockFace.SOUTH;
 		}
-		else if (225 <= rot && rot < 315) {
+		else if (225 <= rotation && rotation < 315) {
 			return BlockFace.WEST;
 		}
 		else {
@@ -60,64 +60,16 @@ public final class LocationUtilities {
 
 
 	/**
-	 * Get location to left of location based on yaw
-	 * @param location initial location
-	 * @return location one block to left
-	 */
-	public static final Location getLocationToLeft(final Location location) {
-
-		float yaw = location.getYaw() + 90;
-
-		// clone location so original isn't modified
-		Location resultLocation = location.clone();
-
-		// get location that is one block to left of current location
-		resultLocation = resultLocation.getBlock().getRelative(getCardinalDirection(yaw)).getLocation();
-
-		// set result location yaw to match original
-		resultLocation.setYaw(yaw);
-		return resultLocation;
-	}
-
-
-	/**
 	 * Get location to right of location based on yaw
 	 * @param location initial location
-	 * @return location one block to right
+	 * @return location one block to right, preserving original yaw
 	 */
 	public static final Location locationToRight(final Location location) {
 
-		float yaw = location.getYaw() - 90;
-
-		// clone location so original isn't modified
-		Location resultLocation = location.clone();
-
-		// get location that is one block to right of current location
-		resultLocation = resultLocation.getBlock().getRelative(getCardinalDirection(yaw)).getLocation();
+		Location resultLocation = blockToRight(location).getLocation();
 
 		// set new location yaw to match original
-		resultLocation.setYaw(yaw);
-		return resultLocation;
-	}
-
-
-	/**
-	 * Get location in front of location based on yaw
-	 * @param location initial location
-	 * @return location one block to right
-	 */
-	public static final Location locationToFront(final Location location) {
-
-		float yaw = location.getYaw();
-
-		// clone location so original isn't modified
-		Location resultLocation = location.clone();
-
-		// get location that is one block in front of current location
-		resultLocation = resultLocation.getBlock().getRelative(getCardinalDirection(yaw)).getLocation();
-
-		// set new location yaw to match original
-		resultLocation.setYaw(yaw);
+		resultLocation.setYaw(location.getYaw());
 		return resultLocation;
 	}
 
@@ -302,11 +254,10 @@ public final class LocationUtilities {
 
 	/**
 	 * Search for valid location to place a double chest, 
-	 * taking into account replaceable blocks, as well as 
-	 * protection plugin regions if configured
-	 * and adjacent existing chests
+	 * taking into account replaceable blocks, adjacent chests, 
+	 * and protection plugin regions if configured
 	 * @param player Player that deathchest is being deployed for
-	 * @return location that is valid for double chest deployment, or null if valid location cannot be found
+	 * @return location that is valid for double chest deployment, or null if no valid location found
 	 */
 	public static final SearchResult findValidDoubleChestLocation(final Player player) {
 
@@ -543,20 +494,36 @@ public final class LocationUtilities {
 	}
 
 
-	final static boolean adjacentChest(final Location location, final Boolean firstChest) {
+	final static boolean adjacentChest(final Location location, final Boolean isFirstChest) {
 
-		if (firstChest) {
-			if (blockToLeft(location).getType().equals(Material.CHEST)) {
-				return true;
+		// if this is the first chest, check block to left; else skip checking block to left
+		if (isFirstChest && blockToLeft(location).getType().equals(Material.CHEST)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Block to left is an adjacent chest.");
+			}
+			return true;
+		}
+		else {
+			if (plugin.debug) {
+				plugin.getLogger().info("Skipping adjacent chest check for block to left.");
 			}
 		}
 		if (blockToRight(location).getType().equals(Material.CHEST)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Block to right is an adjacent chest.");
+			}
 			return true;
 		}
 		if (blockInFront(location).getType().equals(Material.CHEST)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Block to front is an adjacent chest.");
+			}
 			return true;
 		}
 		if (blockToRear(location).getType().equals(Material.CHEST)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Block to rear is an adjacent chest.");
+			}
 			return true;
 		}
 		return false;
@@ -581,28 +548,10 @@ public final class LocationUtilities {
 	}
 
 
-	//	/**
-	//	 * Load list of replaceable blocks from config file
-	//	 */
-	//	private final void loadReplaceableBlocks() {
-	//	
-	//		// get string list of materials from config file
-	//		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
-	//		
-	//		// iterate over string list
-	//		for (String materialString : materialStringList) {
-	//			
-	//			// if material string matches a valid material type, add to replaceableBlocks HashSet
-	//			if (Material.matchMaterial(materialString) != null) {
-	//				replaceableBlocks.add(Material.matchMaterial(materialString));
-	//			}
-	//		}
-	//	}
-
 	/**
 	 * Load list of replaceable blocks from config file
 	 */
-	private static final Set<Material> loadReplaceableBlocks() {
+	public static final Set<Material> loadReplaceableBlocks() {
 
 		// get string list of materials from config file
 		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
@@ -618,6 +567,10 @@ public final class LocationUtilities {
 			}
 		}
 
+		if (plugin.debug) {
+			plugin.getLogger().info("Replaceable blocks: " + returnSet.toString());
+		}
+		
 		return returnSet;
 	}
 

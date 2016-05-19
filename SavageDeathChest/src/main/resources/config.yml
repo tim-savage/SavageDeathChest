@@ -67,32 +67,41 @@ quick-loot: true
 remove-empty: true
 
 # Require build permission from protection plugins when deploying a chest
-# If false, chest access permission will be checked on chest deployment
+# If true, block place permission will be checked for each plugin on chest deployment
+# If false, chest access permission will be checked for each plugin on chest deployment
 require-build-permission: false
 
-# Check protection plugin permissions on death chest placement
-# If a plugin is in this list, its block placement restrictions will be respected when deploying a death chest.
-# If a plugin is not in this list, its block placement restrictions will be ignored when deploying a death chest.
+# Check protection plugin permissions on death chest placement or access
+# If a value is configured true, the protection plugin restrictions will be respected
+# If a value is configured false, the protection plugin restrictions will be ignored
+protection-plugins:
+  Factions:
+    check-on-place: true
+    check-on-access: false
 
-check-on-place:
-  - Factions
-  - GriefPrevention
-  - PreciousStones
-  - Towny
-  - WorldGuard
+  GriefPrevention:
+    check-on-place: true
+    check-on-access: false
 
+  PreciousStones:
+    check-on-place: true
+    check-on-access: false
 
-# check protection plugin permissions on death chest access
-# If a plugin is in this list, its chest access restrictions will be respected when accessing a death chest.
-# If a plugin is not in this list, its chest access restrictions will be ignored when accessing a death chest.
-# By default, all protection plugins are ignored for death chest access. Uncomment to change this behavior.
+  ProClaim:
+    check-on-place: true
+    check-on-access: false
 
-check-on-access:
-#  - Factions
-#  - GriefPrevention
-#  - PreciousStones
-#  - Towny
-#  - WorldGuard
+  RoadBlock:
+    check-on-place: true
+    check-on-access: false
+
+  Towny:
+    check-on-place: true
+    check-on-access: false
+
+  WorldGuard:
+    check-on-place: true
+    check-on-access: false
 
 
 # List of blocks that can be replaced by a chest
