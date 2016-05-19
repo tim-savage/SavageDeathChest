@@ -56,3 +56,4 @@ local.properties
 ### added by me
 lib/
 /target/
+/dependency-reduced-pom.xml
