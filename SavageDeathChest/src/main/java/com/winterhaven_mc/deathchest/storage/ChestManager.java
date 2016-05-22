@@ -31,7 +31,7 @@ public final class ChestManager {
 	private final PluginMain plugin;
 
     // ItemStack of Chest for comparisons
-    private final ItemStack CHEST_STACK = new ItemStack(Material.CHEST);
+    private static final ItemStack CHEST_STACK = new ItemStack(Material.CHEST);
     
 	// DeathChestBlock material types
 	private static final Set<Material> deathChestMaterials = 
@@ -335,6 +335,7 @@ public final class ChestManager {
 		// update chest to set direction
 		chest.update();
 		
+		// fill chest with dropped items
 		List<ItemStack> remainingItems = fillChest(chest,droppedItems);
 
 		// place sign on chest
@@ -377,6 +378,7 @@ public final class ChestManager {
 		// update chest blockstate
 		chest.update();
 	
+		// fill chest with dropped items
 		List<ItemStack> noFitItems = fillChest(chest,remainingItems);
 		
 		// create DeathChestBlock object
