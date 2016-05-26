@@ -130,7 +130,7 @@ public final class DeathChestBlock {
 	 * If the block is not a DeathChestBlock or in case of a DeathSign the attached block
 	 * is not a DeathChest, returns null.
 	 */
-	public final static DeathChestBlock getChestInstance(final Block block) {
+	public static DeathChestBlock getChestInstance(final Block block) {
 
 		// if passed block is null, return null
 		if (block == null) {
@@ -169,7 +169,7 @@ public final class DeathChestBlock {
 	 * @return An instance of DeathChestBlock of block type sign.
 	 * Returns null if the block is not a DeathSign.
 	 */
-	public final static DeathChestBlock getSignInstance(final Block block) {
+	public static DeathChestBlock getSignInstance(final Block block) {
 		
 		// if passed block is null, return null
 		if (block == null) {
@@ -191,7 +191,7 @@ public final class DeathChestBlock {
 	 * @param inventory An inventory whose inventory holder will be used to create a DeathChestBlock object.
 	 * @return DeathChestBlock object, or null if the inventory is not that of a DeathChest.
      */
-	public final static DeathChestBlock getChestInstance(final Inventory inventory) {
+	public static DeathChestBlock getChestInstance(final Inventory inventory) {
 
 		// if inventory is null, return null
 		if (inventory == null) {
@@ -236,7 +236,7 @@ public final class DeathChestBlock {
 
 	/**
 	 * Setter method for DeathChestBlock location
-	 * @param location
+	 * @param location the location to set in the DeathChestBlock object
 	 */
 	public final void setLocation(final Location location) {
 		this.location = location;
@@ -254,7 +254,7 @@ public final class DeathChestBlock {
 
 	/**
 	 * Setter method for DeathChestBlock ownerUUID
-	 * @param ownerUUID
+	 * @param ownerUUID the player UUID to set in ownerUUID field of the DeathChestBlock object
 	 */
 	public final void setOwnerUUID(final UUID ownerUUID) {
 		this.ownerUUID = ownerUUID;
@@ -272,7 +272,7 @@ public final class DeathChestBlock {
 
 	/**
 	 * Setter method for DeathChestBlock killerUUID
-	 * @param killerUUID
+	 * @param killerUUID the player UUID to set in the killerUUID field of the DeathChestBlock object
 	 */
 	public final void setKillerUUID(final UUID killerUUID) {
 		this.killerUUID = killerUUID;
@@ -290,7 +290,8 @@ public final class DeathChestBlock {
 
 	/**
 	 * Setter method for DeathChestBlock expiration
-	 * @param expiration
+	 * @param expiration the expiration time in milliseconds since epoch to set in the
+	 *                   expiration field of the DeathChestBlock object
 	 */
 	public final void setExpiration(final long expiration) {
 		this.expiration = expiration;
@@ -299,16 +300,16 @@ public final class DeathChestBlock {
 	
 	/**
 	 * Getter method for DeathChestBlock expireTaskId
-	 * @return
+	 * @return the value of the expireTaskId field in the DeathChestBlock object
 	 */
-	public final int getExpireTaskId() {
+	private int getExpireTaskId() {
 		return this.expireTaskId;
 	}
 
 
 	/**
 	 * Setter method for DeathChestBlock expireTaskId
-	 * @param expireTaskId
+	 * @param expireTaskId the bukkit task id of the expire task associated with this DeathChestBlock object
      */
 	public final void setExpireTaskId(final int expireTaskId) {
 
@@ -352,7 +353,7 @@ public final class DeathChestBlock {
 	 *                  or {@code deathchest-killer} are valid keys.
      * @return The UUID metadata referenced by {@code key}.
      */
-	private final UUID getBlockMetadataUUID(final Block block, final String key) {
+	private UUID getBlockMetadataUUID(final Block block, final String key) {
 		
 		if (block == null) {
 			return null;
@@ -385,7 +386,7 @@ public final class DeathChestBlock {
 	 *                  or {@code deathchest-expire-task} are valid keys.
      * @return The Integer metadata referenced by {@code key}.
      */
-	private final Integer getBlockMetadataInteger(final Block block, final String string) {
+	private Integer getBlockMetadataInteger(final Block block, final String string) {
 		
 		if (block == null) {
 			return null;
@@ -414,23 +415,10 @@ public final class DeathChestBlock {
 	/**
 	 * Remove DeathChestBlock metadata from a block
 	 */
-	public final void removeBlockMetadata() {
+	private void removeBlockMetadata() {
 	
 		final Block block = this.getLocation().getBlock();
 		
-		block.removeMetadata("deathchest-owner", plugin);
-		block.removeMetadata("deathchest-killer", plugin);
-		block.removeMetadata("deathchest-items-removed", plugin);
-		block.removeMetadata("deathchest-expire-task", plugin);
-	}
-
-
-	/**
-	 * Remove DeathChestBlock metadata from a block
-	 * @param block The block whose metadata will be removed.
-	 */
-	static final void removeBlockMetadata(final Block block) {
-	
 		block.removeMetadata("deathchest-owner", plugin);
 		block.removeMetadata("deathchest-killer", plugin);
 		block.removeMetadata("deathchest-items-removed", plugin);
@@ -443,9 +431,9 @@ public final class DeathChestBlock {
 	 * @param itemStacks	Collection of ItemStacks to combine
 	 * @return List of ItemStack with same materials combined
 	 */
-	public final static List<ItemStack> consolidateItems(final Collection<ItemStack> itemStacks) {
+	public static List<ItemStack> consolidateItems(final Collection<ItemStack> itemStacks) {
 
-		final List<ItemStack> returnList = new ArrayList<ItemStack>();
+		final List<ItemStack> returnList = new ArrayList<>();
 
 		for (ItemStack itemStack : itemStacks) {
 			if (itemStack == null) {
@@ -476,7 +464,7 @@ public final class DeathChestBlock {
 	 * @param block The block to test if it is a DeathChestBlock
 	 * @return boolean True if block has deathchest-owner metadata, false if it does not
 	 */
-	public final static boolean isDeathChestBlock(final Block block) {
+	public static boolean isDeathChestBlock(final Block block) {
 
 		// if passed block is null return false 
 		if (block == null) {
@@ -493,7 +481,7 @@ public final class DeathChestBlock {
 	 * @param block The block to test if it is a DeathSign
 	 * @return true if block is a deathchest sign, false if not
 	 */
-	public final static boolean isDeathSign(final Block block) {
+	static boolean isDeathSign(final Block block) {
 
 		// if passed block is null return false
 		if (block == null) {
@@ -501,12 +489,9 @@ public final class DeathChestBlock {
 		}
 
 		// if block is wall sign or sign post and has death chest metadata, return true
-		if ((block.getType().equals(Material.WALL_SIGN) 
+		return (block.getType().equals(Material.WALL_SIGN)
 				|| block.getType().equals(Material.SIGN_POST))
-				&& block.hasMetadata("deathchest-owner")) {
-			return true;
-		}
-		return false;
+				&& block.hasMetadata("deathchest-owner");
 	}
 
 
@@ -515,7 +500,7 @@ public final class DeathChestBlock {
 	 * @param block The block to test if it is a DeathChest
 	 * @return true if block is a deathchest chest, false if not
 	 */
-	public final static boolean isDeathChest(final Block block) {
+	public static boolean isDeathChest(final Block block) {
 
 		// if passed block is null return false
 		if (block == null) {
@@ -535,9 +520,9 @@ public final class DeathChestBlock {
 	/**
 	 * Test that inventory is a death chest inventory
 	 * @param inventory The inventory whose holder will be tested to see if it is a DeathChest
-	 * @return
+	 * @return {@code true} if the inventory's holder is a DeathChest, {@code false} if not
 	 */
-	public final static boolean isDeathChest(final Inventory inventory) {
+	public static boolean isDeathChest(final Inventory inventory) {
 		
 		// if inventory type is not a chest inventory, return false
 	    if (!inventory.getType().equals(InventoryType.CHEST)) {
@@ -550,7 +535,7 @@ public final class DeathChestBlock {
 	    }
 	    
 	    // try to get inventory holder block
-    	Block block = null;
+    	Block block;
     	
     	try {
 			if (inventory.getHolder() instanceof DoubleChest) {
@@ -572,11 +557,8 @@ public final class DeathChestBlock {
 			return false;
 		}
 
-		// if inventory holder block is not a DeathChest, return false
-		if (!DeathChestBlock.isDeathChest(block)) {
-			return false;
-		}
-		return true;
+		// if inventory holder block is a DeathChest return true, else false
+		return DeathChestBlock.isDeathChest(block);
 	}
 
 
@@ -627,7 +609,7 @@ public final class DeathChestBlock {
 	 * @param block The sign block for which to retrieve an attached DeathChest
 	 * @return DeathChest chest block; returns null if sign is not a DeathSign or attached block is not a DeathChest
 	 */
-	static final Block getAttachedBlock(final Block block) {
+	static Block getAttachedBlock(final Block block) {
 	
 		// if passed block is null return null
 		if (block == null) {
@@ -665,13 +647,18 @@ public final class DeathChestBlock {
 	/**
 	 * Test if a player is the owner of this DeathChestBlock
 	 * @param player The player to test for DeathChestBlock ownership
-	 * @return
+	 * @return {@code true} if the player is the DeathChestBlock owner, false if not
      */
 	public final boolean isOwner(final Player player) {
 		return this.getOwnerUUID().equals(player.getUniqueId());
 	}
 
 
+	/**
+	 * Test if a player is the killer of this DeathChestBlock owner
+	 * @param player The player to test for DeathChestBlock killer
+	 * @return {@code true} if the player is the killer of the DeathChestBlock owner, false if not
+	 */
 	public final boolean isKiller(final Player player) {
 		return this.getKillerUUID().equals(player.getUniqueId());
 	}
@@ -760,10 +747,12 @@ public final class DeathChestBlock {
 
 
 	/**
-	 * Open the inventory of this DeathChestBlock for player
-	 * @param player
+	 * Open the inventory of this DeathChest for player
+	 * @param player the player for whom to open the DeathChest inventory
 	 */
 	public final void openInventory(final Player player) {
+
+		//TODO: Consider using sign attached block method if this block is a DeathSign
 
 		// get the block state of block represented by this DeathChestBlock
 		final BlockState blockState = this.getLocation().getBlock().getState();
@@ -783,7 +772,7 @@ public final class DeathChestBlock {
 	/**
 	 * Transfer all chest contents to player inventory and remove in-game chest.
 	 * Items that do not fit in player inventory will be dropped on ground.
-	 * @param player
+	 * @param player the player whose inventory the chest contents will be transferred
 	 */
 	public final void autoLoot(Player player) {
 
@@ -833,7 +822,7 @@ public final class DeathChestBlock {
 	}
 
 	
-	private final void transferChestContents(final Player player) {
+	private void transferChestContents(final Player player) {
 		
 		// get in-game block represented by this DeathChestBlock object
 		Block block = this.getLocation().getBlock();

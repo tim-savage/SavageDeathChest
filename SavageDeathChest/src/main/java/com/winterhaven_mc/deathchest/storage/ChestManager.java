@@ -1,29 +1,18 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.SearchResult;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.*;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public final class ChestManager {
 
@@ -35,7 +24,7 @@ public final class ChestManager {
     
 	// DeathChestBlock material types
 	private static final Set<Material> deathChestMaterials = 
-			Collections.unmodifiableSet(new HashSet<Material>(Arrays.asList(
+			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 					Material.CHEST,
 					Material.SIGN_POST,
 					Material.WALL_SIGN
@@ -62,7 +51,7 @@ public final class ChestManager {
 	 * expires death chest blocks whose time has passed<br>
 	 * schedules tasks to expire remaining blocks 
 	 */
-	private final void loadAllDeathChestBlocks() {
+	private void loadAllDeathChestBlocks() {
 		
 		Long currentTime = System.currentTimeMillis();
 
@@ -110,11 +99,10 @@ public final class ChestManager {
 	 */
 	public final List<ItemStack> deployChest(final Player player, final List<ItemStack> droppedItems) {
 		
-		List<ItemStack> remainingItems = new ArrayList<ItemStack>();
-		List<ItemStack> chestItems = new ArrayList<ItemStack>();
-				
+		List<ItemStack> remainingItems;
+
 		// combine stacks of same items where possible
-		chestItems = DeathChestBlock.consolidateItems(droppedItems);
+		List<ItemStack> chestItems = DeathChestBlock.consolidateItems(droppedItems);
 
 		// check if require-chest option is enabled
 		// and player does not have permission override
@@ -183,7 +171,7 @@ public final class ChestManager {
 	 * @param droppedItems		items to place in chest
 	 * @return Items that did not fit in chest, as List of ItemStacks
 	 */
-	private final List<ItemStack> deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
+	private List<ItemStack> deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
 		
 		SearchResult result = LocationUtilities.findValidSingleChestLocation(player);
 
@@ -192,7 +180,7 @@ public final class ChestManager {
 			
 			// use try..catch block here so a messaging error does not cause item duplication
 			try {
-				if (result.equals(SearchResult.PROTECTION_PLUGIN)) {
+				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,	
 							"chest-denied-plugin", result.getProtectionPlugin());
 					if (plugin.debug) {
@@ -200,13 +188,13 @@ public final class ChestManager {
 							+ result.getProtectionPlugin().getPluginName() + ".");
 					}
 				}
-				else if (result.equals(SearchResult.ADJACENT_CHEST)) {
+				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,	"chest-denied-adjacent");
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
 					}				
 				}
-				else if (result.equals(SearchResult.NON_REPLACEABLE_BLOCK)) {
+				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,	"chest-denied-block");
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
@@ -263,7 +251,7 @@ public final class ChestManager {
 	 * @param droppedItems		items to place in chest
 	 * @return Any items that could not be placed in chest, as List of ItemStack
 	 */
-	private final List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
+	private List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 		
 		// get chest facing direction based on player yaw
 		BlockFace chestDirection = LocationUtilities.getCardinalDirection(player.getLocation().getYaw());
@@ -288,7 +276,7 @@ public final class ChestManager {
 			
 			// use try..catch block here so a messaging error does not cause item duplication
 			try {
-				if (result.equals(SearchResult.PROTECTION_PLUGIN)) {
+				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,
 							"chest-denied-plugin", result.getProtectionPlugin());
 					if (plugin.debug) {
@@ -296,14 +284,14 @@ public final class ChestManager {
 							+ result.getProtectionPlugin().getPluginName() + ".");
 					}
 				}
-				else if (result.equals(SearchResult.ADJACENT_CHEST)) {
+				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,
 							"chest-denied-adjacent");
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
 					}				
 				}
-				else if (result.equals(SearchResult.NON_REPLACEABLE_BLOCK)) {
+				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,
 							"chest-denied-block");
 					if (plugin.debug) {
@@ -404,7 +392,7 @@ public final class ChestManager {
 	 * @param chestblock	Chest block
 	 * @return boolean		Success or failure to place sign
 	 */
-	private final boolean placeChestSign(final Player player, final Block chestblock) {
+	private boolean placeChestSign(final Player player, final Block chestblock) {
 		
 		// if chest-signs are not enabled in configuration, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-signs")) {
@@ -501,7 +489,7 @@ public final class ChestManager {
 	 * @param itemStacks Collection of ItemStack to check for chest
 	 * @return boolean
 	 */
-	private final boolean hasChest(final Collection<ItemStack> itemStacks) {
+	private boolean hasChest(final Collection<ItemStack> itemStacks) {
 		boolean result = false;
 		for (ItemStack itemStack : itemStacks) {
 			if (itemStack.getType().equals(Material.CHEST)) {
@@ -518,7 +506,7 @@ public final class ChestManager {
 	 * @param itemStacks	List of ItemStack to remove chest
 	 * @return List of ItemStack with one chest removed
 	 */
-	private final List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
+	private List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
 		
 		for (ItemStack stack : itemStacks) {
 			if (stack.isSimilar(CHEST_STACK)) {
@@ -534,14 +522,14 @@ public final class ChestManager {
 	}
 	
 	
-	private final List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
+	private List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
 		
 		// convert itemStacks list to array
 		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
 		stackArray = itemStacks.toArray(stackArray);
 		
 		// return list of items that did not fit in chest
-		return new ArrayList<ItemStack>(chest.getInventory().addItem(stackArray).values());
+		return new ArrayList<>(chest.getInventory().addItem(stackArray).values());
 	}
 	
 }

@@ -1,5 +1,14 @@
 package com.winterhaven_mc.deathchest.util;
 
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.util.ConfigAccessor;
+import com.winterhaven_mc.util.StringUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -9,17 +18,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
-
-import com.winterhaven_mc.util.StringUtil;
-import com.winterhaven_mc.util.ConfigAccessor;
 
 
 public final class MessageManager {
@@ -45,7 +43,7 @@ public final class MessageManager {
 
 	/**
 	 * Class constructor
-	 * @param plugin
+	 * @param plugin reference to main class
 	 */
 	public MessageManager(final PluginMain plugin) {
 
@@ -62,7 +60,7 @@ public final class MessageManager {
 		messages = new ConfigAccessor(plugin, directoryName + File.separator + language + ".yml");
 
 		// initialize messageCooldownMap
-		this.messageCooldownMap = new ConcurrentHashMap<UUID,ConcurrentHashMap<String,Long>>();
+		this.messageCooldownMap = new ConcurrentHashMap<>();
 
 		// default sound file name
 		String soundFileName = "sounds.yml";
@@ -81,14 +79,12 @@ public final class MessageManager {
 		if (!oldSounds.exists()) {
 			plugin.saveResource(oldsoundFileName, false);
 		}
-		// release file object
-		oldSounds = null;
 	}
 
 	/**
 	 * Send message to player
-	 * @param player
-	 * @param messageId
+	 * @param player the player to whom to send a message
+	 * @param messageId the message identifier
 	 */
 	public void sendPlayerMessage(final Player player, final String messageId) {
 		sendPlayerMessage(player,messageId,null);
@@ -96,9 +92,9 @@ public final class MessageManager {
 
 	/**
 	 * Send message to player
-	 * @param player
-	 * @param messageId
-	 * @param plugin
+	 * @param player the player to whom to send a message
+	 * @param messageId the message identifier
+	 * @param protectionPlugin the protection plugin whose name will be used in the message
 	 */
 	public void sendPlayerMessage(final Player player, final String messageId, 
 			final ProtectionPlugin protectionPlugin) {
@@ -120,10 +116,10 @@ public final class MessageManager {
 		}
 
 		// set substitution variables defaults			
-		String playerName = "console";
-		String playerNickname = "console";
-		String playerDisplayName = "console";
-		String worldName = "world";
+		String playerName;
+		String playerNickname;
+		String playerDisplayName;
+		String worldName;
 		String protectionPluginName = "unknown";
 
 		// get protection plugin name
@@ -185,16 +181,17 @@ public final class MessageManager {
 		}
 
 		// send message to player
-		player.sendMessage(ChatColor.translateAlternateColorCodes((char)'&', (String)message));
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&',message));
 
 	}
 
 
 	/**
 	 * Send message to all players
-	 * @param player
-	 * @param messageId
+	 * @param player the player to whose name will be used in the message
+	 * @param messageId the message identifier
 	 */
+	@SuppressWarnings("unused")
 	public void broadcastMessage(final Player player, final String messageId) {
 		if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
 			return;
@@ -208,15 +205,16 @@ public final class MessageManager {
 		message = message.replaceAll("%playerdisplayname%", playerdisplayname);
 		message = message.replaceAll("%playernickname%", playernickname);
 		message = message.replaceAll("%worldname%", worldname);
-		this.plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes((char)'&', (String)message));
+		this.plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',message));
 	}
 
 
 	/**
 	 * Play sound effect for action
-	 * @param sender
-	 * @param soundId
+	 * @param sender they player for whom to play a sound
+	 * @param soundId the sound identifier
 	 */
+	@SuppressWarnings("unused")
 	public void playerSound(final CommandSender sender, final String soundId) {
 
 		if (sender instanceof Player) {
@@ -226,8 +224,8 @@ public final class MessageManager {
 
 	/**
 	 * Play sound effect for action
-	 * @param player
-	 * @param soundId
+	 * @param player they player for whom to play a sound
+	 * @param soundId the sound identifier
 	 */
 	public void playerSound(final Player player, final String soundId) {
 
@@ -271,7 +269,7 @@ public final class MessageManager {
 	/**
 	 * Reload language files
 	 */
-	public void reload() {
+	void reload() {
 
 		// reinstall message files if necessary
 		installLocalizationFiles();
@@ -296,7 +294,7 @@ public final class MessageManager {
 	 */
 	private void installLocalizationFiles() {
 
-		List<String> filelist = new ArrayList<String>();
+		List<String> filelist = new ArrayList<>();
 
 		// get the absolute path to this plugin as URL
 		URL pluginURL = plugin.getServer().getPluginManager().getPlugin(plugin.getName()).getClass().getProtectionDomain().getCodeSource().getLocation();
@@ -333,8 +331,8 @@ public final class MessageManager {
 
 	/**
 	 * Check if file exists for a given language
-	 * @param language
-	 * @return
+	 * @param language the language for which to check if file exists
+	 * @return the language identifier to be used
 	 */
 	private String languageFileExists(final String language) {
 
@@ -353,12 +351,12 @@ public final class MessageManager {
 
 	/**
 	 * Add entry to message cooldown map
-	 * @param player
-	 * @param messageId
+	 * @param player the player to be added to the message cooldown map
+	 * @param messageId the message identifier for this cooldown entry
 	 */
 	private void putMessageCooldown(final Player player, final String messageId) {
 
-		ConcurrentHashMap<String, Long> tempMap = new ConcurrentHashMap<String, Long>();
+		ConcurrentHashMap<String, Long> tempMap = new ConcurrentHashMap<>();
 		tempMap.put(messageId, System.currentTimeMillis());
 		messageCooldownMap.put(player.getUniqueId(), tempMap);
 	}
@@ -366,8 +364,8 @@ public final class MessageManager {
 
 	/**
 	 * get entry from message cooldown map
-	 * @param player
-	 * @param messageId
+	 * @param player the player for whom to retrieve the cooldown expire time from the cooldown map
+	 * @param messageId the message identifier for which to retrieve the cooldown expire time
 	 * @return cooldown expire time
 	 */
 	private long getMessageCooldown(final Player player, final String messageId) {
@@ -388,7 +386,7 @@ public final class MessageManager {
 
 	/**
 	 * Get expire time as formatted string
-	 * @return
+	 * @return a formatted expire time string
 	 */
 	private String getExpireTimeString() {
 

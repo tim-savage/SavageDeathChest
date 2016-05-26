@@ -2,7 +2,7 @@ package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 
-public enum DataStoreType {
+enum DataStoreType {
 
 	YAML("Yaml") {
 		
@@ -35,9 +35,9 @@ public enum DataStoreType {
 
 	/**
 	 * Class constructor
-	 * @param name
+	 * @param displayName the formatted display name of a datastore type
 	 */
-	private DataStoreType(final String displayName) {
+	DataStoreType(final String displayName) {
 		this.displayName = displayName;
 	}
 
@@ -48,7 +48,7 @@ public enum DataStoreType {
 	}
 
 	
-	public final static DataStoreType match(final String name) {
+	public static DataStoreType match(final String name) {
 		for (DataStoreType type : DataStoreType.values()) {
 			if (type.toString().equalsIgnoreCase(name)) {
 				return type;
@@ -59,7 +59,7 @@ public enum DataStoreType {
 	}
 	
 	
-	public final static DataStoreType getDefaultType() {
+	public static DataStoreType getDefaultType() {
 		return defaultType;
 	}
 }

@@ -18,7 +18,6 @@ public final class PluginMain extends JavaPlugin {
 	public static PluginMain instance;
 	
 	public WorldManager worldManager;
-	public CommandManager commandManager;
 	public MessageManager messageManager;
 	public DataStore dataStore;
 	public ChestManager chestManager;
@@ -37,9 +36,6 @@ public final class PluginMain extends JavaPlugin {
 		// instantiate world manager
 		worldManager = new WorldManager(this);
 		
-		// instantiate command manager
-		commandManager = new CommandManager(this);
-
 		// instantiate message manager
 		messageManager = new MessageManager(this);
 		
@@ -51,6 +47,9 @@ public final class PluginMain extends JavaPlugin {
 		
 		// instantiate task manager
 		taskManager = new TaskManager(this);
+
+		// instantiate command manager
+		new CommandManager(this);
 
 		// initialize event listeners
 		new PlayerEventListener(this);

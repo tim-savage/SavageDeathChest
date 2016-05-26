@@ -1,18 +1,17 @@
 package com.winterhaven_mc.deathchest.util;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.SearchResult;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
-import com.winterhaven_mc.deathchest.SearchResult;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public final class LocationUtilities {
@@ -21,7 +20,7 @@ public final class LocationUtilities {
 	private static final PluginMain plugin = PluginMain.instance;
 
 	// material types that can be replaced by death chests
-	private static Set<Material> replaceableBlocks = new HashSet<Material>(loadReplaceableBlocks());
+	private static Set<Material> replaceableBlocks = new HashSet<>(loadReplaceableBlocks());
 
 
 	/**
@@ -39,7 +38,7 @@ public final class LocationUtilities {
 	 * @param yaw	Direction in degrees
 	 * @return BlockFace of cardinal direction
 	 */
-	public static final BlockFace getCardinalDirection(final float yaw) {
+	public static BlockFace getCardinalDirection(final float yaw) {
 
 		// ensure yaw is between 0 and 360 (in case of negative yaw)
 		double rotation = (yaw + 360) % 360;
@@ -64,7 +63,7 @@ public final class LocationUtilities {
 	 * @param location initial location
 	 * @return location one block to right, preserving original yaw
 	 */
-	public static final Location locationToRight(final Location location) {
+	public static Location locationToRight(final Location location) {
 
 		Location resultLocation = blockToRight(location).getLocation();
 
@@ -79,7 +78,7 @@ public final class LocationUtilities {
 	 * @param location initial location
 	 * @return block to left of location
 	 */
-	public static final Block blockToLeft(final Location location) {
+	public static Block blockToLeft(final Location location) {
 		float yaw = location.getYaw() + 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -90,7 +89,7 @@ public final class LocationUtilities {
 	 * @param location inital location
 	 * @return block to right of initial location
 	 */
-	public static final Block blockToRight(final Location location) {
+	public static Block blockToRight(final Location location) {
 		float yaw = location.getYaw() - 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -101,7 +100,7 @@ public final class LocationUtilities {
 	 * @param location initial location
 	 * @return block in front of initial location
 	 */
-	public static final Block blockInFront(final Location location) {
+	public static Block blockInFront(final Location location) {
 		float yaw = location.getYaw() + 180;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -112,7 +111,7 @@ public final class LocationUtilities {
 	 * @param location initial location
 	 * @return block behind inital location
 	 */
-	public static final Block blockToRear(final Location location) {
+	public static Block blockToRear(final Location location) {
 		float yaw = location.getYaw();
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -125,7 +124,7 @@ public final class LocationUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return SearchResult
 	 */
-	public static final SearchResult findValidSingleChestLocation(final Player player) {
+	public static SearchResult findValidSingleChestLocation(final Player player) {
 
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -259,7 +258,7 @@ public final class LocationUtilities {
 	 * @param player Player that deathchest is being deployed for
 	 * @return location that is valid for double chest deployment, or null if no valid location found
 	 */
-	public static final SearchResult findValidDoubleChestLocation(final Player player) {
+	public static SearchResult findValidDoubleChestLocation(final Player player) {
 
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -285,7 +284,7 @@ public final class LocationUtilities {
 
 		// initialize search result objects
 		SearchResult result1 = null;
-		SearchResult result2 = null;
+		SearchResult result2;
 
 		for (int y = 0; y < radius; y = y + 1) {
 			for (int x = 0; x < radius; x = x + 1) {
@@ -399,7 +398,7 @@ public final class LocationUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public static final boolean isValidSignLocation(final Player player, final Location location) {
+	public static boolean isValidSignLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 
@@ -410,10 +409,7 @@ public final class LocationUtilities {
 
 		// check all enabled protection plugins for player permission at location
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
-		if (blockingPlugin != null) {
-			return false;
-		}
-		return true;
+		return (blockingPlugin == null);
 	}
 
 
@@ -423,10 +419,10 @@ public final class LocationUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public static final SearchResult isValidLeftChestLocation(final Player player, final Location location) {
+	private static SearchResult isValidLeftChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
-		SearchResult result = null;
+		SearchResult result;
 
 		// check if block at location is a ReplaceableBlock
 		if(!getReplaceableBlocks().contains(block.getType())) {
@@ -462,10 +458,10 @@ public final class LocationUtilities {
 	 * @param location	Location to check permissions
 	 * @return boolean
 	 */
-	public static final SearchResult isValidRightChestLocation(final Player player, final Location location) {
+	public static SearchResult isValidRightChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
-		SearchResult result = null;
+		SearchResult result;
 
 		// check if block at location is a ReplaceableBlock
 		if(!getReplaceableBlocks().contains(block.getType())) {
@@ -494,7 +490,7 @@ public final class LocationUtilities {
 	}
 
 
-	final static boolean adjacentChest(final Location location, final Boolean isFirstChest) {
+	private static boolean adjacentChest(final Location location, final Boolean isFirstChest) {
 
 		// if this is the first chest, check block to left; else skip checking block to left
 		if (isFirstChest && blockToLeft(location).getType().equals(Material.CHEST)) {
@@ -530,20 +526,17 @@ public final class LocationUtilities {
 	}
 
 
-	final static boolean isAboveGrassPath(final Block block) {
+	private static boolean isAboveGrassPath(final Block block) {
 
-		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
-			return true;
-		}
-		return false;
+		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
 	}
 
 
 	/**
-	 * Get HashSet of replaceable blocks
-	 * @return
+	 * Get Set of replaceable blocks
+	 * @return Set of replaceable blocks
 	 */
-	public static final Set<Material> getReplaceableBlocks() {
+	private static Set<Material> getReplaceableBlocks() {
 		return replaceableBlocks;
 	}
 
@@ -551,12 +544,12 @@ public final class LocationUtilities {
 	/**
 	 * Load list of replaceable blocks from config file
 	 */
-	public static final Set<Material> loadReplaceableBlocks() {
+	static Set<Material> loadReplaceableBlocks() {
 
 		// get string list of materials from config file
 		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
 
-		Set<Material> returnSet = new HashSet<Material>();
+		Set<Material> returnSet = new HashSet<>();
 
 		// iterate over string list
 		for (String materialString : materialStringList) {
@@ -575,4 +568,3 @@ public final class LocationUtilities {
 	}
 
 }
-

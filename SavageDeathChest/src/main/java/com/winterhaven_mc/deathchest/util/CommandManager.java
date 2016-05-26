@@ -1,15 +1,15 @@
 package com.winterhaven_mc.deathchest.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
-import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class CommandManager implements CommandExecutor {
 	
@@ -32,23 +32,24 @@ public final class CommandManager implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED + pluginName + "Too many arguments.");
 			return false;
 		}
-		
-		String subcmd = "";
-		
+
+		String subcmd;
+
 		// if no arguments passed, set subcmd to status
-		if (args.length < 1) {	
+		if (args.length < 1) {
 			subcmd = "status";
 		}
 		else {
 			subcmd = args[0];
 		}
-		
+
 		// status command
-		if (subcmd.equalsIgnoreCase("status")) {			
+		if (subcmd.equalsIgnoreCase("status")) {
 			return statusCommand(sender);
 		}
-		
+
 		// reload command
+		//noinspection SimplifiableIfStatement
 		if (subcmd.equalsIgnoreCase("reload")) {
 			return reloadCommand(sender);
 		}
@@ -56,7 +57,7 @@ public final class CommandManager implements CommandExecutor {
 	}
 	
 	
-	private final boolean statusCommand(final CommandSender sender) {
+	private boolean statusCommand(final CommandSender sender) {
 		
 		String versionString = this.plugin.getDescription().getVersion();
 		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " 
@@ -77,7 +78,7 @@ public final class CommandManager implements CommandExecutor {
 			
 			if (pp.isInstalled()) {
 				
-				List<String> pluginSettings = new ArrayList<String>();
+				List<String> pluginSettings = new ArrayList<>();
 				
 				count++;
 				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
@@ -103,7 +104,7 @@ public final class CommandManager implements CommandExecutor {
 	}
 
 	
-	private final boolean reloadCommand(final CommandSender sender) {
+	private boolean reloadCommand(final CommandSender sender) {
 		
 		// copy default config from jar if it doesn't exist
 		plugin.saveDefaultConfig();

@@ -3,9 +3,6 @@ package com.winterhaven_mc.deathchest.listeners;
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
-
-import java.util.ArrayList;
-
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,6 +15,8 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
+import java.util.ArrayList;
+
 
 public final class BlockEventListener implements Listener {
 
@@ -27,7 +26,7 @@ public final class BlockEventListener implements Listener {
 	
 	/**
 	 * Class constructor
-	 * @param plugin
+	 * @param plugin reference to main class
 	 */
 	public BlockEventListener(final PluginMain plugin) {
 		
@@ -42,7 +41,7 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Block break event handler<br>
 	 * checks for ownership of death chests and prevents breakage by non-owners
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	//TODO: Make sure we're using the right priority. Use NORMAL if possible.
@@ -124,7 +123,7 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Entity explode event handler<br>
 	 * Make death chests explosion proof if chest-protection is enabled
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onEntityExplode(final EntityExplodeEvent event) {
@@ -135,7 +134,7 @@ public final class BlockEventListener implements Listener {
 		}
 		
 		// iterate through all blocks in explosion event and remove those that are DeathChestBlocks
-		ArrayList<Block> blocks = new ArrayList<Block>(event.blockList());
+		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
 			if (DeathChestBlock.isDeathChestBlock(block)) {
 				event.blockList().remove(block);
@@ -147,7 +146,7 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Block explode event handler<br>
 	 * Make death chests explosion proof if chest-protection is enabled
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onBlockExplode(final BlockExplodeEvent event) {
@@ -158,7 +157,7 @@ public final class BlockEventListener implements Listener {
 		}
 		
 		// iterate through all blocks in explosion event and remove those that are DeathChestBlocks
-		ArrayList<Block> blocks = new ArrayList<Block>(event.blockList());
+		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
 			if (DeathChestBlock.isDeathChestBlock(block)) {
 				event.blockList().remove(block);
@@ -170,7 +169,7 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Block physics event handler<br>
 	 * remove detached death chest signs from game to prevent players gaining additional signs
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void signDetachCheck(final BlockPhysicsEvent event) {

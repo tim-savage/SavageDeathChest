@@ -1,18 +1,16 @@
 package com.winterhaven_mc.deathchest.storage;
 
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.util.ConfigAccessor;
+import org.bukkit.Location;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.bukkit.Location;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
-
-import com.winterhaven_mc.util.ConfigAccessor;
-
-
-public class DataStoreYAML extends DataStore {
+class DataStoreYAML extends DataStore {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -23,7 +21,7 @@ public class DataStoreYAML extends DataStore {
 
 	/**
 	 * Class constructor
-	 * @param plugin
+	 * @param plugin reference to main class
 	 */
 	DataStoreYAML (final PluginMain plugin) {
 
@@ -69,7 +67,7 @@ public class DataStoreYAML extends DataStore {
 		}
 
 		// get ownerid from stored record, or set to null if invalid
-		UUID owneruuid = null;
+		UUID owneruuid;
 		try {
 			owneruuid = UUID.fromString(dataFile.getConfig().getString(key + pathSeparator + "owneruuid"));
 		}
@@ -78,7 +76,7 @@ public class DataStoreYAML extends DataStore {
 		}
 
 		// get killerid from stored record, or set to null if invalid
-		UUID killeruuid = null;
+		UUID killeruuid;
 		try {
 			killeruuid = UUID.fromString(dataFile.getConfig().getString(key + pathSeparator + "killeruuid"));
 		}
@@ -107,7 +105,7 @@ public class DataStoreYAML extends DataStore {
 
 		Character pathSeparator = dataFile.getConfig().options().pathSeparator();
 
-		ArrayList<DeathChestBlock> result = new ArrayList<DeathChestBlock>();
+		ArrayList<DeathChestBlock> result = new ArrayList<>();
 
 		for (String key : dataFile.getConfig().getKeys(false)) {
 
@@ -133,7 +131,7 @@ public class DataStoreYAML extends DataStore {
 		String key = locationToString(deathChestBlock.getLocation());
 
 		// create string from owner uuid
-		String owneruuid = null;
+		String owneruuid;
 		try {
 			owneruuid = deathChestBlock.getOwnerUUID().toString();
 		}
@@ -152,7 +150,7 @@ public class DataStoreYAML extends DataStore {
 		}
 
 		// create string from killer uuid, or set to empty string if no killer uuid exists
-		String killeruuid = null;
+		String killeruuid;
 		try {
 			killeruuid = deathChestBlock.getKillerUUID().toString();
 		}
@@ -175,7 +173,7 @@ public class DataStoreYAML extends DataStore {
 
 	/**
 	 * Delete record by location
-	 * @param location
+	 * @param location the location key for the record to be deleted
 	 */
 	@Override
 	public void deleteRecord(final Location location) {
@@ -206,12 +204,16 @@ public class DataStoreYAML extends DataStore {
 
 
 	@Override
-	void delete() {
+	boolean delete() {
 		// delete this datastore file
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + getFilename());
+
+		boolean result = false;
+
 		if (dataStoreFile.exists()) {
-			dataStoreFile.delete();
+			result = dataStoreFile.delete();
 		}
+		return result;
 	}
 
 
@@ -225,9 +227,9 @@ public class DataStoreYAML extends DataStore {
 
 	/**
 	 * Delete record by key
-	 * @param key
+	 * @param key the unique key of the record to be deleted
 	 */
-	void deleteRecord(final String key) {
+	private void deleteRecord(final String key) {
 
 		dataFile.getConfig().set(key, null);		
 		dataFile.saveConfig();
@@ -254,16 +256,15 @@ public class DataStoreYAML extends DataStore {
 		String z = String.valueOf(location.getBlockZ());
 
 		// concatenate location elements into string
-		String locationString = worldname + "|" + x + "|" + y + "|" + z;
 
 		// return concatenated string
-		return locationString;
+		return worldname + "|" + x + "|" + y + "|" + z;
 	}
 
 
 	/**
 	 * create a new location object from a given key
-	 * @param locationString
+	 * @param locationString the serialized location string to convert to a location object
 	 * @return location
 	 */
 	private Location stringToLocation(final String locationString) {
@@ -290,10 +291,9 @@ public class DataStoreYAML extends DataStore {
 		}
 
 		// create location object from location string elements
-		Location location = new Location(plugin.getServer().getWorld(worldname),x,y,z);
 
 		// return newly formed location object
-		return location;		
+		return new Location(plugin.getServer().getWorld(worldname),x,y,z);
 	}
 
 }

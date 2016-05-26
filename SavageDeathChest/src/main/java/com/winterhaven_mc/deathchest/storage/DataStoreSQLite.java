@@ -1,21 +1,15 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
+import java.io.File;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -25,7 +19,8 @@ import com.winterhaven_mc.deathchest.PluginMain;
  *
  */
 
-public final class DataStoreSQLite extends DataStore {
+
+final class DataStoreSQLite extends DataStore {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -36,7 +31,7 @@ public final class DataStoreSQLite extends DataStore {
 
 	/**
 	 * Class constructor
-	 * @param plugin
+	 * @param plugin reference to main class
 	 */
 	DataStoreSQLite (final PluginMain plugin) {
 
@@ -54,19 +49,11 @@ public final class DataStoreSQLite extends DataStore {
 	/**
 	 * initialize the database connection and
 	 * create table if one doesn't already exist
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
 	 */
 	@Override
-	final void initialize() throws SQLException, ClassNotFoundException {
+	final void initialize() throws SQLException,ClassNotFoundException {
 
-		// if data store is already initialized, do nothing and return
-		if (this.isInitialized()) {
-			plugin.getLogger().info(this.getName() + " datastore already initialized.");
-			return;
-		}
-
-		// register the driver 
+		// register the driver
 		final String jdbcDriverName = "org.sqlite.JDBC";
 
 		Class.forName(jdbcDriverName);
@@ -78,6 +65,7 @@ public final class DataStoreSQLite extends DataStore {
 
 		// create a database connection
 		connection = DriverManager.getConnection(dbUrl);
+
 		final Statement statement = connection.createStatement();
 
 		// execute table creation statement
@@ -88,7 +76,9 @@ public final class DataStoreSQLite extends DataStore {
 
 		// output log message
 		plugin.getLogger().info(this.getName() + " datastore initialized.");
+
 	}
+
 
 	@Override
 	final DeathChestBlock getRecord(final Location location) {
@@ -122,7 +112,7 @@ public final class DataStoreSQLite extends DataStore {
 					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID((UUID)null);
+					deathChestBlock.setOwnerUUID(null);
 				}
 
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
@@ -130,7 +120,7 @@ public final class DataStoreSQLite extends DataStore {
 					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID((UUID)null);
+					deathChestBlock.setOwnerUUID(null);
 				}
 
 				// set other fields in deathChestBlock from database
@@ -162,7 +152,7 @@ public final class DataStoreSQLite extends DataStore {
 	@Override
 	final ArrayList<DeathChestBlock> getAllRecords() {
 
-		final ArrayList<DeathChestBlock> results = new ArrayList<DeathChestBlock>();
+		final ArrayList<DeathChestBlock> results = new ArrayList<>();
 
 		try {
 
@@ -241,7 +231,7 @@ public final class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	final void putRecord(final DeathChestBlock deathChestBlock) {
+	synchronized final void putRecord(final DeathChestBlock deathChestBlock) {
 
 		// if passed deathChestBlock is null, do nothing and return
 		if (deathChestBlock == null) {
@@ -253,7 +243,7 @@ public final class DataStoreSQLite extends DataStore {
 			public void run() {
 				
 				// catch invalid player uuid exception
-				String ownerid = null;
+				String ownerid;
 				try {
 					ownerid = deathChestBlock.getOwnerUUID().toString();
 				}
@@ -263,7 +253,7 @@ public final class DataStoreSQLite extends DataStore {
 				}
 
 				// catch invalid killer uuid exception
-				String killerid = null;
+				String killerid;
 				try {
 					killerid = deathChestBlock.getKillerUUID().toString();
 				}
@@ -272,28 +262,24 @@ public final class DataStoreSQLite extends DataStore {
 				}
 
 				try {
-					// synchronize on database connection
-					synchronized(connection) {
+					// create prepared statement
+					PreparedStatement preparedStatement =
+							connection.prepareStatement(Queries.getQuery("InsertDeathChestBlock"));
 
-						// create prepared statement
-						PreparedStatement preparedStatement = 
-								connection.prepareStatement(Queries.getQuery("InsertDeathChestBlock"));
+					preparedStatement.setString(1, ownerid);
+					preparedStatement.setString(2, killerid);
+					preparedStatement.setString(3, deathChestBlock.getLocation().getWorld().getName());
+					preparedStatement.setInt(4, deathChestBlock.getLocation().getBlockX());
+					preparedStatement.setInt(5, deathChestBlock.getLocation().getBlockY());
+					preparedStatement.setInt(6, deathChestBlock.getLocation().getBlockZ());
+					preparedStatement.setLong(7, deathChestBlock.getExpiration());
 
-						preparedStatement.setString(1, ownerid);
-						preparedStatement.setString(2, killerid);
-						preparedStatement.setString(3, deathChestBlock.getLocation().getWorld().getName());
-						preparedStatement.setInt(4, deathChestBlock.getLocation().getBlockX());
-						preparedStatement.setInt(5, deathChestBlock.getLocation().getBlockY());
-						preparedStatement.setInt(6, deathChestBlock.getLocation().getBlockZ());
-						preparedStatement.setLong(7, deathChestBlock.getExpiration());
+					// execute prepared statement
+					int rowsAffected = preparedStatement.executeUpdate();
 
-						// execute prepared statement
-						int rowsAffected = preparedStatement.executeUpdate();
-
-						// output debugging information
-						if (plugin.debug) {
-							plugin.getLogger().info(rowsAffected + " rows affected.");
-						}
+					// output debugging information
+					if (plugin.debug) {
+						plugin.getLogger().info(rowsAffected + " rows affected.");
 					}
 				}
 				catch (SQLException e) {
@@ -352,7 +338,7 @@ public final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	public final void deleteRecord(final Location location) {
+	synchronized public final void deleteRecord(final Location location) {
 
 		// if passed location is null, do nothing and return
 		if (location == null) {
@@ -363,25 +349,21 @@ public final class DataStoreSQLite extends DataStore {
 			@Override
 			public void run() {
 				try {
-					// synchronize on database connection
-					synchronized(connection) {
+					// create prepared statement
+					PreparedStatement preparedStatement =
+							connection.prepareStatement(Queries.getQuery("DeleteDeathChestBlock"));
 
-						// create prepared statement
-						PreparedStatement preparedStatement = 
-								connection.prepareStatement(Queries.getQuery("DeleteDeathChestBlock"));
+					preparedStatement.setString(1, location.getWorld().getName());
+					preparedStatement.setInt(2, location.getBlockX());
+					preparedStatement.setInt(3, location.getBlockY());
+					preparedStatement.setInt(4, location.getBlockZ());
 
-						preparedStatement.setString(1, location.getWorld().getName());
-						preparedStatement.setInt(2, location.getBlockX());
-						preparedStatement.setInt(3, location.getBlockY());
-						preparedStatement.setInt(4, location.getBlockZ());
+					// execute prepared statement
+					int rowsAffected = preparedStatement.executeUpdate();
 
-						// execute prepared statement
-						int rowsAffected = preparedStatement.executeUpdate();
-
-						// output debugging information
-						if (plugin.debug) {
-							plugin.getLogger().info(rowsAffected + " rows deleted.");
-						}
+					// output debugging information
+					if (plugin.debug) {
+						plugin.getLogger().info(rowsAffected + " rows deleted.");
 					}
 				}
 				catch (SQLException e) {
@@ -403,9 +385,9 @@ public final class DataStoreSQLite extends DataStore {
 
 	/**
 	 * Delete expired records in world <i>worldName</i>
-	 * @param worldName
+	 * @param worldName the world name of expired records to delete
 	 */
-	final void deleteExpiredRecords(final String worldName) {
+	private void deleteExpiredRecords(final String worldName) {
 
 		// pastDueTime = current time in milliseconds - 30 days
 		final Long pastDueTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
@@ -474,11 +456,14 @@ public final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	final void delete() {
+	final boolean delete() {
+
+		Boolean result = false;
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		if (dataStoreFile.exists()) {
-			dataStoreFile.delete();
+			result = dataStoreFile.delete();
 		}
+		return result;
 	}
 
 

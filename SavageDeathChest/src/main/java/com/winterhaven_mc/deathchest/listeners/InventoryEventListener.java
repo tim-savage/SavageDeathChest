@@ -1,7 +1,8 @@
 package com.winterhaven_mc.deathchest.listeners;
 
-import java.util.Set;
-
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -9,18 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import java.util.Set;
 
 public final class InventoryEventListener implements Listener {
 
@@ -47,7 +41,7 @@ public final class InventoryEventListener implements Listener {
 	 * Uncancels an event that was cancelled by a protection plugin
 	 * if configured to override the protection plugin and thereby allow
 	 * death chest access where chest access would normally be restricted
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
 	public final void onInventoryOpen(final InventoryOpenEvent event) {
@@ -110,7 +104,7 @@ public final class InventoryEventListener implements Listener {
 	
 	/**
 	 * Remove empty death chest on inventory close event
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onInventoryClose(final InventoryCloseEvent event) {
@@ -144,7 +138,7 @@ public final class InventoryEventListener implements Listener {
 
 	/**
 	 * Prevent hoppers from removing or inserting items in death chests
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onInventoryMoveItem(final InventoryMoveItemEvent event) {
@@ -162,14 +156,13 @@ public final class InventoryEventListener implements Listener {
 		// if destination is a death chest and prevent-item-placement is true, cancel event and return
 		if (DeathChestBlock.isDeathChest(destination) && plugin.getConfig().getBoolean("prevent-item-placement")) {
 			event.setCancelled(true);
-			return;
 		}
 	}
 
 
 	/**
 	 * Prevent placing items in death chests if configured
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onInventoryClick(final InventoryClickEvent event) {
@@ -248,7 +241,7 @@ public final class InventoryEventListener implements Listener {
 
 	/**
 	 * Prevent placing items in death chests if configured
-	 * @param event
+	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onInventoryDrag(final InventoryDragEvent event) {
@@ -292,10 +285,10 @@ public final class InventoryEventListener implements Listener {
 	/**
 	 * Test if inventory is empty
 	 * 
-	 * @param chest
+	 * @param inventory the inventory to test for emptiness
 	 * @return true if inventory is empty, false if inventory has any contents
 	 */
-	private final boolean isEmpty(final Inventory inventory) {
+	private boolean isEmpty(final Inventory inventory) {
 		
 	    final ItemStack[] items = inventory.getContents();
 	    for (ItemStack item : items) {

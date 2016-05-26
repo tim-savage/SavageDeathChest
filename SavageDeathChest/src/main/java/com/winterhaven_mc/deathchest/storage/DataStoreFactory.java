@@ -1,11 +1,11 @@
 package com.winterhaven_mc.deathchest.storage;
 
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
 
 
 public final class DataStoreFactory {
@@ -20,7 +20,7 @@ public final class DataStoreFactory {
 	 * and datastore type should be read from configuration
 	 * @return new datastore of configured type
 	 */
-	public final static DataStore create() {
+	public static DataStore create() {
 		
 		// get data store type from config
 		DataStoreType dataStoreType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
@@ -35,12 +35,12 @@ public final class DataStoreFactory {
 	 * Create new data store of given type.<br>
 	 * Single parameter version used when no current datastore exists
 	 * but the required datastore type is known
-	 * @param dataStoreType
-	 * @return
+	 * @param dataStoreType the datastore type to create
+	 * @return the newly created datastore of given type
 	 */
-	static final DataStore create(final DataStoreType dataStoreType) {
-		return create(dataStoreType, null);
-	}
+//	static DataStore create(final DataStoreType dataStoreType) {
+//		return create(dataStoreType, null);
+//	}
 	
 	
 	/**
@@ -48,9 +48,9 @@ public final class DataStoreFactory {
 	 * Two parameter version used when a datastore instance already exists
 	 * @param dataStoreType		new datastore type
 	 * @param oldDataStore		existing datastore reference
-	 * @return
+	 * @return the new datastore
 	 */
-	static final DataStore create(final DataStoreType dataStoreType, final DataStore oldDataStore) {
+	private static DataStore create(final DataStoreType dataStoreType, final DataStore oldDataStore) {
 	
 		// get new data store of specified type
 		DataStore newDataStore = dataStoreType.create();
@@ -81,7 +81,7 @@ public final class DataStoreFactory {
 	 * Check if a new datastore type has been configured, and
 	 * convert old datastore to new type if necessary
 	 */
-	public final static void reload() {
+	public static void reload() {
 		
 		// get current datastore type
 		DataStoreType currentType = plugin.dataStore.getType();
@@ -101,10 +101,10 @@ public final class DataStoreFactory {
 
 	/**
 	 * convert old data store to new data store
-	 * @param oldDataStore
-	 * @param newDataStore
+	 * @param oldDataStore the existing datastore to be converted from
+	 * @param newDataStore the new datastore to be converted to
 	 */
-	private final static void convertDataStore(final DataStore oldDataStore, final DataStore newDataStore) {
+	private static void convertDataStore(final DataStore oldDataStore, final DataStore newDataStore) {
 
 		// if datastores are same type, do not convert
 		if (oldDataStore.getType().equals(newDataStore.getType())) {
@@ -129,9 +129,7 @@ public final class DataStoreFactory {
 				}
 			}
 			
-			List<DeathChestBlock> allRecords = new ArrayList<DeathChestBlock>();
-			
-			allRecords = oldDataStore.getAllRecords();
+			List<DeathChestBlock> allRecords = oldDataStore.getAllRecords();
 			
 			int count = 0;
 			for (DeathChestBlock record : allRecords) {
@@ -150,16 +148,17 @@ public final class DataStoreFactory {
 	
 	/**
 	 * convert all existing data stores to new data store
-	 * @param newDataStore
+	 * @param newDataStore the new datastore to convert all other datastores to
 	 */
-	private final static void convertAll(final DataStore newDataStore) {
+	private static void convertAll(final DataStore newDataStore) {
 		
 		// get array list of all data store types
-		ArrayList<DataStoreType> dataStores = new ArrayList<DataStoreType>(Arrays.asList(DataStoreType.values()));
+		ArrayList<DataStoreType> dataStores = new ArrayList<>(Arrays.asList(DataStoreType.values()));
 		
 		// remove newDataStore from list of types to convert
+		//noinspection SuspiciousMethodCalls
 		dataStores.remove(newDataStore);
-		
+
 		for (DataStoreType type : dataStores) {
 
 			// create oldDataStore holder

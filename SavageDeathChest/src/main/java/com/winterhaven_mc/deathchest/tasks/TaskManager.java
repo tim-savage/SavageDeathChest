@@ -13,7 +13,7 @@ public final class TaskManager {
 
 	/**
 	 * Class constructor
-	 * @param plugin
+	 * @param plugin reference to main class
 	 */
 	public TaskManager(final PluginMain plugin) {
 		

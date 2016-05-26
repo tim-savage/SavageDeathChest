@@ -1,7 +1,8 @@
 package com.winterhaven_mc.deathchest.listeners;
 
-import java.util.List;
-
+import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -10,12 +11,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.inventory.ItemStack;
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
-
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public final class PlayerEventListener implements Listener {
 
@@ -45,7 +44,7 @@ public final class PlayerEventListener implements Listener {
 	@EventHandler(priority=EventPriority.HIGH)
 	public final void onPlayerDeath(final PlayerDeathEvent event) {
 		
-		final Player player = (Player)event.getEntity();
+		final Player player = event.getEntity();
 		List<ItemStack> droppedItems = event.getDrops();
 		
 		// if player's current world is not enabled in config, do nothing
@@ -86,14 +85,12 @@ public final class PlayerEventListener implements Listener {
 		
 		// drop any items that couldn't be placed in a death chest
 		event.getDrops().addAll(droppedItems);
-		return;
 	}
 
 	
 	/** prevent deathchest opening by non-owners or creative players
 	 * 
 	 * @param	event	PlayerInteractEvent
-	 * @return	void
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
 	public final void onPlayerInteract(final PlayerInteractEvent event) {

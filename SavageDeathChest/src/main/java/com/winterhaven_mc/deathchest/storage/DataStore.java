@@ -1,19 +1,18 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import java.util.ArrayList;
-
+import com.winterhaven_mc.deathchest.DeathChestBlock;
 import org.bukkit.Location;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import java.util.ArrayList;
 
 
 public abstract class DataStore {
 
-	protected boolean initialized;
+	private boolean initialized;
 
 	protected DataStoreType type;
 
-	protected String filename;
+	String filename;
 
 	/**
 	 * Initialize the datastore
@@ -24,7 +23,7 @@ public abstract class DataStore {
 
 	/**
 	 * Retrieve a record from the datastore
-	 * @param location
+	 * @param location the location key for the record to retrieve
 	 * @return DeathChestBlock
 	 */
 	abstract DeathChestBlock getRecord(final Location location);
@@ -39,14 +38,14 @@ public abstract class DataStore {
 
 	/**
 	 * Insert a record in the datastore
-	 * @param deathChestBlock
+	 * @param deathChestBlock the DeathChestBlock object to insert into the datastore
 	 */
 	abstract void putRecord(final DeathChestBlock deathChestBlock);
 
 
 	/**
 	 * Delete a record from the datastore
-	 * @param location
+	 * @param location the location key for the record to delete
 	 */
 	public abstract void deleteRecord(final Location location);
 
@@ -66,19 +65,19 @@ public abstract class DataStore {
 	/**
 	 * Delete the datastore file or equivalent
 	 */
-	abstract void delete();
+	abstract boolean delete();
 
 	
 	/**
 	 * Check for existence of datastore file or equivalent
-	 * @return
+	 * @return {@code true} if the datastore file (or equivilent) exists, {@code false} if it does not
 	 */
 	abstract boolean exists();
 
 	
 	/**
 	 * Check if the datastore is initialized
-	 * @return
+	 * @return {@code true} if the datastore is initialize, {@code false} if it is not
 	 */
 	boolean isInitialized() {
 		return this.initialized;
@@ -87,7 +86,7 @@ public abstract class DataStore {
 	
 	/**
 	 * Set datastore initialized value
-	 * @param initialized
+	 * @param initialized the boolean value to assign to the datastore initialized field
 	 */
 	void setInitialized(final boolean initialized) {
 		this.initialized = initialized;
@@ -96,7 +95,7 @@ public abstract class DataStore {
 	
 	/**
 	 * Get the datastore type
-	 * @return
+	 * @return the datastore type of this datastore instance
 	 */
 	DataStoreType getType() {
 		return this.type;
@@ -105,7 +104,7 @@ public abstract class DataStore {
 	
 	/**
 	 * Get the datastore name
-	 * @return
+	 * @return the name of this datastore instance
 	 */
 	public String getName() {
 		return this.getType().toString();
@@ -114,7 +113,7 @@ public abstract class DataStore {
 	
 	/**
 	 * Get the datastore filename or equivalent
-	 * @return
+	 * @return the filename (or equivalent) of this datastore instance
 	 */
 	String getFilename() {
 		return this.filename;

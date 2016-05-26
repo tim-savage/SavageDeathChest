@@ -376,9 +376,9 @@ public enum ProtectionPlugin {
 
 	/**
 	 * Enum constructor
-	 * @param pluginName
+	 * @param pluginName the official case-sensitive plugin name
 	 */
-	private ProtectionPlugin(final String pluginName) {
+	ProtectionPlugin(final String pluginName) {
 
 		// set plugin name field
 		this.pluginName = pluginName;
@@ -387,25 +387,26 @@ public enum ProtectionPlugin {
 
 	/**
 	 * Check if player has block place permission at location as allowed by plugin
-	 * @param player
-	 * @param location
-	 * @return
+	 * @param player the player to test for block place permission
+	 * @param location the location to test for block place permission
+	 * @return {@code true} if this plugin allows the player to place blocks at the given location,
+	 * 			else {@code false}
 	 */
 	public abstract boolean hasPlacePermission(final Player player, final Location location);
 
 
 	/**
 	 * Check if player has chest access permission at location as allowed by plugin
-	 * @param player
-	 * @param location
-	 * @return
+	 * @param player the player to test for chest access permission
+	 * @param location the location to test for chest access permisssion
+	 * @return {@code true} if this plugin allows the player chest access permission at the given location
 	 */
 	public abstract boolean hasChestPermission(final Player player, final Location location);	
 
 
 	/**
 	 * Get plugin name
-	 * @return
+	 * @return the name of the plugin
 	 */
 	public final String getPluginName() {
 		return this.pluginName;
@@ -424,7 +425,7 @@ public enum ProtectionPlugin {
 	/**
 	 * Check if protection plugin is enabled for check on place in config
 	 */
-	private final boolean isConfigEnabledPlace() {
+	private boolean isConfigEnabledPlace() {
 
 		// if plugin is not enabled in config, return false
 		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".check-on-place"));
@@ -443,7 +444,7 @@ public enum ProtectionPlugin {
 
 	/**
 	 * Check if protection plugin is installed and operational
-	 * @return
+	 * @return {@code true} if the protection plugin is installed, {@code false} if it is not
 	 */
 	public final boolean isInstalled() {
 
@@ -458,7 +459,7 @@ public enum ProtectionPlugin {
 	/**
 	 * Output the detected installed plugins to the log on plugin start
 	 */
-	public final static void reportInstalled() {
+	public static void reportInstalled() {
 
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
 			if (pp.isInstalled()) {
@@ -468,7 +469,7 @@ public enum ProtectionPlugin {
 	}
 
 
-	public final static ProtectionPlugin allowChestPlacement(final Player player, final Block block) {
+	public static ProtectionPlugin allowChestPlacement(final Player player, final Block block) {
 
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
@@ -497,7 +498,7 @@ public enum ProtectionPlugin {
 	}
 
 
-	public final static ProtectionPlugin allowChestAccess(final Player player, final Block block) {
+	public static ProtectionPlugin allowChestAccess(final Player player, final Block block) {
 
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
