@@ -132,7 +132,7 @@ public final class ChestManager {
 			}
 			// deploy double chest
 			else {
-				chestItems.remove(new ItemStack(Material.CHEST,1));
+				chestItems = removeOneChest(chestItems);
 				if (plugin.debug) {
 					plugin.getLogger().info("Deploying Double Chest...");
 				}
@@ -497,7 +497,7 @@ public final class ChestManager {
 				break;
 			}
 		}
-		return result;	
+		return result;
 	}
 
 
@@ -507,21 +507,23 @@ public final class ChestManager {
 	 * @return List of ItemStack with one chest removed
 	 */
 	private List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
-		
-		for (ItemStack stack : itemStacks) {
+
+		for (int i = 0; i < itemStacks.size(); i++) {
+			ItemStack stack = itemStacks.get(i);
 			if (stack.isSimilar(CHEST_STACK)) {
-				itemStacks.remove(stack);
-				stack.setAmount(stack.getAmount() - 1);
-				if (stack.getAmount() > 0) {
-					itemStacks.add(stack);
+				if (stack.getAmount() <= 1) {
+					itemStacks.remove(i);
 				}
-			break;
+				else {
+					stack.setAmount(stack.getAmount() - 1);
+				}
+				break;
 			}
 		}
 		return itemStacks;
 	}
-	
-	
+
+
 	private List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
 		
 		// convert itemStacks list to array
