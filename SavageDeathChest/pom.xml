@@ -5,12 +5,48 @@
 	<artifactId>SavageDeathChest</artifactId>
 	<version>1.6.3</version>
 	<name>SavageDeathChest</name>
+	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
+
 	<properties>
 		<project.author>Tim Savage</project.author>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>https://nexus-winterhaven.rhcloud.com/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+ 			<id>snapshots</id>
+			<url>https://nexus-winterhaven.rhcloud.com/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
+		<!-- Resources -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<excludes>
+					<exclude>plugin.yml</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>plugin.yml</include>
+					<include>config.yml</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<plugins>
+			<!-- Compilation plugin -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -19,6 +55,8 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+
+			<!-- Shade plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -42,143 +80,187 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Javadoc plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Source plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Maven Deploy plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<!-- Nexus Staging plugin -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.6</version>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<serverId>nexus-winterhaven</serverId>
+					<nexusUrl>https://nexus-winterhaven.rhcloud.com/</nexusUrl>
+					<skipStaging>true</skipStaging>
+				</configuration>
+			</plugin>
+
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-				<excludes>
-					<exclude>plugin.yml</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>plugin.yml</include>
-					<include>config.yml</include>
-				</includes>
-			</resource>
-		</resources>
+
 	</build>
+
+	<!-- Repository -->
 	<repositories>
 		<repository>
-			<id>sk89q-repo</id>
-			<url>http://maven.sk89q.com/artifactory/repo/</url>
-		</repository>
-		<repository>
-			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>griefprevention-repo</id>
-			<url>https://github.com/ryanhamshire/GriefPrevention/</url>
-		</repository>
-		<repository>
-			<id>towny-repo</id>
-			<url>http://maven.elmakers.com/repository/</url>
-		</repository>
-		<repository>
-			<id>onarandombox-repo</id>
-			<url>http://repo.onarandombox.com/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>elmakers-repo</id>
-			<url>http://maven.elmakers.com/repository/</url>
+			<id>winterhaven-repo</id>
+			<url>https://nexus-winterhaven.rhcloud.com/content/groups/public/</url>
 		</repository>
 	</repositories>
+
+	<!-- Dependencies -->
 	<dependencies>
+
+		<!-- Bukkit -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.9-R0.1-SNAPSHOT</version>
 		</dependency>
+
+		<!-- WorldEdit -->
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldedit</artifactId>
 			<version>5.6.3</version>
 		</dependency>
+
+		<!-- WorldGuard -->
 		<dependency>
 			<groupId>com.sk89q</groupId>
 			<artifactId>worldguard</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
+			<version>6.1</version>
 		</dependency>
+
+		<!-- GriefPrevention -->
 		<dependency>
 			<groupId>me.ryanhamshire</groupId>
 			<artifactId>griefprevention</artifactId>
-			<version>11.7.4</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/GriefPrevention.jar</systemPath>
+			<version>14.6</version>
 		</dependency>
+
+		<!-- Towny -->
 		<dependency>
 			<groupId>com.palmergames</groupId>
 			<artifactId>Towny</artifactId>
-			<version>0.89.2.0</version>
+			<version>0.91.1.0</version>
 		</dependency>
+
+		<!-- Multiverse-Core -->
 		<dependency>
 			<groupId>com.onarandombox.multiversecore</groupId>
 			<artifactId>Multiverse-Core</artifactId>
 			<version>2.5</version>
 		</dependency>
-		<dependency>
-			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>RoadBlock</artifactId>
-			<version>1.0</version>
-		</dependency>
-		
-		<!--Factions:-->
+
+		<!-- Factions -->
         <dependency>
             <groupId>com.massivecraft</groupId>
-            <!--the name can't be the same because maven would automatically use the newer version-->
-            <artifactId>factions-2.7</artifactId>
-            <!--2.7+-->
-            <version>2.7.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Factions.jar</systemPath>
-            <optional>true</optional>
+            <artifactId>Factions</artifactId>
+            <version>2.8.14</version>
         </dependency>
         
-        <!--MCore must be available for factions-->
+        <!-- MCore -->
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>mcore</artifactId>
-            <version>2.7.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/MassiveCore.jar</systemPath>
-            <optional>true</optional>
+            <version>2.8.14</version>
         </dependency>
+
+		<!-- ProClaim -->
         <dependency>
         	<groupId>com.winterhaven-mc</groupId>
         	<artifactId>ProClaim</artifactId>
         	<version>1.0.0</version>
         </dependency>
-        <dependency>
-        	<groupId>org.mockito</groupId>
-        	<artifactId>mockito-core</artifactId>
-        	<version>1.10.19</version>
-        </dependency>
+
+		<!-- RoadBlock -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>RoadBlock</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- WorldManagerLib -->
         <dependency>
         	<groupId>com.winterhaven-mc</groupId>
         	<artifactId>world-manager-lib</artifactId>
         	<version>1.0.0</version>
         </dependency>
+
+		<!-- ConfigAccessorLib -->
         <dependency>
         	<groupId>com.winterhaven-mc</groupId>
         	<artifactId>config-accessor-lib</artifactId>
         	<version>1.0.0</version>
         </dependency>
+
+		<!-- StringUtilLib -->
         <dependency>
         	<groupId>com.winterhaven-mc</groupId>
         	<artifactId>string-util-lib</artifactId>
         	<version>1.0.0</version>
         </dependency>
+
+		<!-- PreciousStones -->
         <dependency>
         	<groupId>net.sacredlabyrinth.Phaed</groupId>
         	<artifactId>PreciousStones</artifactId>
-        	<version>10.0.5</version>
+        	<version>10.3.0</version>
         </dependency>
+
+		<!-- Mockito -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+		</dependency>
+
 	</dependencies>
-	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 </project>

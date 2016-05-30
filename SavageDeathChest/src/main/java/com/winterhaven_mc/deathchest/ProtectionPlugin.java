@@ -434,6 +434,7 @@ public enum ProtectionPlugin {
 
 	/**
 	 * Check if protection plugin is enabled for check on access in config
+	 * @return {@code true} if the protection plugin is enabled for check on access, {@code false} if not
 	 */
 	public final boolean isConfigEnabledAccess() {
 
