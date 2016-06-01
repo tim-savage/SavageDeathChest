@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.util;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.util.ConfigAccessor;
+import com.winterhaven_mc.util.LanguageManager;
 import com.winterhaven_mc.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -10,20 +11,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 
 public final class MessageManager {
 
 	// reference to main class
 	private final PluginMain plugin;
+
+	// language manager library
+	private LanguageManager languageManager;
 
 	// configuration file manager for messages
 	private ConfigAccessor messages;
@@ -33,12 +32,6 @@ public final class MessageManager {
 
 	// cool down map
 	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
-
-	// currently selected language
-	private String language;
-
-	// language directory name
-	private final String directoryName = "language";
 
 
 	/**
@@ -50,14 +43,11 @@ public final class MessageManager {
 		// set reference to main
 		this.plugin = plugin;
 
-		// install localization files
-		installLocalizationFiles();
-
-		// get configured language
-		this.language = languageFileExists(plugin.getConfig().getString("language"));
+		// instantiate language manager
+		this.languageManager = new LanguageManager(plugin);
 
 		// instantiate custom configuration manager
-		messages = new ConfigAccessor(plugin, directoryName + File.separator + language + ".yml");
+		messages = new ConfigAccessor(plugin, languageManager.getFileName());
 
 		// initialize messageCooldownMap
 		this.messageCooldownMap = new ConcurrentHashMap<>();
@@ -271,81 +261,8 @@ public final class MessageManager {
 	 */
 	void reload() {
 
-		// reinstall message files if necessary
-		installLocalizationFiles();
-
-		// get currently configured language
-		String newLanguage = languageFileExists(plugin.getConfig().getString("language"));
-
-		// if configured language has changed, instantiate new messages object
-		if (!newLanguage.equals(this.language)) {
-			this.messages = new ConfigAccessor(plugin, directoryName + File.separator + newLanguage + ".yml");
-			this.language = newLanguage;
-			plugin.getLogger().info("New language " + this.language + " enabled.");
-		}
-
 		// reload language file
-		messages.reloadConfig();
-	}
-
-
-	/**
-	 * Install localization files from language directory in jar 
-	 */
-	private void installLocalizationFiles() {
-
-		List<String> filelist = new ArrayList<>();
-
-		// get the absolute path to this plugin as URL
-		URL pluginURL = plugin.getServer().getPluginManager().getPlugin(plugin.getName()).getClass().getProtectionDomain().getCodeSource().getLocation();
-
-		// read files contained in jar, adding language/*.yml files to list
-		ZipInputStream zip;
-		try {
-			zip = new ZipInputStream(pluginURL.openStream());
-			while (true) {
-				ZipEntry e = zip.getNextEntry();
-				if (e == null) {
-					break;
-				}
-				String name = e.getName();
-				if (name.startsWith("language" + '/') && name.endsWith(".yml")) {
-					filelist.add(name);
-				}
-			}
-		} catch (IOException e1) {
-			plugin.getLogger().warning("Could not read language files from jar.");
-		}
-
-		// iterate over list of language files and install from jar if not already present
-		for (String filename : filelist) {
-			// this check prevents a warning message when files are already installed
-			if (new File(plugin.getDataFolder() + File.separator + filename).exists()) {
-				continue;
-			}
-			plugin.saveResource(filename, false);
-			plugin.getLogger().info("Installed localization file:  " + filename);
-		}
-	}
-
-
-	/**
-	 * Check if file exists for a given language
-	 * @param language the language for which to check if file exists
-	 * @return the language identifier to be used
-	 */
-	private String languageFileExists(final String language) {
-
-		// check if localization file for configured language exists, if not then fallback to en-US
-		File languageFile = new File(plugin.getDataFolder() 
-				+ File.separator + directoryName 
-				+ File.separator + language + ".yml");
-
-		if (languageFile.exists()) {
-			return language;
-		}
-		plugin.getLogger().info("Language file " + language + ".yml does not exist. Defaulting to en-US.");
-		return "en-US";
+		languageManager.reload(messages);
 	}
 
 

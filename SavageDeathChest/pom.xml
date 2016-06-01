@@ -242,11 +242,18 @@
         </dependency>
 
 		<!-- StringUtilLib -->
-        <dependency>
-        	<groupId>com.winterhaven-mc</groupId>
-        	<artifactId>string-util-lib</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>string-util-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- LanguageManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>language-manager-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<!-- PreciousStones -->
         <dependency>
