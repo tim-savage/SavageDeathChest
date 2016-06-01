@@ -6,11 +6,8 @@ import com.winterhaven_mc.util.ConfigAccessor;
 import com.winterhaven_mc.util.LanguageManager;
 import com.winterhaven_mc.util.StringUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,9 +23,6 @@ public final class MessageManager {
 
 	// configuration file manager for messages
 	private ConfigAccessor messages;
-
-	// configuration file manager for sounds
-	private ConfigAccessor sounds;
 
 	// cool down map
 	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
@@ -51,24 +45,6 @@ public final class MessageManager {
 
 		// initialize messageCooldownMap
 		this.messageCooldownMap = new ConcurrentHashMap<>();
-
-		// default sound file name
-		String soundFileName = "sounds.yml";
-
-		// old sound file name
-		String oldsoundFileName = "pre-1.9_sounds.yml";
-
-		// instantiate custom sound manager
-		sounds = new ConfigAccessor(plugin, soundFileName);
-
-		// install sound file if not present
-		sounds.saveDefaultConfig();
-
-		// install alternate sound file if not present
-		File oldSounds = new File(plugin.getDataFolder() + File.separator + oldsoundFileName);
-		if (!oldSounds.exists()) {
-			plugin.saveResource(oldsoundFileName, false);
-		}
 	}
 
 	/**
@@ -196,63 +172,6 @@ public final class MessageManager {
 		message = message.replaceAll("%playernickname%", playernickname);
 		message = message.replaceAll("%worldname%", worldname);
 		this.plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',message));
-	}
-
-
-	/**
-	 * Play sound effect for action
-	 * @param sender they player for whom to play a sound
-	 * @param soundId the sound identifier
-	 */
-	@SuppressWarnings("unused")
-	public void playerSound(final CommandSender sender, final String soundId) {
-
-		if (sender instanceof Player) {
-			playerSound((Player)sender,soundId);
-		}
-	}
-
-	/**
-	 * Play sound effect for action
-	 * @param player they player for whom to play a sound
-	 * @param soundId the sound identifier
-	 */
-	public void playerSound(final Player player, final String soundId) {
-
-		// if sound effects are disabled in config, do nothing and return
-		if (!plugin.getConfig().getBoolean("sound-effects")) {
-			return;
-		}
-
-		// if sound is set to enabled in sounds file
-		if (sounds.getConfig().getBoolean("sounds." + soundId + ".enabled")) {
-
-			// get player only setting from config file
-			boolean playerOnly = sounds.getConfig().getBoolean("sounds." + soundId + ".player-only");
-
-			// get sound name from config file
-			String soundName = sounds.getConfig().getString("sounds." + soundId + ".sound");
-
-			// get sound volume from config file
-			float volume = (float) sounds.getConfig().getDouble("sounds." + soundId + ".volume");
-
-			// get sound pitch from config file
-			float pitch = (float) sounds.getConfig().getDouble("sounds." + soundId + ".pitch");
-
-			try {
-				// if sound is set player only, use player.playSound()
-				if (playerOnly) {
-					player.playSound(player.getLocation(), Sound.valueOf(soundName), volume, pitch);
-				}
-				// else use world.playSound() so other players in vicinity can hear
-				else {
-					player.getWorld().playSound(player.getLocation(), Sound.valueOf(soundName), volume, pitch);
-				}
-			} catch (IllegalArgumentException e) {
-				plugin.getLogger().warning("An error occured while trying to play the sound '" + soundName 
-						+ "'. You probably need to update the sound name in your sounds.yml file.");
-			}
-		}
 	}
 
 

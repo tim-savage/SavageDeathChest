@@ -94,7 +94,7 @@ public final class BlockEventListener implements Listener {
 			plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
 			// play denied access sound
-			plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
+			plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
 			return;
 		}
 		
@@ -116,7 +116,7 @@ public final class BlockEventListener implements Listener {
 		plugin.messageManager.sendPlayerMessage(player, "not-owner");
 
 		// play denied access sound
-		plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
+		plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
 	}
 
 

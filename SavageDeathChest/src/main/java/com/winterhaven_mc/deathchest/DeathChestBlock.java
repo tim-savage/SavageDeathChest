@@ -851,7 +851,7 @@ public final class DeathChestBlock {
 					chest.getInventory().removeItem(chestinventory[i]);
 					
 					// play inventory add sound
-					plugin.messageManager.playerSound(player,"INVENTORY_ADD_ITEM");
+					plugin.soundManager.playerSound(player,"INVENTORY_ADD_ITEM");
 				}
 			}
 		}

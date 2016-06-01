@@ -1,7 +1,5 @@
 package com.winterhaven_mc.deathchest;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.winterhaven_mc.deathchest.listeners.BlockEventListener;
 import com.winterhaven_mc.deathchest.listeners.InventoryEventListener;
 import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
@@ -11,7 +9,9 @@ import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.CommandManager;
 import com.winterhaven_mc.deathchest.util.MessageManager;
+import com.winterhaven_mc.util.SoundManager;
 import com.winterhaven_mc.util.WorldManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PluginMain extends JavaPlugin {
 
@@ -19,6 +19,7 @@ public final class PluginMain extends JavaPlugin {
 	
 	public WorldManager worldManager;
 	public MessageManager messageManager;
+	public SoundManager soundManager;
 	public DataStore dataStore;
 	public ChestManager chestManager;
 	public TaskManager taskManager;
@@ -38,6 +39,9 @@ public final class PluginMain extends JavaPlugin {
 		
 		// instantiate message manager
 		messageManager = new MessageManager(this);
+
+		// instantiate sound manager
+		soundManager = new SoundManager(this);
 		
 		// instantiate datastore
 		dataStore = DataStoreFactory.create();

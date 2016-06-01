@@ -255,6 +255,13 @@
 			<version>1.0.0</version>
 		</dependency>
 
+		<!-- SoundManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>sound-manager-lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- PreciousStones -->
         <dependency>
         	<groupId>net.sacredlabyrinth.Phaed</groupId>

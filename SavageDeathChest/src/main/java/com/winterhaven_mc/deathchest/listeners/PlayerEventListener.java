@@ -139,7 +139,7 @@ public final class PlayerEventListener implements Listener {
 			plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
 
 			// play denied access sound
-			plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
+			plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
 			return;
 		}
 		
@@ -172,7 +172,7 @@ public final class PlayerEventListener implements Listener {
 			plugin.messageManager.sendPlayerMessage(player, "not-owner");
 
 			// play denied access sound
-			plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
+			plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
 		}
 
 		// if player did not right click block, do nothing and return 
@@ -205,7 +205,7 @@ public final class PlayerEventListener implements Listener {
 		plugin.messageManager.sendPlayerMessage(player, "not-owner");
 
 		// play denied access sound
-		plugin.messageManager.playerSound(player,"CHEST_DENIED_ACCESS");
+		plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
 	}
 	
 }
