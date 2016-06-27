@@ -108,7 +108,11 @@ public final class InventoryEventListener implements Listener {
 	 */
 	@EventHandler
 	public final void onInventoryClose(final InventoryCloseEvent event) {
-		
+
+		if (plugin.debug) {
+			plugin.getLogger().info("InventoryCloseEvent handler called.");
+		}
+
 		// if remove-empty option is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("remove-empty")) {
 			return;

@@ -10,6 +10,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
@@ -195,32 +196,50 @@ public final class DeathChestBlock {
 
 		// if inventory is null, return null
 		if (inventory == null) {
+			if (plugin.debug) {
+				plugin.getLogger().info("getChestInstance: passed inventory is null.");
+			}
 			return null;
 		}
+
+		// if inventory type is not a chest type inventory, return null
+		if (!inventory.getType().equals(InventoryType.CHEST)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("getChestInstance: inventory type is not chest.");
+			}
+			return null;
+		}
+
+		InventoryHolder inventoryHolder = inventory.getHolder();
 
 		// if inventory holder is null, return null
-		if (inventory.getHolder() == null) {
+		if (inventoryHolder == null) {
+			if (plugin.debug) {
+				plugin.getLogger().info("getChestInstance: inventory holder is null.");
+			}
 			return null;
 		}
 
-		// if inventory type is not a chest inventory, return null
-		if (!inventory.getType().equals(InventoryType.CHEST)) {
-			return null;
+		// if inventory holder is a double chest, reassign to just left side
+		if (inventoryHolder instanceof DoubleChest) {
+			inventoryHolder = ((DoubleChest) inventoryHolder).getLeftSide();
 		}
 
-		// if inventory holder is not a block, return null
-		if (!(inventory.getHolder() instanceof Block)) {
-			return null;
-		}
+		// cast inventory holder to chest
+		Chest chest = (Chest)inventoryHolder;
 
-		// get inventory holder block
-		final Block block = (Block)inventory.getHolder();
+		// get block from chest
+		Block block = chest.getBlock();
 
 		// if inventory holder block is not a DeathChest, return null
 		if (!DeathChestBlock.isDeathChest(block)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("getChestInstance: inventory holder is not a death chest.");
+			}
 			return null;
 		}
 
+		// return death chest instance from block
 		return getChestInstance(block);
 	}
 	

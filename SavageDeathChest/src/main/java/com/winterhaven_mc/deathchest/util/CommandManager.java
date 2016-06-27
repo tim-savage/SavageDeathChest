@@ -123,7 +123,10 @@ public final class CommandManager implements CommandExecutor {
 		
 		// reload messages
 		plugin.messageManager.reload();
-		
+
+		// reload sounds
+		plugin.soundManager.reload();
+
 		// reload datastore if changed
 		DataStoreFactory.reload();
 		

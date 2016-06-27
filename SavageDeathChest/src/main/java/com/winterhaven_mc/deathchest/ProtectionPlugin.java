@@ -39,10 +39,7 @@ public enum ProtectionPlugin {
 
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -58,10 +55,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for access permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logAccessError();
 			}
 
 			return true;
@@ -85,10 +79,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -108,10 +99,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for access permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logAccessError();
 			}
 
 			return true;
@@ -131,10 +119,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -150,10 +135,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for access permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logAccessError();
 			}
 
 			return true;
@@ -171,10 +153,7 @@ public enum ProtectionPlugin {
 				return com.winterhaven_mc.proclaim.SimpleAPI.hasBuildTrust(player, location);
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -188,10 +167,7 @@ public enum ProtectionPlugin {
 				return com.winterhaven_mc.proclaim.SimpleAPI.hasContainerTrust(player, location);
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for access permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logAccessError();
 			}
 
 			return true;
@@ -205,17 +181,13 @@ public enum ProtectionPlugin {
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
-				int maxDepth = plugin.getConfig().getInt("search-distance");
 
-				if (com.winterhaven_mc.roadblock.SimpleAPI.isRoadBelow(location, maxDepth)) {
+				if (com.winterhaven_mc.roadblock.SimpleAPI.canPlace(location)) {
 					return false;
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -224,19 +196,17 @@ public enum ProtectionPlugin {
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 
+			// RoadBlock is not concerned with chest access permissions, check chest place permission instead
+
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
-				int maxDepth = plugin.getConfig().getInt("search-distance");
 
-				if (com.winterhaven_mc.roadblock.SimpleAPI.isRoadBelow(location, maxDepth)) {
+				if (com.winterhaven_mc.roadblock.SimpleAPI.canPlace(location)) {
 					return false;
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for access permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logAccessError();
 			}
 
 			return true;
@@ -258,10 +228,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -280,10 +247,7 @@ public enum ProtectionPlugin {
 					}
 				}
 				catch (Exception e) {
-					if (plugin.debug) {
-						plugin.getLogger().warning("An error occured checking for access permission "
-								+ "with " + this.getPluginName() + " v" + this.getVersion());
-					}
+					logAccessError();
 				}
 			}
 			return true;
@@ -318,10 +282,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for place permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logPlaceError();
 			}
 
 			return true;
@@ -356,10 +317,7 @@ public enum ProtectionPlugin {
 				}
 			}
 			catch (Exception e) {
-				if (plugin.debug) {
-					plugin.getLogger().warning("An error occured checking for access permission "
-							+ "with " + this.getPluginName() + " v" + this.getVersion());
-				}
+				logAccessError();
 			}
 
 			return true;
@@ -384,6 +342,15 @@ public enum ProtectionPlugin {
 		this.pluginName = pluginName;
 	}
 
+	void logPlaceError() {
+		plugin.getLogger().warning("An error occured checking for place permission "
+				+ "with " + this.getPluginName() + " v" + this.getVersion());
+	}
+
+	void logAccessError() {
+		plugin.getLogger().warning("An error occured checking for access permission "
+				+ "with " + this.getPluginName() + " v" + this.getVersion());
+	}
 
 	/**
 	 * Check if player has block place permission at location as allowed by plugin

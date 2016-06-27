@@ -73,7 +73,9 @@
 								<includes>
 									<include>com.winterhaven-mc:config-accessor-lib</include>
 									<include>com.winterhaven-mc:string-util-lib</include>
+									<include>com.winterhaven-mc:language-manager-lib</include>
 									<include>com.winterhaven-mc:world-manager-lib</include>
+									<include>com.winterhaven-mc:sound-manager-lib</include>
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -161,7 +163,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.9-R0.1-SNAPSHOT</version>
+			<version>1.10.2-R0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- WorldEdit -->
