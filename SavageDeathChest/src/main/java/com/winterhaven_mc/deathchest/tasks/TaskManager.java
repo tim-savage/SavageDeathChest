@@ -24,7 +24,11 @@ public final class TaskManager {
 	
 	// start death chest block expire task
 	public final void createExpireBlockTask(final DeathChestBlock deathChestBlock) {
-		
+
+		if (plugin.debug) {
+			plugin.getLogger().info("createExpireBlockTask method start");
+		}
+
 		// if DeathChestBlock expiration is zero or less, it is set to never expire; output debug message and return.
 		if (deathChestBlock.getExpiration() < 1) {
 			if (plugin.debug) {

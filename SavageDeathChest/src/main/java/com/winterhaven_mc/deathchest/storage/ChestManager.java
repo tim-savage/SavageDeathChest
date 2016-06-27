@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.storage;
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.SearchResult;
+import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,9 +20,11 @@ public final class ChestManager {
 	// reference to main class
 	private final PluginMain plugin;
 
+	private final TaskManager taskManager;
+
     // ItemStack of Chest for comparisons
     private static final ItemStack CHEST_STACK = new ItemStack(Material.CHEST);
-    
+
 	// DeathChestBlock material types
 	private static final Set<Material> deathChestMaterials = 
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -40,7 +43,10 @@ public final class ChestManager {
 		
 		// set reference to main class
 		this.plugin = plugin;
-		
+
+		// instantiate task manager
+		taskManager = new TaskManager(plugin);
+
 		// load death chest blocks from datastore
 		loadAllDeathChestBlocks();
 	}
@@ -71,7 +77,7 @@ public final class ChestManager {
 				}
 				continue;
 			}
-			
+
 			// set block metadata
 			deathChestBlock.setBlockMetadata();
 			
@@ -85,7 +91,7 @@ public final class ChestManager {
 			}
 			else {
 				// schedule task to expire at appropriate time
-				plugin.taskManager.createExpireBlockTask(deathChestBlock);
+				taskManager.createExpireBlockTask(deathChestBlock);
 			}
 		}
 	}
@@ -231,7 +237,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
-		plugin.taskManager.createExpireBlockTask(deathChestBlock);
+		taskManager.createExpireBlockTask(deathChestBlock);
 
 		// place sign on chest
 		placeChestSign(player,block);
@@ -336,7 +342,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
-		plugin.taskManager.createExpireBlockTask(deathChestBlock);
+		taskManager.createExpireBlockTask(deathChestBlock);
 
 		// get location one block to right of first chest
 		Location location = LocationUtilities.locationToRight(result.getLocation());
@@ -376,7 +382,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(deathChestBlock2);
 		
 		// create expire task for deathChestBlock
-		plugin.taskManager.createExpireBlockTask(deathChestBlock2);
+		taskManager.createExpireBlockTask(deathChestBlock2);
 
 		// send success message to player
 		plugin.messageManager.sendPlayerMessage(player, "chest-success");
@@ -477,7 +483,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
-		plugin.taskManager.createExpireBlockTask(deathChestBlock);
+		taskManager.createExpireBlockTask(deathChestBlock);
 
 		// return success
 		return true;

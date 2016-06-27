@@ -6,7 +6,6 @@ import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
 import com.winterhaven_mc.deathchest.storage.ChestManager;
 import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
-import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.CommandManager;
 import com.winterhaven_mc.deathchest.util.MessageManager;
 import com.winterhaven_mc.util.SoundManager;
@@ -22,7 +21,6 @@ public final class PluginMain extends JavaPlugin {
 	public SoundManager soundManager;
 	public DataStore dataStore;
 	public ChestManager chestManager;
-	public TaskManager taskManager;
 
 	public boolean debug = getConfig().getBoolean("debug");
 
@@ -49,9 +47,6 @@ public final class PluginMain extends JavaPlugin {
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
 		
-		// instantiate task manager
-		taskManager = new TaskManager(this);
-
 		// instantiate command manager
 		new CommandManager(this);
 

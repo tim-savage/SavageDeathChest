@@ -196,17 +196,11 @@ public final class DeathChestBlock {
 
 		// if inventory is null, return null
 		if (inventory == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("getChestInstance: passed inventory is null.");
-			}
 			return null;
 		}
 
 		// if inventory type is not a chest type inventory, return null
 		if (!inventory.getType().equals(InventoryType.CHEST)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("getChestInstance: inventory type is not chest.");
-			}
 			return null;
 		}
 
@@ -214,9 +208,6 @@ public final class DeathChestBlock {
 
 		// if inventory holder is null, return null
 		if (inventoryHolder == null) {
-			if (plugin.debug) {
-				plugin.getLogger().info("getChestInstance: inventory holder is null.");
-			}
 			return null;
 		}
 
@@ -233,9 +224,6 @@ public final class DeathChestBlock {
 
 		// if inventory holder block is not a DeathChest, return null
 		if (!DeathChestBlock.isDeathChest(block)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("getChestInstance: inventory holder is not a death chest.");
-			}
 			return null;
 		}
 
@@ -300,10 +288,10 @@ public final class DeathChestBlock {
 
 	/**
 	 * Getter method for DeathChestBlock expiration
-	 * @return long
+	 * @return long expiration timestamp
 	 */
 	public final long getExpiration() {
-		return expiration;
+		return this.expiration;
 	}
 
 
