@@ -544,7 +544,7 @@ public final class LocationUtilities {
 	/**
 	 * Load list of replaceable blocks from config file
 	 */
-	static Set<Material> loadReplaceableBlocks() {
+	public static Set<Material> loadReplaceableBlocks() {
 
 		// get string list of materials from config file
 		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");

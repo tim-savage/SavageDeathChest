@@ -216,11 +216,13 @@ public final class DeathChestBlock {
 			inventoryHolder = ((DoubleChest) inventoryHolder).getLeftSide();
 		}
 
-		// cast inventory holder to chest
-		Chest chest = (Chest)inventoryHolder;
+		// if inventory holder is not a chest, return null
+		if (!(inventoryHolder instanceof Chest)) {
+			return null;
+		}
 
-		// get block from chest
-		Block block = chest.getBlock();
+		// get block from inventory holder chest
+		Block block = ((Chest) inventoryHolder).getBlock();
 
 		// if inventory holder block is not a DeathChest, return null
 		if (!DeathChestBlock.isDeathChest(block)) {

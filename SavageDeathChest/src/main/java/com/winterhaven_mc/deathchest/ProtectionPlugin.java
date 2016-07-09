@@ -342,15 +342,24 @@ public enum ProtectionPlugin {
 		this.pluginName = pluginName;
 	}
 
+
+	/**
+	 * Log errors that occur when checking for block place permission
+	 */
 	void logPlaceError() {
 		plugin.getLogger().warning("An error occured checking for place permission "
 				+ "with " + this.getPluginName() + " v" + this.getVersion());
 	}
 
+
+	/**
+	 * Log errors that occur when checking for chest access permission
+	 */
 	void logAccessError() {
 		plugin.getLogger().warning("An error occured checking for access permission "
 				+ "with " + this.getPluginName() + " v" + this.getVersion());
 	}
+
 
 	/**
 	 * Check if player has block place permission at location as allowed by plugin

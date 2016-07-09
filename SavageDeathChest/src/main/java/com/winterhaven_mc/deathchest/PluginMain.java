@@ -6,7 +6,7 @@ import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
 import com.winterhaven_mc.deathchest.storage.ChestManager;
 import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
-import com.winterhaven_mc.deathchest.util.CommandManager;
+import com.winterhaven_mc.deathchest.commands.CommandManager;
 import com.winterhaven_mc.deathchest.util.MessageManager;
 import com.winterhaven_mc.util.SoundManager;
 import com.winterhaven_mc.util.WorldManager;

@@ -1,8 +1,9 @@
-package com.winterhaven_mc.deathchest.util;
+package com.winterhaven_mc.deathchest.commands;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
+import com.winterhaven_mc.deathchest.util.LocationUtilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

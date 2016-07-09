@@ -178,7 +178,7 @@ public final class MessageManager {
 	/**
 	 * Reload language files
 	 */
-	void reload() {
+	public void reload() {
 
 		// reload language file
 		languageManager.reload(messages);
