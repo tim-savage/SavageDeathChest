@@ -658,7 +658,12 @@ public final class DeathChestBlock {
 	 * @param player The player to test for DeathChestBlock ownership
 	 * @return {@code true} if the player is the DeathChestBlock owner, false if not
      */
+	@SuppressWarnings("SimplifiableIfStatement")
 	public final boolean isOwner(final Player player) {
+		// if ownerUUID is null, return false
+		if (this.getOwnerUUID() == null ) {
+			return false;
+		}
 		return this.getOwnerUUID().equals(player.getUniqueId());
 	}
 
@@ -668,7 +673,12 @@ public final class DeathChestBlock {
 	 * @param player The player to test for DeathChestBlock killer
 	 * @return {@code true} if the player is the killer of the DeathChestBlock owner, false if not
 	 */
+	@SuppressWarnings("SimplifiableIfStatement")
 	public final boolean isKiller(final Player player) {
+		// if killer uuid is null, return false
+		if (this.getKillerUUID() == null) {
+			return false;
+		}
 		return this.getKillerUUID().equals(player.getUniqueId());
 	}
 
