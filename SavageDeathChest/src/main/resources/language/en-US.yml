@@ -57,6 +57,10 @@ messages:
     enabled: true
     string: '&cDeath chest deployment was prevented by %plugin%.'
 
+  chest-denied-block:
+    enabled: true
+    string: '&cAn open space could not be found to place a chest.'
+
   inventory-empty:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
