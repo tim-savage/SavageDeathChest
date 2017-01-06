@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven-mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.7.0-beta2</version>
+	<version>1.7.0-beta3</version>
 	<name>SavageDeathChest</name>
 	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 
@@ -148,11 +148,23 @@
 
 	</build>
 
-	<!-- Repository -->
+	<!-- Repositories -->
 	<repositories>
 		<repository>
 			<id>winterhaven-repo</id>
 			<url>https://nexus-winterhaven.rhcloud.com/content/groups/public/</url>
+		</repository>
+
+		<repository>
+			<!-- exclude defunct repo -->
+			<id>vault-repo</id>
+			<url>http://nexus.theyeticave.net/content/repositories/pub_releases/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
@@ -163,7 +175,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.10.2-R0.1-SNAPSHOT</version>
+			<version>1.11-R0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- WorldEdit -->
@@ -182,9 +194,9 @@
 
 		<!-- GriefPrevention -->
 		<dependency>
-			<groupId>me.ryanhamshire</groupId>
-			<artifactId>griefprevention</artifactId>
-			<version>14.6</version>
+			<groupId>com.github.TechFortress</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<version>16.4</version>
 		</dependency>
 
 		<!-- Towny -->
@@ -268,7 +280,7 @@
         <dependency>
         	<groupId>net.sacredlabyrinth.Phaed</groupId>
         	<artifactId>PreciousStones</artifactId>
-        	<version>10.3.0</version>
+        	<version>10.3.3</version>
         </dependency>
 
 		<!-- Mockito -->
