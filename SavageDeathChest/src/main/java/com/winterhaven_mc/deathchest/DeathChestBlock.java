@@ -571,7 +571,6 @@ public final class DeathChestBlock {
 	}
 
 
-
 	/**
 	 * Get DeathChest chest block that DeathSign is attached to
 	 * @return DeathChest chest block; returns null if sign is not a DeathSign or attached block is not a DeathChest

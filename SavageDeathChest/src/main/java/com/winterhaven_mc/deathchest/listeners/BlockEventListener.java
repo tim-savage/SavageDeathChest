@@ -5,6 +5,7 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,9 +14,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.ArrayList;
+
+import static com.winterhaven_mc.deathchest.DeathChestBlock.isDeathChest;
+import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
 public final class BlockEventListener implements Listener {
@@ -37,7 +42,35 @@ public final class BlockEventListener implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	
+
+	/**
+	 * Block place event handler<br>
+	 *     prevent placing chests adjacent to existing death chest
+	 * @param event the event being handled by this method
+	 */
+	@EventHandler
+	public final void onBlockPlace(final BlockPlaceEvent event) {
+
+		final Block block = event.getBlock();
+		final Location location = block.getLocation();
+
+		// if placed block is not a chest, do nothing and return
+		if (!block.getType().equals(Material.CHEST)) {
+			return;
+		}
+
+		// check for adjacent death chests
+		if (isDeathChest(blockToLeft(location))
+				|| isDeathChest(blockToRight(location))
+				|| isDeathChest(blockInFront(location))
+				|| isDeathChest(blockToRear(location))) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Chest placed adjacent death chest cancelled.");
+			}
+			event.setCancelled(true);
+		}
+	}
+
 	/**
 	 * Block break event handler<br>
 	 * checks for ownership of death chests and prevents breakage by non-owners
