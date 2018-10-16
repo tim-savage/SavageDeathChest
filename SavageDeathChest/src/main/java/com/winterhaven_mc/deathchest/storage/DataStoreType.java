@@ -4,16 +4,6 @@ import com.winterhaven_mc.deathchest.PluginMain;
 
 enum DataStoreType {
 
-	YAML("Yaml") {
-		
-		@Override
-		public DataStore create() {
-			// create new yaml datastore object
-			return new DataStoreYAML(plugin);
-		}
-		
-	},
-	
 	SQLITE("SQLite") {
 
 		@Override

@@ -18,6 +18,7 @@ public abstract class DataStore {
 	 * Initialize the datastore
 	 * @throws Exception
 	 */
+	@SuppressWarnings("JavaDoc")
 	abstract void initialize() throws Exception;
 
 
@@ -26,6 +27,7 @@ public abstract class DataStore {
 	 * @param location the location key for the record to retrieve
 	 * @return DeathChestBlock
 	 */
+	@SuppressWarnings("unused")
 	abstract DeathChestBlock getRecord(final Location location);
 
 
@@ -65,6 +67,7 @@ public abstract class DataStore {
 	/**
 	 * Delete the datastore file or equivalent
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	abstract boolean delete();
 
 	

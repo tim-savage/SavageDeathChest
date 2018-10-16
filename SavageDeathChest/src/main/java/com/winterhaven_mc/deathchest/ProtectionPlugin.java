@@ -24,6 +24,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 
+@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum ProtectionPlugin {
 
 	FACTIONS("Factions") {
@@ -264,6 +265,10 @@ public enum ProtectionPlugin {
 			try {
 				// get worldguard version string
 				String wgVersion = WGBukkit.getPlugin().getDescription().getVersion();
+
+				if (plugin.debug) {
+					plugin.getLogger().info("Detected WorldGuard version wgVersion");
+				}
 
 				// if worldguard version 5, use canBuild method
 				if (wgVersion.startsWith("5.")) {

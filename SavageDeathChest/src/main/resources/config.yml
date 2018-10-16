@@ -1,4 +1,4 @@
-# This is the config file for ${project.name} v${project.version}
+# configuration file for ${project.name} v${project.version}
 
 # Localization language
 language: en-US
@@ -107,11 +107,10 @@ protection-plugins:
 # List of blocks that can be replaced by a chest
 replaceable-blocks:
   - AIR
-  - LONG_GRASS
+  - GRASS
+  - TALL_GRASS
   - SNOW
   - VINE
-  - WATER_LILY
+  - LILY_PAD
   - WATER
-  - STATIONARY_WATER
   - LAVA
-  - STATIONARY_LAVA

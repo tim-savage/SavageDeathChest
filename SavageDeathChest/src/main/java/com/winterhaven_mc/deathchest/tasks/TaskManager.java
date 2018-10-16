@@ -44,7 +44,7 @@ public final class TaskManager {
 		Long expireTime = deathChestBlock.getExpiration();
 		
 		// compute ticks remaining until expire time
-		Long ticksRemaining = (expireTime - currentTime) / 50;
+		long ticksRemaining = (expireTime - currentTime) / 50;
 		if (ticksRemaining < 1) {
 			ticksRemaining = (long) 1;
 		}

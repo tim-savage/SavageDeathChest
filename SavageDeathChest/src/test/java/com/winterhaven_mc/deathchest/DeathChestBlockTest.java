@@ -67,7 +67,7 @@ public class DeathChestBlockTest {
 		
 		Block mockBlock = mock(Block.class);
 
-		when(mockBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockBlock.getType()).thenReturn(Material.SIGN);
 		when(mockBlock.hasMetadata("deathchest-owner")).thenReturn(false);
 		assertFalse("Sign post block without metadata is not a DeathSign.",isDeathSign(mockBlock));
 	}
@@ -79,7 +79,7 @@ public class DeathChestBlockTest {
 		
 		Block mockBlock = mock(Block.class);
 
-		when(mockBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockBlock.getType()).thenReturn(Material.SIGN);
 		when(mockBlock.hasMetadata("deathchest-owner")).thenReturn(true);
 		assertTrue("Sign post with deathchest-owner metadata is a DeathSign.",isDeathSign(mockBlock));
 	}
@@ -158,7 +158,7 @@ public class DeathChestBlockTest {
 		
 		Block mockBlock = mock(Block.class);
 
-		when(mockBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockBlock.getType()).thenReturn(Material.SIGN);
 		when(mockBlock.hasMetadata("deathchest-owner")).thenReturn(false);
 		assertFalse("Sign post block without metadata is not a DeathChest.",isDeathChest(mockBlock));
 	}
@@ -170,7 +170,7 @@ public class DeathChestBlockTest {
 		
 		Block mockBlock = mock(Block.class);
 
-		when(mockBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockBlock.getType()).thenReturn(Material.SIGN);
 		when(mockBlock.hasMetadata("deathchest-owner")).thenReturn(true);
 		assertFalse("Sign post with deathchest-owner metadata is not a DeathChest.",isDeathChest(mockBlock));
 	}
@@ -249,7 +249,7 @@ public class DeathChestBlockTest {
 		
 		Block mockBlock = mock(Block.class);
 
-		when(mockBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockBlock.getType()).thenReturn(Material.SIGN);
 		when(mockBlock.hasMetadata("deathchest-owner")).thenReturn(false);
 		assertFalse("Sign post block without metadata is not a DeathChestBlock.",isDeathChestBlock(mockBlock));
 	}
@@ -261,7 +261,7 @@ public class DeathChestBlockTest {
 		
 		Block mockBlock = mock(Block.class);
 
-		when(mockBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockBlock.getType()).thenReturn(Material.SIGN);
 		when(mockBlock.hasMetadata("deathchest-owner")).thenReturn(true);
 		assertTrue("Sign post with deathchest-owner metadata is a DeathChestBlock.",isDeathChestBlock(mockBlock));
 	}
@@ -414,12 +414,12 @@ public class DeathChestBlockTest {
 	@Test
 	public void testStaticGetAttachedBlock6() {
 
-		// test when mockPassedBlock is a DeathSign (SIGN_POST) and attached block is a DeathChest (mockBlock)
+		// test when mockPassedBlock is a DeathSign (SIGN) and attached block is a DeathChest (mockBlock)
 		
 		Block mockPassedBlock = mock(Block.class);
 		Block mockReturnBlock = mock(Block.class);
 
-		when(mockPassedBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockPassedBlock.getType()).thenReturn(Material.SIGN);
 		when(mockPassedBlock.hasMetadata("deathchest-owner")).thenReturn(true);
 
 		when(mockPassedBlock.getRelative(0,-1,0)).thenReturn(mockReturnBlock);
@@ -438,7 +438,7 @@ public class DeathChestBlockTest {
 		Block mockPassedBlock = mock(Block.class);
 		Block mockReturnBlock = mock(Block.class);
 
-		when(mockPassedBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockPassedBlock.getType()).thenReturn(Material.SIGN);
 		when(mockPassedBlock.hasMetadata("deathchest-owner")).thenReturn(false);
 
 		when(mockPassedBlock.getRelative(0,-1,0)).thenReturn(mockReturnBlock);
@@ -452,13 +452,13 @@ public class DeathChestBlockTest {
 	@Test
 	public void testStaticGetAttachedBlock8() {
 
-		// test when mockPassedBlock is a DeathSign (SIGN_POST)
+		// test when mockPassedBlock is a DeathSign (SIGN)
 		// but attached block is not a chest
 		
 		Block mockPassedBlock = mock(Block.class);
 		Block mockReturnBlock = mock(Block.class);
 
-		when(mockPassedBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockPassedBlock.getType()).thenReturn(Material.SIGN);
 		when(mockPassedBlock.hasMetadata("deathchest-owner")).thenReturn(true);
 
 		when(mockPassedBlock.getRelative(0,-1,0)).thenReturn(mockReturnBlock);
@@ -472,13 +472,13 @@ public class DeathChestBlockTest {
 	@Test
 	public void testStaticGetAttachedBlock9() {
 
-		// test when mockPassedBlock is a DeathSign (SIGN_POST)
+		// test when mockPassedBlock is a DeathSign (SIGN)
 		// but attached chest does not have DeathChest metadata
 		
 		Block mockPassedBlock = mock(Block.class);
 		Block mockReturnBlock = mock(Block.class);
 
-		when(mockPassedBlock.getType()).thenReturn(Material.SIGN_POST);
+		when(mockPassedBlock.getType()).thenReturn(Material.SIGN);
 		when(mockPassedBlock.hasMetadata("deathchest-owner")).thenReturn(true);
 
 		when(mockPassedBlock.getRelative(0,-1,0)).thenReturn(mockReturnBlock);

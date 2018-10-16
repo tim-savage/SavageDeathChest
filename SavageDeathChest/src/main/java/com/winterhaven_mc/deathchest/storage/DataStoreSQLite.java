@@ -390,7 +390,7 @@ final class DataStoreSQLite extends DataStore {
 	private void deleteExpiredRecords(final String worldName) {
 
 		// pastDueTime = current time in milliseconds - 30 days
-		final Long pastDueTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
+		final long pastDueTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
 
 		try {
 			// create prepared statement
@@ -458,7 +458,7 @@ final class DataStoreSQLite extends DataStore {
 	@Override
 	final boolean delete() {
 
-		Boolean result = false;
+		boolean result = false;
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		if (dataStoreFile.exists()) {
 			result = dataStoreFile.delete();

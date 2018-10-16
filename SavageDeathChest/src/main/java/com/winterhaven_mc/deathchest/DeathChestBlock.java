@@ -1,5 +1,7 @@
 package com.winterhaven_mc.deathchest;
 
+import com.winterhaven_mc.deathchest.messages.MessageId;
+import com.winterhaven_mc.deathchest.messages.SoundId;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,7 +36,7 @@ public final class DeathChestBlock {
 	// the UUID of the owner of this deathchest item
 	private UUID ownerUUID;
 
-	// the UUID of the player who killed the deathchest owner
+	// the UUID of the player who killed the deathchest owner, if any; otherwise null
 	private UUID killerUUID;
 
 	// the expiration time of this deathchest item, in milliseconds since epoch 
@@ -89,7 +91,7 @@ public final class DeathChestBlock {
 
 
 	/**
-	 * Class constructor<br>
+	 * Class constructor
 	 * Create DeathChestBlock object from existing in game DeathChest block.
 	 * @param block the in game block that will be used to create a DeathChest object
 	 */
@@ -149,8 +151,8 @@ public final class DeathChestBlock {
 			// get attached block
 			final Block attachedBlock = getAttachedBlock(block);
 
-			// if attached block is null or not a death chest, return null
-			if (attachedBlock == null || !isDeathChest(attachedBlock)) {
+			// if attached block is not a death chest, return null
+			if (!isDeathChest(attachedBlock)) {
 				return null;
 			}
 			// otherwise, return new DeathChestBlock object representing attachedBlock (chest)
@@ -167,8 +169,8 @@ public final class DeathChestBlock {
 	/**
 	 * Returns an instance of a DeathChestBlock (sign) representing the passed block.
 	 * @param block The block that will be used in the construction of a DeathChest object.
-	 * @return An instance of DeathChestBlock of block type sign.
-	 * Returns null if the block is not a DeathSign.
+	 * @return An instance of DeathChestBlock of type (sign).
+	 * Returns null if the block is not a DeathChestBlock of type (sign).
 	 */
 	public static DeathChestBlock getSignInstance(final Block block) {
 		
@@ -440,7 +442,7 @@ public final class DeathChestBlock {
 	 * @param itemStacks	Collection of ItemStacks to combine
 	 * @return List of ItemStack with same materials combined
 	 */
-	public static List<ItemStack> consolidateItems(final Collection<ItemStack> itemStacks) {
+	public static List<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
 
 		final List<ItemStack> returnList = new ArrayList<>();
 
@@ -499,7 +501,7 @@ public final class DeathChestBlock {
 
 		// if block is wall sign or sign post and has death chest metadata, return true
 		return (block.getType().equals(Material.WALL_SIGN)
-				|| block.getType().equals(Material.SIGN_POST))
+				|| block.getType().equals(Material.SIGN))
 				&& block.hasMetadata("deathchest-owner");
 	}
 
@@ -599,7 +601,7 @@ public final class DeathChestBlock {
 			returnBlock = block.getRelative(sign.getAttachedFace());
 		}
 		// else if block is sign post, set block to one block below
-		else if (block.getType().equals(Material.SIGN_POST)) {
+		else if (block.getType().equals(Material.SIGN)) {
 			returnBlock = block.getRelative(0, -1, 0);
 		}
 
@@ -638,7 +640,7 @@ public final class DeathChestBlock {
 			attachedBlock = block.getRelative(sign.getAttachedFace());
 		}
 		// else if block is sign post, set block to one block below
-		else if (block.getType().equals(Material.SIGN_POST)) {
+		else if (block.getType().equals(Material.SIGN)) {
 			attachedBlock = block.getRelative(0, -1, 0);
 		}
 	
@@ -730,7 +732,7 @@ public final class DeathChestBlock {
 		
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageManager.sendPlayerMessage(player, "chest-expired");
+			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_EXPIRED);
 		}
 		
 		// destroy DeathChestBlock
@@ -845,7 +847,7 @@ public final class DeathChestBlock {
 		// get in-game block represented by this DeathChestBlock object
 		Block block = this.getLocation().getBlock();
 		
-		if (block != null && isDeathChest(block)) {
+		if (isDeathChest(block)) {
 			
 			// get player inventory object
 			final PlayerInventory playerinventory = player.getInventory();
@@ -869,9 +871,10 @@ public final class DeathChestBlock {
 					chest.getInventory().removeItem(chestinventory[i]);
 					
 					// play inventory add sound
-					plugin.soundManager.playerSound(player,"INVENTORY_ADD_ITEM");
+					plugin.messageManager.sendPlayerSound(player, SoundId.INVENTORY_ADD_ITEM);
 				}
 			}
 		}
 	}
+
 }

@@ -12,20 +12,21 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public final class CommandManager implements CommandExecutor {
-	
+
 	private final PluginMain plugin;
 	private final String pluginName;
 	public CommandManager(final PluginMain plugin) {
-		
-		this.plugin = plugin;	
+
+		this.plugin = plugin;
 		plugin.getCommand("deathchest").setExecutor(this);
 		pluginName = "[" + this.plugin.getName() + "] ";
 	}
 
-	public final boolean onCommand(final CommandSender sender, final Command cmd, 
-			final String label, final String[] args) {
 
+	public final boolean onCommand(final CommandSender sender, final Command cmd,
+			final String label, final String[] args) {
 
 		int maxArgs = 1;
 
@@ -34,30 +35,35 @@ public final class CommandManager implements CommandExecutor {
 			return false;
 		}
 
-		String subcmd;
+		String subcommand;
 
-		// if no arguments passed, set subcmd to status
+		// if no arguments passed, set subcommand to status
 		if (args.length < 1) {
-			subcmd = "status";
+			subcommand = "status";
 		}
 		else {
-			subcmd = args[0];
+			subcommand = args[0];
 		}
 
 		// status command
-		if (subcmd.equalsIgnoreCase("status")) {
+		if (subcommand.equalsIgnoreCase("status")) {
 			return statusCommand(sender);
 		}
 
 		// reload command
 		//noinspection SimplifiableIfStatement
-		if (subcmd.equalsIgnoreCase("reload")) {
+		if (subcommand.equalsIgnoreCase("reload")) {
 			return reloadCommand(sender);
 		}
 		return false;
 	}
-	
-	
+
+
+	/**
+	 * Status command
+	 * @param sender Command sender
+	 * @return true if command executed without error, false to output help message
+	 */
 	private boolean statusCommand(final CommandSender sender) {
 		
 		String versionString = this.plugin.getDescription().getVersion();
@@ -124,9 +130,6 @@ public final class CommandManager implements CommandExecutor {
 		
 		// reload messages
 		plugin.messageManager.reload();
-
-		// reload sounds
-		plugin.soundManager.reload();
 
 		// reload datastore if changed
 		DataStoreFactory.reload();

@@ -3,6 +3,8 @@ package com.winterhaven_mc.deathchest.listeners;
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.messages.MessageId;
+import com.winterhaven_mc.deathchest.messages.SoundId;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Location;
@@ -53,6 +55,7 @@ public final class BlockEventListener implements Listener {
 
 		final Block block = event.getBlock();
 		final Location location = block.getLocation();
+
 
 		// if placed block is not a chest, do nothing and return
 		if (!block.getType().equals(Material.CHEST)) {
@@ -107,7 +110,7 @@ public final class BlockEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE) 
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
-			plugin.messageManager.sendPlayerMessage(player, "no-creative-access");
+			plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CREATIVE_ACCESS);
 			event.setCancelled(true);
 			return;
 		}
@@ -124,19 +127,19 @@ public final class BlockEventListener implements Listener {
 		if (deathChestBlock.getViewerCount() > 0) {
 
 			// send player message
-			plugin.messageManager.sendPlayerMessage(player, "chest-currently-open");
+			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_CURRENTLY_OPEN);
 
 			// play denied access sound
-			plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
+			plugin.messageManager.sendPlayerSound(player,SoundId.CHEST_DENIED_ACCESS);
 			return;
 		}
-		
+
 		// if player is owner or has deathchest.loot.other permission, break chest and return
 		if (deathChestBlock.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
 			deathChestBlock.destroy();
 			return;
 		}
-		
+
 		// if killer looting is enabled  and player is killer, break chest and return
 		// TODO: this will need to be removed when items taken limit is implemented
 		if (plugin.getConfig().getBoolean("killer-looting") 
@@ -144,12 +147,12 @@ public final class BlockEventListener implements Listener {
 			deathChestBlock.destroy();
 			return;
 		}
-		
+
 		// send player not-owner message
-		plugin.messageManager.sendPlayerMessage(player, "not-owner");
+		plugin.messageManager.sendPlayerMessage(player, MessageId.NOT_OWNER);
 
 		// play denied access sound
-		plugin.soundManager.playerSound(player,"CHEST_DENIED_ACCESS");
+		plugin.messageManager.sendPlayerSound(player,SoundId.CHEST_DENIED_ACCESS);
 	}
 
 

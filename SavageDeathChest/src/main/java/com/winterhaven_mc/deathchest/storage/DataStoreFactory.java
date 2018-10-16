@@ -31,13 +31,13 @@ public final class DataStoreFactory {
 	}
 	
 	
-	/**
-	 * Create new data store of given type.<br>
-	 * Single parameter version used when no current datastore exists
-	 * but the required datastore type is known
-	 * @param dataStoreType the datastore type to create
-	 * @return the newly created datastore of given type
-	 */
+//	/**
+//	 * Create new data store of given type.<br>
+//	 * Single parameter version used when no current datastore exists
+//	 * but the required datastore type is known
+//	 * @param dataStoreType the datastore type to create
+//	 * @return the newly created datastore of given type
+//	 */
 //	static DataStore create(final DataStoreType dataStoreType) {
 //		return create(dataStoreType, null);
 //	}
@@ -164,10 +164,7 @@ public final class DataStoreFactory {
 			// create oldDataStore holder
 			DataStore oldDataStore = null;
 			
-			if (type.equals(DataStoreType.YAML)) {
-				oldDataStore = new DataStoreYAML(plugin);
-			}
-			else if (type.equals(DataStoreType.SQLITE)) {
+			if (type.equals(DataStoreType.SQLITE)) {
 				oldDataStore = new DataStoreSQLite(plugin);
 			}
 			

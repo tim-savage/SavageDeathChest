@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.storage;
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.SearchResult;
+import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 import org.bukkit.ChatColor;
@@ -29,8 +30,7 @@ public final class ChestManager {
 	private static final Set<Material> deathChestMaterials = 
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 					Material.CHEST,
-					Material.SIGN_POST,
-					Material.WALL_SIGN
+					Material.SIGN
 				)));
 	
 
@@ -59,7 +59,7 @@ public final class ChestManager {
 	 */
 	private void loadAllDeathChestBlocks() {
 		
-		Long currentTime = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
 
 		for (DeathChestBlock deathChestBlock : plugin.dataStore.getAllRecords()) {
 			
@@ -108,7 +108,7 @@ public final class ChestManager {
 		List<ItemStack> remainingItems;
 
 		// combine stacks of same items where possible
-		List<ItemStack> chestItems = DeathChestBlock.consolidateItems(droppedItems);
+		List<ItemStack> chestItems = DeathChestBlock.consolidateItemStacks(droppedItems);
 
 		// check if require-chest option is enabled
 		// and player does not have permission override
@@ -118,7 +118,7 @@ public final class ChestManager {
 			// if player does not have a chest in their inventory
 			// output message and return, allowing inventory items to drop on ground
 			if (!hasChest(chestItems)) {
-				plugin.messageManager.sendPlayerMessage(player, "no-chest-in-inventory");
+				plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 				return droppedItems;
 			}
 			// remove one chest from players inventory
@@ -187,21 +187,21 @@ public final class ChestManager {
 			// use try..catch block here so a messaging error does not cause item duplication
 			try {
 				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,	
-							"chest-denied-plugin", result.getProtectionPlugin());
+					plugin.messageManager.sendPlayerMessage(player,
+							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by "
 							+ result.getProtectionPlugin().getPluginName() + ".");
 					}
 				}
 				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,	"chest-denied-adjacent");
+					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_ADJACENT);
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
 					}				
 				}
 				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,	"chest-denied-block");
+					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_BLOCK);
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
 					}
@@ -243,7 +243,7 @@ public final class ChestManager {
 		placeChestSign(player,block);
 
 		// send success message to player
-		plugin.messageManager.sendPlayerMessage(player, "chest-success");
+		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
 		
 		// return list of items that did not fit in chest
 		return noFit;
@@ -284,7 +284,7 @@ public final class ChestManager {
 			try {
 				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,
-							"chest-denied-plugin", result.getProtectionPlugin());
+							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by "
 							+ result.getProtectionPlugin().getPluginName() + ".");
@@ -292,14 +292,14 @@ public final class ChestManager {
 				}
 				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,
-							"chest-denied-adjacent");
+							MessageId.CHEST_DENIED_ADJACENT);
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
 					}				
 				}
 				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
 					plugin.messageManager.sendPlayerMessage(player,
-							"chest-denied-block");
+							MessageId.CHEST_DENIED_BLOCK);
 					if (plugin.debug) {
 						plugin.getLogger().info("Chest deployment prevented by non-replaceable blocks.");
 					}
@@ -352,7 +352,7 @@ public final class ChestManager {
 		
 		// if block at second chest location is not valid, send message and return remaining_items
 		if (result2 == null || result2 != SearchResult.SUCCESS) {
-			plugin.messageManager.sendPlayerMessage(player, "doublechest-partial-success");
+			plugin.messageManager.sendPlayerMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
 			return remainingItems;
 		}
 		
@@ -385,7 +385,7 @@ public final class ChestManager {
 		taskManager.createExpireBlockTask(deathChestBlock2);
 
 		// send success message to player
-		plugin.messageManager.sendPlayerMessage(player, "chest-success");
+		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
 		
 		// return list of items that did not fit in chest
 		return noFitItems;
@@ -398,6 +398,7 @@ public final class ChestManager {
 	 * @param chestblock	Chest block
 	 * @return boolean		Success or failure to place sign
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	private boolean placeChestSign(final Player player, final Block chestblock) {
 		
 		// if chest-signs are not enabled in configuration, do nothing and return
@@ -419,7 +420,7 @@ public final class ChestManager {
 			// create sign post on top of chest if chest face was invalid location
 			signblock = chestblock.getRelative(BlockFace.UP);
 			if (LocationUtilities.isValidSignLocation(player,signblock.getLocation())) {
-				signblock.setType(Material.SIGN_POST);
+				signblock.setType(Material.SIGN);
 			}
 			else {
 				// if top of chest is also an invalid location, do nothing and return

@@ -1,13 +1,16 @@
-package com.winterhaven_mc.deathchest.util;
+package com.winterhaven_mc.deathchest.messages;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
-import com.winterhaven_mc.util.ConfigAccessor;
 import com.winterhaven_mc.util.LanguageManager;
+import com.winterhaven_mc.util.SoundManager;
 import com.winterhaven_mc.util.StringUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,14 +21,17 @@ public final class MessageManager {
 	// reference to main class
 	private final PluginMain plugin;
 
-	// language manager library
-	private LanguageManager languageManager;
+	// message cooldown hashmap
+	private ConcurrentHashMap<UUID, EnumMap<MessageId, Long>> messageCooldownMap;
 
-	// configuration file manager for messages
-	private ConfigAccessor messages;
+	// language manager
+	private final LanguageManager languageManager;
 
-	// cool down map
-	private ConcurrentHashMap<UUID, ConcurrentHashMap<String, Long>> messageCooldownMap;
+	// sound manager
+	private final SoundManager soundManager;
+
+	// configuration object for messages
+	private YamlConfiguration messages;
 
 
 	/**
@@ -34,27 +40,32 @@ public final class MessageManager {
 	 */
 	public MessageManager(final PluginMain plugin) {
 
-		// set reference to main
+		// set reference to main class
 		this.plugin = plugin;
-
-		// instantiate language manager
-		this.languageManager = new LanguageManager(plugin);
-
-		// instantiate custom configuration manager
-		messages = new ConfigAccessor(plugin, languageManager.getFileName());
 
 		// initialize messageCooldownMap
 		this.messageCooldownMap = new ConcurrentHashMap<>();
+
+		// instantiate messageFileHelper
+		this.languageManager = new LanguageManager(plugin);
+
+		// instantiate sound manager
+		this.soundManager = new SoundManager(plugin);
+
+		// load messages from file
+		this.messages = languageManager.loadMessages();
 	}
+
 
 	/**
 	 * Send message to player
 	 * @param player the player to whom to send a message
 	 * @param messageId the message identifier
 	 */
-	public void sendPlayerMessage(final Player player, final String messageId) {
+	public void sendPlayerMessage(final Player player, final MessageId messageId) {
 		sendPlayerMessage(player,messageId,null);
 	}
+
 
 	/**
 	 * Send message to player
@@ -62,7 +73,7 @@ public final class MessageManager {
 	 * @param messageId the message identifier
 	 * @param protectionPlugin the protection plugin whose name will be used in the message
 	 */
-	public void sendPlayerMessage(final Player player, final String messageId, 
+	public void sendPlayerMessage(final Player player, final MessageId messageId,
 			final ProtectionPlugin protectionPlugin) {
 
 		// if player is null, do nothing and return
@@ -71,13 +82,13 @@ public final class MessageManager {
 		}
 
 		// if messageId does not exist in language file, do nothing and return
-		if (messages.getConfig().getConfigurationSection("messages." + messageId) == null) {
+		if (messages.getConfigurationSection("messages." + messageId) == null) {
 			plugin.getLogger().warning("Could not read message '" + messageId + "' from language file.");
 			return;
 		}
 
 		// if message is not enabled, do nothing and return
-		if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
+		if (!messages.getBoolean("messages." + messageId + ".enabled")) {
 			return;
 		}
 
@@ -94,10 +105,10 @@ public final class MessageManager {
 		}
 
 		// get message cooldown time remaining
-		Long lastDisplayed = getMessageCooldown(player,messageId);
+		long lastDisplayed = getMessageCooldown(player,messageId);
 
 		// get message repeat delay
-		int messageRepeatDelay = messages.getConfig().getInt("messages." + messageId + ".repeat-delay");
+		int messageRepeatDelay = messages.getInt("messages." + messageId + ".repeat-delay");
 
 		// if message has repeat delay value and was displayed to player more recently, do nothing and return
 		if (lastDisplayed > System.currentTimeMillis() - messageRepeatDelay * 1000) {
@@ -118,7 +129,7 @@ public final class MessageManager {
 		worldName = plugin.worldManager.getWorldName(player.getWorld());
 
 		// get message string
-		String message = messages.getConfig().getString("messages." + messageId + ".string");
+		String message = messages.getString("messages." + messageId + ".string");
 
 		// get time to expire formatted string
 		String expireTime = getExpireTimeString();
@@ -159,10 +170,10 @@ public final class MessageManager {
 	 */
 	@SuppressWarnings("unused")
 	public void broadcastMessage(final Player player, final String messageId) {
-		if (!messages.getConfig().getBoolean("messages." + messageId + ".enabled")) {
+		if (!messages.getBoolean("messages." + messageId + ".enabled")) {
 			return;
 		}
-		String message = messages.getConfig().getString("messages." + messageId + ".string");
+		String message = messages.getString("messages." + messageId + ".string");
 		String playername = player.getName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
 		String playernickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
 		String playerdisplayname = player.getDisplayName();
@@ -176,35 +187,46 @@ public final class MessageManager {
 
 
 	/**
-	 * Reload language files
+	 * Play sound
+	 * @param sender command sender (player) to play sound
+	 * @param soundId unique identifier that refers to sound in sounds.yml
 	 */
-	public void reload() {
+	public final void sendPlayerSound(final CommandSender sender, final SoundId soundId) {
+		this.soundManager.playerSound(sender,soundId.toString());
+	}
 
-		// reload language file
-		languageManager.reload(messages);
+
+	/**
+	 * Reload custom messages file
+	 */
+	public final void reload() {
+
+		// reload messages
+		this.messages = languageManager.loadMessages();
 	}
 
 
 	/**
 	 * Add entry to message cooldown map
-	 * @param player the player to be added to the message cooldown map
-	 * @param messageId the message identifier for this cooldown entry
+	 * @param player the player to add to the message cooldown map
+	 * @param messageId the message identifier to add to the message cooldown map for player
 	 */
-	private void putMessageCooldown(final Player player, final String messageId) {
+	private void putMessageCooldown(final Player player, final MessageId messageId) {
 
-		ConcurrentHashMap<String, Long> tempMap = new ConcurrentHashMap<>();
+		EnumMap<MessageId,Long> tempMap = new EnumMap<>(MessageId.class);
+
 		tempMap.put(messageId, System.currentTimeMillis());
-		messageCooldownMap.put(player.getUniqueId(), tempMap);
+		messageCooldownMap.put(player.getUniqueId(),tempMap);
 	}
 
 
 	/**
 	 * get entry from message cooldown map
-	 * @param player the player for whom to retrieve the cooldown expire time from the cooldown map
-	 * @param messageId the message identifier for which to retrieve the cooldown expire time
+	 * @param player the player for whom to retrieve a message cooldown expire time
+	 * @param messageId the message identifier for which to retrieve a message cooldown expire time for player
 	 * @return cooldown expire time
 	 */
-	private long getMessageCooldown(final Player player, final String messageId) {
+	private long getMessageCooldown(final Player player, final MessageId messageId) {
 
 		// check if player is in message cooldown hashmap
 		if (messageCooldownMap.containsKey(player.getUniqueId())) {
@@ -221,6 +243,16 @@ public final class MessageManager {
 
 
 	/**
+	 * Remove player from message cooldown map
+	 * @param player the player to remove from the message cooldown map
+	 */
+	@SuppressWarnings("unused")
+	public void removePlayerCooldown(final Player player) {
+		messageCooldownMap.remove(player.getUniqueId());
+	}
+
+
+	/**
 	 * Get expire time as formatted string
 	 * @return a formatted expire time string
 	 */
@@ -232,16 +264,16 @@ public final class MessageManager {
 
 		// if configured expire-time < 1, set expiretime string to "unlimited"
 		if (expiration < 1) {
-			expireTime = messages.getConfig().getString("unlimited");
+			expireTime = messages.getString("unlimited");
 		}
 		// otherwise, set string to hours and minutes remaining
 		else {
 			int hours = expiration / 60;
 			int minutes = expiration % 60;
-			String hour_string = this.messages.getConfig().getString("hour");
-			String hour_plural_string = this.messages.getConfig().getString("hour_plural");
-			String minute_string = this.messages.getConfig().getString("minute");
-			String minute_plural_string = this.messages.getConfig().getString("minute_plural");
+			String hour_string = this.messages.getString("hour");
+			String hour_plural_string = this.messages.getString("hour_plural");
+			String minute_string = this.messages.getString("minute");
+			String minute_plural_string = this.messages.getString("minute_plural");
 			if (hours > 1) {
 				expireTime = String.valueOf(expireTime) + hours + " " + hour_plural_string + " ";
 			} else if (hours == 1) {
@@ -259,12 +291,12 @@ public final class MessageManager {
 
 
 	public List<String> getSignText() {
-		return this.messages.getConfig().getStringList("sign-text");
+		return this.messages.getStringList("sign-text");
 	}
 
 
 	public String getDateFormat() {
-		return this.messages.getConfig().getString("date-format");
+		return this.messages.getString("date-format");
 	}
 
 }

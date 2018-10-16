@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven-mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.7.0-beta4</version>
+	<version>1.13.0</version>
 	<name>SavageDeathChest</name>
 	<url>http://dev.bukkit.org/bukkit-plugins/savagedeathchest/</url>
 
@@ -28,20 +28,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-				<excludes>
-					<exclude>plugin.yml</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
-				<includes>
-					<include>plugin.yml</include>
-					<include>config.yml</include>
-				</includes>
 			</resource>
 		</resources>
 
@@ -51,8 +38,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
@@ -60,7 +47,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
+				<version>2.4.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -71,7 +58,6 @@
 							<minimizeJar>true</minimizeJar>
 							<artifactSet>
 								<includes>
-									<include>com.winterhaven-mc:config-accessor-lib</include>
 									<include>com.winterhaven-mc:string-util-lib</include>
 									<include>com.winterhaven-mc:language-manager-lib</include>
 									<include>com.winterhaven-mc:world-manager-lib</include>
@@ -150,13 +136,21 @@
 
 	<!-- Repositories -->
 	<repositories>
+
+		<!-- spigot repo -->
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
+		</repository>
+
+		<!-- winterhaven repo (defunct) -->
 		<repository>
 			<id>winterhaven-repo</id>
 			<url>https://nexus-winterhaven.rhcloud.com/content/groups/public/</url>
 		</repository>
 
+		<!-- vault repo (defunct, excluded) -->
 		<repository>
-			<!-- exclude defunct repo -->
 			<id>vault-repo</id>
 			<url>http://nexus.theyeticave.net/content/repositories/pub_releases/</url>
 			<releases>
@@ -171,12 +165,48 @@
 	<!-- Dependencies -->
 	<dependencies>
 
+		<!-- WorldManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>world-manager-lib</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<!-- StringUtilLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>string-util-lib</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<!-- LanguageManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>language-manager-lib</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+
+		<!-- SoundManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>sound-manager-lib</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+
 		<!-- Bukkit -->
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.11-R0.1-SNAPSHOT</version>
+			<version>1.13.1-R0.1-SNAPSHOT</version>
 		</dependency>
+
+		<!-- Bungeecord-chat
+		<dependency>
+			<groupId>net.md-5</groupId>
+			<artifactId>bungeecord-chat</artifactId>
+			<version>1.12-SNAPSHOT</version>
+		</dependency>
+		-->
 
 		<!-- WorldEdit -->
 		<dependency>
@@ -238,50 +268,15 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>RoadBlock</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-
-		<!-- WorldManagerLib -->
-        <dependency>
-        	<groupId>com.winterhaven-mc</groupId>
-        	<artifactId>world-manager-lib</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
-
-		<!-- ConfigAccessorLib -->
-        <dependency>
-        	<groupId>com.winterhaven-mc</groupId>
-        	<artifactId>config-accessor-lib</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
-
-		<!-- StringUtilLib -->
-		<dependency>
-			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>string-util-lib</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<!-- LanguageManagerLib -->
-		<dependency>
-			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>language-manager-lib</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<!-- SoundManagerLib -->
-		<dependency>
-			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>sound-manager-lib</artifactId>
-			<version>1.0.0</version>
+			<version>1.13.1</version>
 		</dependency>
 
 		<!-- PreciousStones -->
-        <dependency>
-        	<groupId>net.sacredlabyrinth.Phaed</groupId>
-        	<artifactId>PreciousStones</artifactId>
-        	<version>10.3.3</version>
-        </dependency>
+		<dependency>
+			<groupId>net.sacredlabyrinth.Phaed</groupId>
+			<artifactId>PreciousStones</artifactId>
+			<version>10.3.3</version>
+		</dependency>
 
 		<!-- Mockito -->
 		<dependency>
