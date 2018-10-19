@@ -1,179 +1,138 @@
 package com.winterhaven_mc.deathchest;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import com.massivecraft.factions.engine.EngineMain;
-import com.massivecraft.massivecore.ps.PS;
 
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
-
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum ProtectionPlugin {
 
-	FACTIONS("Factions") {
+//	FACTIONS("Factions") {
+//
+//		@Override
+//		public final boolean hasPlacePermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(location), false)) {
+//					return false;
+//				}
+//
+//			}
+//			catch (Exception e) {
+//				logPlaceError();
+//			}
+//
+//			return true;
+//		}
+//
+//		@Override
+//		public final boolean hasChestPermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				if (!EngineMain.playerCanUseItemHere(player, PS.valueOf(location), Material.CHEST, false)) {
+//					return false;
+//				}
+//			}
+//			catch (Exception e) {
+//				logAccessError();
+//			}
+//
+//			return true;
+//		}
+//
+//	},
 
-		@Override
-		public final boolean hasPlacePermission(final Player player, final Location location) {
+//	GRIEFPREVENTION("GriefPrevention") {
+//
+//		@Override
+//		public final boolean hasPlacePermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+//				if (claim != null) {
+//					String gpErrorMessage = claim.allowBuild(player,Material.CHEST);
+//					if (gpErrorMessage != null) {
+//						return false;
+//					}
+//				}
+//			}
+//			catch (Exception e) {
+//				logPlaceError();
+//			}
+//
+//			return true;
+//		}
+//
+//		@Override
+//		public final boolean hasChestPermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+//				if (claim != null) {
+//					String gpErrorMessage = claim.allowContainers(player);
+//					if (gpErrorMessage != null) {
+//						return false;
+//					}
+//				}
+//			}
+//			catch (Exception e) {
+//				logAccessError();
+//			}
+//
+//			return true;
+//		}
+//
+//	},
 
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(location), false)) {
-					return false;
-				}
-
-			}
-			catch (Exception e) {
-				logPlaceError();
-			}
-
-			return true;
-		}
-
-		@Override
-		public final boolean hasChestPermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				if (!EngineMain.playerCanUseItemHere(player, PS.valueOf(location), Material.CHEST, false)) {
-					return false;
-				}
-			}
-			catch (Exception e) {
-				logAccessError();
-			}
-
-			return true;
-		}
-
-	},
-
-	GRIEFPREVENTION("GriefPrevention") {
-
-		@Override
-		public final boolean hasPlacePermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-				if (claim != null) {
-					String gpErrorMessage = claim.allowBuild(player,Material.CHEST);
-					if (gpErrorMessage != null) {
-						return false;
-					}
-				}
-			}
-			catch (Exception e) {
-				logPlaceError();
-			}
-
-			return true;
-		}
-
-		@Override
-		public final boolean hasChestPermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-				if (claim != null) {
-					String gpErrorMessage = claim.allowContainers(player);
-					if (gpErrorMessage != null) {
-						return false;
-					}
-				}
-			}
-			catch (Exception e) {
-				logAccessError();
-			}
-
-			return true;
-		}
-
-	},
-
-	PRECIOUSSTONES("PreciousStones") {
-
-		@Override
-		public final boolean hasPlacePermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				if (! PreciousStones.API().canPlace(player,location)) {
-					return false;
-				}
-			}
-			catch (Exception e) {
-				logPlaceError();
-			}
-
-			return true;
-		}
-
-		@Override
-		public final boolean hasChestPermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				if (PreciousStones.API().flagAppliesToPlayer(player,FieldFlag.PROTECT_INVENTORIES,location)) {
-					return false;
-				}
-			}
-			catch (Exception e) {
-				logAccessError();
-			}
-
-			return true;
-		}
-
-	},
-
-	PROCLAIM("ProClaim") {
-
-		@Override
-		public final boolean hasPlacePermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				return com.winterhaven_mc.proclaim.SimpleAPI.hasBuildTrust(player, location);
-			}
-			catch (Exception e) {
-				logPlaceError();
-			}
-
-			return true;
-		}
-
-		@Override
-		public final boolean hasChestPermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				return com.winterhaven_mc.proclaim.SimpleAPI.hasContainerTrust(player, location);
-			}
-			catch (Exception e) {
-				logAccessError();
-			}
-
-			return true;
-		}
-	},
+//	PRECIOUSSTONES("PreciousStones") {
+//
+//		@Override
+//		public final boolean hasPlacePermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				if (! PreciousStones.API().canPlace(player,location)) {
+//					return false;
+//				}
+//			}
+//			catch (Exception e) {
+//				logPlaceError();
+//			}
+//
+//			return true;
+//		}
+//
+//		@Override
+//		public final boolean hasChestPermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				if (PreciousStones.API().flagAppliesToPlayer(player,FieldFlag.PROTECT_INVENTORIES,location)) {
+//					return false;
+//				}
+//			}
+//			catch (Exception e) {
+//				logAccessError();
+//			}
+//
+//			return true;
+//		}
+//
+//	},
 
 	ROADBLOCK("RoadBlock") {
 
@@ -215,46 +174,40 @@ public enum ProtectionPlugin {
 
 	},
 
-	TOWNY("Towny") {
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public final boolean hasPlacePermission(final Player player, final Location location) {
-
-			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-			try {
-				if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(),
-						(byte)0, TownyPermission.ActionType.BUILD)) {
-					return false;
-				}
-			}
-			catch (Exception e) {
-				logPlaceError();
-			}
-
-			return true;
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public final boolean hasChestPermission(final Player player, final Location location) {
-
-			// only perform check if plugin is installed
-			if (this.isInstalled()) {
-				try {
-					if (!PlayerCacheUtil.getCachePermission(player, location, Material.CHEST.getId(),
-							(byte)0, TownyPermission.ActionType.SWITCH)) {
-						return false;
-					}
-				}
-				catch (Exception e) {
-					logAccessError();
-				}
-			}
-			return true;
-		}
-
-	},
+//	TOWNY("Towny") {
+//
+//		@Override
+//		public final boolean hasPlacePermission(final Player player, final Location location) {
+//
+//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+//			try {
+//				return PlayerCacheUtil.getCachePermission(player, location,
+//						Material.CHEST, TownyPermission.ActionType.BUILD);
+//			}
+//			catch (Exception e) {
+//				logPlaceError();
+//			}
+//
+//			return true;
+//		}
+//
+//		@Override
+//		public final boolean hasChestPermission(final Player player, final Location location) {
+//
+//			// only perform check if plugin is installed
+//			if (this.isInstalled()) {
+//				try {
+//					return PlayerCacheUtil.getCachePermission(player, location,
+//							Material.CHEST, TownyPermission.ActionType.SWITCH);
+//				}
+//				catch (Exception e) {
+//					logAccessError();
+//				}
+//			}
+//			return true;
+//		}
+//
+//	},
 
 	WORLDGUARD("WorldGuard") {
 
@@ -263,28 +216,11 @@ public enum ProtectionPlugin {
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
-				// get worldguard version string
-				String wgVersion = WGBukkit.getPlugin().getDescription().getVersion();
 
-				if (plugin.debug) {
-					plugin.getLogger().info("Detected WorldGuard version wgVersion");
-				}
+				RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
+				RegionQuery query = rc.createQuery();
 
-				// if worldguard version 5, use canBuild method
-				if (wgVersion.startsWith("5.")) {
-
-					if (!WGBukkit.getPlugin().canBuild(player, location)) {
-						return false;
-					}
-				}
-				// if worldguard version 6, use testBlockPlace method
-				else if (wgVersion.startsWith("6.")) {
-
-					if (!WGBukkit.getPlugin().createProtectionQuery()
-							.testBlockPlace(player, location, Material.CHEST)) {
-						return false;
-					}
-				}
+				return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
 			}
 			catch (Exception e) {
 				logPlaceError();
@@ -299,27 +235,11 @@ public enum ProtectionPlugin {
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
-				// get worldguard version string
-				String wgVersion = WGBukkit.getPlugin().getDescription().getVersion();
 
-				// if worldguard version 5, use region manager method
-				if (wgVersion.startsWith("5.")) {
+				RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
+				RegionQuery query = rc.createQuery();
 
-					RegionManager regionManager = WGBukkit.getPlugin().getRegionManager(location.getWorld());
-					ApplicableRegionSet set = regionManager.getApplicableRegions(location);
-					LocalPlayer localPlayer = WGBukkit.getPlugin().wrapPlayer(player);
-					if (! set.allows(DefaultFlag.CHEST_ACCESS,localPlayer)) {
-						return false;
-					}
-				}
-				// if worldguard version 6 use protection query method
-				else if (wgVersion.startsWith("6.")) {
-
-					if (! WGBukkit.getPlugin().createProtectionQuery()
-							.testBlockInteract(player, location.getBlock())) {
-						return false;
-					}
-				}
+				return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
 			}
 			catch (Exception e) {
 				logAccessError();
@@ -331,7 +251,7 @@ public enum ProtectionPlugin {
 	};
 
 	// static reference to main class
-	private final static PluginMain plugin = PluginMain.instance;
+	private static PluginMain plugin = PluginMain.instance;
 
 	// protection plugin name
 	private final String pluginName;
