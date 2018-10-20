@@ -133,7 +133,7 @@ public final class InventoryEventListener implements Listener {
 			}
 
 			// if inventory is empty, loot chest to destroy chest(s) and sign
-			// TODO: create a method to destroy chest(s) and sign, and we won't need to deal with player here
+			// TODO: create a method to destroy chest(s) and sign, and we won't need to access player here
 			if (isEmpty(inventory)) {
 				deathChestBlock.autoLoot(player);
 			}

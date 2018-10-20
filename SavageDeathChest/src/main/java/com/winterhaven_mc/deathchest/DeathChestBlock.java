@@ -661,6 +661,7 @@ public final class DeathChestBlock {
      */
 	@SuppressWarnings("SimplifiableIfStatement")
 	public final boolean isOwner(final Player player) {
+
 		// if ownerUUID is null, return false
 		if (this.getOwnerUUID() == null ) {
 			return false;
@@ -676,6 +677,7 @@ public final class DeathChestBlock {
 	 */
 	@SuppressWarnings("SimplifiableIfStatement")
 	public final boolean isKiller(final Player player) {
+
 		// if killer uuid is null, return false
 		if (this.getKillerUUID() == null) {
 			return false;
