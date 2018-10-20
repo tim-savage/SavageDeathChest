@@ -2,12 +2,9 @@ package com.winterhaven_mc.deathchest.messages;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
-import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.util.LanguageManager;
-import com.winterhaven_mc.util.SoundManager;
 import com.winterhaven_mc.util.StringUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -103,7 +100,7 @@ public final class MessageManager {
 		long lastDisplayed = getMessageCooldown(player,messageId);
 
 		// get message repeat delay
-		int messageRepeatDelay = messages.getInt("messages." + messageId + ".repeat-delay");
+		int messageRepeatDelay = messages.getInt("messages." + messageId.toString() + ".repeat-delay");
 
 		// if message has repeat delay value and was displayed to player more recently, do nothing and return
 		if (lastDisplayed > System.currentTimeMillis() - messageRepeatDelay * 1000) {
