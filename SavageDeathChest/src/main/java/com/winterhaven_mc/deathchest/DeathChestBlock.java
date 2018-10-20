@@ -1,7 +1,7 @@
 package com.winterhaven_mc.deathchest;
 
 import com.winterhaven_mc.deathchest.messages.MessageId;
-import com.winterhaven_mc.deathchest.messages.SoundId;
+import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -871,7 +871,7 @@ public final class DeathChestBlock {
 					chest.getInventory().removeItem(chestinventory[i]);
 					
 					// play inventory add sound
-					plugin.messageManager.sendPlayerSound(player, SoundId.INVENTORY_ADD_ITEM);
+					plugin.soundConfig.playSound(player, SoundId.INVENTORY_ADD_ITEM);
 				}
 			}
 		}

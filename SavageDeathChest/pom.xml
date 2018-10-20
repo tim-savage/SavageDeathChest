@@ -18,12 +18,6 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
 		</repository>
-
-		<!-- sk89q repo -->
-		<repository>
-			<id>sk89q-repo</id>
-			<url>http://maven.sk89q.com/repo/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -48,11 +42,11 @@
 			<version>1.0.3</version>
 		</dependency>
 
-		<!-- SoundManagerLib -->
+		<!-- SoundConfigLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>sound-manager-lib</artifactId>
-			<version>1.0.5</version>
+			<artifactId>sound-config-lib</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- Bukkit -->
@@ -141,7 +135,7 @@
 									<include>com.winterhaven-mc:string-util-lib</include>
 									<include>com.winterhaven-mc:language-manager-lib</include>
 									<include>com.winterhaven-mc:world-manager-lib</include>
-									<include>com.winterhaven-mc:sound-manager-lib</include>
+									<include>com.winterhaven-mc:sound-config-lib</include>
 								</includes>
 							</artifactSet>
 						</configuration>

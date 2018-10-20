@@ -2,6 +2,7 @@ package com.winterhaven_mc.deathchest.messages;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.util.LanguageManager;
 import com.winterhaven_mc.util.SoundManager;
 import com.winterhaven_mc.util.StringUtil;
@@ -27,9 +28,6 @@ public final class MessageManager {
 	// language manager
 	private final LanguageManager languageManager;
 
-	// sound manager
-	private final SoundManager soundManager;
-
 	// configuration object for messages
 	private YamlConfiguration messages;
 
@@ -48,9 +46,6 @@ public final class MessageManager {
 
 		// instantiate messageFileHelper
 		this.languageManager = new LanguageManager(plugin);
-
-		// instantiate sound manager
-		this.soundManager = new SoundManager(plugin);
 
 		// load messages from file
 		this.messages = languageManager.loadMessages();
@@ -183,16 +178,6 @@ public final class MessageManager {
 		message = message.replaceAll("%playernickname%", playernickname);
 		message = message.replaceAll("%worldname%", worldname);
 		this.plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',message));
-	}
-
-
-	/**
-	 * Play sound
-	 * @param sender command sender (player) to play sound
-	 * @param soundId unique identifier that refers to sound in sounds.yml
-	 */
-	public final void sendPlayerSound(final CommandSender sender, final SoundId soundId) {
-		this.soundManager.playerSound(sender,soundId.toString());
 	}
 
 

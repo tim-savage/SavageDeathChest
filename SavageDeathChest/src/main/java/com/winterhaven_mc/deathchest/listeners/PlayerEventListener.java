@@ -4,7 +4,7 @@ import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.messages.MessageId;
-import com.winterhaven_mc.deathchest.messages.SoundId;
+import com.winterhaven_mc.deathchest.sounds.SoundId;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -143,7 +143,7 @@ public final class PlayerEventListener implements Listener {
 			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_CURRENTLY_OPEN);
 
 			// play denied access sound
-			plugin.messageManager.sendPlayerSound(player, SoundId.CHEST_DENIED_ACCESS);
+			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 			return;
 		}
 
@@ -176,7 +176,7 @@ public final class PlayerEventListener implements Listener {
 			plugin.messageManager.sendPlayerMessage(player, MessageId.NOT_OWNER);
 
 			// play denied access sound
-			plugin.messageManager.sendPlayerSound(player,SoundId.CHEST_DENIED_ACCESS);
+			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 		}
 
 		// if player did not right click block, do nothing and return
@@ -209,7 +209,7 @@ public final class PlayerEventListener implements Listener {
 		plugin.messageManager.sendPlayerMessage(player, MessageId.NOT_OWNER);
 
 		// play denied access sound
-		plugin.messageManager.sendPlayerSound(player,SoundId.CHEST_DENIED_ACCESS);
+		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 	}
 
 }
