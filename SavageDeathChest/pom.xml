@@ -25,21 +25,21 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>world-manager-lib</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.5</version>
 		</dependency>
 
 		<!-- StringUtilLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>string-util-lib</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.5</version>
 		</dependency>
 
 		<!-- LanguageManagerLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>language-manager-lib</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.5</version>
 		</dependency>
 
 		<!-- SoundConfigLib -->
