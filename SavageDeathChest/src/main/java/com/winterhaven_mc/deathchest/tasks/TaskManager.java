@@ -25,15 +25,8 @@ public final class TaskManager {
 	// start death chest block expire task
 	public final void createExpireBlockTask(final DeathChestBlock deathChestBlock) {
 
-		if (plugin.debug) {
-			plugin.getLogger().info("createExpireBlockTask method start");
-		}
-
 		// if DeathChestBlock expiration is zero or less, it is set to never expire; output debug message and return.
 		if (deathChestBlock.getExpiration() < 1) {
-			if (plugin.debug) {
-				plugin.getLogger().info("DeathChestBlock is set to never expire.");
-			}
 			return;
 		}
 	
@@ -49,19 +42,11 @@ public final class TaskManager {
 			ticksRemaining = (long) 1;
 		}
 		
-		if (plugin.debug) {
-			plugin.getLogger().info("Scheduling block to expire in " + ticksRemaining + " ticks.");
-		}
-
 		// create task to expire death chest block after ticksRemaining
 		BukkitTask blockExpireTask = new BlockExpireTask(deathChestBlock).runTaskLater(plugin, ticksRemaining);
 		
 		// set taskId in deathChestBlock
 		deathChestBlock.setExpireTaskId(blockExpireTask.getTaskId());
-		
-		if (plugin.debug) {
-			plugin.getLogger().info("Block expire task has Id#" + blockExpireTask.getTaskId());
-		}
 	}
 	
 }
