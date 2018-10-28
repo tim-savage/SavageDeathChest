@@ -1,8 +1,10 @@
 package com.winterhaven_mc.deathchest.listeners;
 
+
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -13,8 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Set;
 
 
 public final class InventoryEventListener implements Listener {
@@ -110,10 +110,6 @@ public final class InventoryEventListener implements Listener {
 	@EventHandler
 	public final void onInventoryClose(final InventoryCloseEvent event) {
 
-		if (plugin.debug) {
-			plugin.getLogger().info("InventoryCloseEvent handler called.");
-		}
-
 		// if remove-empty option is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("remove-empty")) {
 			return;
@@ -189,22 +185,8 @@ public final class InventoryEventListener implements Listener {
 					|| action.equals(InventoryAction.PLACE_ONE)
 					|| action.equals(InventoryAction.SWAP_WITH_CURSOR)) {
 
-				// if double chest check for slot below 54
-				if (inventory.getHolder() instanceof DoubleChest) {
-
-					// if slot is below 54, check for player override permission
-					if (event.getRawSlot() < 54) {
-
-						// if player does not have allow-place permission, cancel event
-						if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
-							event.setCancelled(true);
-						}
-					}
-					return;
-				}
-
-				// not a double chest, so check for slot below 27
-				if (event.getRawSlot() < 27) {
+				// if slot is in chest inventory area, check for player override permission
+				if (event.getRawSlot() < inventory.getSize()) {
 
 					// if player does not have allow-place permission, cancel event
 					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
@@ -214,6 +196,7 @@ public final class InventoryEventListener implements Listener {
 				return;
 			}
 
+			//TODO: Fix this up later
 			// if click action is move to other inventory, test slots
 			if (action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 
@@ -251,6 +234,11 @@ public final class InventoryEventListener implements Listener {
 	@EventHandler
 	public final void onInventoryDrag(final InventoryDragEvent event) {
 
+		// if event is already cancelled, do nothing and return
+		if (event.isCancelled()) {
+			return;
+		}
+
 		final Inventory inventory = event.getInventory();
 
 		// if inventory is a death chest inventory
@@ -261,25 +249,15 @@ public final class InventoryEventListener implements Listener {
 				return;
 			}
 
-			// get set of slots dragged over
-			Set<Integer> rawSlots = event.getRawSlots();
-
-			// if single chest set max slot to 27
-			int maxSlot = 27;
-
-			// if double chest set max slot to 54
-			if (inventory.getHolder() instanceof DoubleChest) {
-				maxSlot = 54;
+			// if player has allow-place permission, do nothing and return
+			if (event.getWhoClicked().hasPermission("deathchest.allow-place")) {
+				return;
 			}
 
 			// iterate over dragged slots and if any are above max slot, cancel event
-			for (int slot : rawSlots) {
-				if (slot < maxSlot) {
-
-					// if player does not have allow-place permission, cancel event
-					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
-						event.setCancelled(true);
-					}
+			for (int slot : event.getRawSlots()) {
+				if (slot < inventory.getSize()) {
+					event.setCancelled(true);
 					break;
 				}
 			}
