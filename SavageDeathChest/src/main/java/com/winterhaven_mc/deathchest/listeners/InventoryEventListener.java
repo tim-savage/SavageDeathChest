@@ -144,19 +144,28 @@ public final class InventoryEventListener implements Listener {
 	@EventHandler
 	public final void onInventoryMoveItem(final InventoryMoveItemEvent event) {
 
+		// if event is already cancelled, do nothing and return
+		if (event.isCancelled()) {
+			return;
+		}
+
 		// get inventories involved in event
 		final Inventory destination = event.getDestination();
 		final Inventory source = event.getSource();
 
-		// if source inventory is a death chest, cancel event and return
+		// prevent extracting items from death chest using hopper
 		if (DeathChestBlock.isDeathChest(source)) {
 			event.setCancelled(true);
 			return;
 		}
 
-		// if destination is a death chest and prevent-item-placement is true, cancel event and return
-		if (DeathChestBlock.isDeathChest(destination) && plugin.getConfig().getBoolean("prevent-item-placement")) {
-			event.setCancelled(true);
+		// prevent inserting items into death chest using hopper if prevent-item-placement configured true
+		if (plugin.getConfig().getBoolean("prevent-item-placement")) {
+
+			// if destination is a death chest, cancel event and return
+			if (DeathChestBlock.isDeathChest(destination)) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -168,16 +177,21 @@ public final class InventoryEventListener implements Listener {
 	@EventHandler
 	public final void onInventoryClick(final InventoryClickEvent event) {
 
+		// if event is already cancelled, do nothing and return
+		if (event.isCancelled()) {
+			return;
+		}
+
+		// if prevent-item-placement is configured false, do nothing and return
+		if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
+			return;
+		}
+
 		final Inventory inventory = event.getInventory();
 		final InventoryAction action = event.getAction();
 
 		// if inventory is a death chest inventory
 	    if (DeathChestBlock.isDeathChest(inventory)) {
-
-			// if prevent-item-placement is configured false, do nothing and return
-			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
-				return;
-			}
 
 			// if click action is place, test for chest slots
 			if (action.equals(InventoryAction.PLACE_ALL) 
@@ -196,28 +210,12 @@ public final class InventoryEventListener implements Listener {
 				return;
 			}
 
-			//TODO: Fix this up later
-			// if click action is move to other inventory, test slots
+			// prevent shift-click transfer to death chest
 			if (action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 
-				// if double chest, player inventory starts at slot 54
-				if (inventory.getHolder() instanceof DoubleChest) {
+				if (event.getRawSlot() > inventory.getSize()) {
 
-					// if slot above 53, check for player override permission
-					if (event.getRawSlot() > 53) {
-
-						// if player does not have allow-place permission, cancel event
-						if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
-							event.setCancelled(true);
-						}
-					}
-					return;
-				}
-
-				// single chest, so check for slot above 26
-				if (event.getRawSlot() > 26) {
-
-					// if player does not have allow-place permission, cancel event and return
+					// if player does not have allow-place permission, cancel event
 					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
 						event.setCancelled(true);
 					}
