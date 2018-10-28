@@ -1,36 +1,22 @@
 package com.winterhaven_mc.deathchest.messages;
 
+
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
-
-import com.winterhaven_mc.util.StringUtil;
-import com.winterhaven_mc.util.LanguageManager;
-import com.winterhaven_mc.util.YamlLanguageManager;
-
+import com.winterhaven_mc.util.AbstractMessageManager;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.Configuration;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 
-public final class MessageManager {
+public final class MessageManager extends AbstractMessageManager {
 
 	// reference to main class
 	private final PluginMain plugin;
-
-	// message cooldown hashmap
-	private ConcurrentHashMap<UUID, EnumMap<MessageId, Long>> messageCooldownMap;
-
-	// language manager
-	private final LanguageManager languageManager;
-
-	// configuration object for messages
-	private Configuration messages;
-
 
 	/**
 	 * Class constructor
@@ -38,124 +24,169 @@ public final class MessageManager {
 	 */
 	public MessageManager(final PluginMain plugin) {
 
-		// set reference to main class
+		// call super class constructor
+		//noinspection unchecked
+		super(plugin, MessageId.class);
+
 		this.plugin = plugin;
+	}
 
-		// initialize messageCooldownMap
-		this.messageCooldownMap = new ConcurrentHashMap<>();
+//# Variable substitutions:
+//# %PLAYER_NAME%          Player's name
+//# %PLAYER_NICKNAME%      Player's nickname
+//# %PLAYER_DISPLAYNAME%   Player's display name, including prefix/suffix
+//# %WORLD_NAME%           World name that player is in
+//# %EXPIRE_TIME%          Remaining time at chest deployment
 
-		// instantiate messageFileHelper
-		this.languageManager = new YamlLanguageManager(plugin);
 
-		// load messages from file
-		this.messages = languageManager.loadMessages();
+	@Override
+	protected Map<String,String> getDefaultReplacements(CommandSender recipient) {
+
+		Map<String,String> replacements = new HashMap<>();
+
+		// strip color codes
+		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
+		replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
+
+		replacements.put("%EXPIRE_TIME%",getTimeString(plugin.getConfig().getInt("teleport-warmup")));
+
+		if (recipient instanceof Player) {
+			Player player = (Player)recipient;
+			replacements.put("%PLAYER_NICKNAME%",ChatColor.stripColor(player.getPlayerListName()));
+			replacements.put("%PLAYER_DISPLAYNAME%",ChatColor.stripColor(player.getDisplayName()));
+		}
+
+
+
+
+		return replacements;
 	}
 
 
 	/**
-	 * Send message to player
-	 * @param player the player to whom to send a message
+	 * Send message to recipient
+	 * @param recipient the recipient to whom to send a message
 	 * @param messageId the message identifier
 	 */
-	public void sendPlayerMessage(final Player player, final MessageId messageId) {
-		sendPlayerMessage(player,messageId,null);
+	public void sendPlayerMessage(final CommandSender recipient, final MessageId messageId) {
+
+		// get default replacement map
+		Map<String,String> replacements = getDefaultReplacements(recipient);
+
+		// send message
+		//noinspection unchecked
+		sendMessage(recipient, messageId, replacements);
 	}
 
 
 	/**
-	 * Send message to player
-	 * @param player the player to whom to send a message
+	 * Send message to recipient
+	 * @param recipient the recipient to whom to send a message
 	 * @param messageId the message identifier
 	 * @param protectionPlugin the protection plugin whose name will be used in the message
 	 */
-	public void sendPlayerMessage(final Player player, final MessageId messageId,
-			final ProtectionPlugin protectionPlugin) {
+	public void sendPlayerMessage(final CommandSender recipient,
+								  final MessageId messageId,
+								  final ProtectionPlugin protectionPlugin) {
 
-		// if player is null, do nothing and return
-		if (player == null) {
+		//TODO is this check necessary?
+		// if recipient is null, do nothing and return
+		if (recipient == null) {
 			return;
 		}
 
-		// if messageId does not exist in language file, do nothing and return
-		if (messages.getConfigurationSection("messages." + messageId) == null) {
-			plugin.getLogger().warning("Could not read message '" + messageId + "' from language file.");
-			return;
-		}
+		// get default replacement map
+		Map<String,String> replacements = getDefaultReplacements(recipient);
 
-		// if message is not enabled, do nothing and return
-		if (!messages.getBoolean("messages." + messageId + ".enabled")) {
-			return;
-		}
+		replacements.put("%PLUGIN%",protectionPlugin.getPluginName());
 
-		// set substitution variables defaults			
-		String playerName;
-		String playerNickname;
-		String playerDisplayName;
-		String worldName;
-		String protectionPluginName = "unknown";
-
-		// get protection plugin name
-		if (protectionPlugin != null) {
-			protectionPluginName = protectionPlugin.getPluginName();
-		}
-
-		// get message cooldown time remaining
-		long lastDisplayed = getMessageCooldown(player,messageId);
-
-		// get message repeat delay
-		int messageRepeatDelay = messages.getInt("messages." + messageId.toString() + ".repeat-delay");
-
-		// if message has repeat delay value and was displayed to player more recently, do nothing and return
-		if (lastDisplayed > System.currentTimeMillis() - messageRepeatDelay * 1000) {
-			return;
-		}
-
-		// if repeat delay value is greater than zero, add entry to messageCooldownMap
-		if (messageRepeatDelay > 0) {
-			putMessageCooldown(player,messageId);
-		}
-
-		// assign player dependent variables
-		playerName = player.getName();
-		playerNickname = player.getPlayerListName();
-		playerDisplayName = player.getDisplayName();
-
-		// get player world name from world manager
-		worldName = plugin.worldManager.getWorldName(player.getWorld());
-
-		// get message string
-		String message = messages.getString("messages." + messageId + ".string");
-
-		// get time to expire formatted string
-		String expireTime = getExpireTimeString();
-
-		// do variable substitutions
-		if (message.contains("%")) {
-			message = StringUtil.replace(message,"%playername%", playerName);
-			message = StringUtil.replace(message,"%playerdisplayname%", playerDisplayName);
-			message = StringUtil.replace(message,"%playernickname%", playerNickname);
-			message = StringUtil.replace(message,"%worldname%", worldName);
-			message = StringUtil.replace(message,"%expiretime%", expireTime);
-			message = StringUtil.replace(message,"%plugin%", protectionPluginName);
-
-			// do variable substitutions, stripping color codes from all caps variables
-			message = StringUtil.replace(message,"%PLAYERNAME%", 
-					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerName)));
-			message = StringUtil.replace(message,"%PLAYERNICKNAME%", 
-					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerNickname)));
-			message = StringUtil.replace(message,"%WORLDNAME%", 
-					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',worldName)));
-
-			// no stripping of color codes necessary, but do variable substitutions anyhow
-			// in case all caps variables were used
-			message = StringUtil.replace(message,"%PLAYERDISPLAYNAME%", playerDisplayName);
-			message = StringUtil.replace(message,"%PLUGIN%", protectionPluginName);
-		}
-
-		// send message to player
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&',message));
-
+		// send message
+		//noinspection unchecked
+		sendMessage(recipient, messageId, replacements);
 	}
+
+
+
+//		// if messageId does not exist in language file, do nothing and return
+//		if (messages.getConfigurationSection("messages." + messageId) == null) {
+//			plugin.getLogger().warning("Could not read message '" + messageId + "' from language file.");
+//			return;
+//		}
+//
+//		// if message is not enabled, do nothing and return
+//		if (!messages.getBoolean("messages." + messageId + ".enabled")) {
+//			return;
+//		}
+//
+//		// set substitution variables defaults
+//		String playerName;
+//		String playerNickname;
+//		String playerDisplayName;
+//		String worldName;
+//		String protectionPluginName = "unknown";
+//
+//		// get protection plugin name
+//		if (protectionPlugin != null) {
+//			protectionPluginName = protectionPlugin.getPluginName();
+//		}
+//
+//		// get message cooldown time remaining
+//		long lastDisplayed = getMessageCooldown(recipient,messageId);
+//
+//		// get message repeat delay
+//		int messageRepeatDelay = messages.getInt("messages." + messageId.toString() + ".repeat-delay");
+//
+//		// if message has repeat delay value and was displayed to recipient more recently, do nothing and return
+//		if (lastDisplayed > System.currentTimeMillis() - messageRepeatDelay * 1000) {
+//			return;
+//		}
+//
+//		// if repeat delay value is greater than zero, add entry to messageCooldownMap
+//		if (messageRepeatDelay > 0) {
+//			putMessageCooldown(recipient,messageId);
+//		}
+//
+//		// assign recipient dependent variables
+//		playerName = recipient.getName();
+//		playerNickname = recipient.getPlayerListName();
+//		playerDisplayName = recipient.getDisplayName();
+//
+//		// get recipient world name from world manager
+//		worldName = plugin.worldManager.getWorldName(recipient.getWorld());
+//
+//		// get message string
+//		String message = messages.getString("messages." + messageId + ".string");
+//
+//		// get time to expire formatted string
+//		String expireTime = getExpireTimeString();
+//
+//		// do variable substitutions
+//		if (message.contains("%")) {
+//			message = StringUtil.replace(message,"%PLAYER_NAME%", playerName);
+//			message = StringUtil.replace(message,"%PLAYER_DISPLAYNAME%", playerDisplayName);
+//			message = StringUtil.replace(message,"%PLAYER_NICKNAME%", playerNickname);
+//			message = StringUtil.replace(message,"%WORLD_NAME%", worldName);
+//			message = StringUtil.replace(message,"%EXPIRE_TIME%", expireTime);
+//			message = StringUtil.replace(message,"%PLUGIN%", protectionPluginName);
+//
+//			// do variable substitutions, stripping color codes from all caps variables
+//			message = StringUtil.replace(message,"%PLAYER_NAME%",
+//					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerName)));
+//			message = StringUtil.replace(message,"%PLAYER_NICKNAME%",
+//					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',playerNickname)));
+//			message = StringUtil.replace(message,"%WORLD_NAME%",
+//					ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',worldName)));
+//
+//			// no stripping of color codes necessary, but do variable substitutions anyhow
+//			// in case all caps variables were used
+//			message = StringUtil.replace(message,"%PLAYER_DISPLAYNAME%", playerDisplayName);
+//			message = StringUtil.replace(message,"%PLUGIN%", protectionPluginName);
+//		}
+//
+//		// send message to recipient
+//		recipient.sendMessage(ChatColor.translateAlternateColorCodes('&',message));
+//
+//	}
 
 
 	/**
@@ -173,67 +204,11 @@ public final class MessageManager {
 		String playernickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
 		String playerdisplayname = player.getDisplayName();
 		String worldname = player.getWorld().getName();
-		message = message.replaceAll("%playername%", playername);
-		message = message.replaceAll("%playerdisplayname%", playerdisplayname);
-		message = message.replaceAll("%playernickname%", playernickname);
-		message = message.replaceAll("%worldname%", worldname);
+		message = message.replaceAll("%PLAYER_NAME%", playername);
+		message = message.replaceAll("%PLAYER_DISPLAYNAME%", playerdisplayname);
+		message = message.replaceAll("%PLAYER_NICKNAME%", playernickname);
+		message = message.replaceAll("%WORLD_NAME%", worldname);
 		this.plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',message));
-	}
-
-
-	/**
-	 * Reload custom messages file
-	 */
-	public final void reload() {
-
-		// reload messages
-		this.messages = languageManager.loadMessages();
-	}
-
-
-	/**
-	 * Add entry to message cooldown map
-	 * @param player the player to add to the message cooldown map
-	 * @param messageId the message identifier to add to the message cooldown map for player
-	 */
-	private void putMessageCooldown(final Player player, final MessageId messageId) {
-
-		EnumMap<MessageId,Long> tempMap = new EnumMap<>(MessageId.class);
-
-		tempMap.put(messageId, System.currentTimeMillis());
-		messageCooldownMap.put(player.getUniqueId(),tempMap);
-	}
-
-
-	/**
-	 * get entry from message cooldown map
-	 * @param player the player for whom to retrieve a message cooldown expire time
-	 * @param messageId the message identifier for which to retrieve a message cooldown expire time for player
-	 * @return cooldown expire time
-	 */
-	private long getMessageCooldown(final Player player, final MessageId messageId) {
-
-		// check if player is in message cooldown hashmap
-		if (messageCooldownMap.containsKey(player.getUniqueId())) {
-
-			// check if messageID is in player's cooldown hashmap
-			if (messageCooldownMap.get(player.getUniqueId()).containsKey(messageId)) {
-
-				// return cooldown time
-				return messageCooldownMap.get(player.getUniqueId()).get(messageId);
-			}
-		}
-		return 0L;
-	}
-
-
-	/**
-	 * Remove player from message cooldown map
-	 * @param player the player to remove from the message cooldown map
-	 */
-	@SuppressWarnings("unused")
-	public void removePlayerCooldown(final Player player) {
-		messageCooldownMap.remove(player.getUniqueId());
 	}
 
 
@@ -249,7 +224,7 @@ public final class MessageManager {
 
 		// if configured expire-time < 1, set expiretime string to "unlimited"
 		if (expiration < 1) {
-			expireTime = messages.getString("unlimited");
+			expireTime = messages.getString("UNLIMITED");
 		}
 		// otherwise, set string to hours and minutes remaining
 		else {

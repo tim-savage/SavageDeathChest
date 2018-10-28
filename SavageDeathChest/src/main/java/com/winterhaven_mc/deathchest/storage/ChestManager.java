@@ -454,9 +454,9 @@ public final class ChestManager {
 			try {
 				int lineCount = 0;
 				for (String line : lines) {
-					line = line.replace("%playername%", player.getName());
+					line = line.replace("%PLAYER_NAME%", player.getName());
 					line = line.replace("%date%", dateString);
-					line = line.replace("%worldname%", plugin.worldManager.getWorldName(player.getWorld()));
+					line = line.replace("%WORLD_NAME%", plugin.worldManager.getWorldName(player.getWorld()));
 					line = ChatColor.translateAlternateColorCodes('&', line);
 					sign.setLine(lineCount, line);
 					lineCount++;
@@ -496,6 +496,7 @@ public final class ChestManager {
 	 * @param itemStacks Collection of ItemStack to check for chest
 	 * @return boolean
 	 */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private boolean hasChest(final Collection<ItemStack> itemStacks) {
 		boolean result = false;
 		for (ItemStack itemStack : itemStacks) {

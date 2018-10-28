@@ -15,7 +15,7 @@ unlimited: 'tiempo ilimitado'
 ##################
 sign-text:
   - '&lR.I.P.&r'
-  - '%playername%'
+  - '%PLAYER_NAME%'
   - ''
   - 'D: %date%'
 
@@ -26,17 +26,17 @@ date-format: "MMM d, yyyy"
 # Custom Messages
 #################
 # Variable substitutions:
-# %itemname%			item name as configured above
-# %playername%          Player's name
-# %playernickname%      Player's nickname
-# %playerdisplayname%   Player's display name, including prefix/suffix
-# %worldname%           World name that player is in
-# %expiretime%			Remaining time at chest deployment
+# %ITEM_NAME%			item name as configured above
+# %PLAYER_NAME%          Player's name
+# %PLAYER_NICKNAME%      Player's nickname
+# %PLAYER_DISPLAYNAME%   Player's display name, including prefix/suffix
+# %WORLD_NAME%           World name that player is in
+# %EXPIRE_TIME%			Remaining time at chest deployment
 
 messages:
   chest-success:
     enabled: true
-    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %expiretime% para recuperar tu artículos.'
+    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %EXPIRE_TIME% para recuperar tu artículos.'
     
   doublechest-partial-success:
     enabled: true
@@ -60,7 +60,7 @@ messages:
     
   death-broadcast:
     enabled: true
-    string: '&4%playername%&r murió. La colocación el cofre de muerte.'
+    string: '&4%PLAYER_NAME%&r murió. La colocación el cofre de muerte.'
     
   not-owner:
     enabled: true

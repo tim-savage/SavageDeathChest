@@ -1,26 +1,27 @@
 ##############
 # Time strings
 ##############
-hour: 'hour'
-hour_plural: 'hours'
-minute: 'minute'
-minute_plural: 'minutes'
-second: 'second'
-second_pluaral: 'seconds'
-unlimited: 'unlimited time'
+time_strings:
+  HOUR: 'hour'
+  HOUR_PLURAL: 'hours'
+  MINUTE: 'minute'
+  MINUTE_PLURAL: 'minutes'
+  SECOND: 'second'
+  SECOND_PLURAL: 'seconds'
+  UNLIMITED: 'unlimited time'
 
 
 ##################
 # Custom sign text
 ##################
 # Variable substitutions:
-# %playername%	Player's name
-# %worldname%	World name
+# %PLAYER_NAME%	Player's name
+# %WORLD_NAME%	World name
 # %date%		Death date
 
 sign-text:
   - '&lR.I.P.&r'
-  - '%playername%'
+  - '%PLAYER_NAME%'
   - ''
   - 'D: %date%'
 
@@ -33,17 +34,16 @@ date-format: "MMM d, yyyy"
 # Custom Messages
 #################
 # Variable substitutions:
-# %itemname%			item name as configured above
-# %playername%          Player's name
-# %playernickname%      Player's nickname
-# %playerdisplayname%   Player's display name, including prefix/suffix
-# %worldname%           World name that player is in
-# %expiretime%			Remaining time at chest deployment
+# %PLAYER_NAME%          Player name
+# %PLAYER_NICKNAME%      Player nickname
+# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
+# %WORLD_NAME%           Player world name
+# %EXPIRE_TIME%			 Remaining time at chest deployment
 
 messages:
   CHEST_SUCCESS:
     enabled: true
-    string: '&cSuccessfully placed death chest. You have %expiretime% to retrieve your items.'
+    string: '&cSuccessfully placed death chest. You have %EXPIRE_TIME% to retrieve your items.'
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
@@ -51,7 +51,7 @@ messages:
 
   CHEST_DENIED_PLUGIN:
     enabled: true
-    string: '&cDeath chest deployment was prevented by %plugin%.'
+    string: '&cDeath chest deployment was prevented by %PLUGIN%.'
 
   CHEST_DENIED_BLOCK:
     enabled: true
@@ -79,7 +79,7 @@ messages:
 
   DEATH_BROADCAST:
     enabled: true
-    string: '&4%playername%&r died. Deploying death chest.'
+    string: '&4%PLAYER_NAME%&r died. Deploying death chest.'
 
   NOT_OWNER:
     enabled: true
