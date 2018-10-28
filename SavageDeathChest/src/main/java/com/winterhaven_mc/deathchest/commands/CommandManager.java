@@ -4,24 +4,58 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
-public final class CommandManager implements CommandExecutor {
+public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	private final PluginMain plugin;
 	private final String pluginName;
+	// constant List of subcommands
+	private final static List<String> subcommands =
+			Collections.unmodifiableList(new ArrayList<>(
+					Arrays.asList("status","reload")));
+
+
 	public CommandManager(final PluginMain plugin) {
 
 		this.plugin = plugin;
 		plugin.getCommand("deathchest").setExecutor(this);
 		pluginName = "[" + this.plugin.getName() + "] ";
+	}
+
+
+	/**
+	 * Tab completer for SpawnStar
+	 */
+	@Override
+	public final List<String> onTabComplete(final CommandSender sender, final Command command,
+											final String alias, final String[] args) {
+
+		// initalize return list
+		final List<String> returnList = new ArrayList<>();
+
+		// if first argument, return list of valid matching subcommands
+		if (args.length == 1) {
+
+			for (String subcommand : subcommands) {
+				if (sender.hasPermission("spawnstar." + subcommand)
+						&& subcommand.startsWith(args[0].toLowerCase())) {
+					returnList.add(subcommand);
+				}
+			}
+		}
+		return returnList;
 	}
 
 
