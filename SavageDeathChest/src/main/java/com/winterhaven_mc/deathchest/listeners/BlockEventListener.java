@@ -140,7 +140,7 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// if killer looting is enabled  and player is killer, break chest and return
+		// if killer looting is enabled and player is killer, break chest and return
 		// TODO: this will need to be removed when items taken limit is implemented
 		if (plugin.getConfig().getBoolean("killer-looting") 
 				&& deathChestBlock.isKiller(player)) {
