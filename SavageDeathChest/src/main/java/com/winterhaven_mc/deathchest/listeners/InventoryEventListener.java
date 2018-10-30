@@ -213,7 +213,7 @@ public final class InventoryEventListener implements Listener {
 			// prevent shift-click transfer to death chest
 			if (action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 
-				if (event.getRawSlot() > inventory.getSize()) {
+				if (event.getRawSlot() >= inventory.getSize()) {
 
 					// if player does not have allow-place permission, cancel event
 					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
