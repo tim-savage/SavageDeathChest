@@ -1,11 +1,14 @@
 package com.winterhaven_mc.deathchest.storage;
 
+
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.SearchResult;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +19,9 @@ import org.bukkit.inventory.ItemStack;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
+
+
 public final class ChestManager {
 
 	// reference to main class
@@ -23,8 +29,8 @@ public final class ChestManager {
 
 	private final TaskManager taskManager;
 
-    // ItemStack of Chest for comparisons
-    private static final ItemStack CHEST_STACK = new ItemStack(Material.CHEST);
+	// material types that can be replaced by death chests
+	private Set<Material> replaceableBlocks;
 
 	// DeathChestBlock material types
 	private static final Set<Material> deathChestMaterials = 
@@ -35,9 +41,9 @@ public final class ChestManager {
 	
 
 	/**
-	 * constructor method for <code>ChestManager</code>
+	 * constructor method for {@code ChestManager}
 	 * 
-	 * @param	plugin		A reference to this plugin's main class
+	 * @param plugin reference to plugin main class
 	 */
 	public ChestManager(final PluginMain plugin) {
 		
@@ -47,8 +53,11 @@ public final class ChestManager {
 		// instantiate task manager
 		taskManager = new TaskManager(plugin);
 
+		// load replaceable blocks
+		replaceableBlocks = new HashSet<>(loadReplaceableBlocks());
+
 		// load death chest blocks from datastore
-		loadAllDeathChestBlocks();
+		loadDeathChestBlocks();
 	}
 
 	
@@ -57,7 +66,7 @@ public final class ChestManager {
 	 * expires death chest blocks whose time has passed<br>
 	 * schedules tasks to expire remaining blocks 
 	 */
-	private void loadAllDeathChestBlocks() {
+	private void loadDeathChestBlocks() {
 		
 		long currentTime = System.currentTimeMillis();
 
@@ -97,301 +106,527 @@ public final class ChestManager {
 	}
 
 
-	/**
-	 * Attempt to deploy a death chest at player's death location containing dropped items
-	 * @param player				Player that died
-	 * @param droppedItems			Items player had in inventory on death
-	 * @return List of ItemStack	items that didn't fit in chest
-	 */
-	public final List<ItemStack> deployChest(final Player player, final List<ItemStack> droppedItems) {
-		
-		List<ItemStack> remainingItems;
+	// new deploy prototype
+	public final SearchResult deployChest(final Player player, final List<ItemStack> droppedItems) {
 
 		// combine stacks of same items where possible
 		List<ItemStack> chestItems = DeathChestBlock.consolidateItemStacks(droppedItems);
 
-		// check if require-chest option is enabled
+		// get required chest size
+		ChestSize chestSize = ChestSize.SINGLE;
+		if (chestItems.size() > 27) {
+			chestSize = ChestSize.DOUBLE;
+		}
+
+		// if require-chest option is enabled
+		// if player does not have a chest in inventory
 		// and player does not have permission override
-		if (plugin.getConfig().getBoolean("require-chest") &&
-				!player.hasPermission("deathchest.freechest")) {
+		if (plugin.getConfig().getBoolean("require-chest")
+				&& !player.hasPermission("deathchest.freechest")
+				&& !hasChest(chestItems)) {
 
-			// if player does not have a chest in their inventory
-			// output message and return, allowing inventory items to drop on ground
-			if (!hasChest(chestItems)) {
-				plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
-				return droppedItems;
-			}
-			// remove one chest from players inventory
-			chestItems = removeOneChest(chestItems);
+			// send player message
+			plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 
-			// if only one chest required to hold all dropped items	
-			// or player doesn't have doublechest permission
-			// or player doesn't have a second chest in inventory
-			if (chestItems.size() <= 27 
-					|| !player.hasPermission("deathchest.doublechest") 
-					|| !hasChest(chestItems)) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Deploying single chest...");
-				}
-				remainingItems = deploySingleChest(player, chestItems);
-				return remainingItems;
-			}
-			// deploy double chest
-			else {
-				chestItems = removeOneChest(chestItems);
-				if (plugin.debug) {
-					plugin.getLogger().info("Deploying Double Chest...");
-				}
-				remainingItems = deployDoubleChest(player, chestItems);
-				return remainingItems;
-			}
+			// create result object
+			SearchResult result = SearchResult.NO_CHEST;
+
+			// add all dropped items to result object
+			result.setRemainingItems(droppedItems);
+
+			// return result object
+			return result;
 		}
-		// require-chest option not enabled or player has permission override
-		else {
-			// if only one chest required to hold all dropped items	
-			// or player doesn't have doublechest permission
-			if (chestItems.size() <= 27 
-					|| !player.hasPermission("deathchest.doublechest")) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Deploying Single Chest...");
-				}
-				remainingItems = deploySingleChest(player, chestItems);
-				return remainingItems;
-			}
-			else {
-				// deploy double chest
-				if (plugin.debug) {
-					plugin.getLogger().info("Deploying Double Chest...");
-				}
-				remainingItems = plugin.chestManager.deployDoubleChest(player, chestItems);
-				return remainingItems;
-			}
-		}
-	}
 
+		// search for valid chest location
+		SearchResult result = findValidChestLocation(player, chestSize);
 
-	/**
-	 * Deploy a single chest
-	 * 
-	 * @param player			player to deploy chest for
-	 * @param droppedItems		items to place in chest
-	 * @return Items that did not fit in chest, as List of ItemStacks
-	 */
-	private List<ItemStack> deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
-		
-		SearchResult result = LocationUtilities.findValidSingleChestLocation(player);
-
-		// search result returned gives reason if valid location could not be found
-		if (result == null || !result.equals(SearchResult.SUCCESS)) {
-			
-			// use try..catch block here so a messaging error does not cause item duplication
-			try {
-				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,
-							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest deployment prevented by "
-							+ result.getProtectionPlugin().getPluginName() + ".");
-					}
-				}
-				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_ADJACENT);
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
-					}				
-				}
-				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_BLOCK);
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
-					}
-				}
-			} catch (Exception e) {
-				plugin.getLogger().info("An error occurred while sending a chest denied message.");
-				if (plugin.debug) {
-					e.printStackTrace();
-				}
-			}
-			return droppedItems;
-		}
-		
-		// actual chest creation
-		Block block = result.getLocation().getBlock();
-		block.setType(Material.CHEST);
-		BlockState state = block.getState();
-		Chest chest = (Chest)state;
-		
-		// set chest direction
-		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(LocationUtilities.getCardinalDirection(result.getLocation().getYaw()));
-		
-		chest.update();
-		
-		// put items into chest, items that don't fit are put in noFit list
-		List<ItemStack> noFit = fillChest(chest,droppedItems);
-		
-		// create DeathChestBlock object
-		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
-		
-		// put DeathChestBlock in datastore
-		plugin.dataStore.putRecord(deathChestBlock);
-		
-		// create expire task for deathChestBlock
-		taskManager.createExpireBlockTask(deathChestBlock);
-
-		// place sign on chest
-		placeChestSign(player,block);
-
-		// send success message to player
-		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
-		
-		// return list of items that did not fit in chest
-		return noFit;
-	}
-	
-	
-	/**
-	 * Deploy a double chest
-	 * 
-	 * @param player			Player for whom to deploy chest
-	 * @param droppedItems		items to place in chest
-	 * @return Any items that could not be placed in chest, as List of ItemStack
-	 */
-	private List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
-		
-		// get chest facing direction based on player yaw
-		BlockFace chestDirection = LocationUtilities.getCardinalDirection(player.getLocation().getYaw());
-		
-		// try to find a valid double chest location
-		SearchResult result = LocationUtilities.findValidDoubleChestLocation(player);
-		
-		if (plugin.debug) {
-			plugin.getLogger().info("First Chest Search Result: " + result.toString());
-		}
-		
-		// if no valid double chest location can be found, try to find a valid single chest location
-		if (result == null || result != SearchResult.SUCCESS) {
-			result = LocationUtilities.findValidSingleChestLocation(player);
+		// if search failed, return result
+		if (!result.equals(SearchResult.SUCCESS) && !result.equals(SearchResult.PARTIAL_SUCCCESS)) {
 			if (plugin.debug) {
-				plugin.getLogger().info("Double Chest (single) Search Result: " + result.toString());
+				plugin.getLogger().info("Left chest search failed.");
 			}
+			return result;
 		}
 
-		// if no valid single chest location, return droppedItems
-		if (result == null || result != SearchResult.SUCCESS) {
-			
-			// use try..catch block here so a messaging error does not cause item duplication
-			try {
-				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,
-							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest deployment prevented by "
-							+ result.getProtectionPlugin().getPluginName() + ".");
-					}
-				}
-				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,
-							MessageId.CHEST_DENIED_ADJACENT);
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
-					}				
-				}
-				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
-					plugin.messageManager.sendPlayerMessage(player,
-							MessageId.CHEST_DENIED_BLOCK);
-					if (plugin.debug) {
-						plugin.getLogger().info("Chest deployment prevented by non-replaceable blocks.");
-					}
-				}
-			} catch (Exception e) {
-				plugin.getLogger().info("An error occurred while sending a chest denied message.");
-				if (plugin.debug) {
-					e.printStackTrace();
-				}
+		// if require-chest option is enabled remove one chest from chest items
+		if (plugin.getConfig().getBoolean("require-chest")) {
+			chestItems = removeOneChest(chestItems);
+		}
+
+		// place chest at result location and place dropped items in chest inventory
+		List<ItemStack> remainingItems = placeChest(result.getLocation(), chestItems);
+		if (plugin.debug) {
+			plugin.getLogger().info("Left chest placed at " + result.getLocation().toString());
+		}
+
+		// if chest size is single and result is success, return
+		if (chestSize.equals(ChestSize.SINGLE) && result.equals(SearchResult.SUCCESS)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Single chest placement successful! Exiting deploy method.");
 			}
-			return droppedItems;
+			result.setRemainingItems(remainingItems); // just in case somehow items were left over, they will get dropped
+			return result;
 		}
-		
-		// actual chest creation
-		Block block = result.getLocation().getBlock();
-		
-		// set block to chest material
-		block.setType(Material.CHEST);
-		
-		// get blockstate of chest
-		Chest chest = (Chest)block.getState();
-		
-		// set chest direction
-		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestDirection);
 
-		// update chest to set direction
-		chest.update();
-		
-		// fill chest with dropped items
-		List<ItemStack> remainingItems = fillChest(chest,droppedItems);
-
-		// place sign on chest
-		placeChestSign(player,block);
-	
-		// create DeathChestBlock object
-		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
-		
-		// put deathChestBlock in datastore
-		plugin.dataStore.putRecord(deathChestBlock);
-		
-		// create expire task for deathChestBlock
-		taskManager.createExpireBlockTask(deathChestBlock);
-
-		// get location one block to right of first chest
-		Location location = LocationUtilities.locationToRight(result.getLocation());
-
-		// check that second chest location is valid
-		SearchResult result2 = LocationUtilities.isValidRightChestLocation(player, location);
-		
-		// if block at second chest location is not valid, send message and return remaining_items
-		if (result2 == null || result2 != SearchResult.SUCCESS) {
-			plugin.messageManager.sendPlayerMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
-			return remainingItems;
+		// if result is partial success, return result with remaining items
+		if (result.equals(SearchResult.PARTIAL_SUCCCESS)) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Double chest placement partial success! Exiting deploy method.");
+			}
+			result.setRemainingItems(remainingItems);
+			return result;
 		}
-		
-		// get block at location to the right of first chest
-		block = location.getBlock();
-	
-		// set block to chest material
-		block.setType(Material.CHEST);
-		
-		// get blockstate of chest
-		chest = (Chest)block.getState();
-		
-		// set chest direction
-		chestData = (org.bukkit.material.Chest) chest.getData();
-		chestData.setFacingDirection(chestDirection);
-		
-		// update chest blockstate
-		chest.update();
-	
-		// fill chest with dropped items
-		List<ItemStack> noFitItems = fillChest(chest,remainingItems);
-		
-		// create DeathChestBlock object
-		DeathChestBlock deathChestBlock2 = new DeathChestBlock(player,block);
-		
-		// insert deathChestBlock in datastore
-		plugin.dataStore.putRecord(deathChestBlock2);
-		
-		// create expire task for deathChestBlock
-		taskManager.createExpireBlockTask(deathChestBlock2);
 
-		// send success message to player
-		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
-		
-		// return list of items that did not fit in chest
-		return noFitItems;
+		// if player does not have double chest permission, return result with remaining items
+		if (!player.hasPermission("deathchest.doublechest")) {
+			result.setRemainingItems(remainingItems);
+			return result;
+		}
+
+		// if second chest needed
+		// and require-chest option is enabled
+		// and player does not have a chest in inventory
+		// and player does not have permission override
+		// return result with remaining items
+		if (remainingItems.size() > 0
+				&& plugin.getConfig().getBoolean("require-chest")
+				&& !player.hasPermission("deathchest.freechest")
+				&& !hasChest(chestItems)) {
+
+			result.setRemainingItems(remainingItems);
+			return result;
+		}
+
+		// if second chest needed
+		// and require-chest option is enabled
+		// and player has chest in inventory
+		// and player does not have permission override
+		// remove one chest from remaining items
+		if (remainingItems.size() > 0
+				&& plugin.getConfig().getBoolean("require-chest")
+				&& !player.hasPermission("deathchest.freechest")
+				&& hasChest(remainingItems)) {
+			remainingItems = removeOneChest(remainingItems);
+		}
+
+		// if second chest needed and valid double chest location was found,
+		// place second chest at location to right of result location and place remaining items in inventory
+		if (chestSize.equals(ChestSize.DOUBLE)
+				&& result.equals(SearchResult.SUCCESS)
+				&& remainingItems.size() > 0) {
+
+			remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems);
+		}
+
+		// put remaining items in result
+		result.setRemainingItems(remainingItems);
+		return result;
 	}
 
+
+//	/**
+//	 * Attempt to deploy a death chest at player's death location containing dropped items
+//	 * @param player				Player that died
+//	 * @param droppedItems			Items player had in inventory on death
+//	 * @return List of ItemStack	items that didn't fit in chest
+//	 */
+//	public final List<ItemStack> deployChest(final Player player, final List<ItemStack> droppedItems) {
+//
+//		List<ItemStack> remainingItems;
+//
+//		// combine stacks of same items where possible
+//		List<ItemStack> chestItems = DeathChestBlock.consolidateItemStacks(droppedItems);
+//
+//		// check if require-chest option is enabled
+//		// and player does not have permission override
+//		if (plugin.getConfig().getBoolean("require-chest") &&
+//				!player.hasPermission("deathchest.freechest")) {
+//
+//			// if player does not have a chest in their inventory
+//			// output message and return, allowing inventory items to drop on ground
+//			if (!hasChest(chestItems)) {
+//				plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+//				return droppedItems;
+//			}
+//
+//			// remove one chest from players inventory
+//			chestItems = removeOneChest(chestItems);
+//
+//			// if only one chest required to hold all dropped items
+//			// or player doesn't have doublechest permission
+//			// or player doesn't have a second chest in inventory
+//			if (chestItems.size() <= 27
+//					|| !player.hasPermission("deathchest.doublechest")
+//					|| !hasChest(chestItems)) {
+//				if (plugin.debug) {
+//					plugin.getLogger().info("Deploying single chest...");
+//				}
+//				remainingItems = deploySingleChest(player, chestItems);
+//				return remainingItems;
+//			}
+//			// deploy double chest
+//			else {
+//				chestItems = removeOneChest(chestItems);
+//				if (plugin.debug) {
+//					plugin.getLogger().info("Deploying Double Chest...");
+//				}
+//				remainingItems = deployDoubleChest(player, chestItems);
+//				return remainingItems;
+//			}
+//		}
+//		// require-chest option not enabled or player has permission override
+//		else {
+//			// if only one chest required to hold all dropped items
+//			// or player doesn't have doublechest permission
+//			if (chestItems.size() <= 27
+//					|| !player.hasPermission("deathchest.doublechest")) {
+//				if (plugin.debug) {
+//					plugin.getLogger().info("Deploying Single Chest...");
+//				}
+//				return deploySingleChest(player, chestItems);
+//			}
+//			else {
+//				// deploy double chest
+//				if (plugin.debug) {
+//					plugin.getLogger().info("Deploying Double Chest...");
+//				}
+//				return deployDoubleChest(player, chestItems);
+//			}
+//		}
+//	}
+
+
+//	/**
+//	 * Deploy a single chest
+//	 *
+//	 * @param player			player to deploy chest for
+//	 * @param droppedItems		items to place in chest
+//	 * @return Items that did not fit in chest, as List of ItemStacks
+//	 */
+//	private List<ItemStack> deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
+//
+//		// get chest facing direction based on player yaw
+//		BlockFace chestDirection = LocationUtilities.getCardinalDirection(player);
+//
+//		SearchResult result = findValidChestLocation(player, ChestSize.SINGLE);
+//
+//		// search result returned gives reason if valid location could not be found
+//		if (result == null || !result.equals(SearchResult.SUCCESS)) {
+//
+//			// use try..catch block here so a messaging error does not cause item duplication
+//			try {
+//				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
+//					plugin.messageManager.sendPlayerMessage(player,
+//							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
+//					if (plugin.debug) {
+//						plugin.getLogger().info("Chest deployment prevented by "
+//							+ result.getProtectionPlugin().getPluginName() + ".");
+//					}
+//				}
+//				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
+//					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_ADJACENT);
+//					if (plugin.debug) {
+//						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
+//					}
+//				}
+//				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
+//					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_BLOCK);
+//					if (plugin.debug) {
+//						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
+//					}
+//				}
+//			} catch (Exception e) {
+//				plugin.getLogger().info("An error occurred while sending a chest denied message.");
+//				if (plugin.debug) {
+//					e.printStackTrace();
+//				}
+//			}
+//			return droppedItems;
+//		}
+//
+//		// actual chest creation
+//		Block chestBlock = result.getLocation().getBlock();
+//		BlockState chestState = chestBlock.getState();
+//
+//		// set material to chest
+//		chestState.setType(Material.CHEST);
+//
+//		// set direction
+//		chestState.setData(new org.bukkit.material.Chest(chestDirection));
+//
+//		// update chest BlockState
+//		chestState.update(true, false);
+//
+//		// get updated BlockState
+//		chestState = chestBlock.getState();
+//
+//		// cast to Chest
+//		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) chestState;
+//
+//		// get chest inventory
+//		Inventory inventory = chest.getBlockInventory();
+//
+//		// put items into chest inventory, items that don't fit are returned as List of ItemStack
+//		List<ItemStack> noFit = fillChest(inventory,droppedItems);
+//
+//		// create DeathChestBlock object
+//		DeathChestBlock deathChestBlock = new DeathChestBlock(player,chestBlock);
+//
+//		// put DeathChestBlock in datastore
+//		plugin.dataStore.putRecord(deathChestBlock);
+//
+//		// create expire task for deathChestBlock
+//		taskManager.createExpireBlockTask(deathChestBlock);
+//
+//		// place sign on chest
+//		placeChestSign(player,chestBlock);
+//
+//		// send success message to player
+//		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
+//
+//		// return list of items that did not fit in chest
+//		return noFit;
+//	}
 	
+	
+//	/**
+//	 * Deploy a double chest
+//	 *
+//	 * @param player Player for whom to deploy chest
+//	 * @param droppedItems items to place in chest
+//	 * @return Any items that could not be placed in chest, as List of ItemStack
+//	 */
+//	private List<ItemStack> deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
+//
+//		// get chest facing direction based on player yaw
+//		BlockFace chestDirection = LocationUtilities.getCardinalDirection(player.getLocation().getYaw());
+//
+//		// try to find a valid double chest location
+//		SearchResult result = findValidChestLocation(player, ChestSize.DOUBLE);
+//
+//		// if no valid double chest location can be found, deploy single chest
+//		if (result == null || !result.equals(SearchResult.SUCCESS)) {
+//			result = findValidChestLocation(player, ChestSize.SINGLE);
+//			if (result.equals(SearchResult.SUCCESS)) {
+//				result = SearchResult.PARTIAL_SUCCCESS;
+//			}
+//		}
+//
+//		// if no valid single chest location, return droppedItems
+//		if (!result.equals(SearchResult.SUCCESS)|| !result.equals(SearchResult.PARTIAL_SUCCCESS)) {
+//
+//			// use try..catch block here so a messaging error does not cause item duplication
+//			try {
+//				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
+//					plugin.messageManager.sendPlayerMessage(player,
+//							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
+//					if (plugin.debug) {
+//						plugin.getLogger().info("Chest deployment prevented by "
+//							+ result.getProtectionPlugin().getPluginName() + ".");
+//					}
+//				}
+//				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
+//					plugin.messageManager.sendPlayerMessage(player,
+//							MessageId.CHEST_DENIED_ADJACENT);
+//					if (plugin.debug) {
+//						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
+//					}
+//				}
+//				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
+//					plugin.messageManager.sendPlayerMessage(player,
+//							MessageId.CHEST_DENIED_BLOCK);
+//					if (plugin.debug) {
+//						plugin.getLogger().info("Chest deployment prevented by non-replaceable blocks.");
+//					}
+//				}
+//			} catch (Exception e) {
+//				plugin.getLogger().info("An error occurred while sending a chest denied message.");
+//				if (plugin.debug) {
+//					e.printStackTrace();
+//				}
+//			}
+//			return droppedItems;
+//		}
+//
+//		// actual chest creation
+//		Block leftChestBlock = result.getLocation().getBlock();
+//		BlockState leftChestState = leftChestBlock.getState();
+//
+//		// set material to chest
+//		leftChestState.setType(Material.CHEST);
+//
+//		// set direction
+//		leftChestState.setData(new org.bukkit.material.Chest(chestDirection));
+//
+//		// update chest BlockState
+//		leftChestState.update(true, false);
+//
+//		// get updated BlockState
+//		leftChestState = leftChestBlock.getState();
+//
+//		// cast to Chest
+//		org.bukkit.block.Chest leftChest = (org.bukkit.block.Chest) leftChestState;
+//
+//		// get chest inventory
+//		Inventory inventory = leftChest.getBlockInventory();
+//
+//		// put items into chest inventory, items that don't fit are returned as List of ItemStack
+//		List<ItemStack> noFit = fillChest(inventory,droppedItems);
+//
+//		// create DeathChestBlock object
+//		DeathChestBlock deathChestBlock = new DeathChestBlock(player,leftChestBlock);
+//
+//		// put DeathChestBlock in datastore
+//		plugin.dataStore.putRecord(deathChestBlock);
+//
+//		// create expire task for deathChestBlock
+//		taskManager.createExpireBlockTask(deathChestBlock);
+//
+//		// place sign on chest
+//		placeChestSign(player,leftChestBlock);
+//
+//		// PLACE RIGHT CHEST
+//
+//		// if search returned PARTIAL_SUCCESS, return remaining items
+//		if (result.equals(SearchResult.PARTIAL_SUCCCESS)) {
+//			// return remaining items
+//			return noFit;
+//		}
+//
+//		Block rightChestBlock = blockToRight(leftChestBlock.getLocation());
+//		BlockState rightChestState = rightChestBlock.getState();
+//
+//		// set material to chest
+//		rightChestState.setType(Material.CHEST);
+//
+//		// set direction
+//		rightChestState.setData(new org.bukkit.material.Chest(chestDirection));
+//
+//		// update chest BlockState
+//		rightChestState.update(true, false);
+//
+//		// get updated BlockState
+//		rightChestState = leftChestBlock.getState();
+//
+//
+//
+//
+//
+//		// get location one block to right of first chest
+//		Location location = locationToRight(result.getLocation());
+//
+//		// actual chest creation
+//		Block block = result.getLocation().getBlock();
+//
+//		// set block to chest material
+//		block.setType(Material.CHEST);
+//
+//		// get blockstate of chest
+//		Chest chest = (Chest)block.getState();
+//
+//		// set chest direction
+//		org.bukkit.material.Chest chestData = (org.bukkit.material.Chest) chest.getData();
+//		chestData.setFacingDirection(chestDirection);
+//
+//		// update chest to set direction
+//		chest.update();
+//
+//		// fill chest with dropped items
+//		List<ItemStack> remainingItems = fillChest(chest,droppedItems);
+//
+//		// place sign on chest
+//		placeChestSign(player,block);
+//
+//		// create DeathChestBlock object
+//		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
+//
+//		// put deathChestBlock in datastore
+//		plugin.dataStore.putRecord(deathChestBlock);
+//
+//		// create expire task for deathChestBlock
+//		taskManager.createExpireBlockTask(deathChestBlock);
+//
+//		// get location one block to right of first chest
+//		Location location = locationToRight(result.getLocation());
+//
+//		// check that second chest location is valid
+//		SearchResult result2 = validateChestLocation(player, location, ChestSize.DOUBLE);
+//
+//		// if block at second chest location is not valid, send message and return remaining_items
+//		if (result2 == null || result2 != SearchResult.SUCCESS) {
+//			plugin.messageManager.sendPlayerMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
+//			return remainingItems;
+//		}
+//
+//		// get block at location to the right of first chest
+//		block = location.getBlock();
+//
+//		// set block to chest material
+//		block.setType(Material.CHEST);
+//
+//		// get blockstate of chest
+//		chest = (Chest)block.getState();
+//
+//		// set chest direction
+//		chestData = (org.bukkit.material.Chest) chest.getData();
+//		chestData.setFacingDirection(chestDirection);
+//
+//		// update chest blockstate
+//		chest.update();
+//
+//		// fill chest with dropped items
+//		List<ItemStack> noFitItems = fillChest(chest,remainingItems);
+//
+//		// create DeathChestBlock object
+//		DeathChestBlock deathChestBlock2 = new DeathChestBlock(player,block);
+//
+//		// insert deathChestBlock in datastore
+//		plugin.dataStore.putRecord(deathChestBlock2);
+//
+//		// create expire task for deathChestBlock
+//		taskManager.createExpireBlockTask(deathChestBlock2);
+//
+//		// send success message to player
+//		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
+//
+//		// return list of items that did not fit in chest
+//		return noFitItems;
+//	}
+
+	
+	private List<ItemStack> placeChest(final Location location,
+									   final List<ItemStack> chestItems) {
+
+		// get current block at location
+		Block chestBlock = location.getBlock();
+
+		// get block state
+		BlockState chestState = chestBlock.getState();
+
+		// set material to chest
+		chestState.setType(Material.CHEST);
+
+		// set direction
+		chestState.setData(new org.bukkit.material.Chest(getCardinalDirection(location)));
+
+		// update chest BlockState
+		chestState.update(true, false);
+
+		// get updated BlockState
+		chestState = chestBlock.getState();
+
+		// cast to Chest
+		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) chestState;
+
+		// get chest inventory
+//		Inventory inventory = chest.getBlockInventory();
+
+		// put items into chest inventory, items that don't fit are returned as List of ItemStack
+		return fillChest(chest, chestItems);
+	}
+
+
 	/**
 	 * Place sign on chest
 	 * @param player		Chest owner
@@ -413,13 +648,13 @@ public final class ChestManager {
 		Block signblock = chestblock.getRelative(LocationUtilities.getCardinalDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
-		if (LocationUtilities.isValidSignLocation(player,signblock.getLocation())) {
+		if (isValidSignLocation(player,signblock.getLocation())) {
 			signblock.setType(Material.WALL_SIGN);
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
 			signblock = chestblock.getRelative(BlockFace.UP);
-			if (LocationUtilities.isValidSignLocation(player,signblock.getLocation())) {
+			if (isValidSignLocation(player,signblock.getLocation())) {
 				signblock.setType(Material.SIGN);
 			}
 			else {
@@ -511,15 +746,15 @@ public final class ChestManager {
 
 	/**
 	 * Remove one chest from list of item stacks
-	 * @param itemStacks	List of ItemStack to remove chest
+	 * @param itemStacks List of ItemStack to remove chest
 	 * @return List of ItemStack with one chest removed
 	 */
 	private List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
 
 		for (int i = 0; i < itemStacks.size(); i++) {
 			ItemStack stack = itemStacks.get(i);
-			if (stack.isSimilar(CHEST_STACK)) {
-				if (stack.getAmount() <= 1) {
+			if (stack.getType().equals(Material.CHEST)) {
+				if (stack.getAmount() == 1) {
 					itemStacks.remove(i);
 				}
 				else {
@@ -533,13 +768,294 @@ public final class ChestManager {
 
 
 	private List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
-		
+
 		// convert itemStacks list to array
 		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
 		stackArray = itemStacks.toArray(stackArray);
-		
+
 		// return list of items that did not fit in chest
 		return new ArrayList<>(chest.getInventory().addItem(stackArray).values());
 	}
-	
+
+
+//	private List<ItemStack> fillChest(final Inventory inventory, final List<ItemStack> itemStacks) {
+//
+//		// convert itemStacks list to array
+//		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
+//		stackArray = itemStacks.toArray(stackArray);
+//
+//		// return list of items that did not fit in chest
+//		return new ArrayList<>(inventory.addItem(stackArray).values());
+//	}
+
+
+	/**
+	 * Search for a valid location to place a single chest,
+	 * taking into account replaceable blocks, grass path blocks and
+	 * restrictions from other block protection plugins if configured
+	 * @param player Player that deathchest is being deployed for
+	 * @return SearchResult
+	 */
+	private SearchResult findValidChestLocation(final Player player, final ChestSize chestSize) {
+
+		// count number of tests performed, for debugging purposes
+		int testCount = 0;
+
+		// get distance to search from config
+		int radius = plugin.getConfig().getInt("search-distance");
+
+		// get clone of player death location
+		Location testLocation = player.getLocation().clone();
+
+		// if player died in the void, start search at y=1 if place-above-void configured true
+		if (testLocation.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
+			testLocation.setY(1);
+		}
+
+		// print player death location in log
+		if (plugin.debug) {
+			plugin.getLogger().info("Death location: "
+					+ testLocation.getBlockX() + ","
+					+ testLocation.getBlockY() + ","
+					+ testLocation.getBlockZ());
+		}
+
+		// declare search result object
+		SearchResult result;
+
+		// iterate over all locations with search distance until a valid location is found
+		for (int y = 0; y < radius; y = y + 1) {
+			for (int x = 0; x < radius; x = x + 1) {
+				for (int z = 0; z < radius; z = z + 1) {
+
+					// set new test location
+					testLocation.add(x,y,z);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if test location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
+					}
+					else {
+						// reset test location
+						testLocation.add(-x,-y,-z);
+					}
+
+					// location 0,y,0 has already been checked, so skip ahead
+					if (x == 0 && z == 0) {
+						continue;
+					}
+
+					// set new test location
+					testLocation.add(-x,y,z);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
+					}
+					else {
+						// reset test location
+						testLocation.add(x,-y,-z);
+					}
+
+					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
+					if (x == 0 || z == 0) {
+						continue;
+					}
+
+					// set new test location
+					testLocation.add(-x,y,-z);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
+					}
+					else {
+						// reset test location
+						testLocation.add(x,-y,z);
+					}
+
+					// set new test location
+					testLocation.add(x,y,-z);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if location is valid, return search result object
+					if (result.equals(SearchResult.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
+					}
+					else {
+						// reset test location
+						testLocation.add(-x,-y,z);
+					}
+				}
+			}
+		}
+		// no valid location could be found, so return result
+		if (plugin.debug) {
+			plugin.getLogger().info("Locations tested: " + testCount);
+		}
+		return SearchResult.NON_REPLACEABLE_BLOCK;
+	}
+
+
+	private SearchResult validateChestLocation(final Player player,
+											   final Location testLocation,
+											   final ChestSize chestSize) {
+
+		// declare search result
+		SearchResult result;
+
+		// test left chest block location
+		result = validateChestLocation(player, testLocation, ChestElement.LEFT_CHEST);
+		if (!result.equals(SearchResult.SUCCESS)) {
+			return result;
+		}
+
+		// test sign block location
+		result = validateChestLocation(player, LocationUtilities.getLocationToFront(testLocation), ChestElement.SIGN);
+		if (!result.equals(SearchResult.SUCCESS)) {
+			return result;
+		}
+
+		if (chestSize.equals(ChestSize.DOUBLE)) {
+
+			// test right chest block location
+			result = validateChestLocation(player, LocationUtilities.getLocationToRight(testLocation), ChestElement.SIGN);
+			if (!result.equals(SearchResult.SUCCESS)) {
+				return result;
+			}
+		}
+
+		result = SearchResult.SUCCESS;
+		result.setLocation(testLocation);
+		return SearchResult.SUCCESS;
+	}
+
+
+	private SearchResult validateChestLocation(final Player player,
+											   final Location testLocation,
+											   final ChestElement chestElement) {
+
+		// get block at passed location
+		Block leftBlock = testLocation.getBlock();
+
+		// if block at location is not replaceable block, return negative result
+		if (!getReplaceableBlocks().contains(leftBlock.getType())) {
+			return SearchResult.NON_REPLACEABLE_BLOCK;
+		}
+
+		// if block at location is above grass path, return negative result
+		if (isAboveGrassPath(leftBlock)) {
+			return SearchResult.ABOVE_GRASS_PATH;
+		}
+
+		// if left chest, check for adjacent chest to left
+		if (chestElement.equals(ChestElement.LEFT_CHEST)) {
+			if (getBlockToLeft(testLocation).getType().equals(Material.CHEST)) {
+				return SearchResult.ADJACENT_CHEST;
+			}
+		}
+
+		// if right chest, check for adjacent chest to right
+		if (chestElement.equals(ChestElement.RIGHT_CHEST)) {
+			if (getBlockToRight(testLocation).getType().equals(Material.CHEST)) {
+				return SearchResult.ADJACENT_CHEST;
+			}
+		}
+
+//		// if block at location is protected by plugin, return negative result
+//		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, leftBlock);
+//		if (blockingPlugin != null) {
+//			SearchResult result = SearchResult.PROTECTION_PLUGIN;
+//			result.setProtectionPlugin(blockingPlugin);
+//			return result;
+//		}
+
+		return SearchResult.SUCCESS;
+	}
+
+
+	/**
+	 * Get Set of replaceable blocks
+	 * @return Set of replaceable blocks
+	 */
+	public Set<Material> getReplaceableBlocks() {
+		return replaceableBlocks;
+	}
+
+
+	/**
+	 * Load list of replaceable blocks from config file
+	 */
+	public Set<Material> loadReplaceableBlocks() {
+
+		// get string list of materials from config file
+		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
+
+		Set<Material> returnSet = new HashSet<>();
+
+		// iterate over string list
+		for (String materialString : materialStringList) {
+
+			// if material string matches a valid material type, add to replaceableBlocks HashSet
+			if (Material.matchMaterial(materialString) != null) {
+				returnSet.add(Material.matchMaterial(materialString));
+			}
+		}
+
+		return returnSet;
+	}
+
+
+	private boolean isAboveGrassPath(final Block block) {
+		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
+	}
+
+
+	/** Check if sign can be placed at location
+	 *
+	 * @param player	Player to check permissions
+	 * @param location	Location to check permissions
+	 * @return boolean
+	 */
+	private boolean isValidSignLocation(final Player player, final Location location) {
+
+		Block block = location.getBlock();
+
+		// check if block at location is a ReplaceableBlock
+		if (!getReplaceableBlocks().contains(block.getType())) {
+			return false;
+		}
+
+		// check all enabled protection plugins for player permission at location
+		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		return (blockingPlugin == null);
+	}
+
 }
