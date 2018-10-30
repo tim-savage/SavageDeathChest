@@ -56,9 +56,6 @@ public final class MessageManager extends AbstractMessageManager {
 			replacements.put("%PLAYER_DISPLAYNAME%",ChatColor.stripColor(player.getDisplayName()));
 		}
 
-
-
-
 		return replacements;
 	}
 
@@ -187,29 +184,6 @@ public final class MessageManager extends AbstractMessageManager {
 //		recipient.sendMessage(ChatColor.translateAlternateColorCodes('&',message));
 //
 //	}
-
-
-	/**
-	 * Send message to all players
-	 * @param player the player to whose name will be used in the message
-	 * @param messageId the message identifier
-	 */
-	@SuppressWarnings("unused")
-	public void broadcastMessage(final Player player, final String messageId) {
-		if (!messages.getBoolean("messages." + messageId + ".enabled")) {
-			return;
-		}
-		String message = messages.getString("messages." + messageId + ".string");
-		String playername = player.getName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
-		String playernickname = player.getPlayerListName().replaceAll("&[0-9A-Za-zK-Ok-oRr]", "");
-		String playerdisplayname = player.getDisplayName();
-		String worldname = player.getWorld().getName();
-		message = message.replaceAll("%PLAYER_NAME%", playername);
-		message = message.replaceAll("%PLAYER_DISPLAYNAME%", playerdisplayname);
-		message = message.replaceAll("%PLAYER_NICKNAME%", playernickname);
-		message = message.replaceAll("%WORLD_NAME%", worldname);
-		this.plugin.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&',message));
-	}
 
 
 	/**
