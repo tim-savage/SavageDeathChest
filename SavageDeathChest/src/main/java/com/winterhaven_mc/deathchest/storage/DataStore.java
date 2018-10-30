@@ -10,7 +10,7 @@ public abstract class DataStore {
 
 	private boolean initialized;
 
-	protected DataStoreType type;
+	DataStoreType type;
 
 	String filename;
 
