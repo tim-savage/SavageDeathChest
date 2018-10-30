@@ -3,9 +3,6 @@
 # Localization language
 language: en-US
 
-# Storage Type ( sqlite | yaml )
-storage-type: sqlite
-
 # Use sound effects
 sound-effects: true
 
