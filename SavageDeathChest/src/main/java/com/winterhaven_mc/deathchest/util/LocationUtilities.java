@@ -77,6 +77,7 @@ public final class LocationUtilities {
 	 * @param player player to determine cardinal direction
 	 * @return BlockFace of cardinal direction
 	 */
+	@SuppressWarnings("unused")
 	public static BlockFace getCardinalDirection(final Player player) {
 
 		// ensure yaw is between 0 and 360 (in case of negative yaw)
