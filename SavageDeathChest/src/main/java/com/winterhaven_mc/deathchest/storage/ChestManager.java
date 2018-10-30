@@ -5,7 +5,6 @@ import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.SearchResult;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 
@@ -106,7 +105,7 @@ public final class ChestManager {
 	}
 
 
-	// new deploy prototype
+	// new deployChest prototype
 	public final SearchResult deployChest(final Player player, final List<ItemStack> droppedItems) {
 
 		// combine stacks of same items where possible
@@ -124,9 +123,6 @@ public final class ChestManager {
 		if (plugin.getConfig().getBoolean("require-chest")
 				&& !player.hasPermission("deathchest.freechest")
 				&& !hasChest(chestItems)) {
-
-			// send player message
-			plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 
 			// create result object
 			SearchResult result = SearchResult.NO_CHEST;
@@ -151,7 +147,7 @@ public final class ChestManager {
 
 		// if require-chest option is enabled remove one chest from chest items
 		if (plugin.getConfig().getBoolean("require-chest")) {
-			chestItems = removeOneChest(chestItems);
+			removeOneChest(chestItems);
 		}
 
 		// place chest at result location and place dropped items in chest inventory
@@ -159,6 +155,18 @@ public final class ChestManager {
 		if (plugin.debug) {
 			plugin.getLogger().info("Left chest placed at " + result.getLocation().toString());
 		}
+
+		// create DeathChestBlock object
+		DeathChestBlock deathChestBlock = new DeathChestBlock(player, result.getLocation().getBlock());
+
+		// put DeathChestBlock in datastore
+		plugin.dataStore.putRecord(deathChestBlock);
+
+		// create expire task for deathChestBlock
+		taskManager.createExpireBlockTask(deathChestBlock);
+
+		// place sign on left chest
+		placeChestSign(player, result.getLocation().getBlock());
 
 		// if chest size is single and result is success, return
 		if (chestSize.equals(ChestSize.SINGLE) && result.equals(SearchResult.SUCCESS)) {
@@ -207,7 +215,7 @@ public final class ChestManager {
 				&& plugin.getConfig().getBoolean("require-chest")
 				&& !player.hasPermission("deathchest.freechest")
 				&& hasChest(remainingItems)) {
-			remainingItems = removeOneChest(remainingItems);
+			removeOneChest(remainingItems);
 		}
 
 		// if second chest needed and valid double chest location was found,
@@ -219,8 +227,21 @@ public final class ChestManager {
 			remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems);
 		}
 
+
 		// put remaining items in result
 		result.setRemainingItems(remainingItems);
+
+		// create DeathChestBlock object
+		DeathChestBlock rightChestBlock = new DeathChestBlock(player,getLocationToRight(result.getLocation()).getBlock());
+
+		// put DeathChestBlock in datastore
+		plugin.dataStore.putRecord(rightChestBlock);
+
+		// create expire task for deathChestBlock
+		taskManager.createExpireBlockTask(rightChestBlock);
+
+
+
 		return result;
 	}
 
@@ -619,22 +640,29 @@ public final class ChestManager {
 		// cast to Chest
 		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) chestState;
 
-		// get chest inventory
-//		Inventory inventory = chest.getBlockInventory();
-
 		// put items into chest inventory, items that don't fit are returned as List of ItemStack
 		return fillChest(chest, chestItems);
+
+//		// create DeathChestBlock object
+//		DeathChestBlock deathChestBlock = new DeathChestBlock(player,chestBlock);
+//
+//		// put DeathChestBlock in datastore
+//		plugin.dataStore.putRecord(deathChestBlock);
+//
+//		// create expire task for deathChestBlock
+//		taskManager.createExpireBlockTask(deathChestBlock);
+
 	}
 
 
 	/**
 	 * Place sign on chest
 	 * @param player		Chest owner
-	 * @param chestblock	Chest block
+	 * @param chestBlock	Chest block
 	 * @return boolean		Success or failure to place sign
 	 */
 	@SuppressWarnings("UnusedReturnValue")
-	private boolean placeChestSign(final Player player, final Block chestblock) {
+	private boolean placeChestSign(final Player player, final Block chestBlock) {
 		
 		// if chest-signs are not enabled in configuration, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-signs")) {
@@ -645,7 +673,7 @@ public final class ChestManager {
 		float yaw = player.getLocation().getYaw();
 		
 		// get block adjacent to chest facing player direction
-		Block signblock = chestblock.getRelative(LocationUtilities.getCardinalDirection(yaw));
+		Block signblock = chestBlock.getRelative(LocationUtilities.getCardinalDirection(yaw));
 		
 		// if chest face is valid location, create wall sign
 		if (isValidSignLocation(player,signblock.getLocation())) {
@@ -653,7 +681,7 @@ public final class ChestManager {
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
-			signblock = chestblock.getRelative(BlockFace.UP);
+			signblock = chestBlock.getRelative(BlockFace.UP);
 			if (isValidSignLocation(player,signblock.getLocation())) {
 				signblock.setType(Material.SIGN);
 			}
@@ -744,12 +772,34 @@ public final class ChestManager {
 	}
 
 
+//	/**
+//	 * Remove one chest from list of item stacks
+//	 * @param itemStacks List of ItemStack to remove chest
+//	 * @return List of ItemStack with one chest removed
+//	 */
+//	private List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
+//
+//		for (int i = 0; i < itemStacks.size(); i++) {
+//			ItemStack stack = itemStacks.get(i);
+//			if (stack.getType().equals(Material.CHEST)) {
+//				if (stack.getAmount() == 1) {
+//					itemStacks.remove(i);
+//				}
+//				else {
+//					stack.setAmount(stack.getAmount() - 1);
+//				}
+//				break;
+//			}
+//		}
+//		return itemStacks;
+//	}
+
+
 	/**
 	 * Remove one chest from list of item stacks
 	 * @param itemStacks List of ItemStack to remove chest
-	 * @return List of ItemStack with one chest removed
 	 */
-	private List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
+	private void removeOneChest(final List<ItemStack> itemStacks) {
 
 		for (int i = 0; i < itemStacks.size(); i++) {
 			ItemStack stack = itemStacks.get(i);
@@ -763,7 +813,6 @@ public final class ChestManager {
 				break;
 			}
 		}
-		return itemStacks;
 	}
 
 
