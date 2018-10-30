@@ -1,10 +1,13 @@
 package com.winterhaven_mc.deathchest.listeners;
 
+
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.SearchResult;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
+
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -81,14 +84,45 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
-		droppedItems = plugin.chestManager.deployChest(player, droppedItems);
-//		DeathChest deathChest = new DeathChest(player, droppedItems);
+		SearchResult result = plugin.chestManager.deployChest(player, droppedItems);
 
 		// clear dropped items
 		event.getDrops().clear();
 
 		// drop any items that couldn't be placed in a death chest
-		event.getDrops().addAll(droppedItems);
+		event.getDrops().addAll(result.getRemainingItems());
+
+		// send message based on result
+		switch (result) {
+			case NO_CHEST:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+				break;
+
+			case PARTIAL_SUCCCESS:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
+				break;
+
+			case ABOVE_GRASS_PATH:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_BLOCK);
+				break;
+
+			case NON_REPLACEABLE_BLOCK:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_BLOCK);
+				break;
+
+			case ADJACENT_CHEST:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_ADJACENT);
+				break;
+
+			case PROTECTION_PLUGIN:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
+				break;
+
+			default:
+				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
+				break;
+		}
+
 	}
 
 
