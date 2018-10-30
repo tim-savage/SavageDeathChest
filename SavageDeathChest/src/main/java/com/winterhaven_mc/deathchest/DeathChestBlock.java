@@ -1,8 +1,9 @@
 package com.winterhaven_mc.deathchest;
 
+import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import com.winterhaven_mc.deathchest.util.LocationUtilities;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -819,17 +820,17 @@ public final class DeathChestBlock {
 		DeathChestBlock secondDeathChest = null;
 		
 		// check for adjacent chests
-		if (isDeathChest(LocationUtilities.blockToLeft(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockToLeft(initialDeathChest.getLocation()));
+		if (isDeathChest(getBlockToLeft(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToLeft(initialDeathChest.getLocation()));
 		}
-		else if (isDeathChest(LocationUtilities.blockToRight(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockToRight(initialDeathChest.getLocation()));
+		else if (isDeathChest(getBlockToRight(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToRight(initialDeathChest.getLocation()));
 		}
-		else if (isDeathChest(LocationUtilities.blockInFront(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockInFront(initialDeathChest.getLocation()));
+		else if (isDeathChest(getBlockToFront(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToFront(initialDeathChest.getLocation()));
 		}
-		else if (isDeathChest(LocationUtilities.blockToRear(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockToRear(initialDeathChest.getLocation()));
+		else if (isDeathChest(getBlockToRear(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToRear(initialDeathChest.getLocation()));
 		}
 		
 		// transfer contents and destroy chest
