@@ -1,9 +1,9 @@
 package com.winterhaven_mc.deathchest.commands;
 
+
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
-import com.winterhaven_mc.deathchest.util.LocationUtilities;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -140,7 +140,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		
 		sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + 
 				plugin.worldManager.getEnabledWorldNames().toString());
-		
+
+		if (plugin.debug) {
+			sender.sendMessage(ChatColor.GREEN + "Replaceable Blocks: " + ChatColor.RESET +
+					plugin.chestManager.getReplaceableBlocks().toString());
+		}
+
 		return true;
 	}
 
@@ -154,7 +159,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		plugin.reloadConfig();
 		
 		// reload replaceable blocks
-		LocationUtilities.loadReplaceableBlocks();
+		plugin.chestManager.loadReplaceableBlocks();
 		
 		// update debug field
 		plugin.debug = plugin.getConfig().getBoolean("debug");
