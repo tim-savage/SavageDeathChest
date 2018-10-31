@@ -1,7 +1,7 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 

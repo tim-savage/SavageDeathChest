@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -35,14 +35,14 @@ public abstract class DataStore {
 	 * Retrieve a list of all records from the datastore
 	 * @return ArrayList of DeathChestBlock
 	 */
-	abstract ArrayList<DeathChestBlock> getAllRecords();
+	public abstract ArrayList<DeathChestBlock> getAllRecords();
 
 
 	/**
 	 * Insert a record in the datastore
 	 * @param deathChestBlock the DeathChestBlock object to insert into the datastore
 	 */
-	abstract void putRecord(final DeathChestBlock deathChestBlock);
+	public abstract void putRecord(final DeathChestBlock deathChestBlock);
 
 
 	/**

@@ -1,6 +1,8 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.chests;
 
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
+
+import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
@@ -60,7 +62,7 @@ public final class DeathChestBlock {
 	 * @param player deathchest owner
 	 * @param block in game death chest block
 	 */
-	public DeathChestBlock(final Player player, final Block block) {
+	DeathChestBlock(final Player player, final Block block) {
 
 		// set location field
 		this.setLocation(block.getLocation());
@@ -338,7 +340,7 @@ public final class DeathChestBlock {
 	/**
 	 * Set block metadata
 	 */
-	public final void setBlockMetadata() {
+	final void setBlockMetadata() {
 
 		final Block block = this.location.getBlock();
 
@@ -459,7 +461,7 @@ public final class DeathChestBlock {
 	 * @param block The block to test if it is a DeathSign
 	 * @return true if block is a deathchest sign, false if not
 	 */
-	static boolean isDeathSign(final Block block) {
+	private static boolean isDeathSign(final Block block) {
 
 		// if passed block is null return false
 		if (block == null) {
@@ -586,7 +588,7 @@ public final class DeathChestBlock {
 	 * @param block The sign block for which to retrieve an attached DeathChest
 	 * @return DeathChest chest block; returns null if sign is not a DeathSign or attached block is not a DeathChest
 	 */
-	static Block getAttachedBlock(final Block block) {
+	private static Block getAttachedBlock(final Block block) {
 	
 		// if passed block is null return null
 		if (block == null) {
@@ -856,7 +858,7 @@ public final class DeathChestBlock {
 	}
 
 	// start death chest block expire task
-	public final void createExpireChestTask() {
+	final void createExpireChestTask() {
 
 		// if DeathChestBlock expiration is zero or less, it is set to never expire; output debug message and return.
 		if (this.getExpiration() < 1) {

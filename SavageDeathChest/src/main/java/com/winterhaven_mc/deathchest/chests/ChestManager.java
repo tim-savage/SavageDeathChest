@@ -1,12 +1,10 @@
-package com.winterhaven_mc.deathchest.storage;
+package com.winterhaven_mc.deathchest.chests;
 
-import com.winterhaven_mc.deathchest.*;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.Result;
+import com.winterhaven_mc.deathchest.ResultCode;
 import com.winterhaven_mc.deathchest.util.ChestUtilities;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
-
-import static com.winterhaven_mc.deathchest.util.ChestUtilities.*;
-import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +14,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.winterhaven_mc.deathchest.util.ChestUtilities.*;
+import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
 public final class ChestManager {
@@ -564,7 +565,7 @@ public final class ChestManager {
 		// test left chest block location
 		result = validateChestLocation(player,
 				location,
-				ChestElement.LEFT_CHEST);
+				ChestElementType.LEFT_CHEST);
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
 		}
@@ -572,7 +573,7 @@ public final class ChestManager {
 		// test sign block location
 		result = validateChestLocation(player,
 				LocationUtilities.getLocationToFront(location),
-				ChestElement.SIGN);
+				ChestElementType.SIGN);
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
 		}
@@ -583,7 +584,7 @@ public final class ChestManager {
 			// test right chest block location
 			result = validateChestLocation(player,
 					LocationUtilities.getLocationToRight(location),
-					ChestElement.RIGHT_CHEST);
+					ChestElementType.RIGHT_CHEST);
 			if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 				return result;
 			}
@@ -597,7 +598,7 @@ public final class ChestManager {
 
 	private Result validateChestLocation(final Player player,
 											   final Location location,
-											   final ChestElement chestElement) {
+											   final ChestElementType chestElementType) {
 
 		// get block at passed location
 		Block block = location.getBlock();
@@ -613,14 +614,14 @@ public final class ChestManager {
 		}
 
 		// if left chest, check for adjacent chest to left
-		if (chestElement.equals(ChestElement.LEFT_CHEST)) {
+		if (chestElementType.equals(ChestElementType.LEFT_CHEST)) {
 			if (getBlockToLeft(location).getType().equals(Material.CHEST)) {
 				return new Result(ResultCode.ADJACENT_CHEST);
 			}
 		}
 
 		// if right chest, check for adjacent chest to right
-		if (chestElement.equals(ChestElement.RIGHT_CHEST)) {
+		if (chestElementType.equals(ChestElementType.RIGHT_CHEST)) {
 			if (getBlockToRight(location).getType().equals(Material.CHEST)) {
 				return new Result(ResultCode.ADJACENT_CHEST);
 			}

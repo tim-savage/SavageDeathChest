@@ -2,6 +2,7 @@ package com.winterhaven_mc.deathchest.listeners;
 
 
 import com.winterhaven_mc.deathchest.*;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 

@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 
 import java.util.ArrayList;

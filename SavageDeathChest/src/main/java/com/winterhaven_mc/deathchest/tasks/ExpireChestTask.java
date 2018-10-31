@@ -2,7 +2,7 @@ package com.winterhaven_mc.deathchest.tasks;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 
 
 final public class ExpireChestTask extends BukkitRunnable {

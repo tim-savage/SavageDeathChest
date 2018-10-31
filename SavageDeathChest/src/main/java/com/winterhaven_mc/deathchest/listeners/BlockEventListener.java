@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest.listeners;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.messages.MessageId;
@@ -21,7 +21,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.ArrayList;
 
-import static com.winterhaven_mc.deathchest.DeathChestBlock.isDeathChest;
+import static com.winterhaven_mc.deathchest.chests.DeathChestBlock.isDeathChest;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 

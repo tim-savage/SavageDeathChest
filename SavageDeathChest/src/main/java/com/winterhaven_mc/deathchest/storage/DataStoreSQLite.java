@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -150,7 +150,7 @@ final class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	final ArrayList<DeathChestBlock> getAllRecords() {
+	public final ArrayList<DeathChestBlock> getAllRecords() {
 
 		final ArrayList<DeathChestBlock> results = new ArrayList<>();
 
@@ -231,7 +231,7 @@ final class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	synchronized final void putRecord(final DeathChestBlock deathChestBlock) {
+	public synchronized final void putRecord(final DeathChestBlock deathChestBlock) {
 
 		// if passed deathChestBlock is null, do nothing and return
 		if (deathChestBlock == null) {
