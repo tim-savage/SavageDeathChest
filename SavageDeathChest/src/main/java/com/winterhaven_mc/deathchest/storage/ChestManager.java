@@ -601,11 +601,11 @@ public final class ChestManager {
 
 
 	private Result validateChestLocation(final Player player,
-											   final Location testLocation,
+											   final Location location,
 											   final ChestElement chestElement) {
 
 		// get block at passed location
-		Block block = testLocation.getBlock();
+		Block block = location.getBlock();
 
 		// if block at location is not replaceable block, return negative result
 		if (!getReplaceableBlocks().contains(block.getType())) {
@@ -619,14 +619,14 @@ public final class ChestManager {
 
 		// if left chest, check for adjacent chest to left
 		if (chestElement.equals(ChestElement.LEFT_CHEST)) {
-			if (getBlockToLeft(testLocation).getType().equals(Material.CHEST)) {
+			if (getBlockToLeft(location).getType().equals(Material.CHEST)) {
 				return new Result(ResultCode.ADJACENT_CHEST);
 			}
 		}
 
 		// if right chest, check for adjacent chest to right
 		if (chestElement.equals(ChestElement.RIGHT_CHEST)) {
-			if (getBlockToRight(testLocation).getType().equals(Material.CHEST)) {
+			if (getBlockToRight(location).getType().equals(Material.CHEST)) {
 				return new Result(ResultCode.ADJACENT_CHEST);
 			}
 		}
@@ -640,7 +640,7 @@ public final class ChestManager {
 //		}
 
 		Result result = new Result(ResultCode.SUCCESS);
-		result.setLocation(testLocation);
+		result.setLocation(location);
 		return result;
 	}
 
