@@ -1,9 +1,8 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.SearchResult;
+import com.winterhaven_mc.deathchest.*;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
+import com.winterhaven_mc.deathchest.util.ChestUtilities;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 
 import static com.winterhaven_mc.deathchest.util.ChestUtilities.*;
@@ -34,8 +33,8 @@ public final class ChestManager {
 	private static final Set<Material> deathChestMaterials = 
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 					Material.CHEST,
-					Material.SIGN
-				)));
+					Material.WALL_SIGN,
+					Material.SIGN )));
 	
 
 	/**
@@ -137,10 +136,10 @@ public final class ChestManager {
 
 
 	// new deployChest prototype
-	public final SearchResult deployChest(final Player player, final List<ItemStack> droppedItems) {
+	public final Result deployChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// combine stacks of same items where possible
-		List<ItemStack> chestItems = DeathChestBlock.consolidateItemStacks(droppedItems);
+		List<ItemStack> chestItems = ChestUtilities.consolidateItemStacks(droppedItems);
 
 		// get required chest size
 		ChestSize chestSize = ChestSize.SINGLE;
@@ -156,7 +155,7 @@ public final class ChestManager {
 				&& !hasChest(chestItems)) {
 
 			// create result object
-			SearchResult result = SearchResult.NO_CHEST;
+			Result result = new Result(ResultCode.NO_CHEST);
 
 			// add all dropped items to result object
 			result.setRemainingItems(droppedItems);
@@ -166,10 +165,11 @@ public final class ChestManager {
 		}
 
 		// search for valid chest location
-		SearchResult result = findValidChestLocation(player, chestSize);
+		Result result = findValidChestLocation(player, chestSize);
 
 		// if search failed, return result
-		if (!result.equals(SearchResult.SUCCESS) && !result.equals(SearchResult.PARTIAL_SUCCCESS)) {
+		if (!result.getResultCode().equals(ResultCode.SUCCESS)
+				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCCESS)) {
 			if (plugin.debug) {
 				plugin.getLogger().info("Left chest search failed.");
 			}
@@ -200,7 +200,7 @@ public final class ChestManager {
 		placeSign(player, result.getLocation().getBlock());
 
 		// if chest size is single and result is success, return
-		if (chestSize.equals(ChestSize.SINGLE) && result.equals(SearchResult.SUCCESS)) {
+		if (chestSize.equals(ChestSize.SINGLE) && result.getResultCode().equals(ResultCode.SUCCESS)) {
 			if (plugin.debug) {
 				plugin.getLogger().info("Single chest placement successful! Exiting deploy method.");
 			}
@@ -209,7 +209,7 @@ public final class ChestManager {
 		}
 
 		// if result is partial success, return result with remaining items
-		if (result.equals(SearchResult.PARTIAL_SUCCCESS)) {
+		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCCESS)) {
 			if (plugin.debug) {
 				plugin.getLogger().info("Double chest placement partial success! Exiting deploy method.");
 			}
@@ -252,7 +252,7 @@ public final class ChestManager {
 		// if second chest needed and valid double chest location was found,
 		// place second chest at location to right of result location and place remaining items in inventory
 		if (chestSize.equals(ChestSize.DOUBLE)
-				&& result.equals(SearchResult.SUCCESS)
+				&& result.getResultCode().equals(ResultCode.SUCCESS)
 				&& remainingItems.size() > 0) {
 
 			remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems);
@@ -412,7 +412,7 @@ public final class ChestManager {
 	}
 
 
-	private List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
+	private List<ItemStack> fillChest(final Chest chest, final Collection<ItemStack> itemStacks) {
 
 		// convert itemStacks list to array
 		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
@@ -430,7 +430,7 @@ public final class ChestManager {
 	 * @param player Player that deathchest is being deployed for
 	 * @return SearchResult
 	 */
-	private SearchResult findValidChestLocation(final Player player, final ChestSize chestSize) {
+	private Result findValidChestLocation(final Player player, final ChestSize chestSize) {
 
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -455,7 +455,7 @@ public final class ChestManager {
 		}
 
 		// declare search result object
-		SearchResult result;
+		Result result;
 
 		// iterate over all locations with search distance until a valid location is found
 		for (int y = 0; y < radius; y = y + 1) {
@@ -470,7 +470,7 @@ public final class ChestManager {
 					testCount = testCount + 1;
 
 					// if test location is valid, return search result object
-					if (result.equals(SearchResult.SUCCESS)) {
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
 						if (plugin.debug) {
 							plugin.getLogger().info("Locations tested: " + testCount);
 						}
@@ -494,7 +494,7 @@ public final class ChestManager {
 					testCount = testCount + 1;
 
 					// if location is valid, return search result object
-					if (result.equals(SearchResult.SUCCESS)) {
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
 						if (plugin.debug) {
 							plugin.getLogger().info("Locations tested: " + testCount);
 						}
@@ -518,7 +518,7 @@ public final class ChestManager {
 					testCount = testCount + 1;
 
 					// if location is valid, return search result object
-					if (result.equals(SearchResult.SUCCESS)) {
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
 						if (plugin.debug) {
 							plugin.getLogger().info("Locations tested: " + testCount);
 						}
@@ -537,7 +537,7 @@ public final class ChestManager {
 					testCount = testCount + 1;
 
 					// if location is valid, return search result object
-					if (result.equals(SearchResult.SUCCESS)) {
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
 						if (plugin.debug) {
 							plugin.getLogger().info("Locations tested: " + testCount);
 						}
@@ -554,47 +554,53 @@ public final class ChestManager {
 		if (plugin.debug) {
 			plugin.getLogger().info("Locations tested: " + testCount);
 		}
-		return SearchResult.NON_REPLACEABLE_BLOCK;
+
+		return new Result(ResultCode.NON_REPLACEABLE_BLOCK);
 	}
 
 
-	private SearchResult validateChestLocation(final Player player,
+	private Result validateChestLocation(final Player player,
 											   final Location testLocation,
 											   final ChestSize chestSize) {
 
-		// declare search result
-		SearchResult result;
+		// declare result
+		Result result;
 
 		// test left chest block location
-		result = validateChestLocation(player, testLocation, ChestElement.LEFT_CHEST);
-		if (!result.equals(SearchResult.SUCCESS)) {
+		result = validateChestLocation(player,
+				testLocation,
+				ChestElement.LEFT_CHEST);
+		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
 		}
 
 		// test sign block location
-		result = validateChestLocation(player, LocationUtilities.getLocationToFront(testLocation), ChestElement.SIGN);
-		if (!result.equals(SearchResult.SUCCESS)) {
+		result = validateChestLocation(player,
+				LocationUtilities.getLocationToFront(testLocation),
+				ChestElement.SIGN);
+		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
 		}
 
-		// if test is to be a double chest, test right chest location
+		// if chest is to be a double chest, test right chest location
 		if (chestSize.equals(ChestSize.DOUBLE)) {
 
 			// test right chest block location
-			result = validateChestLocation(player, LocationUtilities.getLocationToRight(testLocation), ChestElement.SIGN);
-			if (!result.equals(SearchResult.SUCCESS)) {
+			result = validateChestLocation(player,
+					LocationUtilities.getLocationToRight(testLocation),
+					ChestElement.RIGHT_CHEST);
+			if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 				return result;
 			}
 		}
 
 		// return successful search result with location
-		result = SearchResult.SUCCESS;
-		result.setLocation(testLocation);
-		return SearchResult.SUCCESS;
+		result.setResultCode(ResultCode.SUCCESS);
+		return result;
 	}
 
 
-	private SearchResult validateChestLocation(final Player player,
+	private Result validateChestLocation(final Player player,
 											   final Location testLocation,
 											   final ChestElement chestElement) {
 
@@ -603,39 +609,39 @@ public final class ChestManager {
 
 		// if block at location is not replaceable block, return negative result
 		if (!getReplaceableBlocks().contains(block.getType())) {
-			return SearchResult.NON_REPLACEABLE_BLOCK;
+			return new Result(ResultCode.NON_REPLACEABLE_BLOCK);
 		}
 
 		// if block at location is above grass path, return negative result
 		if (isAboveGrassPath(block)) {
-			return SearchResult.ABOVE_GRASS_PATH;
+			return new Result(ResultCode.ABOVE_GRASS_PATH);
 		}
 
 		// if left chest, check for adjacent chest to left
 		if (chestElement.equals(ChestElement.LEFT_CHEST)) {
 			if (getBlockToLeft(testLocation).getType().equals(Material.CHEST)) {
-				return SearchResult.ADJACENT_CHEST;
+				return new Result(ResultCode.ADJACENT_CHEST);
 			}
 		}
 
 		// if right chest, check for adjacent chest to right
 		if (chestElement.equals(ChestElement.RIGHT_CHEST)) {
 			if (getBlockToRight(testLocation).getType().equals(Material.CHEST)) {
-				return SearchResult.ADJACENT_CHEST;
+				return new Result(ResultCode.ADJACENT_CHEST);
 			}
 		}
 
 //		// if block at location is protected by plugin, return negative result
 //		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 //		if (blockingPlugin != null) {
-//			SearchResult result = SearchResult.PROTECTION_PLUGIN;
+//			Result result = new Result(ResultCode.PROTECTION_PLUGIN);
 //			result.setProtectionPlugin(blockingPlugin);
 //			return result;
 //		}
 
-		SearchResult result = SearchResult.SUCCESS;
+		Result result = new Result(ResultCode.SUCCESS);
 		result.setLocation(testLocation);
-		return SearchResult.SUCCESS;
+		return result;
 	}
 
 

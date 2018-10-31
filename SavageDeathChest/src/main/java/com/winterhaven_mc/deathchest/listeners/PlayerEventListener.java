@@ -1,10 +1,7 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
-import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
-import com.winterhaven_mc.deathchest.SearchResult;
+import com.winterhaven_mc.deathchest.*;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
@@ -84,7 +81,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
-		SearchResult result = plugin.chestManager.deployChest(player, droppedItems);
+		Result result = plugin.chestManager.deployChest(player, droppedItems);
 
 		// clear dropped items
 		event.getDrops().clear();
@@ -93,7 +90,7 @@ public final class PlayerEventListener implements Listener {
 		event.getDrops().addAll(result.getRemainingItems());
 
 		// send message based on result
-		switch (result) {
+		switch (result.getResultCode()) {
 			case NO_CHEST:
 				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 				break;
