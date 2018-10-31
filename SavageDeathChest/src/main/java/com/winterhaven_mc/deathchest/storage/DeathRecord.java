@@ -25,13 +25,8 @@ public class DeathRecord {
 
 
     /**
-     * Empty DeathChest constructor
-     */
-    public DeathRecord() {}
-
-
-    /**
-     * DeathChest constructor
+     * class constructor
+     * @param player chest owner
      */
     public DeathRecord(Player player) {
 
@@ -40,7 +35,9 @@ public class DeathRecord {
 
 
     /**
-     * DeathChest constructor
+     * class constructor
+      * @param player chest owner
+     * @param location chest location
      */
     public DeathRecord(Player player, Location location) {
 
