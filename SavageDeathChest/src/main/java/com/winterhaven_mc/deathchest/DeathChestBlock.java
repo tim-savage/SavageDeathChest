@@ -735,7 +735,7 @@ public final class DeathChestBlock {
 		
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_EXPIRED);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED);
 		}
 		
 		// destroy DeathChestBlock

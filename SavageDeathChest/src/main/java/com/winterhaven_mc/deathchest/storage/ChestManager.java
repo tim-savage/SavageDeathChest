@@ -300,7 +300,7 @@ public final class ChestManager {
 //			// if player does not have a chest in their inventory
 //			// output message and return, allowing inventory items to drop on ground
 //			if (!hasChest(chestItems)) {
-//				plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+//				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 //				return droppedItems;
 //			}
 //
@@ -371,7 +371,7 @@ public final class ChestManager {
 //			// use try..catch block here so a messaging error does not cause item duplication
 //			try {
 //				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
-//					plugin.messageManager.sendPlayerMessage(player,
+//					plugin.messageManager.sendMessage(player,
 //							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
 //					if (plugin.debug) {
 //						plugin.getLogger().info("Chest deployment prevented by "
@@ -379,13 +379,13 @@ public final class ChestManager {
 //					}
 //				}
 //				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
-//					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_ADJACENT);
+//					plugin.messageManager.sendMessage(player,	MessageId.CHEST_DENIED_ADJACENT);
 //					if (plugin.debug) {
 //						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
 //					}
 //				}
 //				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
-//					plugin.messageManager.sendPlayerMessage(player,	MessageId.CHEST_DENIED_BLOCK);
+//					plugin.messageManager.sendMessage(player,	MessageId.CHEST_DENIED_BLOCK);
 //					if (plugin.debug) {
 //						plugin.getLogger().info("Chest deployment prevented by non-replaceable block.");
 //					}
@@ -437,7 +437,7 @@ public final class ChestManager {
 //		placeChestSign(player,chestBlock);
 //
 //		// send success message to player
-//		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
+//		plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
 //
 //		// return list of items that did not fit in chest
 //		return noFit;
@@ -473,7 +473,7 @@ public final class ChestManager {
 //			// use try..catch block here so a messaging error does not cause item duplication
 //			try {
 //				if (SearchResult.PROTECTION_PLUGIN.equals(result)) {
-//					plugin.messageManager.sendPlayerMessage(player,
+//					plugin.messageManager.sendMessage(player,
 //							MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
 //					if (plugin.debug) {
 //						plugin.getLogger().info("Chest deployment prevented by "
@@ -481,14 +481,14 @@ public final class ChestManager {
 //					}
 //				}
 //				else if (SearchResult.ADJACENT_CHEST.equals(result)) {
-//					plugin.messageManager.sendPlayerMessage(player,
+//					plugin.messageManager.sendMessage(player,
 //							MessageId.CHEST_DENIED_ADJACENT);
 //					if (plugin.debug) {
 //						plugin.getLogger().info("Chest deployment prevented by adjacent chest.");
 //					}
 //				}
 //				else if (SearchResult.NON_REPLACEABLE_BLOCK.equals(result)) {
-//					plugin.messageManager.sendPlayerMessage(player,
+//					plugin.messageManager.sendMessage(player,
 //							MessageId.CHEST_DENIED_BLOCK);
 //					if (plugin.debug) {
 //						plugin.getLogger().info("Chest deployment prevented by non-replaceable blocks.");
@@ -609,7 +609,7 @@ public final class ChestManager {
 //
 //		// if block at second chest location is not valid, send message and return remaining_items
 //		if (result2 == null || result2 != SearchResult.SUCCESS) {
-//			plugin.messageManager.sendPlayerMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
+//			plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
 //			return remainingItems;
 //		}
 //
@@ -642,7 +642,7 @@ public final class ChestManager {
 //		taskManager.createExpireBlockTask(deathChestBlock2);
 //
 //		// send success message to player
-//		plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
+//		plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
 //
 //		// return list of items that did not fit in chest
 //		return noFitItems;

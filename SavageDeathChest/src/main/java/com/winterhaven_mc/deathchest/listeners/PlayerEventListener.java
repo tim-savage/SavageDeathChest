@@ -62,7 +62,7 @@ public final class PlayerEventListener implements Listener {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_PERMISSION);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PERMISSION);
 			return;
 		}
 
@@ -73,13 +73,13 @@ public final class PlayerEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-deploy")
 				&& !player.hasPermission("deathchest.creative-deploy")) {
-			plugin.messageManager.sendPlayerMessage(player, MessageId.CREATIVE_MODE);
+			plugin.messageManager.sendMessage(player, MessageId.CREATIVE_MODE);
 			return;
 		}
 
 		// if player inventory is empty, output message and return
 		if (droppedItems.isEmpty()) {
-			plugin.messageManager.sendPlayerMessage(player, MessageId.INVENTORY_EMPTY);
+			plugin.messageManager.sendMessage(player, MessageId.INVENTORY_EMPTY);
 			return;
 		}
 
@@ -95,31 +95,31 @@ public final class PlayerEventListener implements Listener {
 		// send message based on result
 		switch (result) {
 			case NO_CHEST:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 				break;
 
 			case PARTIAL_SUCCCESS:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
+				plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
 				break;
 
 			case ABOVE_GRASS_PATH:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_BLOCK);
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
 				break;
 
 			case NON_REPLACEABLE_BLOCK:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_BLOCK);
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
 				break;
 
 			case ADJACENT_CHEST:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_ADJACENT);
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_ADJACENT);
 				break;
 
 			case PROTECTION_PLUGIN:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
 				break;
 
 			default:
-				plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_SUCCESS);
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
 				break;
 		}
 
@@ -154,7 +154,7 @@ public final class PlayerEventListener implements Listener {
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
 			event.setCancelled(true);
-			plugin.messageManager.sendPlayerMessage(player, MessageId.NO_CREATIVE_ACCESS);
+			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS);
 			return;
 		}
 
@@ -174,7 +174,7 @@ public final class PlayerEventListener implements Listener {
 			event.setCancelled(true);
 
 			// send player message
-			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_CURRENTLY_OPEN);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -207,7 +207,7 @@ public final class PlayerEventListener implements Listener {
 			}
 
 			// send player not-owner message
-			plugin.messageManager.sendPlayerMessage(player, MessageId.NOT_OWNER);
+			plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -240,7 +240,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// send player not-owner message
-		plugin.messageManager.sendPlayerMessage(player, MessageId.NOT_OWNER);
+		plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER);
 
 		// play denied access sound
 		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);

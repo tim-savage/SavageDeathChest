@@ -65,7 +65,7 @@ public final class MessageManager extends AbstractMessageManager {
 	 * @param recipient the recipient to whom to send a message
 	 * @param messageId the message identifier
 	 */
-	public void sendPlayerMessage(final CommandSender recipient, final MessageId messageId) {
+	public void sendMessage(final CommandSender recipient, final MessageId messageId) {
 
 		// get default replacement map
 		Map<String,String> replacements = getDefaultReplacements(recipient);
@@ -82,9 +82,9 @@ public final class MessageManager extends AbstractMessageManager {
 	 * @param messageId the message identifier
 	 * @param protectionPlugin the protection plugin whose name will be used in the message
 	 */
-	public void sendPlayerMessage(final CommandSender recipient,
-								  final MessageId messageId,
-								  final ProtectionPlugin protectionPlugin) {
+	public void sendMessage(final CommandSender recipient,
+							final MessageId messageId,
+							final ProtectionPlugin protectionPlugin) {
 
 		//TODO is this check necessary?
 		// if recipient is null, do nothing and return
