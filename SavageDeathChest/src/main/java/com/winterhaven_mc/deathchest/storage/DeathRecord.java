@@ -26,6 +26,12 @@ public class DeathRecord {
 
     /**
      * class constructor
+     */
+    DeathRecord() {}
+
+
+    /**
+     * class constructor
      * @param player chest owner
      */
     public DeathRecord(Player player) {

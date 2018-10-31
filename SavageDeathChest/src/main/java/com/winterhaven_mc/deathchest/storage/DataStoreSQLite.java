@@ -1,6 +1,5 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import com.winterhaven_mc.deathchest.chests.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -8,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -81,7 +81,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	final DeathChestBlock getRecord(final Location location) {
+	final DeathRecord getRecord(final Location location) {
 
 		// if location is null, return null object
 		if (location == null) {
@@ -89,12 +89,12 @@ final class DataStoreSQLite extends DataStore {
 		}
 
 		// create new DeathChestBlock object for return
-		final DeathChestBlock deathChestBlock = new DeathChestBlock();
+		final DeathRecord deathRecord = new DeathRecord();
 
 		try {
 
 			PreparedStatement preparedStatement = 
-					connection.prepareStatement(Queries.getQuery("SelectDeathChestBlock"));
+					connection.prepareStatement(Queries.getQuery("SelectDeathRecord"));
 
 			preparedStatement.setString(1, location.getWorld().getName());
 			preparedStatement.setInt(2, location.getBlockX());
@@ -109,23 +109,23 @@ final class DataStoreSQLite extends DataStore {
 
 				// try to convert owner uuid from stored string, or set to null if invalid uuid
 				try {
-					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
+					deathRecord.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					deathRecord.setOwnerUUID(null);
 				}
 
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
 				try {
-					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
+					deathRecord.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setOwnerUUID(null);
+					deathRecord.setOwnerUUID(null);
 				}
 
 				// set other fields in deathChestBlock from database
-				deathChestBlock.setLocation(location);
-				deathChestBlock.setExpiration(rs.getLong("expiration"));
+				deathRecord.setLocation(location);
+				deathRecord.setExpiration(rs.getLong("expiration"));
 			}
 
 			// return null if no matching location exists in database
@@ -146,18 +146,19 @@ final class DataStoreSQLite extends DataStore {
 			}
 		}
 
-		return deathChestBlock;
+		return deathRecord;
 	}
 
-	@Override
-	public final ArrayList<DeathChestBlock> getAllRecords() {
 
-		final ArrayList<DeathChestBlock> results = new ArrayList<>();
+	@Override
+	public final Collection<DeathRecord> getAllRecords() {
+
+		final Collection<DeathRecord> results = new ArrayList<>();
 
 		try {
 
 			PreparedStatement preparedStatement = 
-					connection.prepareStatement(Queries.getQuery("SelectAllDeathChestBlocks"));
+					connection.prepareStatement(Queries.getQuery("SelectAllDeathRecords"));
 
 			// execute sql query
 			ResultSet rs = preparedStatement.executeQuery();
@@ -165,11 +166,11 @@ final class DataStoreSQLite extends DataStore {
 			while (rs.next()) {
 
 				// create empty DeathChestBlock object
-				DeathChestBlock deathChestBlock = new DeathChestBlock();
+				DeathRecord deathRecord = new DeathRecord();
 
 				// try to convert owner uuid from stored string
 				try {
-					deathChestBlock.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
+					deathRecord.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
 				}
 				catch (Exception e) {
 					plugin.getLogger().warning("[SQLite getAllRecords] An error occured while trying to set ownerUUID.");
@@ -180,10 +181,10 @@ final class DataStoreSQLite extends DataStore {
 
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
 				try {
-					deathChestBlock.setKillerUUID(UUID.fromString(rs.getString("killerid")));
+					deathRecord.setKillerUUID(UUID.fromString(rs.getString("killerid")));
 				}
 				catch (Exception e) {
-					deathChestBlock.setKillerUUID(null);
+					deathRecord.setKillerUUID(null);
 				}
 
 				String worldName = rs.getString("worldname");
@@ -206,11 +207,11 @@ final class DataStoreSQLite extends DataStore {
 						rs.getInt("z"));
 
 				// set other fields in deathChestBlock from database fields
-				deathChestBlock.setLocation(location);
-				deathChestBlock.setExpiration(rs.getLong("expiration"));
+				deathRecord.setLocation(location);
+				deathRecord.setExpiration(rs.getLong("expiration"));
 
 				// add DeathChestObject to results ArrayList
-				results.add(deathChestBlock);
+				results.add(deathRecord);
 			}
 		}
 		catch (SQLException e) {
@@ -231,10 +232,10 @@ final class DataStoreSQLite extends DataStore {
 	}
 
 	@Override
-	public synchronized final void putRecord(final DeathChestBlock deathChestBlock) {
+	public synchronized final void putRecord(final DeathRecord deathRecord) {
 
 		// if passed deathChestBlock is null, do nothing and return
-		if (deathChestBlock == null) {
+		if (deathRecord == null) {
 			return;
 		}
 
@@ -245,17 +246,17 @@ final class DataStoreSQLite extends DataStore {
 				// catch invalid player uuid exception
 				String ownerid;
 				try {
-					ownerid = deathChestBlock.getOwnerUUID().toString();
+					ownerid = deathRecord.getOwnerUUID().toString();
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("DeathChestBlock owner UUID is invalid.");
+					plugin.getLogger().warning("DeathRecord owner UUID is invalid.");
 					return;
 				}
 
 				// catch invalid killer uuid exception
 				String killerid;
 				try {
-					killerid = deathChestBlock.getKillerUUID().toString();
+					killerid = deathRecord.getKillerUUID().toString();
 				}
 				catch (Exception e) {
 					killerid = null;
@@ -264,15 +265,15 @@ final class DataStoreSQLite extends DataStore {
 				try {
 					// create prepared statement
 					PreparedStatement preparedStatement =
-							connection.prepareStatement(Queries.getQuery("InsertDeathChestBlock"));
+							connection.prepareStatement(Queries.getQuery("InsertDeathRecord"));
 
 					preparedStatement.setString(1, ownerid);
 					preparedStatement.setString(2, killerid);
-					preparedStatement.setString(3, deathChestBlock.getLocation().getWorld().getName());
-					preparedStatement.setInt(4, deathChestBlock.getLocation().getBlockX());
-					preparedStatement.setInt(5, deathChestBlock.getLocation().getBlockY());
-					preparedStatement.setInt(6, deathChestBlock.getLocation().getBlockZ());
-					preparedStatement.setLong(7, deathChestBlock.getExpiration());
+					preparedStatement.setString(3, deathRecord.getLocation().getWorld().getName());
+					preparedStatement.setInt(4, deathRecord.getLocation().getBlockX());
+					preparedStatement.setInt(5, deathRecord.getLocation().getBlockY());
+					preparedStatement.setInt(6, deathRecord.getLocation().getBlockZ());
+					preparedStatement.setLong(7, deathRecord.getExpiration());
 
 					// execute prepared statement
 					int rowsAffected = preparedStatement.executeUpdate();
@@ -351,7 +352,7 @@ final class DataStoreSQLite extends DataStore {
 				try {
 					// create prepared statement
 					PreparedStatement preparedStatement =
-							connection.prepareStatement(Queries.getQuery("DeleteDeathChestBlock"));
+							connection.prepareStatement(Queries.getQuery("DeleteDeathRecord"));
 
 					preparedStatement.setString(1, location.getWorld().getName());
 					preparedStatement.setInt(2, location.getBlockX());
@@ -395,7 +396,7 @@ final class DataStoreSQLite extends DataStore {
 		try {
 			// create prepared statement
 			PreparedStatement preparedStatement = 
-					connection.prepareStatement(Queries.getQuery("DeleteExpiredDeathChestBlock"));
+					connection.prepareStatement(Queries.getQuery("DeleteExpiredDeathRecord"));
 
 			preparedStatement.setString(1, worldName);
 			preparedStatement.setLong(2, pastDueTime);
