@@ -1,7 +1,6 @@
 package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.*;
-import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.ChestUtilities;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 
@@ -24,8 +23,6 @@ public final class ChestManager {
 	// reference to main class
 	private final PluginMain plugin;
 
-	private final TaskManager taskManager;
-
 	// material types that can be replaced by death chests
 	private Set<Material> replaceableBlocks;
 
@@ -46,9 +43,6 @@ public final class ChestManager {
 		
 		// set reference to main class
 		this.plugin = plugin;
-
-		// instantiate task manager
-		taskManager = new TaskManager(plugin);
 
 		// load replaceable blocks
 		replaceableBlocks = new HashSet<>(loadReplaceableBlocks());
@@ -129,7 +123,7 @@ public final class ChestManager {
 			}
 			else {
 				// schedule task to expire at appropriate time
-				taskManager.createExpireBlockTask(deathChestBlock);
+				deathChestBlock.createExpireChestTask();
 			}
 		}
 	}
@@ -194,7 +188,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(deathChestBlock);
 
 		// create expire task for deathChestBlock
-		taskManager.createExpireBlockTask(deathChestBlock);
+		deathChestBlock.createExpireChestTask();
 
 		// place sign on left chest
 		placeSign(player, result.getLocation().getBlock());
@@ -268,7 +262,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(rightChestBlock);
 
 		// create expire task for deathChestBlock
-		taskManager.createExpireBlockTask(rightChestBlock);
+		deathChestBlock.createExpireChestTask();
 
 		return result;
 	}
@@ -308,7 +302,7 @@ public final class ChestManager {
 //		plugin.dataStore.putRecord(deathChestBlock);
 //
 //		// create expire task for deathChestBlock
-//		taskManager.createExpireBlockTask(deathChestBlock);
+//		taskManager.createExpireChestTask(deathChestBlock);
 
 	}
 
@@ -405,7 +399,7 @@ public final class ChestManager {
 		plugin.dataStore.putRecord(deathChestBlock);
 		
 		// create expire task for deathChestBlock
-		taskManager.createExpireBlockTask(deathChestBlock);
+		deathChestBlock.createExpireChestTask();
 
 		// return success
 		return true;
@@ -550,6 +544,7 @@ public final class ChestManager {
 				}
 			}
 		}
+
 		// no valid location could be found, so return result
 		if (plugin.debug) {
 			plugin.getLogger().info("Locations tested: " + testCount);

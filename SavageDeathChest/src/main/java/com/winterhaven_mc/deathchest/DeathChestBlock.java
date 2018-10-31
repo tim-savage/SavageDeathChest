@@ -4,6 +4,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
+import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,10 +20,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 
@@ -323,7 +322,7 @@ public final class DeathChestBlock {
 	 * Setter method for DeathChestBlock expireTaskId
 	 * @param expireTaskId the bukkit task id of the expire task associated with this DeathChestBlock object
      */
-	public final void setExpireTaskId(final int expireTaskId) {
+	private void setExpireTaskId(final int expireTaskId) {
 
 		// set expire task id in this DeathChestBlock object
 		this.expireTaskId = expireTaskId;
@@ -855,5 +854,33 @@ public final class DeathChestBlock {
 			}
 		}
 	}
+
+	// start death chest block expire task
+	public final void createExpireChestTask() {
+
+		// if DeathChestBlock expiration is zero or less, it is set to never expire; output debug message and return.
+		if (this.getExpiration() < 1) {
+			return;
+		}
+
+		// get current time
+		Long currentTime = System.currentTimeMillis();
+
+		// get death chest block expire time
+		Long expireTime = this.getExpiration();
+
+		// compute ticks remaining until expire time
+		long ticksRemaining = (expireTime - currentTime) / 50;
+		if (ticksRemaining < 1) {
+			ticksRemaining = (long) 1;
+		}
+
+		// create task to expire death chest block after ticksRemaining
+		BukkitTask blockExpireTask = new ExpireChestTask(this).runTaskLater(plugin, ticksRemaining);
+
+		// set taskId in deathChestBlock
+		this.setExpireTaskId(blockExpireTask.getTaskId());
+	}
+
 
 }
