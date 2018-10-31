@@ -5,8 +5,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 
 public final class ChestUtilities {
@@ -69,6 +71,39 @@ public final class ChestUtilities {
 				break;
 			}
 		}
+	}
+
+
+	/**
+	 * Combine ItemStacks of same material up to max stack size
+	 * @param itemStacks	Collection of ItemStacks to combine
+	 * @return List of ItemStack with same materials combined
+	 */
+	public static List<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
+
+		final List<ItemStack> returnList = new ArrayList<>();
+
+		for (ItemStack itemStack : itemStacks) {
+			if (itemStack == null) {
+				continue;
+			}
+
+			for (ItemStack checkStack : returnList) {
+				if (checkStack == null) {
+					continue;
+				}
+				if (checkStack.isSimilar(itemStack)) {
+					int transferAmount =
+							Math.min(itemStack.getAmount(),checkStack.getMaxStackSize() - checkStack.getAmount());
+					itemStack.setAmount(itemStack.getAmount() - transferAmount);
+					checkStack.setAmount(checkStack.getAmount()	+ transferAmount);
+				}
+			}
+			if (itemStack.getAmount() > 0) {
+				returnList.add(itemStack);
+			}
+		}
+		return returnList;
 	}
 
 }
