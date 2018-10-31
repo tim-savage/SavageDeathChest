@@ -8,6 +8,9 @@ import com.winterhaven_mc.deathchest.SearchResult;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
 
+import static com.winterhaven_mc.deathchest.util.ChestUtilities.*;
+import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
 public final class ChestManager {
@@ -59,7 +60,39 @@ public final class ChestManager {
 		loadDeathChestBlocks();
 	}
 
-	
+
+	/**
+	 * Get Set of replaceable blocks
+	 * @return Set of replaceable blocks
+	 */
+	public Set<Material> getReplaceableBlocks() {
+		return replaceableBlocks;
+	}
+
+
+	/**
+	 * Load list of replaceable blocks from config file
+	 */
+	public Set<Material> loadReplaceableBlocks() {
+
+		// get string list of materials from config file
+		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
+
+		Set<Material> returnSet = new HashSet<>();
+
+		// iterate over string list
+		for (String materialString : materialStringList) {
+
+			// if material string matches a valid material type, add to replaceableBlocks HashSet
+			if (Material.matchMaterial(materialString) != null) {
+				returnSet.add(Material.matchMaterial(materialString));
+			}
+		}
+
+		return returnSet;
+	}
+
+
 	/**
 	 * Loads death chest blocks from datastore<br>
 	 * expires death chest blocks whose time has passed<br>
@@ -671,9 +704,9 @@ public final class ChestManager {
 		
 		// get player facing direction (yaw)
 		float yaw = player.getLocation().getYaw();
-		
+
 		// get block adjacent to chest facing player direction
-		Block signblock = chestBlock.getRelative(LocationUtilities.getCardinalDirection(yaw));
+		Block signblock = chestBlock.getRelative(getCardinalDirection(player));
 		
 		// if chest face is valid location, create wall sign
 		if (isValidSignLocation(player,signblock.getLocation())) {
@@ -734,7 +767,7 @@ public final class ChestManager {
 		
 		// set sign facing direction
 		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signblockState.getData();
-		signData.setFacingDirection(LocationUtilities.getCardinalDirection(yaw));
+		signData.setFacingDirection(getCardinalDirection(yaw));
 		sign.setData(signData);
 		
 		// update sign block with text and direction
@@ -754,68 +787,6 @@ public final class ChestManager {
 	}
 
 
-	/**
-	 * Check if Collection of ItemStack contains at least one chest
-	 * @param itemStacks Collection of ItemStack to check for chest
-	 * @return boolean
-	 */
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	private boolean hasChest(final Collection<ItemStack> itemStacks) {
-		boolean result = false;
-		for (ItemStack itemStack : itemStacks) {
-			if (itemStack.getType().equals(Material.CHEST)) {
-				result = true;
-				break;
-			}
-		}
-		return result;
-	}
-
-
-//	/**
-//	 * Remove one chest from list of item stacks
-//	 * @param itemStacks List of ItemStack to remove chest
-//	 * @return List of ItemStack with one chest removed
-//	 */
-//	private List<ItemStack> removeOneChest(final List<ItemStack> itemStacks) {
-//
-//		for (int i = 0; i < itemStacks.size(); i++) {
-//			ItemStack stack = itemStacks.get(i);
-//			if (stack.getType().equals(Material.CHEST)) {
-//				if (stack.getAmount() == 1) {
-//					itemStacks.remove(i);
-//				}
-//				else {
-//					stack.setAmount(stack.getAmount() - 1);
-//				}
-//				break;
-//			}
-//		}
-//		return itemStacks;
-//	}
-
-
-	/**
-	 * Remove one chest from list of item stacks
-	 * @param itemStacks List of ItemStack to remove chest
-	 */
-	private void removeOneChest(final List<ItemStack> itemStacks) {
-
-		for (int i = 0; i < itemStacks.size(); i++) {
-			ItemStack stack = itemStacks.get(i);
-			if (stack.getType().equals(Material.CHEST)) {
-				if (stack.getAmount() == 1) {
-					itemStacks.remove(i);
-				}
-				else {
-					stack.setAmount(stack.getAmount() - 1);
-				}
-				break;
-			}
-		}
-	}
-
-
 	private List<ItemStack> fillChest(final Chest chest, final List<ItemStack> itemStacks) {
 
 		// convert itemStacks list to array
@@ -825,17 +796,6 @@ public final class ChestManager {
 		// return list of items that did not fit in chest
 		return new ArrayList<>(chest.getInventory().addItem(stackArray).values());
 	}
-
-
-//	private List<ItemStack> fillChest(final Inventory inventory, final List<ItemStack> itemStacks) {
-//
-//		// convert itemStacks list to array
-//		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
-//		stackArray = itemStacks.toArray(stackArray);
-//
-//		// return list of items that did not fit in chest
-//		return new ArrayList<>(inventory.addItem(stackArray).values());
-//	}
 
 
 	/**
@@ -992,6 +952,7 @@ public final class ChestManager {
 			return result;
 		}
 
+		// if test is to be a double chest, test right chest location
 		if (chestSize.equals(ChestSize.DOUBLE)) {
 
 			// test right chest block location
@@ -1001,6 +962,7 @@ public final class ChestManager {
 			}
 		}
 
+		// return successful search result with location
 		result = SearchResult.SUCCESS;
 		result.setLocation(testLocation);
 		return SearchResult.SUCCESS;
@@ -1012,15 +974,15 @@ public final class ChestManager {
 											   final ChestElement chestElement) {
 
 		// get block at passed location
-		Block leftBlock = testLocation.getBlock();
+		Block block = testLocation.getBlock();
 
 		// if block at location is not replaceable block, return negative result
-		if (!getReplaceableBlocks().contains(leftBlock.getType())) {
+		if (!getReplaceableBlocks().contains(block.getType())) {
 			return SearchResult.NON_REPLACEABLE_BLOCK;
 		}
 
 		// if block at location is above grass path, return negative result
-		if (isAboveGrassPath(leftBlock)) {
+		if (isAboveGrassPath(block)) {
 			return SearchResult.ABOVE_GRASS_PATH;
 		}
 
@@ -1039,51 +1001,16 @@ public final class ChestManager {
 		}
 
 //		// if block at location is protected by plugin, return negative result
-//		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, leftBlock);
+//		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 //		if (blockingPlugin != null) {
 //			SearchResult result = SearchResult.PROTECTION_PLUGIN;
 //			result.setProtectionPlugin(blockingPlugin);
 //			return result;
 //		}
 
+		SearchResult result = SearchResult.SUCCESS;
+		result.setLocation(testLocation);
 		return SearchResult.SUCCESS;
-	}
-
-
-	/**
-	 * Get Set of replaceable blocks
-	 * @return Set of replaceable blocks
-	 */
-	public Set<Material> getReplaceableBlocks() {
-		return replaceableBlocks;
-	}
-
-
-	/**
-	 * Load list of replaceable blocks from config file
-	 */
-	public Set<Material> loadReplaceableBlocks() {
-
-		// get string list of materials from config file
-		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
-
-		Set<Material> returnSet = new HashSet<>();
-
-		// iterate over string list
-		for (String materialString : materialStringList) {
-
-			// if material string matches a valid material type, add to replaceableBlocks HashSet
-			if (Material.matchMaterial(materialString) != null) {
-				returnSet.add(Material.matchMaterial(materialString));
-			}
-		}
-
-		return returnSet;
-	}
-
-
-	private boolean isAboveGrassPath(final Block block) {
-		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
 	}
 
 
@@ -1098,13 +1025,7 @@ public final class ChestManager {
 		Block block = location.getBlock();
 
 		// check if block at location is a ReplaceableBlock
-		if (!getReplaceableBlocks().contains(block.getType())) {
-			return false;
-		}
-
-		// check all enabled protection plugins for player permission at location
-		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
-		return (blockingPlugin == null);
+		return getReplaceableBlocks().contains(block.getType());
 	}
 
 }
