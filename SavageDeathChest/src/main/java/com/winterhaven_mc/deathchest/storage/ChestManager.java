@@ -3,7 +3,6 @@ package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.SearchResult;
 import com.winterhaven_mc.deathchest.tasks.TaskManager;
 import com.winterhaven_mc.deathchest.util.LocationUtilities;
@@ -199,7 +198,7 @@ public final class ChestManager {
 		taskManager.createExpireBlockTask(deathChestBlock);
 
 		// place sign on left chest
-		placeChestSign(player, result.getLocation().getBlock());
+		placeSign(player, result.getLocation().getBlock());
 
 		// if chest size is single and result is success, return
 		if (chestSize.equals(ChestSize.SINGLE) && result.equals(SearchResult.SUCCESS)) {
@@ -434,7 +433,7 @@ public final class ChestManager {
 //		taskManager.createExpireBlockTask(deathChestBlock);
 //
 //		// place sign on chest
-//		placeChestSign(player,chestBlock);
+//		placeSign(player,chestBlock);
 //
 //		// send success message to player
 //		plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
@@ -538,7 +537,7 @@ public final class ChestManager {
 //		taskManager.createExpireBlockTask(deathChestBlock);
 //
 //		// place sign on chest
-//		placeChestSign(player,leftChestBlock);
+//		placeSign(player,leftChestBlock);
 //
 //		// PLACE RIGHT CHEST
 //
@@ -590,7 +589,7 @@ public final class ChestManager {
 //		List<ItemStack> remainingItems = fillChest(chest,droppedItems);
 //
 //		// place sign on chest
-//		placeChestSign(player,block);
+//		placeSign(player,block);
 //
 //		// create DeathChestBlock object
 //		DeathChestBlock deathChestBlock = new DeathChestBlock(player,block);
@@ -695,7 +694,7 @@ public final class ChestManager {
 	 * @return boolean		Success or failure to place sign
 	 */
 	@SuppressWarnings("UnusedReturnValue")
-	private boolean placeChestSign(final Player player, final Block chestBlock) {
+	private boolean placeSign(final Player player, final Block chestBlock) {
 		
 		// if chest-signs are not enabled in configuration, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-signs")) {
