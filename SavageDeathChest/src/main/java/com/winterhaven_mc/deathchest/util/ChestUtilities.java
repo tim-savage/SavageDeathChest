@@ -6,7 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 
 
 public final class ChestUtilities {
@@ -52,22 +52,23 @@ public final class ChestUtilities {
 	 * the list and return. If a stack contains more than one chest, decrease the stack amount by one and return.
 	 * @param itemStacks List of ItemStack to remove chest
 	 */
-	public static void removeOneChest(final List<ItemStack> itemStacks) {
+	public static void removeOneChest(final Collection<ItemStack> itemStacks) {
 
-		for (int i = 0; i < itemStacks.size(); i++) {
-			ItemStack stack = itemStacks.get(i);
-			if (stack.getType().equals(Material.CHEST)) {
-				if (stack.getAmount() == 1) {
-					itemStacks.remove(i);
-				}
-				else {
-					stack.setAmount(stack.getAmount() - 1);
+		Iterator<ItemStack> iterator = itemStacks.iterator();
+
+		while (iterator.hasNext()) {
+
+			ItemStack itemStack = iterator.next();
+
+			if (itemStack.getType().equals(Material.CHEST)) {
+				if (itemStack.getAmount() == 1) {
+					iterator.remove();
+				} else {
+					itemStack.setAmount(itemStack.getAmount() - 1);
 				}
 				break;
 			}
 		}
 	}
-
-
 
 }
