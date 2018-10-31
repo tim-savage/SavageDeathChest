@@ -91,8 +91,8 @@ public final class PlayerEventListener implements Listener {
 
 		// send message based on result
 		switch (result.getResultCode()) {
-			case NO_CHEST:
-				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+			case SUCCESS:
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
 				break;
 
 			case PARTIAL_SUCCCESS:
@@ -115,8 +115,8 @@ public final class PlayerEventListener implements Listener {
 				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
 				break;
 
-			default:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
+			case NO_CHEST:
+				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 				break;
 		}
 
@@ -125,7 +125,7 @@ public final class PlayerEventListener implements Listener {
 
 	/** prevent deathchest opening by non-owners or creative players
 	 * 
-	 * @param	event	PlayerInteractEvent
+	 * @param event PlayerInteractEvent
 	 */
 	@EventHandler(priority=EventPriority.HIGH)
 	public final void onPlayerInteract(final PlayerInteractEvent event) {
