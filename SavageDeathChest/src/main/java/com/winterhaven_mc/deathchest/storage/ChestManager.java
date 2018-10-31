@@ -560,15 +560,15 @@ public final class ChestManager {
 
 
 	private Result validateChestLocation(final Player player,
-											   final Location testLocation,
-											   final ChestSize chestSize) {
+										 final Location location,
+										 final ChestSize chestSize) {
 
 		// declare result
 		Result result;
 
 		// test left chest block location
 		result = validateChestLocation(player,
-				testLocation,
+				location,
 				ChestElement.LEFT_CHEST);
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
@@ -576,7 +576,7 @@ public final class ChestManager {
 
 		// test sign block location
 		result = validateChestLocation(player,
-				LocationUtilities.getLocationToFront(testLocation),
+				LocationUtilities.getLocationToFront(location),
 				ChestElement.SIGN);
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
@@ -587,7 +587,7 @@ public final class ChestManager {
 
 			// test right chest block location
 			result = validateChestLocation(player,
-					LocationUtilities.getLocationToRight(testLocation),
+					LocationUtilities.getLocationToRight(location),
 					ChestElement.RIGHT_CHEST);
 			if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 				return result;
