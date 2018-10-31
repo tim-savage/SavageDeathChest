@@ -439,39 +439,6 @@ public final class DeathChestBlock {
 
 
 	/**
-	 * Combine ItemStacks of same material up to max stack size
-	 * @param itemStacks	Collection of ItemStacks to combine
-	 * @return List of ItemStack with same materials combined
-	 */
-	public static List<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
-
-		final List<ItemStack> returnList = new ArrayList<>();
-
-		for (ItemStack itemStack : itemStacks) {
-			if (itemStack == null) {
-				continue;
-			}
-
-			for (ItemStack checkStack : returnList) {
-				if (checkStack == null) {
-					continue;
-				}
-				if (checkStack.isSimilar(itemStack)) {
-					int transferAmount = 
-							Math.min(itemStack.getAmount(),checkStack.getMaxStackSize() - checkStack.getAmount());
-					itemStack.setAmount(itemStack.getAmount() - transferAmount);
-					checkStack.setAmount(checkStack.getAmount()	+ transferAmount);
-				}
-			}
-			if (itemStack.getAmount() > 0) {
-				returnList.add(itemStack);
-			}
-		}
-		return returnList;
-	}
-
-
-	/**
 	 * Test if a block is a DeathChestBlock; either signs or chests with deathchest metadata
 	 * @param block The block to test if it is a DeathChestBlock
 	 * @return boolean True if block has deathchest-owner metadata, false if it does not
@@ -775,10 +742,19 @@ public final class DeathChestBlock {
 	 */
 	public final void openInventory(final Player player) {
 
-		//TODO: Consider using sign attached block method if this block is a DeathSign
-
 		// get the block state of block represented by this DeathChestBlock
-		final BlockState blockState = this.getLocation().getBlock().getState();
+		BlockState blockState = this.getLocation().getBlock().getState();
+
+		// if block is a sign or wall sign, get attached block
+		if (blockState.getType().equals(Material.SIGN) || blockState.getType().equals((Material.WALL_SIGN))) {
+			Block block = this.getAttachedBlock();
+
+			// if attached block returned null, do nothing and return
+			if (block != null) {
+				blockState = this.getAttachedBlock().getState();
+			}
+			else return;
+		}
 
 		// if block state is not a chest block, do nothing and return
 		if (!blockState.getType().equals(Material.CHEST)) {
