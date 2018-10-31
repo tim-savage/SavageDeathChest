@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.winterhaven_mc.deathchest.DeathChestBlock;
 
 
-final class ExpireChestTask extends BukkitRunnable {
+final public class ExpireChestTask extends BukkitRunnable {
 
 	// death chest block to expire
 	private final DeathChestBlock deathChestBlock;
@@ -13,7 +13,7 @@ final class ExpireChestTask extends BukkitRunnable {
 	/**
 	 * Class constructor
 	 */
-	ExpireChestTask(final DeathChestBlock deathChestBlock) {
+	public ExpireChestTask(final DeathChestBlock deathChestBlock) {
 		
 		// set death chest block field
 		this.deathChestBlock = deathChestBlock;		
