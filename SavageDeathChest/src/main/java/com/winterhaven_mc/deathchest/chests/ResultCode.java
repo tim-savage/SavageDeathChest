@@ -1,9 +1,9 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.chests;
 
-public enum ResultCode {
+enum ResultCode {
 
 	SUCCESS,
-	PARTIAL_SUCCCESS,
+	PARTIAL_SUCCESS,
 	PROTECTION_PLUGIN,
 	NON_REPLACEABLE_BLOCK,
 	ABOVE_GRASS_PATH,
