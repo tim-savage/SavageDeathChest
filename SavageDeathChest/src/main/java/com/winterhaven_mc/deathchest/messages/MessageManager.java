@@ -48,7 +48,8 @@ public final class MessageManager extends AbstractMessageManager {
 		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
 		replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
 
-		replacements.put("%EXPIRE_TIME%",getTimeString(plugin.getConfig().getInt("teleport-warmup")));
+//		replacements.put("%EXPIRE_TIME%",getTimeString(plugin.getConfig().getInt("teleport-warmup")));
+		replacements.put("%EXPIRE_TIME%",getExpireTimeString());
 
 		if (recipient instanceof Player) {
 			Player player = (Player)recipient;
@@ -115,7 +116,7 @@ public final class MessageManager extends AbstractMessageManager {
 
 		// if configured expire-time < 1, set expiretime string to "unlimited"
 		if (expiration < 1) {
-			expireTime = messages.getString("UNLIMITED");
+			expireTime = messages.getString("unlimited");
 		}
 		// otherwise, set string to hours and minutes remaining
 		else {
