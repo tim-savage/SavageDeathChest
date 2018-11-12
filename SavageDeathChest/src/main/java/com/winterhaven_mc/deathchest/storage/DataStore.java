@@ -1,8 +1,9 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import org.bukkit.Location;
+import com.winterhaven_mc.deathchest.chests.ChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChest;
 
-import java.util.Collection;
+import java.util.List;
 
 
 public abstract class DataStore {
@@ -22,33 +23,45 @@ public abstract class DataStore {
 
 
 	/**
-	 * Retrieve a record from the datastore
-	 * @param location the location key for the record to retrieve
-	 * @return DeathChestBlock
+	 * Retrieve a list of all chest records from the datastore
+	 * @return List of DeathChest
 	 */
-	@SuppressWarnings("unused")
-	abstract DeathRecord getRecord(final Location location);
+	public abstract List<DeathChest> getAllChestRecords();
 
 
 	/**
-	 * Retrieve a list of all records from the datastore
-	 * @return ArrayList of DeathChestBlock
+	 * Retrieve a list of all block records from the datastore
+	 * @return List of ChestBlock
 	 */
-	public abstract Collection<DeathRecord> getAllRecords();
+	public abstract List<ChestBlock> getAllBlockRecords();
 
 
 	/**
-	 * Insert a record in the datastore
-	 * @param deathRecord the DeathRecord object to insert into the datastore
+	 * Insert a chest record in the datastore
+	 * @param deathChest the DeathChest object to insert into the datastore
 	 */
-	public abstract void putRecord(final DeathRecord deathRecord);
+	public abstract void putChestRecord(final DeathChest deathChest);
 
 
 	/**
-	 * Delete a record from the datastore
-	 * @param location the location key for the record to delete
+	 * Insert a block record in the datastore
+	 * @param blockRecord the BlockChest object to insert in the datastore
 	 */
-	public abstract void deleteRecord(final Location location);
+	public abstract void putBlockRecord(final ChestBlock blockRecord);
+
+
+	/**
+	 * Delete a block record from the datastore
+	 * @param chestBlock the chest block to delete
+	 */
+	public abstract void deleteBlockRecord(final ChestBlock chestBlock);
+
+
+	/**
+	 * Delete a chest record from the datastore
+	 * @param deathChest the chest to delete
+	 */
+	public abstract void deleteChestRecord(final DeathChest deathChest);
 
 
 	/**

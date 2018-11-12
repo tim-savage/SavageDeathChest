@@ -1,6 +1,8 @@
 package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.chests.ChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChest;
 
 import java.util.*;
 
@@ -113,15 +115,29 @@ public final class DataStoreFactory {
 					return;
 				}
 			}
-			
-			Collection<DeathRecord> allRecords = oldDataStore.getAllRecords();
-			
-			Iterator<DeathRecord> iterator = allRecords.iterator();
+
+			Collection<DeathChest> allChestRecords = oldDataStore.getAllChestRecords();
+
+			Iterator<DeathChest> chestIterator = allChestRecords.iterator();
 
 			int recordCount = 0;
 
-			while (iterator.hasNext()) {
-				newDataStore.putRecord(iterator.next());
+			while (chestIterator.hasNext()) {
+				newDataStore.putChestRecord(chestIterator.next());
+				recordCount++;
+			}
+
+			plugin.getLogger().info(recordCount + " records converted to "
+					+ newDataStore.getName() + " datastore.");
+
+			Collection<ChestBlock> allBlockRecords = oldDataStore.getAllBlockRecords();
+
+			Iterator<ChestBlock> blockIterator = allBlockRecords.iterator();
+
+			recordCount = 0;
+
+			while (blockIterator.hasNext()) {
+				newDataStore.putBlockRecord(blockIterator.next());
 				recordCount++;
 			}
 

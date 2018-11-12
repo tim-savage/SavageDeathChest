@@ -1,15 +1,19 @@
 package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.chests.ChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChest;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import static com.winterhaven_mc.deathchest.storage.Queries.getQuery;
 
 
 /**
@@ -68,97 +72,185 @@ final class DataStoreSQLite extends DataStore {
 
 		final Statement statement = connection.createStatement();
 
-		// execute table creation statement
-		statement.executeUpdate(Queries.getQuery("CreateBlockTable"));
+		// enable foreign keys
+		statement.executeUpdate(getQuery("EnableForeignKeys"));
+
+		// execute table creation statements
+		statement.executeUpdate(getQuery("CreateDeathChestTable"));
+		statement.executeUpdate(getQuery("CreateDeathBlockTable"));
 
 		// set initialized true
 		setInitialized(true);
 
 		// output log message
 		plugin.getLogger().info(this.getName() + " datastore initialized.");
-
 	}
 
 
+//	@Override
+//	final ChestBlock getBlockByLocation(final Location location) {
+//
+//		// if location is null, return null object
+//		if (location == null) {
+//			return null;
+//		}
+//
+//		// create new DeathChestBlock object for return
+//		final ChestBlock chestBlock = new ChestBlock();
+//
+//		try {
+//
+//			PreparedStatement preparedStatement =
+//					connection.prepareStatement(getQuery("SelectBlockByLocation"));
+//
+//			preparedStatement.setString(1, location.getWorld().getName());
+//			preparedStatement.setInt(2, location.getBlockX());
+//			preparedStatement.setInt(3, location.getBlockY());
+//			preparedStatement.setInt(4, location.getBlockZ());
+//
+//			// execute sql query
+//			ResultSet rs = preparedStatement.executeQuery();
+//
+//			// only zero or one record can match the unique location
+//			if (rs.next()) {
+//
+//				// try to convert owner uuid from stored string, or set to null if invalid uuid
+//				try {
+//					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+//				}
+//				catch (Exception e) {
+//					chestBlock.setChestUUID(null);
+//				}
+//				String worldName = rs.getString("WorldName");
+//
+//				// check that world is valid
+//				if (plugin.getServer().getWorld(worldName) == null) {
+//
+//					// world does not exist, so output log message
+//					plugin.getLogger().warning("Saved deathchest world '" + worldName + "' does not exist.");
+//
+//					// delete all expired records in database that have this invalid world
+//					deleteOrphanedChests(worldName);
+//				}
+//
+//				// create Location object from database fields
+//				Location storedLocation = new Location(plugin.getServer().getWorld(worldName),
+//						rs.getInt("X"),
+//						rs.getInt("Y"),
+//						rs.getInt("Z"));
+//
+//				// set location in deathChestBlock from database fields
+//				chestBlock.setLocation(storedLocation);
+//			}
+//
+//			// return null if no matching location exists in database
+//			else {
+//				return null;
+//			}
+//
+//		}
+//		catch (SQLException e) {
+//
+//			// output simple error message
+//			plugin.getLogger().warning("An error occured while fetching a death chest block from the SQLite database.");
+//			plugin.getLogger().warning(e.getMessage());
+//
+//			// if debugging is enabled, output stack trace
+//			if (plugin.debug) {
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		return chestBlock;
+//	}
+
+
+//	@Override
+//	final List<ChestBlock> getBlocksByChestUUID(final UUID chestUUID) {
+//
+//		// create new List of ChestBlock for return
+//		final List<ChestBlock> results = new ArrayList<>();
+//
+//		// if chestUUID is null, return empty result list
+//		if (chestUUID == null) {
+//			return results;
+//		}
+//
+//		try {
+//
+//			PreparedStatement preparedStatement =
+//					connection.prepareStatement(getQuery("SelectBlocksByChestUUID"));
+//
+//			preparedStatement.setString(1, chestUUID.toString());
+//
+//			// execute sql query
+//			ResultSet rs = preparedStatement.executeQuery();
+//
+//			while (rs.next()) {
+//
+//				final ChestBlock chestBlock = new ChestBlock();
+//
+//				// try to convert owner uuid from stored string, or set to null if invalid uuid
+//				try {
+//					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+//				}
+//				catch (Exception e) {
+//					chestBlock.setChestUUID(null);
+//				}
+//
+//				String worldName = rs.getString("WorldName");
+//
+//				// check that world is valid
+//				if (plugin.getServer().getWorld(worldName) == null) {
+//
+//					// world does not exist, so output log message and continue to next record
+//					// plugin.getLogger().warning("Saved deathchest world '" + worldName + "' does not exist.");
+//
+//					// delete all expired records in database that have this invalid world
+//					deleteOrphanedChests(worldName);
+//					continue;
+//				}
+//
+//				// create Location object from database fields
+//				Location location = new Location(plugin.getServer().getWorld(worldName),
+//						rs.getInt("X"),
+//						rs.getInt("Y"),
+//						rs.getInt("Z"));
+//
+//				// set other fields in deathChestBlock from database fields
+//				chestBlock.setLocation(location);
+//
+//				// add DeathChestObject to results ArrayList
+//				results.add(chestBlock);
+//
+//			}
+//
+//		}
+//		catch (SQLException e) {
+//
+//			// output simple error message
+//			plugin.getLogger().warning("An error occured while fetching a death chest block from the SQLite database.");
+//			plugin.getLogger().warning(e.getMessage());
+//
+//			// if debugging is enabled, output stack trace
+//			if (plugin.debug) {
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		return results;
+//	}
+
+
 	@Override
-	final DeathRecord getRecord(final Location location) {
+	public final List<ChestBlock> getAllBlockRecords() {
 
-		// if location is null, return null object
-		if (location == null) {
-			return null;
-		}
-
-		// create new DeathChestBlock object for return
-		final DeathRecord deathRecord = new DeathRecord();
+		final List<ChestBlock> results = new ArrayList<>();
 
 		try {
 
-			PreparedStatement preparedStatement = 
-					connection.prepareStatement(Queries.getQuery("SelectDeathRecord"));
-
-			preparedStatement.setString(1, location.getWorld().getName());
-			preparedStatement.setInt(2, location.getBlockX());
-			preparedStatement.setInt(3, location.getBlockY());
-			preparedStatement.setInt(4, location.getBlockZ());
-
-			// execute sql query
-			ResultSet rs = preparedStatement.executeQuery();
-
-			// only zero or one record can match the unique location
-			if (rs.next()) {
-
-				// try to convert owner uuid from stored string, or set to null if invalid uuid
-				try {
-					deathRecord.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
-				}
-				catch (Exception e) {
-					deathRecord.setOwnerUUID(null);
-				}
-
-				// try to convert killer uuid from stored string, or set to null if invalid uuid
-				try {
-					deathRecord.setKillerUUID(UUID.fromString(rs.getString("killerid")));
-				}
-				catch (Exception e) {
-					deathRecord.setOwnerUUID(null);
-				}
-
-				// set other fields in deathChestBlock from database
-				deathRecord.setLocation(location);
-				deathRecord.setExpiration(rs.getLong("expiration"));
-			}
-
-			// return null if no matching location exists in database
-			else {
-				return null;
-			}
-
-		}
-		catch (SQLException e) {
-
-			// output simple error message
-			plugin.getLogger().warning("An error occured while fetching a death chest block from the SQLite database.");
-			plugin.getLogger().warning(e.getMessage());
-
-			// if debugging is enabled, output stack trace
-			if (plugin.debug) {
-				e.printStackTrace();
-			}
-		}
-
-		return deathRecord;
-	}
-
-
-	@Override
-	public final Collection<DeathRecord> getAllRecords() {
-
-		final Collection<DeathRecord> results = new ArrayList<>();
-
-		try {
-
-			PreparedStatement preparedStatement = 
-					connection.prepareStatement(Queries.getQuery("SelectAllDeathRecords"));
+			PreparedStatement preparedStatement =
+					connection.prepareStatement(getQuery("SelectAllBlocks"));
 
 			// execute sql query
 			ResultSet rs = preparedStatement.executeQuery();
@@ -166,28 +258,20 @@ final class DataStoreSQLite extends DataStore {
 			while (rs.next()) {
 
 				// create empty DeathChestBlock object
-				DeathRecord deathRecord = new DeathRecord();
+				ChestBlock chestBlock = new ChestBlock();
 
-				// try to convert owner uuid from stored string
+				// try to convert chest uuid from stored string
 				try {
-					deathRecord.setOwnerUUID(UUID.fromString(rs.getString("ownerid")));
+					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("[SQLite getAllRecords] An error occured while trying to set ownerUUID.");
-					plugin.getLogger().warning("[SQLite getAllRecords] ownerid string: " + rs.getString("ownerid"));
+					plugin.getLogger().warning("[SQLite getAllBlockRecords] An error occured while trying to set chestUUID.");
+					plugin.getLogger().warning("[SQLite getAllBlockRecords] chestUUID string: " + rs.getString("ChestUUID"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
 				}
 
-				// try to convert killer uuid from stored string, or set to null if invalid uuid
-				try {
-					deathRecord.setKillerUUID(UUID.fromString(rs.getString("killerid")));
-				}
-				catch (Exception e) {
-					deathRecord.setKillerUUID(null);
-				}
-
-				String worldName = rs.getString("worldname");
+				String worldName = rs.getString("WorldName");
 
 				// check that world is valid
 				if (plugin.getServer().getWorld(worldName) == null) {
@@ -195,29 +279,29 @@ final class DataStoreSQLite extends DataStore {
 					// world does not exist, so output log message and continue to next record
 					// plugin.getLogger().warning("Saved deathchest world '" + worldName + "' does not exist.");
 
-					// delete all expired records in database that have this invalid world
-					deleteExpiredRecords(worldName);
+					// delete all records expired more than 30 days in database that have this invalid world
+					deleteOrphanedChests(worldName);
 					continue;
 				}
 
 				// create Location object from database fields
 				Location location = new Location(plugin.getServer().getWorld(worldName),
-						rs.getInt("x"),
-						rs.getInt("y"),
-						rs.getInt("z"));
+						rs.getInt("X"),
+						rs.getInt("Y"),
+						rs.getInt("Z"));
 
 				// set other fields in deathChestBlock from database fields
-				deathRecord.setLocation(location);
-				deathRecord.setExpiration(rs.getLong("expiration"));
+				chestBlock.setLocation(location);
 
 				// add DeathChestObject to results ArrayList
-				results.add(deathRecord);
+				results.add(chestBlock);
 			}
 		}
 		catch (SQLException e) {
 
 			// output simple error message
-			plugin.getLogger().warning("An error occurred while trying to fetch all records from the SQLite database.");
+			plugin.getLogger().warning("An error occurred while trying to "
+					+ "fetch all block records from the SQLite database.");
 			plugin.getLogger().warning(e.getMessage());
 
 			// if debugging is enabled, output stack trace
@@ -226,54 +310,135 @@ final class DataStoreSQLite extends DataStore {
 			}
 		}
 		if (plugin.debug) {
-			plugin.getLogger().info(results.size() + " records fetched from SQLite datastore.");
+			plugin.getLogger().info(results.size() + " block records fetched from SQLite datastore.");
 		}
 		return results;
 	}
 
+
 	@Override
-	public synchronized final void putRecord(final DeathRecord deathRecord) {
+	public final List<DeathChest> getAllChestRecords() {
+
+		final List<DeathChest> results = new ArrayList<>();
+
+		try {
+
+			PreparedStatement preparedStatement =
+					connection.prepareStatement(getQuery("SelectAllChests"));
+
+			// execute sql query
+			ResultSet rs = preparedStatement.executeQuery();
+
+			while (rs.next()) {
+
+				// create empty DeathChestBlock object
+				DeathChest deathChest = new DeathChest();
+
+				// try to convert chest uuid from stored string
+				try {
+					deathChest.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+				}
+				catch (Exception e) {
+					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occured while trying to set chestUUID.");
+					plugin.getLogger().warning("[SQLite getAllChestRecords] chestUUID string: " + rs.getString("ChestUUID"));
+					plugin.getLogger().warning(e.getLocalizedMessage());
+					continue;
+				}
+
+				// try to convert owner uuid from stored string
+				try {
+					deathChest.setOwnerUUID(UUID.fromString(rs.getString("OwnerUUID")));
+				}
+				catch (Exception e) {
+					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occured while trying to set ownerUUID.");
+					plugin.getLogger().warning("[SQLite getAllChestRecords] ownerUUID string: " + rs.getString("OwnerUUID"));
+					plugin.getLogger().warning(e.getLocalizedMessage());
+					continue;
+				}
+
+				// try to convert killer uuid from stored string, or set to null if invalid uuid
+				try {
+					deathChest.setKillerUUID(UUID.fromString(rs.getString("KillerUUID")));
+				}
+				catch (Exception e) {
+					deathChest.setKillerUUID(null);
+				}
+
+				// set other fields in deathChestBlock from database fields
+				deathChest.setExpiration(rs.getLong("Expiration"));
+
+				// add DeathChestObject to results ArrayList
+				results.add(deathChest);
+			}
+		}
+		catch (SQLException e) {
+
+			// output simple error message
+			plugin.getLogger().warning("An error occurred while trying to fetch all chest records from the SQLite database.");
+			plugin.getLogger().warning(e.getMessage());
+
+			// if debugging is enabled, output stack trace
+			if (plugin.debug) {
+				e.printStackTrace();
+			}
+		}
+		if (plugin.debug) {
+			plugin.getLogger().info(results.size() + " chest records fetched from SQLite datastore.");
+		}
+		return results;
+	}
+
+
+	@Override
+	public synchronized final void putChestRecord(final DeathChest deathChest) {
 
 		// if passed deathChestBlock is null, do nothing and return
-		if (deathRecord == null) {
+		if (deathChest == null) {
 			return;
 		}
 
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				
-				// catch invalid player uuid exception
-				String ownerid;
+
+				// catch invalid chest uuid exception
+				String chestUUID;
 				try {
-					ownerid = deathRecord.getOwnerUUID().toString();
+					chestUUID = deathChest.getChestUUID().toString();
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("DeathRecord owner UUID is invalid.");
+					plugin.getLogger().warning("DeathBlock owner UUID is invalid.");
+					return;
+				}
+
+				// catch invalid player uuid exception
+				String ownerUUID;
+				try {
+					ownerUUID = deathChest.getOwnerUUID().toString();
+				}
+				catch (Exception e) {
+					plugin.getLogger().warning("DeathBlock owner UUID is invalid.");
 					return;
 				}
 
 				// catch invalid killer uuid exception
-				String killerid;
+				String killerUUID;
 				try {
-					killerid = deathRecord.getKillerUUID().toString();
+					killerUUID = deathChest.getKillerUUID().toString();
 				}
 				catch (Exception e) {
-					killerid = null;
+					killerUUID = null;
 				}
 
 				try {
 					// create prepared statement
 					PreparedStatement preparedStatement =
-							connection.prepareStatement(Queries.getQuery("InsertDeathRecord"));
+							connection.prepareStatement(getQuery("InsertChestRecord"));
 
-					preparedStatement.setString(1, ownerid);
-					preparedStatement.setString(2, killerid);
-					preparedStatement.setString(3, deathRecord.getLocation().getWorld().getName());
-					preparedStatement.setInt(4, deathRecord.getLocation().getBlockX());
-					preparedStatement.setInt(5, deathRecord.getLocation().getBlockY());
-					preparedStatement.setInt(6, deathRecord.getLocation().getBlockZ());
-					preparedStatement.setLong(7, deathRecord.getExpiration());
+					preparedStatement.setString(1, chestUUID);
+					preparedStatement.setString(2, ownerUUID);
+					preparedStatement.setString(3, killerUUID);
+					preparedStatement.setLong(4, deathChest.getExpiration());
 
 					// execute prepared statement
 					int rowsAffected = preparedStatement.executeUpdate();
@@ -294,6 +459,70 @@ final class DataStoreSQLite extends DataStore {
 						e.printStackTrace();
 					}
 				}
+
+				// insert each chest block into datastore
+				for (ChestBlock chestBlock : deathChest.getChestBlocks()) {
+					putBlockRecord(chestBlock);
+				}
+
+			}
+		}.runTaskAsynchronously(plugin);
+	}
+
+
+	@Override
+	public synchronized final void putBlockRecord(final ChestBlock chestBlock) {
+
+		// if passed deathChestBlock is null, do nothing and return
+		if (chestBlock == null) {
+			return;
+		}
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+
+				// catch invalid player uuid exception
+				String chestUUID;
+				try {
+					chestUUID = chestBlock.getChestUUID().toString();
+				}
+				catch (Exception e) {
+					plugin.getLogger().warning("ChestBlock chest UUID is invalid.");
+					return;
+				}
+
+				try {
+					// create prepared statement
+					PreparedStatement preparedStatement =
+							connection.prepareStatement(getQuery("InsertBlockRecord"));
+
+					preparedStatement.setString(1, chestUUID);
+					preparedStatement.setString(2, chestBlock.getLocation().getWorld().getName());
+					preparedStatement.setInt(3, chestBlock.getLocation().getBlockX());
+					preparedStatement.setInt(4, chestBlock.getLocation().getBlockY());
+					preparedStatement.setInt(5, chestBlock.getLocation().getBlockZ());
+
+					// execute prepared statement
+					int rowsAffected = preparedStatement.executeUpdate();
+
+					// output debugging information
+					if (plugin.debug) {
+						plugin.getLogger().info(rowsAffected + " rows affected.");
+					}
+				}
+				catch (SQLException e) {
+
+					// output simple error message
+					plugin.getLogger().warning("An error occured while "
+							+ "inserting a death chest block into the SQLite database.");
+					plugin.getLogger().warning(e.getMessage());
+
+					// if debugging is enabled, output stack trace
+					if (plugin.debug) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}.runTaskAsynchronously(plugin);
 	}
@@ -303,7 +532,7 @@ final class DataStoreSQLite extends DataStore {
 	//	 * Delete a death chest block record
 	//	 */
 	//	@Override
-	//	public final void deleteRecord(final Location location) {
+	//	public final void deleteBlockRecord(final Location location) {
 	//
 	//		try {
 	//			// create prepared statement
@@ -339,10 +568,10 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	synchronized public final void deleteRecord(final Location location) {
+	synchronized public final void deleteChestRecord(final DeathChest deathChest) {
 
-		// if passed location is null, do nothing and return
-		if (location == null) {
+		// if passed deathChest is null, do nothing and return
+		if (deathChest == null) {
 			return;
 		}
 
@@ -352,7 +581,54 @@ final class DataStoreSQLite extends DataStore {
 				try {
 					// create prepared statement
 					PreparedStatement preparedStatement =
-							connection.prepareStatement(Queries.getQuery("DeleteDeathRecord"));
+							connection.prepareStatement(getQuery("DeleteChestByUUID"));
+
+					preparedStatement.setString(1, deathChest.getChestUUID().toString());
+
+					// execute prepared statement
+					int rowsAffected = preparedStatement.executeUpdate();
+
+					// output debugging information
+					if (plugin.debug) {
+						plugin.getLogger().info(rowsAffected + " rows deleted.");
+					}
+				}
+				catch (SQLException e) {
+
+					// output simple error message
+					plugin.getLogger().warning("An error occurred while attempting to "
+							+ "delete a chest record from the " + toString() + " datastore.");
+					plugin.getLogger().warning(e.getMessage());
+
+					// if debugging is enabled, output stack trace
+					if (plugin.debug) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.runTaskAsynchronously(plugin);
+
+	}
+
+
+	@Override
+	synchronized public final void deleteBlockRecord(final ChestBlock chestBlock) {
+
+		// if passed chestBlock is null, do nothing and return
+		if (chestBlock == null) {
+			return;
+		}
+
+		// get chest block location
+		final Location location = chestBlock.getLocation();
+
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					// create prepared statement
+					PreparedStatement preparedStatement =
+							connection.prepareStatement(getQuery("DeleteBlockByLocation"));
 
 					preparedStatement.setString(1, location.getWorld().getName());
 					preparedStatement.setInt(2, location.getBlockX());
@@ -385,10 +661,10 @@ final class DataStoreSQLite extends DataStore {
 
 
 	/**
-	 * Delete expired records in world <i>worldName</i>
-	 * @param worldName the world name of expired records to delete
+	 * Delete orphaned chests in nonexistent world {@code worldName}
+	 * @param worldName the world name of orphaned chests to delete
 	 */
-	private void deleteExpiredRecords(final String worldName) {
+	private void deleteOrphanedChests(final String worldName) {
 
 		// pastDueTime = current time in milliseconds - 30 days
 		final long pastDueTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
@@ -396,7 +672,7 @@ final class DataStoreSQLite extends DataStore {
 		try {
 			// create prepared statement
 			PreparedStatement preparedStatement = 
-					connection.prepareStatement(Queries.getQuery("DeleteExpiredDeathRecord"));
+					connection.prepareStatement(getQuery("DeleteOrphanedChests"));
 
 			preparedStatement.setString(1, worldName);
 			preparedStatement.setLong(2, pastDueTime);
@@ -412,7 +688,7 @@ final class DataStoreSQLite extends DataStore {
 		catch (SQLException e) {
 
 			// output simple error message
-			plugin.getLogger().warning("An error occurred while attempting to delete expired records from the SQLite database.");
+			plugin.getLogger().warning("An error occurred while attempting to delete orphaned chests from the SQLite database.");
 			plugin.getLogger().warning(e.getMessage());
 
 			// if debugging is enabled, output stack trace
