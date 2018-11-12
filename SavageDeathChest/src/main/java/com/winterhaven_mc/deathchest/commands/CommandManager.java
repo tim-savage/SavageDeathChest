@@ -143,7 +143,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		if (plugin.debug) {
 			sender.sendMessage(ChatColor.GREEN + "Replaceable Blocks: " + ChatColor.RESET +
-					plugin.chestManager.getReplaceableBlocks().toString());
+					plugin.chestManager.replaceableBlocks.toString());
 		}
 
 		return true;
@@ -159,7 +159,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		plugin.reloadConfig();
 		
 		// reload replaceable blocks
-		plugin.chestManager.loadReplaceableBlocks();
+		plugin.chestManager.replaceableBlocks.reload();
 		
 		// update debug field
 		plugin.debug = plugin.getConfig().getBoolean("debug");
