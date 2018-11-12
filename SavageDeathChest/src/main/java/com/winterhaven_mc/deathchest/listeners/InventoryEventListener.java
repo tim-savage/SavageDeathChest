@@ -1,9 +1,9 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.chests.DeathChest;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -56,7 +56,7 @@ public final class InventoryEventListener implements Listener {
 		final Inventory inventory = event.getInventory();
 
 		// if inventory holder is not a death chest, do nothing and return
-		if (!DeathChestBlock.isDeathChest(inventory)) {
+		if (!plugin.chestManager.isDeathChestInventory(inventory)) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ public final class InventoryEventListener implements Listener {
 		}
 
 		// if block is not a death chest, do nothing and return
-		if (!DeathChestBlock.isDeathChest(block)) {
+		if (!plugin.chestManager.isDeathChestChestBlock(block)) {
 			return;
 		}
 
@@ -115,24 +115,41 @@ public final class InventoryEventListener implements Listener {
 			return;
 		}
 
-		if (event.getPlayer() instanceof Player) {
+		// get event inventory
+		final Inventory inventory = event.getInventory();
 
-			final Player player = (Player)event.getPlayer();
-			final Inventory inventory = event.getInventory();
+		// if inventory is null, do nothing and return
+		if (inventory == null) {
+			return;
+		}
 
-			// get DeathChestBlock instance from inventory
-			final DeathChestBlock deathChestBlock = DeathChestBlock.getChestInstance(inventory);
+		// if inventory type is not a chest, do nothing and return
+		if (!inventory.getType().equals(InventoryType.CHEST)) {
+			return;
+		}
 
-			// if inventory is not a DeathChest inventory, return
-			if (deathChestBlock == null) {
-				return;
-			}
+		// if inventory location is null, do nothing and return
+		if (inventory.getLocation() == null) {
+			return;
+		}
 
-			// if inventory is empty, loot chest to destroy chest(s) and sign
-			// TODO: create a method to destroy chest(s) and sign, and we won't need to access player here
-			if (isEmpty(inventory)) {
-				deathChestBlock.autoLoot(player);
-			}
+		// get inventory block from location
+		final Block block = inventory.getLocation().getBlock();
+
+		final DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+
+		// if inventory is not a DeathChest inventory, return
+		if (deathChest == null) {
+			return;
+		}
+
+		if (plugin.debug) {
+			plugin.getLogger().info("Closed inventory size: " + inventory.getSize());
+		}
+
+		// if inventory is empty, destroy chest(s) and sign
+		if (isEmpty(inventory)) {
+			deathChest.destroy();
 		}
 	}
 
@@ -154,7 +171,7 @@ public final class InventoryEventListener implements Listener {
 		final Inventory source = event.getSource();
 
 		// prevent extracting items from death chest using hopper
-		if (DeathChestBlock.isDeathChest(source)) {
+		if (plugin.chestManager.isDeathChestInventory(source)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -162,8 +179,8 @@ public final class InventoryEventListener implements Listener {
 		// prevent inserting items into death chest using hopper if prevent-item-placement configured true
 		if (plugin.getConfig().getBoolean("prevent-item-placement")) {
 
-			// if destination is a death chest, cancel event and return
-			if (DeathChestBlock.isDeathChest(destination)) {
+			// if destination inventory is a death chest, cancel event and return
+			if (plugin.chestManager.isDeathChestInventory(destination)) {
 				event.setCancelled(true);
 			}
 		}
@@ -191,7 +208,7 @@ public final class InventoryEventListener implements Listener {
 		final InventoryAction action = event.getAction();
 
 		// if inventory is a death chest inventory
-	    if (DeathChestBlock.isDeathChest(inventory)) {
+	    if (plugin.chestManager.isDeathChestInventory(inventory)) {
 
 			// if click action is place, test for chest slots
 			if (action.equals(InventoryAction.PLACE_ALL) 
@@ -213,7 +230,7 @@ public final class InventoryEventListener implements Listener {
 			// prevent shift-click transfer to death chest
 			if (action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 
-				if (event.getRawSlot() > inventory.getSize()) {
+				if (event.getRawSlot() >= inventory.getSize()) {
 
 					// if player does not have allow-place permission, cancel event
 					if (!event.getWhoClicked().hasPermission("deathchest.allow-place")) {
@@ -240,7 +257,7 @@ public final class InventoryEventListener implements Listener {
 		final Inventory inventory = event.getInventory();
 
 		// if inventory is a death chest inventory
-	    if (DeathChestBlock.isDeathChest(inventory)) {
+	    if (plugin.chestManager.isDeathChestInventory(inventory)) {
 
 			// if prevent-item-placement is configured false, do nothing and return
 			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {

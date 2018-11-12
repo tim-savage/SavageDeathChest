@@ -1,11 +1,10 @@
 package com.winterhaven_mc.deathchest.storage;
 
-import com.winterhaven_mc.deathchest.DeathChestBlock;
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.chests.ChestBlock;
+import com.winterhaven_mc.deathchest.chests.DeathChest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public final class DataStoreFactory {
@@ -29,18 +28,6 @@ public final class DataStoreFactory {
 		}
 		return create(dataStoreType, null);
 	}
-	
-	
-//	/**
-//	 * Create new data store of given type.<br>
-//	 * Single parameter version used when no current datastore exists
-//	 * but the required datastore type is known
-//	 * @param dataStoreType the datastore type to create
-//	 * @return the newly created datastore of given type
-//	 */
-//	static DataStore create(final DataStoreType dataStoreType) {
-//		return create(dataStoreType, null);
-//	}
 	
 	
 	/**
@@ -128,15 +115,34 @@ public final class DataStoreFactory {
 					return;
 				}
 			}
-			
-			List<DeathChestBlock> allRecords = oldDataStore.getAllRecords();
-			
-			int count = 0;
-			for (DeathChestBlock record : allRecords) {
-				newDataStore.putRecord(record);
-				count++;
+
+			Collection<DeathChest> allChestRecords = oldDataStore.getAllChestRecords();
+
+			Iterator<DeathChest> chestIterator = allChestRecords.iterator();
+
+			int recordCount = 0;
+
+			while (chestIterator.hasNext()) {
+				newDataStore.putChestRecord(chestIterator.next());
+				recordCount++;
 			}
-			plugin.getLogger().info(count + " records converted to " + newDataStore.getName() + " datastore.");
+
+			plugin.getLogger().info(recordCount + " records converted to "
+					+ newDataStore.getName() + " datastore.");
+
+			Collection<ChestBlock> allBlockRecords = oldDataStore.getAllBlockRecords();
+
+			Iterator<ChestBlock> blockIterator = allBlockRecords.iterator();
+
+			recordCount = 0;
+
+			while (blockIterator.hasNext()) {
+				newDataStore.putBlockRecord(blockIterator.next());
+				recordCount++;
+			}
+
+			plugin.getLogger().info(recordCount + " records converted to "
+					+ newDataStore.getName() + " datastore.");
 			
 			newDataStore.sync();
 			

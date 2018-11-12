@@ -1,8 +1,12 @@
-package com.winterhaven_mc.deathchest;
+package com.winterhaven_mc.deathchest.chests;
 
+import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
+
+import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import com.winterhaven_mc.deathchest.util.LocationUtilities;
+
+import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,10 +22,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 
@@ -60,7 +62,7 @@ public final class DeathChestBlock {
 	 * @param player deathchest owner
 	 * @param block in game death chest block
 	 */
-	public DeathChestBlock(final Player player, final Block block) {
+	DeathChestBlock(final Player player, final Block block) {
 
 		// set location field
 		this.setLocation(block.getLocation());
@@ -322,7 +324,7 @@ public final class DeathChestBlock {
 	 * Setter method for DeathChestBlock expireTaskId
 	 * @param expireTaskId the bukkit task id of the expire task associated with this DeathChestBlock object
      */
-	public final void setExpireTaskId(final int expireTaskId) {
+	private void setExpireTaskId(final int expireTaskId) {
 
 		// set expire task id in this DeathChestBlock object
 		this.expireTaskId = expireTaskId;
@@ -338,7 +340,7 @@ public final class DeathChestBlock {
 	/**
 	 * Set block metadata
 	 */
-	public final void setBlockMetadata() {
+	final void setBlockMetadata() {
 
 		final Block block = this.location.getBlock();
 
@@ -438,39 +440,6 @@ public final class DeathChestBlock {
 
 
 	/**
-	 * Combine ItemStacks of same material up to max stack size
-	 * @param itemStacks	Collection of ItemStacks to combine
-	 * @return List of ItemStack with same materials combined
-	 */
-	public static List<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
-
-		final List<ItemStack> returnList = new ArrayList<>();
-
-		for (ItemStack itemStack : itemStacks) {
-			if (itemStack == null) {
-				continue;
-			}
-
-			for (ItemStack checkStack : returnList) {
-				if (checkStack == null) {
-					continue;
-				}
-				if (checkStack.isSimilar(itemStack)) {
-					int transferAmount = 
-							Math.min(itemStack.getAmount(),checkStack.getMaxStackSize() - checkStack.getAmount());
-					itemStack.setAmount(itemStack.getAmount() - transferAmount);
-					checkStack.setAmount(checkStack.getAmount()	+ transferAmount);
-				}
-			}
-			if (itemStack.getAmount() > 0) {
-				returnList.add(itemStack);
-			}
-		}
-		return returnList;
-	}
-
-
-	/**
 	 * Test if a block is a DeathChestBlock; either signs or chests with deathchest metadata
 	 * @param block The block to test if it is a DeathChestBlock
 	 * @return boolean True if block has deathchest-owner metadata, false if it does not
@@ -492,7 +461,7 @@ public final class DeathChestBlock {
 	 * @param block The block to test if it is a DeathSign
 	 * @return true if block is a deathchest sign, false if not
 	 */
-	static boolean isDeathSign(final Block block) {
+	private static boolean isDeathSign(final Block block) {
 
 		// if passed block is null return false
 		if (block == null) {
@@ -619,7 +588,7 @@ public final class DeathChestBlock {
 	 * @param block The sign block for which to retrieve an attached DeathChest
 	 * @return DeathChest chest block; returns null if sign is not a DeathSign or attached block is not a DeathChest
 	 */
-	static Block getAttachedBlock(final Block block) {
+	private static Block getAttachedBlock(final Block block) {
 	
 		// if passed block is null return null
 		if (block == null) {
@@ -734,7 +703,7 @@ public final class DeathChestBlock {
 		
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageManager.sendPlayerMessage(player, MessageId.CHEST_EXPIRED);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED);
 		}
 		
 		// destroy DeathChestBlock
@@ -774,10 +743,19 @@ public final class DeathChestBlock {
 	 */
 	public final void openInventory(final Player player) {
 
-		//TODO: Consider using sign attached block method if this block is a DeathSign
-
 		// get the block state of block represented by this DeathChestBlock
-		final BlockState blockState = this.getLocation().getBlock().getState();
+		BlockState blockState = this.getLocation().getBlock().getState();
+
+		// if block is a sign or wall sign, get attached block
+		if (blockState.getType().equals(Material.SIGN) || blockState.getType().equals((Material.WALL_SIGN))) {
+			Block block = this.getAttachedBlock();
+
+			// if attached block returned null, do nothing and return
+			if (block != null) {
+				blockState = this.getAttachedBlock().getState();
+			}
+			else return;
+		}
 
 		// if block state is not a chest block, do nothing and return
 		if (!blockState.getType().equals(Material.CHEST)) {
@@ -819,17 +797,17 @@ public final class DeathChestBlock {
 		DeathChestBlock secondDeathChest = null;
 		
 		// check for adjacent chests
-		if (isDeathChest(LocationUtilities.blockToLeft(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockToLeft(initialDeathChest.getLocation()));
+		if (isDeathChest(getBlockToLeft(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToLeft(initialDeathChest.getLocation()));
 		}
-		else if (isDeathChest(LocationUtilities.blockToRight(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockToRight(initialDeathChest.getLocation()));
+		else if (isDeathChest(getBlockToRight(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToRight(initialDeathChest.getLocation()));
 		}
-		else if (isDeathChest(LocationUtilities.blockInFront(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockInFront(initialDeathChest.getLocation()));
+		else if (isDeathChest(getBlockToFront(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToFront(initialDeathChest.getLocation()));
 		}
-		else if (isDeathChest(LocationUtilities.blockToRear(initialDeathChest.getLocation()))) {
-			secondDeathChest = getChestInstance(LocationUtilities.blockToRear(initialDeathChest.getLocation()));
+		else if (isDeathChest(getBlockToRear(initialDeathChest.getLocation()))) {
+			secondDeathChest = getChestInstance(getBlockToRear(initialDeathChest.getLocation()));
 		}
 		
 		// transfer contents and destroy chest
@@ -878,5 +856,33 @@ public final class DeathChestBlock {
 			}
 		}
 	}
+
+	// start death chest block expire task
+	final void createExpireChestTask() {
+
+		// if DeathChestBlock expiration is zero or less, it is set to never expire; output debug message and return.
+		if (this.getExpiration() < 1) {
+			return;
+		}
+
+		// get current time
+		Long currentTime = System.currentTimeMillis();
+
+		// get death chest block expire time
+		Long expireTime = this.getExpiration();
+
+		// compute ticks remaining until expire time
+		long ticksRemaining = (expireTime - currentTime) / 50;
+		if (ticksRemaining < 1) {
+			ticksRemaining = (long) 1;
+		}
+
+		// create task to expire death chest block after ticksRemaining
+		BukkitTask blockExpireTask = new ExpireChestTask(this).runTaskLater(plugin, ticksRemaining);
+
+		// set taskId in deathChestBlock
+		this.setExpireTaskId(blockExpireTask.getTaskId());
+	}
+
 
 }

@@ -229,7 +229,6 @@ public enum ProtectionPlugin {
 			return true;
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
 
