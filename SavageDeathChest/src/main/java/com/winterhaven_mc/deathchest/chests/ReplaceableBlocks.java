@@ -21,7 +21,7 @@ public class ReplaceableBlocks {
 	 * Class Constructor<br>
 	 *     populates set of replaceable blocks from config file
 	 */
-	public ReplaceableBlocks(PluginMain plugin) {
+	ReplaceableBlocks(PluginMain plugin) {
 
 		this.plugin = plugin;
 
@@ -55,8 +55,7 @@ public class ReplaceableBlocks {
 	 * @param material the material the test for
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
-	@SuppressWarnings("WeakerAccess")
-	public boolean contains(Material material) {
+	boolean contains(Material material) {
 		return this.replaceableBlocks.contains(material);
 	}
 
