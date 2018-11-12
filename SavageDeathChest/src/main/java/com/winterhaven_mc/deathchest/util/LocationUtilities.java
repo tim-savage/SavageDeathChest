@@ -6,6 +6,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 
+@SuppressWarnings("unused")
 public final class LocationUtilities {
 
 	/**
@@ -23,6 +24,7 @@ public final class LocationUtilities {
 	 * @param yaw	Direction in degrees
 	 * @return BlockFace of cardinal direction
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public static BlockFace getCardinalDirection(final float yaw) {
 
 		// ensure yaw is between 0 and 360 (in case of negative yaw)
@@ -51,22 +53,7 @@ public final class LocationUtilities {
 	 * @return BlockFace of cardinal direction
 	 */
 	public static BlockFace getCardinalDirection(final Location location) {
-
-		// ensure yaw is between 0 and 360 (in case of negative yaw)
-		double rotation = (location.getYaw() + 360) % 360;
-
-		if (45 <= rotation && rotation < 135) {
-			return BlockFace.EAST;
-		}
-		else if (135 <= rotation && rotation < 225) {
-			return BlockFace.SOUTH;
-		}
-		else if (225 <= rotation && rotation < 315) {
-			return BlockFace.WEST;
-		}
-		else {
-			return BlockFace.NORTH;
-		}
+		return getCardinalDirection(location.getYaw());
 	}
 
 
@@ -77,24 +64,8 @@ public final class LocationUtilities {
 	 * @param player player to determine cardinal direction
 	 * @return BlockFace of cardinal direction
 	 */
-	@SuppressWarnings("unused")
 	public static BlockFace getCardinalDirection(final Player player) {
-
-		// ensure yaw is between 0 and 360 (in case of negative yaw)
-		double rotation = (player.getLocation().getYaw() + 360) % 360;
-
-		if (45 <= rotation && rotation < 135) {
-			return BlockFace.EAST;
-		}
-		else if (135 <= rotation && rotation < 225) {
-			return BlockFace.SOUTH;
-		}
-		else if (225 <= rotation && rotation < 315) {
-			return BlockFace.WEST;
-		}
-		else {
-			return BlockFace.NORTH;
-		}
+		return getCardinalDirection(player.getLocation().getYaw());
 	}
 
 
@@ -106,6 +77,21 @@ public final class LocationUtilities {
 	public static Location getLocationToRight(final Location location) {
 
 		Location resultLocation = getBlockToRight(location).getLocation();
+
+		// set new location yaw to match original
+		resultLocation.setYaw(location.getYaw());
+		return resultLocation;
+	}
+
+
+	/**
+	 * Get location to left of location based on yaw
+	 * @param location initial location
+	 * @return location one block to left, preserving original yaw
+	 */
+	public static Location getLocationToLeft(final Location location) {
+
+		Location resultLocation = getBlockToLeft(location).getLocation();
 
 		// set new location yaw to match original
 		resultLocation.setYaw(location.getYaw());
@@ -169,6 +155,21 @@ public final class LocationUtilities {
 	public static Block getBlockToRear(final Location location) {
 		float yaw = location.getYaw();
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
+	}
+
+
+	public static BlockFace getBlockFaceToLeft(final BlockFace blockFace) {
+
+		if (blockFace.equals(BlockFace.NORTH)) {
+			return BlockFace.EAST;
+		}
+		else if (blockFace.equals(BlockFace.WEST)) {
+			return BlockFace.NORTH;
+		}
+		else if (blockFace.equals(BlockFace.SOUTH)) {
+			return BlockFace.WEST;
+		}
+		return BlockFace.SOUTH;
 	}
 
 }
