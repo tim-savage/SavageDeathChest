@@ -114,18 +114,18 @@ public final class MessageManager extends AbstractMessageManager {
 
 		int expiration = this.plugin.getConfig().getInt("expire-time");
 
-		// if configured expire-time < 1, set expiretime string to "unlimited"
+		// if configured expire-time < 1, set expireTime string to "unlimited"
 		if (expiration < 1) {
-			expireTime = messages.getString("unlimited");
+			expireTime = messages.getString("time_strings.UNLIMITED");
 		}
 		// otherwise, set string to hours and minutes remaining
 		else {
 			int hours = expiration / 60;
 			int minutes = expiration % 60;
-			String hour_string = this.messages.getString("hour");
-			String hour_plural_string = this.messages.getString("hour_plural");
-			String minute_string = this.messages.getString("minute");
-			String minute_plural_string = this.messages.getString("minute_plural");
+			String hour_string = this.messages.getString("time_strings.HOUR");
+			String hour_plural_string = this.messages.getString("time_strings.HOUR_PLURAL");
+			String minute_string = this.messages.getString("time_strings.MINUTE");
+			String minute_plural_string = this.messages.getString("time_strings.MINUTE_PLURAL");
 			if (hours > 1) {
 				expireTime = String.valueOf(expireTime) + hours + " " + hour_plural_string + " ";
 			} else if (hours == 1) {
