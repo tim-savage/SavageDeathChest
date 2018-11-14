@@ -17,10 +17,17 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
 		</repository>
+
 		<!-- sk89q repo -->
 		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
+
+		<!-- Grief Prevention-repo -->
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 
@@ -76,6 +83,13 @@
 			<artifactId>worldguard-legacy</artifactId>
 			<version>7.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- GriefPrevention -->
+		<dependency>
+			<groupId>com.github.TechFortress</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<version>16.11.4</version>
 		</dependency>
 
 		<!-- RoadBlock -->
