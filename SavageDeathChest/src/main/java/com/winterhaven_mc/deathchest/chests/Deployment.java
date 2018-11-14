@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 
 import org.bukkit.ChatColor;
@@ -68,6 +69,7 @@ public class Deployment {
 			return;
 		}
 
+		// create new deathChest object for player
 		this.deathChest = new DeathChest(player);
 
 		if (plugin.debug) {
@@ -93,6 +95,10 @@ public class Deployment {
 				plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
 				break;
 
+			case PROTECTION_PLUGIN:
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
+				break;
+
 			case ABOVE_GRASS_PATH:
 				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
 				break;
@@ -105,17 +111,19 @@ public class Deployment {
 				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_ADJACENT);
 				break;
 
-			case PROTECTION_PLUGIN:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
-				break;
-
 			case NO_CHEST:
 				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 				break;
 		}
 
-		// if configured expiration is zero (or less), set expiration to zero to signify never expire
-		if (plugin.getConfig().getLong("expire-time") < 1) {
+		// if result is negative, return now
+		if (!result.getResultCode().equals(ResultCode.SUCCESS)
+				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
+			return;
+		}
+
+		// if configured expiration is zero (or negative), set expiration to zero to signify never expire
+		if (plugin.getConfig().getLong("expire-time") <= 0) {
 			deathChest.setExpiration(0);
 		} else {
 			// set expiration field based on config setting (config setting is in minutes, so multiply by 60000)
@@ -665,13 +673,13 @@ public class Deployment {
 			return new Result(ResultCode.ABOVE_GRASS_PATH);
 		}
 
-//		// if block at location is protected by plugin, return negative result
-//		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestPlacement(player, block);
-//		if (blockingPlugin != null) {
-//			Result result = new Result(ResultCode.PROTECTION_PLUGIN);
-//			result.setProtectionPlugin(blockingPlugin);
-//			return result;
-//		}
+		// if block at location is protected by plugin, return negative result
+		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		if (protectionPlugin != null) {
+			Result result = new Result(ResultCode.PROTECTION_PLUGIN);
+			result.setProtectionPlugin(protectionPlugin);
+			return result;
+		}
 
 		Result result = new Result(ResultCode.SUCCESS);
 		result.setLocation(location);
