@@ -65,11 +65,6 @@ quick-loot: true
 # Automatically remove empty chests on closing
 remove-empty: true
 
-# Require build permission from protection plugins when deploying a chest
-# If true, block place permission will be checked for each plugin on chest deployment
-# If false, chest access permission will be checked for each plugin on chest deployment
-require-build-permission: false
-
 # Check protection plugin permissions on death chest placement or access
 # If a value is configured true, the protection plugin restrictions will be respected
 # If a value is configured false, the protection plugin restrictions will be ignored
@@ -83,10 +78,6 @@ protection-plugins:
     check-on-access: false
 
   PreciousStones:
-    check-on-place: true
-    check-on-access: false
-
-  ProClaim:
     check-on-place: true
     check-on-access: false
 
