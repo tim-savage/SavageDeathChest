@@ -1,69 +1,94 @@
+##############
 # Time strings
-hour: 'hour'
-hour_plural: 'hours'
-minute: 'minute'
-minute_plural: 'minutes'
-unlimited: 'unlimited time'
+##############
+time_strings:
+  HOUR: 'hour'
+  HOUR_PLURAL: 'hours'
+  MINUTE: 'minute'
+  MINUTE_PLURAL: 'minutes'
+  SECOND: 'second'
+  SECOND_PLURAL: 'seconds'
+  UNLIMITED: 'unlimited time'
 
-# Custom Messages
-#
+
+##################
+# Custom sign text
+##################
 # Variable substitutions:
-# %itemname%			item name as configured above
-# %playername%          Player's name
-# %playernickname%      Player's nickname
-# %playerdisplayname%   Player's display name, including prefix/suffix
-# %worldname%           World name that player is in
-# %expiretime%			Remaining time at chest deployment
+# %PLAYER_NAME%	Player's name
+# %WORLD_NAME%	World name
+# %date%		Death date
+sign-text:
+  - '&lR.I.P.&r'
+  - '%PLAYER_NAME%'
+  - ''
+  - 'D: %date%'
+
+# Date format documentation:
+# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+date-format: "MMM d, yyyy"
+
+
+#################
+# Custom Messages
+#################
+# Variable substitutions:
+# %PLAYER_NAME%          Player name
+# %PLAYER_NICKNAME%      Player nickname
+# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
+# %WORLD_NAME%           Player world name
+# %EXPIRE_TIME%			 Remaining time at chest deployment
 
 messages:
-  chest-success:
+  CHEST_SUCCESS:
     enabled: true
-    string: '&cSuccessfully placed death chest. You have %expiretime% to retrieve your items.'
+    string: '&cSuccessfully placed death chest. You have %EXPIRE_TIME% to retrieve your items.'
 
-  doublechest-partial-success:
+  DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cOnly a single chest could be placed at your death location. Some items were dropped.'
 
-  chest-denied:
+  CHEST_DENIED_PLUGIN:
     enabled: true
-    string: '&cCould not place death chest.'
+    string: '&cDeath chest deployment was prevented by %PLUGIN%.'
 
-  chest-denied-plugin:
+  CHEST_DENIED_BLOCK:
     enabled: true
-    string: '&cDeath chest deployment was prevented by %plugin%.'
+    string: '&cAn open space could not be found to place a chest.'
 
-  inventory-empty:
+  CHEST_DENIED_PERMISSION:
+    enabled: false
+    string: '&cYou do not have permission for death chests.'
+
+  CHEST_DENIED_ADJACENT:
+    enabled: true
+    string: '&cDeath chest deployment was prevented by an existing adjacent chest.'
+
+  INVENTORY_EMPTY:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
 
-  no-room:
-    enabled: true
-    string: '&cThere was no room to place chest at your death location.'
-
-  no-chest-in-inventory:
+  NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cYou did not have any chests in your inventory.'
 
-  death-broadcast:
-    enabled: true
-    string: '&4%playername%&r died. Deploying death chest.'
-
-  not-owner:
+  NOT_OWNER:
     enabled: true
     string: '&cThat death chest does not belong to you.'
 
-  chest-expired:
+  CHEST_EXPIRED:
     enabled: true
     string: '&cYour death chest has expired.'
+    repeat-delay: 1
 
-  creative-mode:
+  CREATIVE_MODE:
     enabled: true
     string: '&cCreative mode inventory is not saved in death chests.'
-  
-  no-creative-access:
+
+  NO_CREATIVE_ACCESS:
     enabled: true
     string: '&cAccess to death chests in creative mode is not allowed.'
-  
-  chest-currently-open:
+
+  CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cDeath chest is currently being accessed by another player.'

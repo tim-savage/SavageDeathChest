@@ -1,29 +1,28 @@
-#This is the SavageDeathChest config file
+# configuration file for ${project.name} v${project.version}
 
 # Localization language
 language: en-US
 
-# Storage Type ( sqlite | yaml )
-storage-type: sqlite
 
-# Use sound effects
-sound-effects: true
+# enabled worlds list
+# if this list is empty, all worlds will be added to the enabled worlds list
+# otherwise, only listed worlds will be added to the enabled worlds list
 
-
-# Note: use only one enabled/disabled list, and comment out or remove the other
-# enabled worlds list (use this list for a default-deny world policy)
-
-#enabled-worlds:
+enabled-worlds:
 #  - enabled_world1
 #  - enabled_world2
 
 
-# disabled worlds list (use this list for a default-allow world policy)
+# disabled worlds list
+# these worlds will be removed from the enabled worlds list created by the previous setting
 
 disabled-worlds:
   - disabled_world1
   - disabled_world2
 
+
+# Use sound effects
+sound-effects: true
 
 # Protect chests from other players
 chest-protection: true
@@ -37,10 +36,16 @@ require-chest: false
 # prevent placing items in death chests
 prevent-item-placement: true
 
+# deploy chests for players in creative mode
+creative-deploy: false
+
+# allow access to chests for players in creative mode
+creative-access: false
+
 # Distance from death location to search for a valid chest location
 # NOTE: This checks exponentially more locations for each increase in distance
 # For this reason, it is not recommended to set this value too high.
-search-distance: 5
+search-distance: 10
 
 # Place chests above the void when players die below level 0
 place-above-void: true
@@ -60,43 +65,42 @@ quick-loot: true
 # Automatically remove empty chests on closing
 remove-empty: true
 
-# Require build permission from protection plugins when deploying a chest
-# If false, chest access permission will be checked on chest deployment
-require-build-permission: false
+# Check protection plugin permissions on death chest placement or access
+# If a value is configured true, the protection plugin restrictions will be respected
+# If a value is configured false, the protection plugin restrictions will be ignored
+protection-plugins:
+  Factions:
+    check-on-place: true
+    check-on-access: false
 
-# Check protection plugin permissions on death chest placement
-# If a plugin is in this list, its block placement restrictions will be respected when deploying a death chest.
-# If a plugin is not in this list, its block placement restrictions will be ignored when deploying a death chest.
+  GriefPrevention:
+    check-on-place: true
+    check-on-access: false
 
-check-on-place:
-  - Factions
-  - GriefPrevention
-  - PreciousStones
-  - Towny
-  - WorldGuard
+  PreciousStones:
+    check-on-place: true
+    check-on-access: false
 
+  RoadBlock:
+    check-on-place: true
+    check-on-access: false
 
-# check protection plugin permissions on death chest access
-# If a plugin is in this list, its chest access restrictions will be respected when accessing a death chest.
-# If a plugin is not in this list, its chest access restrictions will be ignored when accessing a death chest.
-# By default, all protection plugins are ignored for death chest access. Uncomment to change this behavior.
+  Towny:
+    check-on-place: true
+    check-on-access: false
 
-check-on-access:
-#  - Factions
-#  - GriefPrevention
-#  - PreciousStones
-#  - Towny
-#  - WorldGuard
+  WorldGuard:
+    check-on-place: true
+    check-on-access: false
 
 
-# List of blocks that can be replaced by a chest
+# List of block materials that can be replaced by a chest
 replaceable-blocks:
   - AIR
-  - LONG_GRASS
+  - GRASS
+  - TALL_GRASS
   - SNOW
   - VINE
-  - WATER_LILY
+  - LILY_PAD
   - WATER
-  - STATIONARY_WATER
   - LAVA
-  - STATIONARY_LAVA

@@ -1,65 +1,82 @@
+##############
 # Time strings
-hour: 'hora'
-hour_plural: 'horas'
-minute: 'minuto'
-minute_plural: 'minutos'
-unlimited: 'tiempo ilimitado'
+##############
+time_strings:
+  hour: 'hora'
+  hour_plural: 'horas'
+  minute: 'minuto'
+  minute_plural: 'minutos'
+  second: 'segundo'
+  second_plural: 'segundos'
+  unlimited: 'tiempo ilimitado'
 
-# Custom Messages
-#
+
+##################
+# Custom sign text
+##################
 # Variable substitutions:
-# %itemname%			item name as configured above
-# %playername%          Player's name
-# %playernickname%      Player's nickname
-# %playerdisplayname%   Player's display name, including prefix/suffix
-# %worldname%           World name that player is in
-# %expiretime%			Remaining time at chest deployment
+# %PLAYER_NAME%	Player's name
+# %WORLD_NAME%	World name
+# %date%		Death date
+
+sign-text:
+  - '&lR.I.P.&r'
+  - '%PLAYER_NAME%'
+  - ''
+  - 'D: %date%'
+
+# Date format documentation:
+# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+date-format: "MMM d, yyyy"
+
+
+#################
+# Custom Messages
+#################
+# Variable substitutions:
+# %PLAYER_NAME%          Player name
+# %PLAYER_NICKNAME%      Player nickname
+# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
+# %WORLD_NAME%           Player world name
+# %EXPIRE_TIME%			 Remaining time at chest deployment
 
 messages:
-  chest-success:
+  CHEST_SUCCESS:
     enabled: true
-    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %expiretime% para recuperar tu artículos.'
-    
-  doublechest-partial-success:
+    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %EXPIRE_TIME% para recuperar tu artículos.'
+
+  DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cSólo se podía colocar un solo cofre del punto muerte.'
-    
-  chest-denied:
+
+  CHEST_DENIED_BLOCK:
     enabled: true
     string: '&cNo se pudo colocar el cofre de la muerte.'
-    
-  inventory-empty:
+
+  INVENTORY_EMPTY:
     enabled: true
     string: '&cNo tenías ningún inventario para poner en un cofre de la muerte.'
-    
-  no-room:
-    enabled: true
-    string: '&cNo había espacio para colocar en el cofre en el lugar de la muerte.'
-    
-  no-chest-in-inventory:
+
+  NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cNo tenías ningún cofres en su inventario.'
-    
-  death-broadcast:
-    enabled: true
-    string: '&4%playername%&r murió. La colocación el cofre de muerte.'
-    
-  not-owner:
+
+  NOT_OWNER:
     enabled: true
     string: '&cEse el cofre de muerte no pertenece a usted.'
-    
-  chest-expired:
+
+  CHEST_EXPIRED:
     enabled: true
     string: '&cSu el cofre de muerte ha expirado.'
-    
-  creative-mode:
+
+  CREATIVE_MODE:
     enabled: true
     string: '&cInventario de modo creativo no se guarda en cofres de muerte.'
-    
-  no-creative-access:
+
+  NO_CREATIVE_ACCESS:
     enabled: true
     string: '&cEl acceso a los cofres de la muerte en el modo creativo no está permitido.'
-    
-  chest-currently-open:
+
+  CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cPecho Muerte está accediendo por otro jugador.'
