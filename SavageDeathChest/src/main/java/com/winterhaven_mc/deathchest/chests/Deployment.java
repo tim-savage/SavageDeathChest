@@ -48,7 +48,7 @@ public class Deployment {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			// plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PERMISSION);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PERMISSION);
 			return;
 		}
 
