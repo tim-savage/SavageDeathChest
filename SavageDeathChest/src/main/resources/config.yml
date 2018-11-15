@@ -97,6 +97,7 @@ protection-plugins:
 # List of block materials that can be replaced by a chest
 replaceable-blocks:
   - AIR
+  - CAVE_AIR
   - GRASS
   - TALL_GRASS
   - SNOW
