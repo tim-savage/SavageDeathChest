@@ -1,7 +1,7 @@
 package com.winterhaven_mc.deathchest.listeners;
 
-
-import com.winterhaven_mc.deathchest.*;
+import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.chests.Deployment;
@@ -96,13 +96,13 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-//		final ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
-//		if (blockingPlugin != null) {
-//			if (plugin.debug) {
-//				plugin.getLogger().info(blockingPlugin.getPluginName() + " is preventing access to this chest.");
-//			}
-//			return;
-//		}
+		final ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
+		if (blockingPlugin != null) {
+			if (plugin.debug) {
+				plugin.getLogger().info(blockingPlugin.getPluginName() + " is preventing access to this chest.");
+			}
+			return;
+		}
 
 		// if player is in creative mode,
 		// and creative-access is configured false,
