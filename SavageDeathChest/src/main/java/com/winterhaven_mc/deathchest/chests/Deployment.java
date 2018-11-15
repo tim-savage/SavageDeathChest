@@ -475,8 +475,15 @@ public class Deployment {
 		Location testLocation = player.getLocation().clone();
 
 		// if player died in the void, start search at y=1 if place-above-void configured true
-		if (testLocation.getY() < 1 && plugin.getConfig().getBoolean("place-above-void")) {
+		if (plugin.getConfig().getBoolean("place-above-void")
+				&& testLocation.getY() < 1) {
 			testLocation.setY(1);
+		}
+
+		// if player died above world build height, start search at build height minus search distance
+		else if (plugin.getConfig().getBoolean("place-below-max")
+				&& testLocation.getY() >= player.getWorld().getMaxHeight()) {
+			testLocation.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
 		}
 
 		// print player death location in log
