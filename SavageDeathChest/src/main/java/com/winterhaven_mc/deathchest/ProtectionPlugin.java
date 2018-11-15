@@ -1,5 +1,7 @@
 package com.winterhaven_mc.deathchest;
 
+import com.palmergames.bukkit.towny.object.TownyPermission;
+import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 
 import com.sk89q.worldguard.WorldGuard;
@@ -7,7 +9,10 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -24,7 +29,7 @@ public enum ProtectionPlugin {
 //
 //			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 //			try {
-//				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(location), false)) {
+//				if (!EnginePermBuild.canPlayerBuildAt(player, PS.valueOf(location), false)) {
 //					return false;
 //				}
 //
@@ -41,7 +46,8 @@ public enum ProtectionPlugin {
 //
 //			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 //			try {
-//				if (!EngineMain.playerCanUseItemHere(player, PS.valueOf(location), Material.CHEST, false)) {
+//				if (!EnginePermBuild.useBlock(player, location.getBlock(), Material.CHEST, false)) {
+////				if (!EngineMain.playerCanUseItemHere(player, PS.valueOf(location), Material.CHEST, false)) {
 //					return false;
 //				}
 //			}
@@ -54,49 +60,49 @@ public enum ProtectionPlugin {
 //
 //	},
 
-//	GRIEFPREVENTION("GriefPrevention") {
-//
-//		@Override
-//		public final boolean hasPlacePermission(final Player player, final Location location) {
-//
-//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-//			try {
-//				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-//				if (claim != null) {
-//					String gpErrorMessage = claim.allowBuild(player,Material.CHEST);
-//					if (gpErrorMessage != null) {
-//						return false;
-//					}
-//				}
-//			}
-//			catch (Exception e) {
-//				logPlaceError();
-//			}
-//
-//			return true;
-//		}
-//
-//		@Override
-//		public final boolean hasChestPermission(final Player player, final Location location) {
-//
-//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-//			try {
-//				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
-//				if (claim != null) {
-//					String gpErrorMessage = claim.allowContainers(player);
-//					if (gpErrorMessage != null) {
-//						return false;
-//					}
-//				}
-//			}
-//			catch (Exception e) {
-//				logAccessError();
-//			}
-//
-//			return true;
-//		}
-//
-//	},
+	GRIEFPREVENTION("GriefPrevention") {
+
+		@Override
+		public final boolean hasPlacePermission(final Player player, final Location location) {
+
+			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+			try {
+				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+				if (claim != null) {
+					String gpErrorMessage = claim.allowBuild(player, Material.CHEST);
+					if (gpErrorMessage != null) {
+						return false;
+					}
+				}
+			}
+			catch (Exception e) {
+				logPlaceError();
+			}
+
+			return true;
+		}
+
+		@Override
+		public final boolean hasChestPermission(final Player player, final Location location) {
+
+			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+			try {
+				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, false, null);
+				if (claim != null) {
+					String gpErrorMessage = claim.allowContainers(player);
+					if (gpErrorMessage != null) {
+						return false;
+					}
+				}
+			}
+			catch (Exception e) {
+				logAccessError();
+			}
+
+			return true;
+		}
+
+	},
 
 //	PRECIOUSSTONES("PreciousStones") {
 //
@@ -174,52 +180,52 @@ public enum ProtectionPlugin {
 
 	},
 
-//	TOWNY("Towny") {
-//
-//		@Override
-//		public final boolean hasPlacePermission(final Player player, final Location location) {
-//
-//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-//			try {
-//				return PlayerCacheUtil.getCachePermission(player, location,
-//						Material.CHEST, TownyPermission.ActionType.BUILD);
-//			}
-//			catch (Exception e) {
-//				logPlaceError();
-//			}
-//
-//			return true;
-//		}
-//
-//		@Override
-//		public final boolean hasChestPermission(final Player player, final Location location) {
-//
-//			// only perform check if plugin is installed
-//			if (this.isInstalled()) {
-//				try {
-//					return PlayerCacheUtil.getCachePermission(player, location,
-//							Material.CHEST, TownyPermission.ActionType.SWITCH);
-//				}
-//				catch (Exception e) {
-//					logAccessError();
-//				}
-//			}
-//			return true;
-//		}
-//
-//	},
-
-	WORLDGUARD("WorldGuard") {
+	TOWNY("Towny") {
 
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
+				return PlayerCacheUtil.getCachePermission(player, location,
+						Material.CHEST, TownyPermission.ActionType.BUILD);
+			}
+			catch (Exception e) {
+				logPlaceError();
+			}
 
-				RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-				RegionQuery query = rc.createQuery();
+			return true;
+		}
 
+		@Override
+		public final boolean hasChestPermission(final Player player, final Location location) {
+
+			// only perform check if plugin is installed
+			if (this.isInstalled()) {
+				try {
+					return PlayerCacheUtil.getCachePermission(player, location,
+							Material.CHEST, TownyPermission.ActionType.SWITCH);
+				}
+				catch (Exception e) {
+					logAccessError();
+				}
+			}
+			return true;
+		}
+
+	},
+
+	WORLDGUARD("WorldGuard") {
+
+		// get WorldGuard region container
+		RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
+
+		@Override
+		public final boolean hasPlacePermission(final Player player, final Location location) {
+
+			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+			try {
+				RegionQuery query = regionContainer.createQuery();
 				return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
 			}
 			catch (Exception e) {
@@ -234,10 +240,7 @@ public enum ProtectionPlugin {
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
-
-				RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-				RegionQuery query = rc.createQuery();
-
+				RegionQuery query = regionContainer.createQuery();
 				return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
 			}
 			catch (Exception e) {
@@ -271,7 +274,7 @@ public enum ProtectionPlugin {
 	 * Log errors that occur when checking for block place permission
 	 */
 	void logPlaceError() {
-		plugin.getLogger().warning("An error occured checking for place permission "
+		plugin.getLogger().warning("An error occurred checking for block place permission "
 				+ "with " + this.getPluginName() + " v" + this.getVersion());
 	}
 
@@ -280,7 +283,7 @@ public enum ProtectionPlugin {
 	 * Log errors that occur when checking for chest access permission
 	 */
 	void logAccessError() {
-		plugin.getLogger().warning("An error occured checking for access permission "
+		plugin.getLogger().warning("An error occurred checking for chest access permission "
 				+ "with " + this.getPluginName() + " v" + this.getVersion());
 	}
 
@@ -375,20 +378,11 @@ public enum ProtectionPlugin {
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
 
-			// if plugin is installed and in check-on-place list, check required permission
+			// if plugin is installed and in check-on-place is true, check required permission
 			if (pp.isInstalled() && pp.isConfigEnabledPlace()) {
 
-				// if require build is configured true, check for build permission
-				if (plugin.getConfig().getBoolean("require-build-permission")) {
-
-					// if build permission is denied, return ProtectionPlugin object
-					if (!pp.hasPlacePermission(player, block.getLocation())) {
-						return pp;
-					}
-				}
-
-				// otherwise if chest access permission is denied, return ProtectionPlugin object
-				else if (!pp.hasChestPermission(player, block.getLocation())) {
+				// if build permission is denied, return ProtectionPlugin object
+				if (!pp.hasPlacePermission(player, block.getLocation())) {
 					return pp;
 				}
 			}
@@ -404,7 +398,7 @@ public enum ProtectionPlugin {
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
 
-			// if plugin is installed and in check-on-access list, check for access permission
+			// if plugin is installed and in check-on-access is true, check for access permission
 			if (pp.isInstalled() && pp.isConfigEnabledAccess()) {
 
 				// if access permission is denied, return ProtectionPlugin object
