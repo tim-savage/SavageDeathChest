@@ -18,7 +18,6 @@ time_strings:
 # %PLAYER_NAME%	Player's name
 # %WORLD_NAME%	World name
 # %date%		Death date
-
 sign-text:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
@@ -69,17 +68,9 @@ messages:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
 
-  NO_ROOM:
-    enabled: true
-    string: '&cThere was no room to place chest at your death location.'
-
   NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cYou did not have any chests in your inventory.'
-
-  DEATH_BROADCAST:
-    enabled: true
-    string: '&4%PLAYER_NAME%&r died. Deploying death chest.'
 
   NOT_OWNER:
     enabled: true
@@ -93,11 +84,11 @@ messages:
   CREATIVE_MODE:
     enabled: true
     string: '&cCreative mode inventory is not saved in death chests.'
-  
+
   NO_CREATIVE_ACCESS:
     enabled: true
     string: '&cAccess to death chests in creative mode is not allowed.'
-  
+
   CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cDeath chest is currently being accessed by another player.'

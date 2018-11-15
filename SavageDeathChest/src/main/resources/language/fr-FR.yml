@@ -1,22 +1,29 @@
 #################################
 # Traduction des chaînes de temps
 #################################
-hour: 'heure'
-hour_plural: 'heures'
-minute: 'minute'
-minute_plural: 'minutes'
-unlimited: 'temps illimité'
+time_strings:
+  HOUR: 'heure'
+  HOUR_PLURAL: 'heures'
+  MINUTE: 'minute'
+  MINUTE_PLURAL: 'minutes'
+  UNLIMITED: 'temps illimité'
 
 
 ##########################
 # Signe texte personnalisé
 ##########################
+# Variable substitutions:
+# %PLAYER_NAME%	Player's name
+# %WORLD_NAME%	World name
+# %date%		Death date
 sign-text:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
   - ''
   - 'D: %date%'
 
+# Date format documentation:
+# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
 date-format: "MMM d, yyyy"
 
 
@@ -32,55 +39,55 @@ date-format: "MMM d, yyyy"
 # %EXPIRE_TIME%			Temps restant avant la disparition du coffre
 
 messages:
-  chest-success:
+  CHEST_SUCCESS:
     enabled: true
     string: '&cUn coffre contenant votre inventaire a été placé. Vous avez %EXPIRE_TIME% avant sa disparition.'
 
-  doublechest-partial-success:
+  DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cSeul un coffre peut être placé à l''endroit de votre mort. Certains items ont donc été éparpillés à terre.'
 
-  chest-denied:
-    enabled: true
-    string: '&cImpossible de placer le coffre contenant l''inventaire lors de votre mort.'
-
-  chest-denied-plugin:
+  CHEST_DENIED_PLUGIN:
     enabled: true
     string: '&cL''apparition du coffre contenant l''inventaire de votre mort a été empéché par %PLUGIN%.'
 
-  inventory-empty:
+  CHEST_DENIED_BLOCK:
+    enabled: true
+    string: '&cImpossible de placer le coffre contenant l''inventaire lors de votre mort.'
+
+  CHEST_DENIED_PERMISSION:
+    enabled: false
+    string: '&cVous n''avez pas la permission pour les coffres de mort.'
+
+  CHEST_DENIED_ADJACENT:
+    enabled: true
+    string: '&cLe déploiement dans la poitrine de la mort a été empêché par une poitrine adjacente existante.'
+
+  INVENTORY_EMPTY:
     enabled: true
     string: '&cVous aviez votre inventaire vide, aucun coffre n''a donc été placé.'
 
-  no-room:
-    enabled: true
-    string: '&cIl n''y avait pas d''endroit où placer le coffre contenant votre inventaire.'
-
-  no-chest-in-inventory:
+  NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cLors de votre mort, vous n''aviez pas de coffre dans votre inventaire.'
 
-  death-broadcast:
-    enabled: true
-    string: '&4%PLAYER_NAME%&r est mort. Un coffre contenant son inventaire est apparu.'
-
-  not-owner:
+  NOT_OWNER:
     enabled: true
     string: '&cCe coffre de joueur mort ne vous appartient pas.'
 
-  chest-expired:
+  CHEST_EXPIRED:
     enabled: true
     string: '&cVotre coffre contenant l''inventaire lors de votre mort vient de disparaître.'
 
-  creative-mode:
+  CREATIVE_MODE:
     enabled: true
     string: '&cVotre inventaire du mode créatif n''est pas sauvegardé dans un coffre lors de votre mort.'
-  
-  no-creative-access:
+
+  NO_CREATIVE_ACCESS:
     enabled: true
     string: '&cImpossible d''accéder aux coffres de joueurs mort en mode créatif.'
-  
-  chest-currently-open:
+
+  CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cLe coffre contenant votre inventaire lors de votre mort est en train d''être ouvert par un autre joueur!'
 
