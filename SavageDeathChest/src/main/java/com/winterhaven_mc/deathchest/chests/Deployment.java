@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
@@ -126,8 +127,9 @@ public class Deployment {
 		if (plugin.getConfig().getLong("expire-time") <= 0) {
 			deathChest.setExpiration(0);
 		} else {
-			// set expiration field based on config setting (config setting is in minutes, so multiply by 60000)
-			deathChest.setExpiration(System.currentTimeMillis() + plugin.getConfig().getLong("expire-time") * 60000);
+			// set expiration field based on config setting (config setting is in minutes)
+			deathChest.setExpiration(System.currentTimeMillis()
+					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")));
 		}
 
 		// create expire task for deathChest
@@ -212,13 +214,13 @@ public class Deployment {
 			}
 
 			// place chest at result location
-			remainingItems = placeChest(result.getLocation(), remainingItems);
+			remainingItems = placeChest(result.getLocation(), remainingItems, ChestBlockType.RIGHT_CHEST);
 
 			if (plugin.debug) {
 				plugin.getLogger().info("Single chest placed at " + result.getLocation().toString());
 			}
 
-			// place sign on left chest
+			// place sign on chest
 			boolean signPlaced = placeSign(player, result.getLocation().getBlock());
 
 			if (plugin.debug && signPlaced) {
@@ -292,7 +294,7 @@ public class Deployment {
 		}
 
 		// place chest at result location
-		remainingItems = placeChest(result.getLocation(), remainingItems);
+		remainingItems = placeChest(result.getLocation(), remainingItems, ChestBlockType.RIGHT_CHEST);
 
 		if (plugin.debug) {
 			plugin.getLogger().info("Right chest placed at " + result.getLocation().toString());
@@ -336,7 +338,7 @@ public class Deployment {
 			if (remainingItems.size() > 0
 					&& result.getResultCode().equals(ResultCode.SUCCESS)) {
 
-				remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems);
+				remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems, ChestBlockType.LEFT_CHEST);
 
 				if (plugin.debug) {
 					plugin.getLogger().info("Left chest placed at "
@@ -347,7 +349,7 @@ public class Deployment {
 
 		// set chest type to left/right for double chest
 
-		// get left and right chest block
+		// get right chest block
 		Block rightBlock = result.getLocation().getBlock();
 
 		// left block is to player's right
@@ -600,7 +602,9 @@ public class Deployment {
 	}
 
 
-	private List<ItemStack> placeChest(final Location location, final List<ItemStack> chestItems) {
+	private List<ItemStack> placeChest(final Location location,
+									   final List<ItemStack> chestItems,
+									   final ChestBlockType chestBlockType) {
 
 		// get current block at location
 		Block block = location.getBlock();
@@ -624,7 +628,7 @@ public class Deployment {
 		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) blockState;
 
 		// create new ChestBlock object
-		new ChestBlock(deathChest, block);
+		new ChestBlock(deathChest, block, chestBlockType);
 
 		// put items into chest inventory, items that don't fit are returned as List of ItemStack
 		return fillChest(chest, chestItems);
@@ -636,7 +640,7 @@ public class Deployment {
 										 final ChestSize chestSize) {
 
 		// test left chest location
-		Result result = validateChestLocation(player, location, ChestSide.LEFT);
+		Result result = validateChestLocation(player, location, ChestBlockType.LEFT_CHEST);
 
 		// if left chest is not successful, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
@@ -651,7 +655,7 @@ public class Deployment {
 		if (chestSize.equals(ChestSize.DOUBLE)) {
 
 			// test right chest block location
-			result = validateChestLocation(player, location, ChestSide.RIGHT);
+			result = validateChestLocation(player, location, ChestBlockType.RIGHT_CHEST);
 		}
 
 		return result;
@@ -660,11 +664,11 @@ public class Deployment {
 
 	private Result validateChestLocation(@SuppressWarnings("unused") final Player player,
 										 final Location location,
-										 final ChestSide chestSide) {
+										 final ChestBlockType chestBlockType) {
 
 		Location testLocation = location;
 
-		if (chestSide.equals(ChestSide.RIGHT)) {
+		if (chestBlockType.equals(ChestBlockType.RIGHT_CHEST)) {
 			testLocation = getLocationToRight(location);
 		}
 
@@ -780,7 +784,7 @@ public class Deployment {
 		ChestBlock signChestBlock = new ChestBlock(this.deathChest, signBlock);
 
 		// add sign to chestBlocks
-		this.deathChest.addChestBlock(signChestBlock);
+		this.deathChest.addChestBlock(ChestBlockType.SIGN, signChestBlock);
 
 		// return success
 		return true;
@@ -821,7 +825,5 @@ public class Deployment {
 	private boolean isAboveGrassPath(final Block block) {
 		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
 	}
-
-
 
 }
