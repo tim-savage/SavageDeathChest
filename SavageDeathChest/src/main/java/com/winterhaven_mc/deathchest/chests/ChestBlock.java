@@ -32,6 +32,9 @@ public class ChestBlock {
 	// chest block location
 	private Location location;
 
+	// chest block type
+	private ChestBlockType chestBlockType;
+
 
 	/**
 	 * Class constructor
@@ -52,6 +55,9 @@ public class ChestBlock {
 		// set location for this ChestBlock
 		this.location = block.getLocation();
 
+		// set ChestBlockType
+		this.chestBlockType = ChestBlockType.getType(block);
+
 		// set block metadata
 		this.setMetadata(deathChest);
 
@@ -59,7 +65,34 @@ public class ChestBlock {
 		plugin.chestManager.addChestBlock(this);
 
 		// add this ChestBlock to passed DeathChest
-		deathChest.addChestBlock(this);
+		deathChest.addChestBlock(this.chestBlockType, this);
+	}
+
+
+	/**
+	 * Class constructor
+	 * @param deathChest DeathChest object that this ChestBlock is member
+	 * @param block in game block this ChestBlock represents
+	 */
+	ChestBlock(final DeathChest deathChest, final Block block, final ChestBlockType chestBlockType) {
+
+		// set ChestUUID for this ChestBlock
+		this.chestUUID = deathChest.getChestUUID();
+
+		// set location for this ChestBlock
+		this.location = block.getLocation();
+
+		// set ChestBlockType
+		this.chestBlockType = chestBlockType;
+
+		// set block metadata
+		this.setMetadata(deathChest);
+
+		// add this ChestBlock to map
+		plugin.chestManager.addChestBlock(this);
+
+		// add this ChestBlock to passed DeathChest
+		deathChest.addChestBlock(this.chestBlockType, this);
 	}
 
 
@@ -67,19 +100,24 @@ public class ChestBlock {
 		return location;
 	}
 
-
 	public void setLocation(final Location location) {
 		this.location = location;
 	}
-
 
 	public UUID getChestUUID() {
 		return chestUUID;
 	}
 
-
 	public void setChestUUID(final UUID chestUUID) {
 		this.chestUUID = chestUUID;
+	}
+
+	public ChestBlockType getType() {
+		return chestBlockType;
+	}
+
+	public void setType(ChestBlockType chestBlockType) {
+		this.chestBlockType = chestBlockType;
 	}
 
 
@@ -181,16 +219,16 @@ public class ChestBlock {
 			final List<ItemStack> chestInventory = new ArrayList<>(Arrays.asList(chest.getInventory().getContents()));
 
 			// iterate through all inventory slots in chest inventory
-			for (ItemStack stack : chestInventory) {
+			for (ItemStack itemStack : chestInventory) {
 
 				// if inventory slot item is not null...
-				if (stack != null) {
+				if (itemStack != null) {
 
 					// remove item from chest inventory
-					chest.getInventory().removeItem(stack);
+					chest.getInventory().removeItem(itemStack);
 
 					// add item to player inventory
-					playerinventory.addItem(stack);
+					playerinventory.addItem(itemStack);
 
 					// play inventory add sound
 					plugin.soundConfig.playSound(player, SoundId.INVENTORY_ADD_ITEM);
@@ -263,11 +301,11 @@ public class ChestBlock {
 		// set block material to air; this will drop chest contents, but not the block itself
 		block.setType(Material.AIR);
 
-		// remove ChestBlock from chest block map
-		plugin.chestManager.removeChestBlock(this);
-
 		// remove ChestBlock record from datastore
 		plugin.dataStore.deleteBlockRecord(this);
+
+		// remove ChestBlock from chest block map
+		plugin.chestManager.removeChestBlock(this);
 	}
 
 }
