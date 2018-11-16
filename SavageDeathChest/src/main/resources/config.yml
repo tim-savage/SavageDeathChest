@@ -50,6 +50,9 @@ search-distance: 10
 # Place chests above the void when players die below level 0
 place-above-void: true
 
+# Place chests below max build height when players die above max height
+place-below-max: true
+
 # Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
 expire-time: 60
 
@@ -97,6 +100,7 @@ protection-plugins:
 # List of block materials that can be replaced by a chest
 replaceable-blocks:
   - AIR
+  - CAVE_AIR
   - GRASS
   - TALL_GRASS
   - SNOW

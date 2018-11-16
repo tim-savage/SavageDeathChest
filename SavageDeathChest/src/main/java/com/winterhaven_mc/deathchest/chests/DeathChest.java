@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public final class DeathChest {
@@ -38,8 +38,7 @@ public final class DeathChest {
 	private int expireTaskId;
 
 	// set of chest blocks that make up this death chest
-	private Set<ChestBlock> chestBlocks;
-
+	private EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
 	/**
 	 * Class constructor
@@ -66,8 +65,6 @@ public final class DeathChest {
 			killerUUID = player.getKiller().getUniqueId();
 		}
 
-		// initialize chestBlocks set
-		this.chestBlocks = ConcurrentHashMap.newKeySet();
 	}
 
 
@@ -178,13 +175,15 @@ public final class DeathChest {
 	 * Getter method for DeathChest chestBlocks
 	 * @return List of Blocks in chestBlocks
 	 */
-	public Set<ChestBlock> getChestBlocks() {
-		return this.chestBlocks;
+	public Collection<ChestBlock> getChestBlocks() {
+		return this.chestBlocks.values();
 	}
 
 
-	void addChestBlock(final ChestBlock chestBlock) {
-		this.chestBlocks.add(chestBlock);
+	void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
+		if (chestBlock != null) {
+			this.chestBlocks.put(chestBlockType, chestBlock);
+		}
 	}
 
 
@@ -195,6 +194,11 @@ public final class DeathChest {
 
 		// set metadata on blocks in set
 		for (ChestBlock chestBlock : this.getChestBlocks()) {
+
+			if (plugin.debug) {
+				plugin.getLogger().info("Setting metadata on chest block at " + chestBlock.getLocation().toString());
+			}
+
 			setMetadata(chestBlock);
 		}
 	}
@@ -208,8 +212,16 @@ public final class DeathChest {
 		// get in game block at chest block location
 		Block block = chestBlock.getLocation().getBlock();
 
+		if (plugin.debug) {
+			plugin.getLogger().info("Setting metadata on block type " + block.getType().toString());
+		}
+
+		for (Material material : ChestManager.deathChestMaterials) {
+			plugin.getLogger().info(material.toString());
+		}
+
 		// if block is not death chest material, do nothing and return
-		if (!plugin.chestManager.getDeathChestMaterials().contains(block.getType())) {
+		if (!ChestManager.deathChestMaterials.contains(block.getType())) {
 			return;
 		}
 
@@ -278,7 +290,7 @@ public final class DeathChest {
 		}
 
 		// transfer contents of any chest blocks to player
-		for (ChestBlock chestBlock : chestBlocks) {
+		for (ChestBlock chestBlock : chestBlocks.values()) {
 			chestBlock.transferContents(player);
 		}
 
@@ -288,26 +300,24 @@ public final class DeathChest {
 
 
 	/**
-	 * Destroy a death chest block, dropping chest contents
+	 * Destroy a death chest, dropping chest contents
 	 */
 	public final void destroy() {
 
 		// destroy sign blocks first, to prevent detached sign drop
-		for (ChestBlock chestBlock : chestBlocks) {
-			Block block = chestBlock.getLocation().getBlock();
-			if (block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN)) {
-				chestBlock.destroy();
-				this.chestBlocks.remove(chestBlock);
-			}
+		if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
+			chestBlocks.get(ChestBlockType.SIGN).destroy();
+			this.chestBlocks.remove(ChestBlockType.SIGN);
 		}
 
 		// destroy remaining DeathChest blocks
-		for (ChestBlock chestBlock : chestBlocks) {
+		for (ChestBlock chestBlock : chestBlocks.values()) {
 			chestBlock.destroy();
 		}
 
 		// remove ChestBlocks from set
-		this.chestBlocks.clear();
+		this.chestBlocks.remove(ChestBlockType.LEFT_CHEST);
+		this.chestBlocks.remove(ChestBlockType.RIGHT_CHEST);
 
 		// delete DeathChest record from datastore
 		plugin.dataStore.deleteChestRecord(this);
@@ -317,9 +327,10 @@ public final class DeathChest {
 
 		if (plugin.debug) {
 			plugin.getLogger().info("Expire chest task #" + this.getExpireTaskId() + " cancelled.");
+			plugin.getLogger().info("Removing chest UUID: " + this.getChestUUID());
 		}
 
-		// remove DeathChest from ChestManager
+		// remove DeathChest from ChestManager DeathChest map
 		plugin.chestManager.removeDeathChest(this);
 	}
 
@@ -348,7 +359,7 @@ public final class DeathChest {
 		Block block = null;
 
 		// get chestBlock
-		for (ChestBlock chestBlock : this.chestBlocks) {
+		for (ChestBlock chestBlock : this.chestBlocks.values()) {
 			if (chestBlock.getLocation().getBlock().getType().equals(Material.CHEST)) {
 				block = chestBlock.getLocation().getBlock();
 				break;

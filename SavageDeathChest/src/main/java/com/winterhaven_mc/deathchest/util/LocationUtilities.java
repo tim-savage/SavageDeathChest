@@ -24,8 +24,7 @@ public final class LocationUtilities {
 	 * @param yaw	Direction in degrees
 	 * @return BlockFace of cardinal direction
 	 */
-	@SuppressWarnings("WeakerAccess")
-	public static BlockFace getCardinalDirection(final float yaw) {
+	private static BlockFace getCardinalDirection(final float yaw) {
 
 		// ensure yaw is between 0 and 360 (in case of negative yaw)
 		double rotation = (yaw + 360) % 360;
@@ -141,7 +140,7 @@ public final class LocationUtilities {
 	 * @param location initial location
 	 * @return block in front of initial location
 	 */
-	public static Block getBlockToFront(final Location location) {
+	private static Block getBlockToFront(final Location location) {
 		float yaw = location.getYaw() + 180;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
 	}
@@ -158,6 +157,11 @@ public final class LocationUtilities {
 	}
 
 
+	/**
+	 * Get BlockFace to left of passed BlockFace
+	 * @param blockFace the original BlockFace
+	 * @return BlockFace to left of passed BlockFace
+	 */
 	public static BlockFace getBlockFaceToLeft(final BlockFace blockFace) {
 
 		if (blockFace.equals(BlockFace.NORTH)) {

@@ -27,7 +27,7 @@ public class ChestManager {
 	public ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
-	private final Set<Material> deathChestMaterials =
+	final static Set<Material> deathChestMaterials =
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 					Material.CHEST,
 					Material.WALL_SIGN,
@@ -71,21 +71,38 @@ public class ChestManager {
 			deathChestMap.put(deathChest.getChestUUID(),deathChest);
 		}
 
-		// retrieve all death block records from datastore
+		// retrieve all chest block records from datastore
 		List<ChestBlock> blockQueryResult = plugin.dataStore.getAllBlockRecords();
 
 		// populate death chests in map with all valid chest blocks retrieved from datastore
 		for (ChestBlock chestBlock : blockQueryResult) {
 
-			// if chestUUID exists in deathChestMap and in game block at location is valid chest material,
-			// add chestBlock to deathChest in map
-			if (deathChestMap.containsKey(chestBlock.getChestUUID())
-					&& plugin.chestManager.getDeathChestMaterials().contains(chestBlock.getLocation().getBlock().getType())) {
-				deathChestMap.get(chestBlock.getChestUUID()).addChestBlock(chestBlock);
-				chestBlockMap.put(chestBlock.getLocation(),chestBlock);
-			}
-			else {
+			// get chest block type
+			ChestBlockType chestBlockType = ChestBlockType.getType(chestBlock.getLocation().getBlock());
+
+			// if chest block type is null, delete record
+			if (chestBlockType == null) {
+				if (plugin.debug) {
+					plugin.getLogger().info("Removing ChestBlock with invalid material type from dataStore.");
+				}
 				plugin.dataStore.deleteBlockRecord(chestBlock);
+			}
+			else if (!deathChestMap.containsKey(chestBlock.getChestUUID())) {
+				if (plugin.debug) {
+					plugin.getLogger().info("Removing orphan ChestBlock from dataStore.");
+				}
+				plugin.dataStore.deleteBlockRecord(chestBlock);
+			}
+
+			else {
+				// add chestBlock to chestBlockMap
+				chestBlockMap.put(chestBlock.getLocation(), chestBlock);
+
+				// add chestBlock to parent DeathChest object
+				DeathChest deathChest = deathChestMap.get(chestBlock.getChestUUID());
+				if (deathChest != null) {
+					deathChest.addChestBlock(chestBlockType, chestBlock);
+				}
 			}
 		}
 
@@ -95,8 +112,12 @@ public class ChestManager {
 		// expire chests with no blocks or past expiration
 		for (DeathChest deathChest : deathChestMap.values()) {
 
-			if (deathChest.getChestBlocks().isEmpty()
-					|| deathChest.getExpiration() > currentTime) {
+			// if DeathChest has no children, remove from map and datastore
+			if (deathChest.getChestBlocks().isEmpty()) {
+				deathChestMap.remove(deathChest.getChestUUID());
+				plugin.dataStore.deleteChestRecord(deathChest);
+			}
+			else if (deathChest.getExpiration() < currentTime) {
 				deathChest.expire();
 			}
 			else {
@@ -174,7 +195,7 @@ public class ChestManager {
 	 */
 	void addChestBlock(ChestBlock chestBlock) {
 
-		this.chestBlockMap.put(chestBlock.getLocation(),chestBlock);
+		this.chestBlockMap.put(chestBlock.getLocation(), chestBlock);
 
 		if (plugin.debug) {
 			plugin.getLogger().info("ChestBlock added to Map.");
@@ -198,13 +219,6 @@ public class ChestManager {
 	boolean isChestBlock(Block block) {
 		return chestBlockMap.containsKey(block.getLocation());
 	}
-
-
-	/**
-	 * Get set of valid death chest materials
-	 * @return set of valid death chest materials
-	 */
-	Set<Material> getDeathChestMaterials() { return this.deathChestMaterials; }
 
 
 	/**
