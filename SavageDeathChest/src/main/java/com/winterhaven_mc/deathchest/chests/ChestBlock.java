@@ -116,7 +116,7 @@ public class ChestBlock {
 		return chestBlockType;
 	}
 
-	public void setType(ChestBlockType chestBlockType) {
+	public void setType(final ChestBlockType chestBlockType) {
 		this.chestBlockType = chestBlockType;
 	}
 
