@@ -92,3 +92,21 @@ messages:
   CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cDeath chest is currently being accessed by another player.'
+
+
+  COMMAND_FAIL_ARGS_COUNT_OVER:
+    enabled: true
+    string: '&cToo many arguments!'
+
+  COMMAND_FAIL_RELOAD_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to reload DeathChest configuration!'
+
+  COMMAND_FAIL_STATUS_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to view DeathChest settings!'
+
+  COMMAND_SUCCESS_RELOAD:
+    enabled: true
+    string: '&7DeathChest configuration reloaded.'
+
