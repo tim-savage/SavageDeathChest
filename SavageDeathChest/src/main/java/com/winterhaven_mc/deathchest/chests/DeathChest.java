@@ -57,7 +57,7 @@ public final class DeathChest {
 	 * Class constructor
 	 * @param player the death chest owner
 	 */
-	public DeathChest(Player player) {
+	public DeathChest(final Player player) {
 
 		// create random chestUUID
 		this.chestUUID = UUID.randomUUID();
@@ -165,7 +165,7 @@ public final class DeathChest {
 	 * @param itemCount the itemCount to set
 	 */
 	@SuppressWarnings("unused")
-	public void setItemCount(int itemCount) {
+	public void setItemCount(final int itemCount) {
 		this.itemCount = itemCount;
 	}
 
@@ -344,7 +344,7 @@ public final class DeathChest {
 	 * Items that do not fit in player inventory will be dropped on ground.
 	 * @param player the player whose inventory the chest contents will be transferred
 	 */
-	public final void autoLoot(Player player) {
+	public final void autoLoot(final Player player) {
 
 		// if passed player is null, do nothing and return
 		if (player == null) {
