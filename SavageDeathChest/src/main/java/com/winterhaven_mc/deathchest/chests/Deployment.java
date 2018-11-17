@@ -32,6 +32,10 @@ public class Deployment {
 	private DeathChest deathChest;
 
 
+	/**
+	 * Class constructor for DeathChest deployment
+	 * @param event player death event that triggers DeathChest deployment
+	 */
 	public Deployment (PlayerDeathEvent event) {
 
 		// get player from event
@@ -143,8 +147,12 @@ public class Deployment {
 	}
 
 
-
-	// new deployChest prototype
+	/**
+	 * Deploy a DeathChest for player and fill with dropped items on player death
+	 * @param player the player who died
+	 * @param droppedItems the player's items dropped on death
+	 * @return Result - the result of the attempted DeathChest deployment
+	 */
 	private Result deployChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// combine stacks of same items where possible
@@ -169,7 +177,12 @@ public class Deployment {
 	}
 
 
-	// new deployChest prototype
+	/**
+	 * Deploy a single chest for player and fill with dropped items on player death
+	 * @param player the player who died
+	 * @param droppedItems the player's items dropped on death
+	 * @return Result - the result of the attempted DeathChest deployment
+	 */
 	private Result deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
 
 		List<ItemStack> remainingItems = droppedItems;
@@ -236,7 +249,12 @@ public class Deployment {
 	}
 
 
-	// new deployChest prototype
+	/**
+	 * Deploy a double chest for player and fill with dropped items on player death
+	 * @param player the player who died
+	 * @param droppedItems the player's items dropped on death
+	 * @return Result - the result of the attempted DeathChest deployment
+	 */
 	private Result deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 
 		List<ItemStack> remainingItems = droppedItems;

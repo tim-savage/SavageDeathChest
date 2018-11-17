@@ -508,7 +508,7 @@ final class DataStoreSQLite extends DataStore {
 
 					// output debugging information
 					if (plugin.debug) {
-						plugin.getLogger().info(rowsAffected + " rows affected.");
+						plugin.getLogger().info(rowsAffected + " rows inserted.");
 					}
 				}
 				catch (SQLException e) {

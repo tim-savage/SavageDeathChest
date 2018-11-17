@@ -3,6 +3,8 @@ package com.winterhaven_mc.deathchest.commands;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.messages.MessageId;
+import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 
 import org.bukkit.ChatColor;
@@ -21,6 +23,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	private final PluginMain plugin;
 	private final String pluginName;
+
 	// constant List of subcommands
 	private final static List<String> subcommands =
 			Collections.unmodifiableList(new ArrayList<>(
@@ -36,7 +39,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 
 	/**
-	 * Tab completer for SpawnStar
+	 * Tab completer for DeathChest
 	 */
 	@Override
 	public final List<String> onTabComplete(final CommandSender sender, final Command command,
@@ -49,7 +52,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		if (args.length == 1) {
 
 			for (String subcommand : subcommands) {
-				if (sender.hasPermission("spawnstar." + subcommand)
+				if (sender.hasPermission("deathchest." + subcommand)
 						&& subcommand.startsWith(args[0].toLowerCase())) {
 					returnList.add(subcommand);
 				}
@@ -65,7 +68,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		int maxArgs = 1;
 
 		if (args.length > maxArgs) {
-			sender.sendMessage(ChatColor.RED + pluginName + "Too many arguments.");
+			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_ARGS_COUNT_OVER);
+			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return false;
 		}
 
@@ -89,6 +93,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		if (subcommand.equalsIgnoreCase("reload")) {
 			return reloadCommand(sender);
 		}
+
+		// return false to display bukkit command help
 		return false;
 	}
 
@@ -99,7 +105,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @return true if command executed without error, false to output help message
 	 */
 	private boolean statusCommand(final CommandSender sender) {
-		
+
+		if (!sender.hasPermission("deathchest.status")) {
+			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_STATUS_PERMISSION);
+			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+		}
+
 		String versionString = this.plugin.getDescription().getVersion();
 		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " 
 				+ ChatColor.RESET + versionString);
@@ -151,7 +162,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	
 	private boolean reloadCommand(final CommandSender sender) {
-		
+
+		if (!sender.hasPermission("deathchest.reload")) {
+			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_RELOAD_PERMISSION);
+			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+		}
+
 		// copy default config from jar if it doesn't exist
 		plugin.saveDefaultConfig();
 		
@@ -175,9 +191,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		// reload datastore if changed
 		DataStoreFactory.reload();
-		
-		sender.sendMessage(ChatColor.AQUA + pluginName + "Configuration reloaded.");
-		
+
+		// send success message
+		plugin.messageManager.sendMessage(sender, MessageId.COMMAND_SUCCESS_RELOAD);
+
+		// return true to prevent bukkit command help display
 		return true;
 	}
 	
