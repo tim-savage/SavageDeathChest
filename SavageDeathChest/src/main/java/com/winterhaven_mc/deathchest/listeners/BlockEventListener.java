@@ -63,9 +63,7 @@ public final class BlockEventListener implements Listener {
 
 		// check for adjacent death chests
 		if (plugin.chestManager.isDeathChestChestBlock(getBlockToLeft(location))
-				|| plugin.chestManager.isDeathChestChestBlock(getBlockToRight(location))
-				|| plugin.chestManager.isDeathChestChestBlock(getBlockToFront(location))
-				|| plugin.chestManager.isDeathChestChestBlock(getBlockToRear(location))) {
+				|| plugin.chestManager.isDeathChestChestBlock(getBlockToRight(location))) {
 			if (plugin.debug) {
 				plugin.getLogger().info("Chest placed adjacent to death chest cancelled.");
 			}
