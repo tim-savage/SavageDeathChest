@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 public final class DeathChest {
@@ -31,8 +32,14 @@ public final class DeathChest {
 	// the UUID of the player who killed the death chest owner, if any; otherwise null
 	private UUID killerUUID;
 
-	// the expiration time of this death chest item, in milliseconds since epoch
-	private long expiration;
+	// item count; for future use
+	private int itemCount;
+
+	// placementTime time of this death chest, in milliseconds since epoch
+	private long placementTime;
+
+	// the expirationTime time of this death chest, in milliseconds since epoch
+	private long expirationTime;
 
 	// task id of expire task for this death chest block
 	private int expireTaskId;
@@ -65,6 +72,21 @@ public final class DeathChest {
 			killerUUID = player.getKiller().getUniqueId();
 		}
 
+		// set item count
+		this.itemCount = 0;
+
+		// set placementTime timestamp
+		this.placementTime = System.currentTimeMillis();
+
+		// set expirationTime timestamp
+		// if configured expiration is zero (or negative), set expiration to zero to signify no expiration
+		if (plugin.getConfig().getLong("expire-time") <= 0) {
+			this.setExpirationTime(0);
+		} else {
+			// set expiration field based on config setting (in minutes)
+			this.setExpirationTime(System.currentTimeMillis()
+					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")));
+		}
 	}
 
 
@@ -129,23 +151,63 @@ public final class DeathChest {
 
 
 	/**
-	 * Getter method for DeathChest expiration
-	 *
-	 * @return long expiration timestamp
+	 * Getter method for DeathChest itemCount
+	 * @return integer - itemCount
 	 */
-	public final long getExpiration() {
-		return this.expiration;
+	@SuppressWarnings("unused")
+	public int getItemCount() {
+		return itemCount;
 	}
 
 
 	/**
-	 * Setter method for DeathChest expiration
-	 *
-	 * @param expiration the expiration time in milliseconds since epoch to set in the
-	 *                   expiration field of the DeathChest object
+	 * Setter method for DeathChest itemCount
+	 * @param itemCount the itemCount to set
 	 */
-	public final void setExpiration(final long expiration) {
-		this.expiration = expiration;
+	@SuppressWarnings("unused")
+	public void setItemCount(int itemCount) {
+		this.itemCount = itemCount;
+	}
+
+	/**
+	 * Getter method for DeathChest placementTime timestamp
+	 *
+	 * @return long placementTime timestamp
+	 */
+	public final long getPlacementTime() {
+		return this.placementTime;
+	}
+
+
+	/**
+	 * Setter method for DeathChest placementTime timestamp
+	 *
+	 * @param placementTime the placementTime time in milliseconds since epoch to set in the
+	 *                  placementTime field of the DeathChest object
+	 */
+	public final void setPlacementTime(final long placementTime) {
+		this.placementTime = placementTime;
+	}
+
+
+	/**
+	 * Getter method for DeathChest expirationTime timestamp
+	 *
+	 * @return long expirationTime timestamp
+	 */
+	public final long getExpirationTime() {
+		return this.expirationTime;
+	}
+
+
+	/**
+	 * Setter method for DeathChest expirationTime timestamp
+	 *
+	 * @param expirationTime the expirationTime time in milliseconds since epoch to set in the
+	 *                   expirationTime field of the DeathChest object
+	 */
+	public final void setExpirationTime(final long expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 
 
@@ -389,8 +451,8 @@ public final class DeathChest {
 	 */
 	final void createExpireTask() {
 
-		// if DeathChestBlock expiration is zero or less, it is set to never expire
-		if (this.getExpiration() < 1) {
+		// if DeathChestBlock expirationTime is zero or less, it is set to never expire
+		if (this.getExpirationTime() < 1) {
 			return;
 		}
 
@@ -398,7 +460,7 @@ public final class DeathChest {
 		Long currentTime = System.currentTimeMillis();
 
 		// get death chest block expire time
-		Long expireTime = this.getExpiration();
+		Long expireTime = this.getExpirationTime();
 
 		// compute ticks remaining until expire time
 		long ticksRemaining = (expireTime - currentTime) / 50;

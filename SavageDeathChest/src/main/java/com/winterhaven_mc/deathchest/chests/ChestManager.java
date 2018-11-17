@@ -117,7 +117,7 @@ public class ChestManager {
 				deathChestMap.remove(deathChest.getChestUUID());
 				plugin.dataStore.deleteChestRecord(deathChest);
 			}
-			else if (deathChest.getExpiration() < currentTime) {
+			else if (deathChest.getExpirationTime() < currentTime) {
 				deathChest.expire();
 			}
 			else {

@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
@@ -125,15 +124,6 @@ public class Deployment {
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)
 				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
 			return;
-		}
-
-		// if configured expiration is zero (or negative), set expiration to zero to signify never expire
-		if (plugin.getConfig().getLong("expire-time") <= 0) {
-			deathChest.setExpiration(0);
-		} else {
-			// set expiration field based on config setting (config setting is in minutes)
-			deathChest.setExpiration(System.currentTimeMillis()
-					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")));
 		}
 
 		// create expire task for deathChest
@@ -776,7 +766,7 @@ public class Deployment {
 				int lineCount = 0;
 				for (String line : lines) {
 					line = line.replace("%PLAYER_NAME%", player.getName());
-					line = line.replace("%date%", dateString);
+					line = line.replace("%DATE%", dateString);
 					line = line.replace("%WORLD_NAME%", plugin.worldManager.getWorldName(player.getWorld()));
 					line = ChatColor.translateAlternateColorCodes('&', line);
 					sign.setLine(lineCount, line);
