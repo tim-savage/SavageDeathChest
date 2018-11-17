@@ -35,7 +35,7 @@ public class Deployment {
 	 * Class constructor for DeathChest deployment
 	 * @param event player death event that triggers DeathChest deployment
 	 */
-	public Deployment (PlayerDeathEvent event) {
+	public Deployment (final PlayerDeathEvent event) {
 
 		// get player from event
 		Player player = event.getEntity();
@@ -643,7 +643,7 @@ public class Deployment {
 	}
 
 
-	private Result validateChestLocation(@SuppressWarnings("unused") final Player player,
+	private Result validateChestLocation(final Player player,
 										 final Location location,
 										 final ChestSize chestSize) {
 
@@ -670,7 +670,7 @@ public class Deployment {
 	}
 
 
-	private Result validateChestLocation(@SuppressWarnings("unused") final Player player,
+	private Result validateChestLocation(final Player player,
 										 final Location location,
 										 final ChestBlockType chestBlockType) {
 
@@ -724,13 +724,13 @@ public class Deployment {
 		Block signBlock = chestBlock.getRelative(getCardinalDirection(player));
 
 		// if chest face is valid location, create wall sign
-		if (isValidSignLocation(player,signBlock.getLocation())) {
+		if (isValidSignLocation(signBlock.getLocation())) {
 			signBlock.setType(Material.WALL_SIGN);
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
 			signBlock = chestBlock.getRelative(BlockFace.UP);
-			if (isValidSignLocation(player,signBlock.getLocation())) {
+			if (isValidSignLocation(signBlock.getLocation())) {
 				signBlock.setType(Material.SIGN);
 			}
 			else {
@@ -801,13 +801,17 @@ public class Deployment {
 
 	/** Check if sign can be placed at location
 	 *
-	 * @param player	Player to check permissions
-	 * @param location	Location to check permissions
+	 * @param location	Location to check
 	 * @return boolean
 	 */
-	private boolean isValidSignLocation(@SuppressWarnings("unused") final Player player, final Location location) {
+	private boolean isValidSignLocation(final Location location) {
 
 		Block block = location.getBlock();
+
+		// if block at location is above grass path, return negative result
+		if (isAboveGrassPath(block)) {
+			return false;
+		}
 
 		// check if block at location is a ReplaceableBlock
 		return plugin.chestManager.replaceableBlocks.contains(block.getType());
