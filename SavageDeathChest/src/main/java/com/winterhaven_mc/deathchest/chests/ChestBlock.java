@@ -96,26 +96,55 @@ public class ChestBlock {
 	}
 
 
+	/**
+	 * Getter method for chest block location
+	 * @return location - the location of this chest block
+	 */
 	public Location getLocation() {
 		return location;
 	}
 
+
+	/**
+	 * Setter method for chest block location
+	 * @param location the location to set for this chest block
+	 */
 	public void setLocation(final Location location) {
 		this.location = location;
 	}
 
+
+	/**
+	 * Getter method for chest block chestUUID
+	 * @return the chestUUID for this chest block
+	 */
 	public UUID getChestUUID() {
 		return chestUUID;
 	}
 
+
+	/**
+	 * Setter method for chest block chestUUID
+	 * @param chestUUID the chestUUID to set for this chest block
+	 */
 	public void setChestUUID(final UUID chestUUID) {
 		this.chestUUID = chestUUID;
 	}
 
+
+	/**
+	 * Getter method for ChestBlockType of this chest block
+	 * @return the ChestBlockType of this chest block
+	 */
 	public ChestBlockType getType() {
 		return chestBlockType;
 	}
 
+
+	/**
+	 * Setter method for ChestBlockType of this chest block
+	 * @param chestBlockType the ChestBlockType to set for this chest block
+	 */
 	public void setType(final ChestBlockType chestBlockType) {
 		this.chestBlockType = chestBlockType;
 	}
