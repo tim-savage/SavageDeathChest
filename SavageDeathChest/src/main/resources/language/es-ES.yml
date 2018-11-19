@@ -18,7 +18,6 @@ TIME_STRING:
 # %PLAYER_NAME%	Player's name
 # %WORLD_NAME%	World name
 # %DATE%		Death date
-
 SIGN_TEXT:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
