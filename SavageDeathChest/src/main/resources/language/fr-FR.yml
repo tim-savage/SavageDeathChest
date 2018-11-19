@@ -15,12 +15,12 @@ time_strings:
 # Variable substitutions:
 # %PLAYER_NAME%	Player's name
 # %WORLD_NAME%	World name
-# %date%		Death date
+# %DATE%		Death date
 sign-text:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
   - ''
-  - 'D: %date%'
+  - 'D: %DATE%'
 
 # Date format documentation:
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html

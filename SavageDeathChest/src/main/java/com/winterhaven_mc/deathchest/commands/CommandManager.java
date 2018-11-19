@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public final class CommandManager implements CommandExecutor, TabCompleter {
@@ -114,15 +115,22 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		String versionString = this.plugin.getDescription().getVersion();
 		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " 
 				+ ChatColor.RESET + versionString);
+
 		if (plugin.debug) {
 			sender.sendMessage(ChatColor.DARK_RED + "DEBUG: true");
 		}
-		sender.sendMessage(ChatColor.GREEN + "Language: " 
+
+		sender.sendMessage(ChatColor.GREEN + "Language: "
 				+ ChatColor.RESET + plugin.getConfig().getString("language"));
-		sender.sendMessage(ChatColor.GREEN + "Storage Type: " 
+
+		sender.sendMessage(ChatColor.GREEN + "Storage Type: "
 				+ ChatColor.RESET + plugin.dataStore.getName());
-		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: " 
-				+ ChatColor.RESET + plugin.getConfig().getInt("expire-time") + " minutes");
+
+		int expireTime = plugin.getConfig().getInt("expire-time");
+		if (expireTime == 0) { expireTime = -1;	}
+		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
+				+ ChatColor.RESET + plugin.messageManager.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
+
 		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
 		
 		int count = 0;

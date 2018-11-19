@@ -152,7 +152,7 @@ final class DataStoreSQLite extends DataStore {
 //		catch (SQLException e) {
 //
 //			// output simple error message
-//			plugin.getLogger().warning("An error occured while fetching a death chest block from the SQLite database.");
+//			plugin.getLogger().warning("An error occurred while fetching a death chest block from the SQLite database.");
 //			plugin.getLogger().warning(e.getMessage());
 //
 //			// if debugging is enabled, output stack trace
@@ -229,7 +229,7 @@ final class DataStoreSQLite extends DataStore {
 //		catch (SQLException e) {
 //
 //			// output simple error message
-//			plugin.getLogger().warning("An error occured while fetching a death chest block from the SQLite database.");
+//			plugin.getLogger().warning("An error occurred while fetching a death chest block from the SQLite database.");
 //			plugin.getLogger().warning(e.getMessage());
 //
 //			// if debugging is enabled, output stack trace
@@ -265,7 +265,7 @@ final class DataStoreSQLite extends DataStore {
 					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("[SQLite getAllBlockRecords] An error occured while trying to set chestUUID.");
+					plugin.getLogger().warning("[SQLite getAllBlockRecords] An error occurred while trying to set chestUUID.");
 					plugin.getLogger().warning("[SQLite getAllBlockRecords] chestUUID string: " + rs.getString("ChestUUID"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
@@ -339,7 +339,7 @@ final class DataStoreSQLite extends DataStore {
 					deathChest.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occured while trying to set chestUUID.");
+					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occurred while trying to set chestUUID.");
 					plugin.getLogger().warning("[SQLite getAllChestRecords] chestUUID string: " + rs.getString("ChestUUID"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
@@ -350,7 +350,7 @@ final class DataStoreSQLite extends DataStore {
 					deathChest.setOwnerUUID(UUID.fromString(rs.getString("OwnerUUID")));
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occured while trying to set ownerUUID.");
+					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occurred while trying to set ownerUUID.");
 					plugin.getLogger().warning("[SQLite getAllChestRecords] ownerUUID string: " + rs.getString("OwnerUUID"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
@@ -365,7 +365,9 @@ final class DataStoreSQLite extends DataStore {
 				}
 
 				// set other fields in deathChestBlock from database fields
-				deathChest.setExpiration(rs.getLong("Expiration"));
+				deathChest.setItemCount(rs.getInt("ItemCount"));
+				deathChest.setPlacementTime(rs.getLong("PlacementTime"));
+				deathChest.setExpirationTime(rs.getLong("ExpirationTime"));
 
 				// add DeathChestObject to results ArrayList
 				results.add(deathChest);
@@ -407,7 +409,7 @@ final class DataStoreSQLite extends DataStore {
 					chestUUID = deathChest.getChestUUID().toString();
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("DeathBlock owner UUID is invalid.");
+					plugin.getLogger().warning("DeathChest chest UUID is invalid.");
 					return;
 				}
 
@@ -417,7 +419,7 @@ final class DataStoreSQLite extends DataStore {
 					ownerUUID = deathChest.getOwnerUUID().toString();
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("DeathBlock owner UUID is invalid.");
+					plugin.getLogger().warning("DeathChest owner UUID is invalid.");
 					return;
 				}
 
@@ -438,7 +440,9 @@ final class DataStoreSQLite extends DataStore {
 					preparedStatement.setString(1, chestUUID);
 					preparedStatement.setString(2, ownerUUID);
 					preparedStatement.setString(3, killerUUID);
-					preparedStatement.setLong(4, deathChest.getExpiration());
+					preparedStatement.setInt(4, deathChest.getItemCount());
+					preparedStatement.setLong(5, deathChest.getPlacementTime());
+					preparedStatement.setLong(6, deathChest.getExpirationTime());
 
 					// execute prepared statement
 					int rowsAffected = preparedStatement.executeUpdate();
@@ -451,7 +455,7 @@ final class DataStoreSQLite extends DataStore {
 				catch (SQLException e) {
 
 					// output simple error message
-					plugin.getLogger().warning("An error occured while inserting a deathchest block into the SQLite database.");
+					plugin.getLogger().warning("An error occurred while inserting a DeathChest into the SQLite database.");
 					plugin.getLogger().warning(e.getMessage());
 
 					// if debugging is enabled, output stack trace
@@ -514,7 +518,7 @@ final class DataStoreSQLite extends DataStore {
 				catch (SQLException e) {
 
 					// output simple error message
-					plugin.getLogger().warning("An error occured while "
+					plugin.getLogger().warning("An error occurred while "
 							+ "inserting a death chest block into the SQLite database.");
 					plugin.getLogger().warning(e.getMessage());
 
@@ -713,7 +717,7 @@ final class DataStoreSQLite extends DataStore {
 			catch (SQLException e) {
 
 				// output simple error message
-				plugin.getLogger().warning("An error occured while closing the SQLite database connection.");
+				plugin.getLogger().warning("An error occurred while closing the SQLite database connection.");
 				plugin.getLogger().warning(e.getMessage());
 
 				// if debugging is enabled, output stack trace

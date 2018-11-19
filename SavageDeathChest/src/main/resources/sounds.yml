@@ -14,6 +14,13 @@ CHEST_DENIED_ACCESS:
   volume: 1
   pitch: 1
 
+CHEST_BREAK:
+  enabled: true
+  player-only: true
+  sound: BLOCK_WOOD_BREAK
+  volume: 2
+  pitch: 1
+
 INVENTORY_ADD_ITEM:
   enabled: true
   player-only: true

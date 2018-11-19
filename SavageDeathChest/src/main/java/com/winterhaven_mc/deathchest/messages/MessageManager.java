@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 public final class MessageManager extends AbstractMessageManager {
@@ -48,8 +49,18 @@ public final class MessageManager extends AbstractMessageManager {
 		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
 		replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
 
-//		replacements.put("%EXPIRE_TIME%",getTimeString(plugin.getConfig().getInt("teleport-warmup")));
-		replacements.put("%EXPIRE_TIME%",getExpireTimeString());
+		// get expire time from config
+		long expireTime = plugin.getConfig().getLong("expire-time");
+
+		// convert time to milliseconds
+		expireTime = TimeUnit.MINUTES.toMillis(expireTime);
+
+		// if expire time is zero, convert to negative (allow config to specify zero for unlimited time)
+		if (expireTime == 0) {
+			expireTime = -1;
+		}
+
+		replacements.put("%EXPIRE_TIME%",getTimeString(expireTime));
 
 		if (recipient instanceof Player) {
 			Player player = (Player)recipient;
@@ -87,7 +98,6 @@ public final class MessageManager extends AbstractMessageManager {
 							final MessageId messageId,
 							final ProtectionPlugin protectionPlugin) {
 
-		//TODO is this check necessary?
 		// if recipient is null, do nothing and return
 		if (recipient == null) {
 			return;
@@ -101,44 +111,6 @@ public final class MessageManager extends AbstractMessageManager {
 		// send message
 		//noinspection unchecked
 		sendMessage(recipient, messageId, replacements);
-	}
-
-
-	/**
-	 * Get expire time as formatted string
-	 * @return a formatted expire time string
-	 */
-	private String getExpireTimeString() {
-
-		String expireTime = "";
-
-		int expiration = this.plugin.getConfig().getInt("expire-time");
-
-		// if configured expire-time < 1, set expireTime string to "unlimited"
-		if (expiration < 1) {
-			expireTime = messages.getString("time_strings.UNLIMITED");
-		}
-		// otherwise, set string to hours and minutes remaining
-		else {
-			int hours = expiration / 60;
-			int minutes = expiration % 60;
-			String hour_string = this.messages.getString("time_strings.HOUR");
-			String hour_plural_string = this.messages.getString("time_strings.HOUR_PLURAL");
-			String minute_string = this.messages.getString("time_strings.MINUTE");
-			String minute_plural_string = this.messages.getString("time_strings.MINUTE_PLURAL");
-			if (hours > 1) {
-				expireTime = String.valueOf(expireTime) + hours + " " + hour_plural_string + " ";
-			} else if (hours == 1) {
-				expireTime = String.valueOf(expireTime) + hours + " " + hour_string + " ";
-			}
-			if (minutes > 1) {
-				expireTime = String.valueOf(expireTime) + minutes + " " + minute_plural_string;
-			} else if (minutes == 1) {
-				expireTime = String.valueOf(expireTime) + minutes + " " + minute_string;
-			}
-			expireTime = expireTime.trim();
-		}
-		return expireTime;
 	}
 
 
