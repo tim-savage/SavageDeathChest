@@ -218,7 +218,7 @@ public enum ProtectionPlugin {
 	WORLDGUARD("WorldGuard") {
 
 		// get WorldGuard region container
-		RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
 
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
@@ -253,7 +253,7 @@ public enum ProtectionPlugin {
 	};
 
 	// static reference to main class
-	private static PluginMain plugin = PluginMain.instance;
+	private final static PluginMain plugin = PluginMain.instance;
 
 	// protection plugin name
 	private final String pluginName;
