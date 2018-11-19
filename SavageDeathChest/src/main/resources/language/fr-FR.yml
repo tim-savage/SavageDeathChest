@@ -107,4 +107,3 @@ messages:
   COMMAND_SUCCESS_RELOAD:
     enabled: true
     string: '&7DeathChest configuration reloaded.'
-
