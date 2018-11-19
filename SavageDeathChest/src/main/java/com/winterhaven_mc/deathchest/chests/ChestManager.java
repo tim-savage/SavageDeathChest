@@ -16,15 +16,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChestManager {
 
 	// reference to main class
-	private PluginMain plugin;
+	private final PluginMain plugin;
 
 	// map of DeathChests
-	private Map<UUID, DeathChest> deathChestMap;
+	private final Map<UUID, DeathChest> deathChestMap;
 
 	// map of ChestBlocks
-	private Map<Location, ChestBlock> chestBlockMap;
+	private final Map<Location, ChestBlock> chestBlockMap;
 
-	public ReplaceableBlocks replaceableBlocks;
+	public final ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
 	final static Set<Material> deathChestMaterials =
