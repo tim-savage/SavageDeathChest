@@ -1,7 +1,7 @@
 ##############
 # Time strings
 ##############
-time_strings:
+TIME_STRINGS:
   HOUR: 'hour'
   HOUR_PLURAL: 'hours'
   MINUTE: 'minute'
@@ -18,7 +18,7 @@ time_strings:
 # %PLAYER_NAME%	Player's name
 # %WORLD_NAME%	World name
 # %DATE%		Death date
-sign-text:
+SIGN_TEXT:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
   - ''
@@ -26,7 +26,7 @@ sign-text:
 
 # Date format documentation:
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-date-format: "MMM d, yyyy"
+DATE_FORMAT: "MMM d, yyyy"
 
 
 #################
@@ -39,7 +39,7 @@ date-format: "MMM d, yyyy"
 # %WORLD_NAME%           Player world name
 # %EXPIRE_TIME%			 Remaining time at chest deployment
 
-messages:
+MESSAGES:
   CHEST_SUCCESS:
     enabled: true
     string: '&cSuccessfully placed death chest. You have %EXPIRE_TIME% to retrieve your items.'

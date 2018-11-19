@@ -115,12 +115,12 @@ public final class MessageManager extends AbstractMessageManager {
 
 
 	public List<String> getSignText() {
-		return this.messages.getStringList("sign-text");
+		return this.messages.getStringList("SIGN_TEXT");
 	}
 
 
 	public String getDateFormat() {
-		return this.messages.getString("date-format");
+		return this.messages.getString("DATE_FORMAT");
 	}
 
 }
