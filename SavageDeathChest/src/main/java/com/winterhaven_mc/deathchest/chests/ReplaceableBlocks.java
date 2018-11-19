@@ -14,7 +14,7 @@ public class ReplaceableBlocks {
 	private final PluginMain plugin;
 
 	// material types that can be replaced by death chests
-	private Set<Material> replaceableBlocks;
+	private final Set<Material> replaceableBlocks;
 
 
 	/**
@@ -35,6 +35,9 @@ public class ReplaceableBlocks {
 	 * Load list of replaceable blocks from config file
 	 */
 	public void reload() {
+
+		// clear replaceable blocks
+		replaceableBlocks.clear();
 
 		// get string list of materials from config file
 		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
