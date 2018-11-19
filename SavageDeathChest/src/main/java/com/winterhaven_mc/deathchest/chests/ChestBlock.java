@@ -289,10 +289,6 @@ public class ChestBlock {
 		if (deathChest.getKillerUUID() != null) {
 			block.setMetadata("deathchest-killer", new FixedMetadataValue(plugin, deathChest.getKillerUUID()));
 		}
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Metadata set on DeathChest block" + block.toString());
-		}
 	}
 
 
