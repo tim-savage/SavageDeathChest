@@ -176,7 +176,9 @@ public class ChestManager {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
-	public ChestBlock getChestBlock(Location location) { return this.chestBlockMap.get(location); }
+	public ChestBlock getChestBlock(Location location) {
+		return this.chestBlockMap.get(location);
+	}
 
 
 	/**
@@ -192,7 +194,9 @@ public class ChestManager {
 	 * Remove ChestBlock object from map
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
-	void removeChestBlock(ChestBlock chestBlock) { this.chestBlockMap.remove(chestBlock.getLocation()); }
+	void removeChestBlock(ChestBlock chestBlock) {
+		this.chestBlockMap.remove(chestBlock.getLocation());
+	}
 
 
 	/**
