@@ -76,10 +76,6 @@ public class Deployment {
 		// create new deathChest object for player
 		this.deathChest = new DeathChest(player);
 
-		if (plugin.debug) {
-			plugin.getLogger().info("DeathChest created with UUID: " + deathChest.getChestUUID().toString());
-		}
-
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
 		Result result = deployChest(player, droppedItems);
 
@@ -200,14 +196,9 @@ public class Deployment {
 		// search for valid chest location
 		result = findChestLocation(player, ChestSize.SINGLE);
 
-		// if search failed, return result
-		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Single chest search failed.");
-			}
-		}
+		// if search successful, place chest
+		if (result.getResultCode().equals(ResultCode.SUCCESS)) {
 
-		else {
 			// if require-chest option is enabled
 			// and player does not have permission override
 			// remove one chest from chest items
@@ -219,17 +210,8 @@ public class Deployment {
 			// place chest at result location
 			remainingItems = placeChest(result.getLocation(), remainingItems, ChestBlockType.RIGHT_CHEST);
 
-			if (plugin.debug) {
-				plugin.getLogger().info("Single chest placed at " + result.getLocation().toString());
-			}
-
 			// place sign on chest
-			boolean signPlaced = placeSign(player, result.getLocation().getBlock());
-
-			if (plugin.debug && signPlaced) {
-				plugin.getLogger().info("Sign attached to single chest.");
-			}
-
+			placeSign(player, result.getLocation().getBlock());
 		}
 
 		// put remaining items in result
@@ -282,10 +264,6 @@ public class Deployment {
 		// if search failed, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 
-			if (plugin.debug) {
-				plugin.getLogger().info("Double chest search failed.");
-			}
-
 			// put remaining items in result
 			result.setRemainingItems(remainingItems);
 
@@ -304,16 +282,8 @@ public class Deployment {
 		// place chest at result location
 		remainingItems = placeChest(result.getLocation(), remainingItems, ChestBlockType.RIGHT_CHEST);
 
-		if (plugin.debug) {
-			plugin.getLogger().info("Right chest placed at " + result.getLocation().toString());
-		}
-
-		// place sign on left chest
-		boolean signPlaced = placeSign(player, result.getLocation().getBlock());
-
-		if (plugin.debug && signPlaced) {
-			plugin.getLogger().info("Sign attached to right chest.");
-		}
+		// place sign on right chest
+		placeSign(player, result.getLocation().getBlock());
 
 		// if second chest still needed
 		// and require-chest option is enabled
@@ -347,11 +317,6 @@ public class Deployment {
 					&& result.getResultCode().equals(ResultCode.SUCCESS)) {
 
 				remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems, ChestBlockType.LEFT_CHEST);
-
-				if (plugin.debug) {
-					plugin.getLogger().info("Left chest placed at "
-							+ getLocationToRight(result.getLocation()).toString());
-				}
 			}
 		}
 
@@ -494,14 +459,6 @@ public class Deployment {
 		else if (plugin.getConfig().getBoolean("place-below-max")
 				&& testLocation.getY() >= player.getWorld().getMaxHeight()) {
 			testLocation.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
-		}
-
-		// print player death location in log
-		if (plugin.debug) {
-			plugin.getLogger().info("Death location: "
-					+ testLocation.getBlockX() + ","
-					+ testLocation.getBlockY() + ","
-					+ testLocation.getBlockZ());
 		}
 
 		// declare search result object
@@ -653,10 +610,6 @@ public class Deployment {
 		// if left chest is not successful, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
-		}
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Left chest location valid.");
 		}
 
 		// if chest is to be a double chest, test right chest location
@@ -818,6 +771,12 @@ public class Deployment {
 	}
 
 
+	/**
+	 * Place dropped items in chest
+	 * @param chest the chest to place items
+	 * @param itemStacks Collection of ItemStacks to place in chest
+	 * @return List of ItemStacks that did not fit in chest
+	 */
 	private List<ItemStack> fillChest(final Chest chest, final Collection<ItemStack> itemStacks) {
 
 		// convert itemStacks list to array

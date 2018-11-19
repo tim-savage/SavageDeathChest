@@ -244,6 +244,11 @@ public final class DeathChest {
 	}
 
 
+	/**
+	 * Add a chest block to this DeathChest
+	 * @param chestBlockType the type of chest block to add to this DeathChest
+	 * @param chestBlock the chest block to add to this DeathChest
+	 */
 	void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 		if (chestBlock != null) {
 			this.chestBlocks.put(chestBlockType, chestBlock);
@@ -258,11 +263,6 @@ public final class DeathChest {
 
 		// set metadata on blocks in set
 		for (ChestBlock chestBlock : this.getChestBlocks()) {
-
-			if (plugin.debug) {
-				plugin.getLogger().info("Setting metadata on chest block at " + chestBlock.getLocation().toString());
-			}
-
 			setMetadata(chestBlock);
 		}
 	}
@@ -275,14 +275,6 @@ public final class DeathChest {
 
 		// get in game block at chest block location
 		Block block = chestBlock.getLocation().getBlock();
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Setting metadata on block type " + block.getType().toString());
-		}
-
-		for (Material material : ChestManager.deathChestMaterials) {
-			plugin.getLogger().info(material.toString());
-		}
 
 		// if block is not death chest material, do nothing and return
 		if (!ChestManager.deathChestMaterials.contains(block.getType())) {
@@ -302,10 +294,6 @@ public final class DeathChest {
 		// set killer uuid metadata
 		if (this.killerUUID != null) {
 			block.setMetadata("deathchest-killer", new FixedMetadataValue(plugin, this.killerUUID));
-		}
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Metadata set on DeathChest block" + block.toString());
 		}
 	}
 
@@ -364,7 +352,7 @@ public final class DeathChest {
 
 
 	/**
-	 * Destroy a death chest, dropping chest contents
+	 * Destroy this death chest, dropping chest contents
 	 */
 	public final void destroy() {
 
@@ -397,6 +385,9 @@ public final class DeathChest {
 	}
 
 
+	/**
+	 * Expire this death chest
+	 */
 	public final void expire() {
 
 		// get player from ownerUUID
@@ -473,10 +464,6 @@ public final class DeathChest {
 
 		// set taskId in deathChest object
 		this.setExpireTaskId(chestExpireTask.getTaskId());
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Created chest expire task id:" + chestExpireTask.getTaskId());
-		}
 	}
 
 

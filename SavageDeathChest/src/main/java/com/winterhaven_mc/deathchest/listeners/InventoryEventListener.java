@@ -143,10 +143,6 @@ public final class InventoryEventListener implements Listener {
 			return;
 		}
 
-		if (plugin.debug) {
-			plugin.getLogger().info("Closed inventory size: " + inventory.getSize());
-		}
-
 		// if inventory is empty, destroy chest(s) and sign
 		if (isEmpty(inventory)) {
 			deathChest.destroy();
