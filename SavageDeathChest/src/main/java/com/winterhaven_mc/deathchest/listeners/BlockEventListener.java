@@ -61,12 +61,9 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// check for adjacent death chests
+		// check for adjacent death chests and cancel event if found
 		if (plugin.chestManager.isDeathChestChestBlock(getBlockToLeft(location))
 				|| plugin.chestManager.isDeathChestChestBlock(getBlockToRight(location))) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Chest placed adjacent to death chest cancelled.");
-			}
 			event.setCancelled(true);
 		}
 	}
@@ -81,10 +78,6 @@ public final class BlockEventListener implements Listener {
 	//TODO: Make sure we're using the right priority. Use NORMAL if possible.
 	public final void onBlockBreak(final BlockBreakEvent event) {
 
-		if (plugin.debug) {
-			plugin.getLogger().info("Caught BlockBreakEvent.");
-		}
-
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
 
@@ -93,11 +86,8 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// if block is DeathChest sign, set drop items false
+		// if block is DeathChest sign, set drop items to empty
 		if (plugin.chestManager.isDeathChestSignBlock(block)) {
-			if (plugin.debug) {
-				plugin.getLogger().info("Caught BlockBreakEvent for DeathChest sign.");
-			}
 			block.getDrops().clear();
 			return;
 		}

@@ -263,11 +263,6 @@ public final class DeathChest {
 
 		// set metadata on blocks in set
 		for (ChestBlock chestBlock : this.getChestBlocks()) {
-
-			if (plugin.debug) {
-				plugin.getLogger().info("Setting metadata on chest block at " + chestBlock.getLocation().toString());
-			}
-
 			setMetadata(chestBlock);
 		}
 	}
@@ -280,14 +275,6 @@ public final class DeathChest {
 
 		// get in game block at chest block location
 		Block block = chestBlock.getLocation().getBlock();
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Setting metadata on block type " + block.getType().toString());
-		}
-
-		for (Material material : ChestManager.deathChestMaterials) {
-			plugin.getLogger().info(material.toString());
-		}
 
 		// if block is not death chest material, do nothing and return
 		if (!ChestManager.deathChestMaterials.contains(block.getType())) {
@@ -307,10 +294,6 @@ public final class DeathChest {
 		// set killer uuid metadata
 		if (this.killerUUID != null) {
 			block.setMetadata("deathchest-killer", new FixedMetadataValue(plugin, this.killerUUID));
-		}
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Metadata set on DeathChest block" + block.toString());
 		}
 	}
 
@@ -481,10 +464,6 @@ public final class DeathChest {
 
 		// set taskId in deathChest object
 		this.setExpireTaskId(chestExpireTask.getTaskId());
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Created chest expire task id:" + chestExpireTask.getTaskId());
-		}
 	}
 
 

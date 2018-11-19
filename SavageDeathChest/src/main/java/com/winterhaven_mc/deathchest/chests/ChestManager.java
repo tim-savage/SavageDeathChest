@@ -80,17 +80,12 @@ public class ChestManager {
 			// get chest block type
 			ChestBlockType chestBlockType = ChestBlockType.getType(chestBlock.getLocation().getBlock());
 
-			// if chest block type is null, delete record
+			// if chest block type is null, delete block record
 			if (chestBlockType == null) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Removing ChestBlock with invalid material type from dataStore.");
-				}
 				plugin.dataStore.deleteBlockRecord(chestBlock);
 			}
+			// if parent death chest does not exist in map, delete block record
 			else if (!deathChestMap.containsKey(chestBlock.getChestUUID())) {
-				if (plugin.debug) {
-					plugin.getLogger().info("Removing orphan ChestBlock from dataStore.");
-				}
 				plugin.dataStore.deleteBlockRecord(chestBlock);
 			}
 
@@ -163,12 +158,7 @@ public class ChestManager {
 	 * @param deathChest the DeathChest object to put in map
 	 */
 	void addDeathChest(DeathChest deathChest) {
-
 		this.deathChestMap.put(deathChest.getChestUUID(),deathChest);
-
-		if (plugin.debug) {
-			plugin.getLogger().info("DeathChest added to Map.");
-		}
 	}
 
 
@@ -194,12 +184,7 @@ public class ChestManager {
 	 * @param chestBlock the ChestBlock to put in map
 	 */
 	void addChestBlock(ChestBlock chestBlock) {
-
 		this.chestBlockMap.put(chestBlock.getLocation(), chestBlock);
-
-		if (plugin.debug) {
-			plugin.getLogger().info("ChestBlock added to Map.");
-		}
 	}
 
 
