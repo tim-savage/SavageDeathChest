@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ChestBlock {
 
 	// static reference to main class
-	private static PluginMain plugin = PluginMain.instance;
+	private final static PluginMain plugin = PluginMain.instance;
 
 	// chest UUID
 	private UUID chestUUID;
