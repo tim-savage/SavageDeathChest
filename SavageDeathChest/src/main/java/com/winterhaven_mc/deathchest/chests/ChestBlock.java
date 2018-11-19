@@ -58,14 +58,14 @@ public class ChestBlock {
 		// set ChestBlockType
 		this.chestBlockType = chestBlockType;
 
-		// set block metadata
-		this.setMetadata(deathChest);
-
 		// add this ChestBlock to map
 		plugin.chestManager.addChestBlock(this);
 
 		// add this ChestBlock to passed DeathChest
 		deathChest.addChestBlock(this.chestBlockType, this);
+
+		// set block metadata
+		this.setMetadata(deathChest);
 	}
 
 
