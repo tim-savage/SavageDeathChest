@@ -26,7 +26,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 public class Deployment {
 
 	// reference to main class
-	private PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = PluginMain.instance;
 
 	private DeathChest deathChest;
 
