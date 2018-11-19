@@ -244,6 +244,11 @@ public final class DeathChest {
 	}
 
 
+	/**
+	 * Add a chest block to this DeathChest
+	 * @param chestBlockType the type of chest block to add to this DeathChest
+	 * @param chestBlock the chest block to add to this DeathChest
+	 */
 	void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 		if (chestBlock != null) {
 			this.chestBlocks.put(chestBlockType, chestBlock);
@@ -364,7 +369,7 @@ public final class DeathChest {
 
 
 	/**
-	 * Destroy a death chest, dropping chest contents
+	 * Destroy this death chest, dropping chest contents
 	 */
 	public final void destroy() {
 
@@ -397,6 +402,9 @@ public final class DeathChest {
 	}
 
 
+	/**
+	 * Expire this death chest
+	 */
 	public final void expire() {
 
 		// get player from ownerUUID
