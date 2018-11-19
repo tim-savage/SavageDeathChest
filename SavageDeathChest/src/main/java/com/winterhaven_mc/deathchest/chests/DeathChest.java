@@ -2,8 +2,10 @@ package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.MessageId;
+import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -366,6 +368,9 @@ public final class DeathChest {
 	 */
 	public final void destroy() {
 
+		// play chest break sound at chest location
+		plugin.soundConfig.playSound(this.getLocation(), SoundId.CHEST_BREAK);
+
 		// destroy sign blocks first, to prevent detached sign drop
 		if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
 			chestBlocks.get(ChestBlockType.SIGN).destroy();
@@ -386,11 +391,6 @@ public final class DeathChest {
 
 		// cancel expire block task
 		plugin.getServer().getScheduler().cancelTask(this.getExpireTaskId());
-
-		if (plugin.debug) {
-			plugin.getLogger().info("Expire chest task #" + this.getExpireTaskId() + " cancelled.");
-			plugin.getLogger().info("Removing chest UUID: " + this.getChestUUID());
-		}
 
 		// remove DeathChest from ChestManager DeathChest map
 		plugin.chestManager.removeDeathChest(this);
@@ -476,6 +476,28 @@ public final class DeathChest {
 
 		if (plugin.debug) {
 			plugin.getLogger().info("Created chest expire task id:" + chestExpireTask.getTaskId());
+		}
+	}
+
+
+	/**
+	 * Get chest location. Attempt to get chest location from right chest, sign or left chest in that order.
+	 * Returns null if location could not be derived from chest blocks.
+	 * @return Location - the chest location or null if no location found
+	 */
+	final Location getLocation() {
+
+		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
+			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();
+		}
+		else if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
+			return this.chestBlocks.get(ChestBlockType.SIGN).getLocation();
+		}
+		else if (chestBlocks.containsKey(ChestBlockType.LEFT_CHEST)) {
+			return this.chestBlocks.get(ChestBlockType.LEFT_CHEST).getLocation();
+		}
+		else {
+			return null;
 		}
 	}
 

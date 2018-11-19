@@ -50,6 +50,10 @@ permissions:
     description: Allows reloading the config file.
     default: op
 
+  deathchest.status:
+    description: Allows viewing deathchest status.
+    default: op
+
   deathchest.player:
     description: Default permissions.
     default: true
@@ -68,3 +72,4 @@ permissions:
       deathchest.creative-access: true
       deathchest.allow-place: true
       deathchest.reload: true
+      deathchest.status: true
