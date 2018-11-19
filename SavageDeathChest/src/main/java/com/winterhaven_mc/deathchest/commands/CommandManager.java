@@ -160,10 +160,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + 
 				plugin.worldManager.getEnabledWorldNames().toString());
 
-		if (plugin.debug) {
-			sender.sendMessage(ChatColor.GREEN + "Replaceable Blocks: " + ChatColor.RESET +
-					plugin.chestManager.replaceableBlocks.toString());
-		}
+		sender.sendMessage(ChatColor.GREEN + "Replaceable Blocks: " + ChatColor.RESET +
+				plugin.chestManager.replaceableBlocks.toString());
 
 		return true;
 	}
