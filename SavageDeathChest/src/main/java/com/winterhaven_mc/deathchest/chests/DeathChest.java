@@ -47,7 +47,7 @@ public final class DeathChest {
 	private int expireTaskId;
 
 	// set of chest blocks that make up this death chest
-	private EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
+	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
 	/**
 	 * Class constructor
