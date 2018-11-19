@@ -297,7 +297,7 @@ public class ChestBlock {
 
 
 	/**
-	 * Remove  metadata from block
+	 * Remove metadata from block
 	 */
 	private void removeMetadata() {
 
