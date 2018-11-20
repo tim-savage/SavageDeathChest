@@ -27,6 +27,8 @@ public final class PluginMain extends JavaPlugin {
 
 	public boolean debug = getConfig().getBoolean("debug");
 
+
+	@Override
 	public void onEnable() {
 
 		// static reference to plugin instance
@@ -62,6 +64,8 @@ public final class PluginMain extends JavaPlugin {
 		ProtectionPlugin.reportInstalled();
 	}
 
+
+	@Override
 	public void onDisable() {
 
 		// close datastore
