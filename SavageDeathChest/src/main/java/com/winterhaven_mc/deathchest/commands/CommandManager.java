@@ -43,8 +43,10 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * Tab completer for DeathChest
 	 */
 	@Override
-	public final List<String> onTabComplete(final CommandSender sender, final Command command,
-											final String alias, final String[] args) {
+	public final List<String> onTabComplete(final CommandSender sender,
+											final Command command,
+											final String alias,
+											final String[] args) {
 
 		// initialize return list
 		final List<String> returnList = new ArrayList<>();
@@ -63,9 +65,14 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	}
 
 
+	/**
+	 * Command handler for DeathChest
+	 */
 	@Override
-	public final boolean onCommand(final CommandSender sender, final Command cmd,
-			final String label, final String[] args) {
+	public final boolean onCommand(final CommandSender sender,
+								   final Command cmd,
+								   final String label,
+								   final String[] args) {
 
 		int maxArgs = 1;
 
