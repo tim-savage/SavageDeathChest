@@ -52,6 +52,6 @@ class Result {
 
 	Collection<ItemStack> getRemainingItems() { return remainingItems; }
 
-	void setRemainingItems(Collection<ItemStack> remainingItems) { this.remainingItems = remainingItems; }
+	void setRemainingItems(final Collection<ItemStack> remainingItems) { this.remainingItems = remainingItems; }
 
 }
