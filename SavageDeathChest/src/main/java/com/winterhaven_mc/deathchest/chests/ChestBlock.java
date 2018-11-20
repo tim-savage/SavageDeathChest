@@ -58,7 +58,7 @@ public class ChestBlock {
 		// set ChestBlockType
 		this.chestBlockType = chestBlockType;
 
-		// add this ChestBlock to map
+		// add this ChestBlock to block map
 		plugin.chestManager.addChestBlock(this);
 
 		// add this ChestBlock to passed DeathChest
