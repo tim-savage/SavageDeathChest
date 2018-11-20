@@ -472,7 +472,7 @@ public final class DeathChest {
 	 * Returns null if location could not be derived from chest blocks.
 	 * @return Location - the chest location or null if no location found
 	 */
-	final Location getLocation() {
+	private Location getLocation() {
 
 		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
 			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();
