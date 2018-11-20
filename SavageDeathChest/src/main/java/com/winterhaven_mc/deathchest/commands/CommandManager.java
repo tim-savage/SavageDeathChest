@@ -63,6 +63,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	}
 
 
+	@Override
 	public final boolean onCommand(final CommandSender sender, final Command cmd,
 			final String label, final String[] args) {
 
