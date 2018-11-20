@@ -114,13 +114,21 @@ public final class MessageManager extends AbstractMessageManager {
 	}
 
 
+	/**
+	 * Get sign text from language file
+	 * @return List of String - lines of sign text
+	 */
 	public List<String> getSignText() {
-		return this.messages.getStringList("sign-text");
+		return this.messages.getStringList("SIGN_TEXT");
 	}
 
 
+	/**
+	 * Get date format string from language file
+	 * @return String - date format string
+	 */
 	public String getDateFormat() {
-		return this.messages.getString("date-format");
+		return this.messages.getString("DATE_FORMAT");
 	}
 
 }

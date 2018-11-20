@@ -218,7 +218,7 @@ public enum ProtectionPlugin {
 	WORLDGUARD("WorldGuard") {
 
 		// get WorldGuard region container
-		RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
 
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
@@ -253,7 +253,7 @@ public enum ProtectionPlugin {
 	};
 
 	// static reference to main class
-	private static PluginMain plugin = PluginMain.instance;
+	private final static PluginMain plugin = PluginMain.instance;
 
 	// protection plugin name
 	private final String pluginName;
@@ -316,7 +316,7 @@ public enum ProtectionPlugin {
 	}
 
 
-	public final String getVersion() {
+	private String getVersion() {
 
 		if (plugin.getServer().getPluginManager().getPlugin(this.getPluginName()) != null) {
 			return plugin.getServer().getPluginManager().getPlugin(this.getPluginName()).getDescription().getVersion();
@@ -339,7 +339,7 @@ public enum ProtectionPlugin {
 	 * Check if protection plugin is enabled for check on access in config
 	 * @return {@code true} if the protection plugin is enabled for check on access, {@code false} if not
 	 */
-	public final boolean isConfigEnabledAccess() {
+	private boolean isConfigEnabledAccess() {
 
 		// if plugin is not enabled in config, return false
 		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".check-on-access"));

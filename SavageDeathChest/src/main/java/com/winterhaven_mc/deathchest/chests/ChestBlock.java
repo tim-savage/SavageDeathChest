@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ChestBlock {
 
 	// static reference to main class
-	private static PluginMain plugin = PluginMain.instance;
+	private final static PluginMain plugin = PluginMain.instance;
 
 	// chest UUID
 	private UUID chestUUID;
@@ -47,33 +47,6 @@ public class ChestBlock {
 	 * @param deathChest DeathChest object that this ChestBlock is member
 	 * @param block in game block this ChestBlock represents
 	 */
-	ChestBlock(final DeathChest deathChest, final Block block) {
-
-		// set ChestUUID for this ChestBlock
-		this.chestUUID = deathChest.getChestUUID();
-
-		// set location for this ChestBlock
-		this.location = block.getLocation();
-
-		// set ChestBlockType
-		this.chestBlockType = ChestBlockType.getType(block);
-
-		// set block metadata
-		this.setMetadata(deathChest);
-
-		// add this ChestBlock to map
-		plugin.chestManager.addChestBlock(this);
-
-		// add this ChestBlock to passed DeathChest
-		deathChest.addChestBlock(this.chestBlockType, this);
-	}
-
-
-	/**
-	 * Class constructor
-	 * @param deathChest DeathChest object that this ChestBlock is member
-	 * @param block in game block this ChestBlock represents
-	 */
 	ChestBlock(final DeathChest deathChest, final Block block, final ChestBlockType chestBlockType) {
 
 		// set ChestUUID for this ChestBlock
@@ -85,14 +58,14 @@ public class ChestBlock {
 		// set ChestBlockType
 		this.chestBlockType = chestBlockType;
 
-		// set block metadata
-		this.setMetadata(deathChest);
-
 		// add this ChestBlock to map
 		plugin.chestManager.addChestBlock(this);
 
 		// add this ChestBlock to passed DeathChest
 		deathChest.addChestBlock(this.chestBlockType, this);
+
+		// set block metadata
+		this.setMetadata(deathChest);
 	}
 
 
@@ -274,6 +247,11 @@ public class ChestBlock {
 
 		// get in game block at chest block location
 		Block block = this.getLocation().getBlock();
+
+		// if block is not death chest material, do nothing and return
+		if (!ChestManager.deathChestMaterials.contains(block.getType())) {
+			return;
+		}
 
 		// set chest uuid metadata
 		if (deathChest.getChestUUID() != null) {

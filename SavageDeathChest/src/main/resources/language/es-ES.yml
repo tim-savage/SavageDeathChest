@@ -1,14 +1,14 @@
 ##############
 # Time strings
 ##############
-time_strings:
-  hour: 'hora'
-  hour_plural: 'horas'
-  minute: 'minuto'
-  minute_plural: 'minutos'
-  second: 'segundo'
-  second_plural: 'segundos'
-  unlimited: 'tiempo ilimitado'
+TIME_STRING:
+  HOUR: 'hora'
+  HOUR_PLURAL: 'horas'
+  MINUTE: 'minuto'
+  MINUTE_PLURAL: 'minutos'
+  SECOND: 'segundo'
+  SECOND_PLURAL: 'segundos'
+  UNLIMITED: 'tiempo ilimitado'
 
 
 ##################
@@ -18,8 +18,7 @@ time_strings:
 # %PLAYER_NAME%	Player's name
 # %WORLD_NAME%	World name
 # %DATE%		Death date
-
-sign-text:
+SIGN_TEXT:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
   - ''
@@ -27,7 +26,7 @@ sign-text:
 
 # Date format documentation:
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-date-format: "MMM d, yyyy"
+DATE_FORMAT: "MMM d, yyyy"
 
 
 #################
@@ -40,7 +39,7 @@ date-format: "MMM d, yyyy"
 # %WORLD_NAME%           Player world name
 # %EXPIRE_TIME%			 Remaining time at chest deployment
 
-messages:
+MESSAGES:
   CHEST_SUCCESS:
     enabled: true
     string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %EXPIRE_TIME% para recuperar tu artículos.'

@@ -1,11 +1,13 @@
 #################################
 # Traduction des chaînes de temps
 #################################
-time_strings:
+TIME_STRINGS:
   HOUR: 'heure'
   HOUR_PLURAL: 'heures'
   MINUTE: 'minute'
   MINUTE_PLURAL: 'minutes'
+  SECOND: 'seconde'
+  SECOND_PLURAL: 'secondes'
   UNLIMITED: 'temps illimité'
 
 
@@ -16,7 +18,7 @@ time_strings:
 # %PLAYER_NAME%	Player's name
 # %WORLD_NAME%	World name
 # %DATE%		Death date
-sign-text:
+SIGN_TEXT:
   - '&lR.I.P.&r'
   - '%PLAYER_NAME%'
   - ''
@@ -24,21 +26,20 @@ sign-text:
 
 # Date format documentation:
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-date-format: "MMM d, yyyy"
+DATE_FORMAT: "MMM d, yyyy"
 
 
 ########################
 # Messages personnalisés
 ########################
 # Substitutions de variables:
-# %ITEM_NAME%			Nom de l'item configuré auparavant
 # %PLAYER_NAME%          Nom du joueur
 # %PLAYER_NICKNAME%      Pseudo du joueur
 # %PLAYER_DISPLAYNAME%   Nom d'affichage du joueur, incluant préfix/suffix
 # %WORLD_NAME%           Nom du monde dans lequel le joueur est mort
 # %EXPIRE_TIME%			Temps restant avant la disparition du coffre
 
-messages:
+MESSAGES:
   CHEST_SUCCESS:
     enabled: true
     string: '&cUn coffre contenant votre inventaire a été placé. Vous avez %EXPIRE_TIME% avant sa disparition.'

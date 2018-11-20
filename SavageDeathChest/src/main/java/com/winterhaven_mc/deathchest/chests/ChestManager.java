@@ -16,15 +16,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChestManager {
 
 	// reference to main class
-	private PluginMain plugin;
+	private final PluginMain plugin;
 
 	// map of DeathChests
-	private Map<UUID, DeathChest> deathChestMap;
+	private final Map<UUID, DeathChest> deathChestMap;
 
 	// map of ChestBlocks
-	private Map<Location, ChestBlock> chestBlockMap;
+	private final Map<Location, ChestBlock> chestBlockMap;
 
-	public ReplaceableBlocks replaceableBlocks;
+	public final ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
 	final static Set<Material> deathChestMaterials =
@@ -176,7 +176,9 @@ public class ChestManager {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
-	public ChestBlock getChestBlock(Location location) { return this.chestBlockMap.get(location); }
+	public ChestBlock getChestBlock(Location location) {
+		return this.chestBlockMap.get(location);
+	}
 
 
 	/**
@@ -192,7 +194,9 @@ public class ChestManager {
 	 * Remove ChestBlock object from map
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
-	void removeChestBlock(ChestBlock chestBlock) { this.chestBlockMap.remove(chestBlock.getLocation()); }
+	void removeChestBlock(ChestBlock chestBlock) {
+		this.chestBlockMap.remove(chestBlock.getLocation());
+	}
 
 
 	/**

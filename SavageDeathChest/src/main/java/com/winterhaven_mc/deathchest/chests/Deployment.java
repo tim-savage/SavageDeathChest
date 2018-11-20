@@ -26,7 +26,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 public class Deployment {
 
 	// reference to main class
-	private PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = PluginMain.instance;
 
 	private DeathChest deathChest;
 
@@ -742,7 +742,7 @@ public class Deployment {
 		sign.update();
 
 		// create ChestBlock for this sign block
-		ChestBlock signChestBlock = new ChestBlock(this.deathChest, signBlock);
+		ChestBlock signChestBlock = new ChestBlock(this.deathChest, signBlock, ChestBlockType.SIGN);
 
 		// add sign to chestBlocks
 		this.deathChest.addChestBlock(ChestBlockType.SIGN, signChestBlock);

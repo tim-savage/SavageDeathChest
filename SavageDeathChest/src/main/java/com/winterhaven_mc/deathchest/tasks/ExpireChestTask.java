@@ -9,6 +9,7 @@ final public class ExpireChestTask extends BukkitRunnable {
 	// death chest block to expire
 	private final DeathChest deathChest;
 	
+
 	/**
 	 * Class constructor
 	 */
@@ -17,6 +18,7 @@ final public class ExpireChestTask extends BukkitRunnable {
 		// set death chest block field
 		this.deathChest = deathChest;
 	}
+
 
 	@Override
 	public void run() {
