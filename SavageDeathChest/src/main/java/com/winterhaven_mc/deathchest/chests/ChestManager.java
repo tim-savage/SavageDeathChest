@@ -246,7 +246,7 @@ public class ChestManager {
 		}
 
 		// if passed block is chest and is in block map, return true; else return false
-		return (!block.getType().equals(Material.CHEST) && chestBlockMap.containsKey(block.getLocation()));
+		return (block.getType().equals(Material.CHEST) && chestBlockMap.containsKey(block.getLocation()));
 	}
 
 
@@ -263,10 +263,10 @@ public class ChestManager {
 			return false;
 		}
 
-		// if block is wall sign or sign post and is in block map, return true; else return false
-		return ((block.getType().equals(Material.WALL_SIGN)
-				|| block.getType().equals(Material.SIGN)))
-				&& chestBlockMap.containsKey(block.getLocation());
+		// if block is sign or wall sign material and exists in block map, return true
+		return ((block.getType().equals(Material.SIGN)
+				|| block.getType().equals(Material.WALL_SIGN))
+				&& chestBlockMap.containsKey(block.getLocation()));
 	}
 
 
