@@ -468,7 +468,7 @@ public final class DeathChest {
 
 
 	/**
-	 * Get chest location. Attempt to get chest location from right chest, sign or left chest in that order.
+	 * Get chest location. Attempt to get chest location from right chest, left chest or sign in that order.
 	 * Returns null if location could not be derived from chest blocks.
 	 * @return Location - the chest location or null if no location found
 	 */
@@ -477,11 +477,11 @@ public final class DeathChest {
 		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
 			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();
 		}
-		else if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
-			return this.chestBlocks.get(ChestBlockType.SIGN).getLocation();
-		}
 		else if (chestBlocks.containsKey(ChestBlockType.LEFT_CHEST)) {
 			return this.chestBlocks.get(ChestBlockType.LEFT_CHEST).getLocation();
+		}
+		else if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
+			return this.chestBlocks.get(ChestBlockType.SIGN).getLocation();
 		}
 		else {
 			return null;
