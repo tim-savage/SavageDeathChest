@@ -7,6 +7,11 @@ enum ChestSize {
 
 	private final int size;
 
+
+	/**
+	 * Constructor
+	 * @param size the chest inventory size
+	 */
 	ChestSize(int size) {
 		this.size = size;
 	}
