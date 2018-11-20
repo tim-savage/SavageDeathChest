@@ -38,7 +38,7 @@ public class ChestManager {
 	 * Class constructor
 	 * @param plugin reference to main class
 	 */
-	public ChestManager(PluginMain plugin) {
+	public ChestManager(final PluginMain plugin) {
 
 		// set reference to main class
 		this.plugin = plugin;
@@ -131,7 +131,7 @@ public class ChestManager {
 	 * @param chestUUID UUID of DeathChest object to retrieve
 	 * @return DeathChest
 	 */
-	public DeathChest getDeathChest(UUID chestUUID) {
+	public DeathChest getDeathChest(final UUID chestUUID) {
 		return this.deathChestMap.get(chestUUID);
 	}
 
@@ -141,7 +141,7 @@ public class ChestManager {
 	 * @param block the block to retrieve DeathChest object
 	 * @return DeathChest object, or null if no DeathChest exists in map that contains passed block
 	 */
-	public DeathChest getDeathChest(Block block) {
+	public DeathChest getDeathChest(final Block block) {
 
 		ChestBlock chestBlock = getChestBlock(block.getLocation());
 
@@ -157,7 +157,7 @@ public class ChestManager {
 	 * Put DeathChest object in map
 	 * @param deathChest the DeathChest object to put in map
 	 */
-	void addDeathChest(DeathChest deathChest) {
+	void addDeathChest(final DeathChest deathChest) {
 		this.deathChestMap.put(deathChest.getChestUUID(),deathChest);
 	}
 
@@ -166,7 +166,7 @@ public class ChestManager {
 	 * Remove DeathChest object from map
 	 * @param deathChest the DeathChest object to remove from map
 	 */
-	void removeDeathChest(DeathChest deathChest) {
+	void removeDeathChest(final DeathChest deathChest) {
 		this.deathChestMap.remove(deathChest.getChestUUID());
 	}
 
@@ -176,7 +176,7 @@ public class ChestManager {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
-	public ChestBlock getChestBlock(Location location) {
+	public ChestBlock getChestBlock(final Location location) {
 		return this.chestBlockMap.get(location);
 	}
 
@@ -185,7 +185,7 @@ public class ChestManager {
 	 * Put ChestBlock object in map
 	 * @param chestBlock the ChestBlock to put in map
 	 */
-	void addChestBlock(ChestBlock chestBlock) {
+	void addChestBlock(final ChestBlock chestBlock) {
 		this.chestBlockMap.put(chestBlock.getLocation(), chestBlock);
 	}
 
@@ -194,7 +194,7 @@ public class ChestManager {
 	 * Remove ChestBlock object from map
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
-	void removeChestBlock(ChestBlock chestBlock) {
+	void removeChestBlock(final ChestBlock chestBlock) {
 		this.chestBlockMap.remove(chestBlock.getLocation());
 	}
 
@@ -205,7 +205,7 @@ public class ChestManager {
 	 * @return {@code true} if a ChestBlock exists in map with passed block location,
 	 * {@code false} if no ChestBlock exists in map with passed block location
 	 */
-	boolean isChestBlock(Block block) {
+	boolean isChestBlock(final Block block) {
 		return chestBlockMap.containsKey(block.getLocation());
 	}
 
