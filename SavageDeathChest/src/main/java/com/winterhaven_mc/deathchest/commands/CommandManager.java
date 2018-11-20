@@ -46,7 +46,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	public final List<String> onTabComplete(final CommandSender sender, final Command command,
 											final String alias, final String[] args) {
 
-		// initalize return list
+		// initialize return list
 		final List<String> returnList = new ArrayList<>();
 
 		// if first argument, return list of valid matching subcommands
@@ -167,7 +167,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		return true;
 	}
 
-	
+
+	/**
+	 * reload command
+	 * @param sender command sender
+	 * @return always returns true, to prevent bukkit command help display
+	 */
 	private boolean reloadCommand(final CommandSender sender) {
 
 		if (!sender.hasPermission("deathchest.reload")) {
