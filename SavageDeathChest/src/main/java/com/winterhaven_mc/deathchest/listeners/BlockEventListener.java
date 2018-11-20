@@ -86,16 +86,10 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// if block is DeathChest sign, set drop items to empty
-		if (plugin.chestManager.isDeathChestSignBlock(block)) {
-			block.getDrops().clear();
-			return;
-		}
-
 		// get instance of DeathChest from event block
 		final DeathChest deathChest = plugin.chestManager.getDeathChest(block);
 
-		// if event block is not a DeathChestBlock, do nothing and return
+		// if returned DeathChest is null, do nothing and return
 		if (deathChest == null) {
 			return;
 		}
