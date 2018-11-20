@@ -17,7 +17,7 @@ enum ChestSize {
 	 * @param itemCount the number of ItemStacks to be considered for chest size
 	 * @return ChestSize enum value, SINGLE or DOUBLE
 	 */
-	public static ChestSize selectFor(int itemCount) {
+	public static ChestSize selectFor(final int itemCount) {
 
 		if (itemCount > SINGLE.size) {
 			return DOUBLE;
