@@ -129,7 +129,7 @@ public class ChestManager {
 	/**
 	 * Get DeathChest object by chestUUID
 	 * @param chestUUID UUID of DeathChest object to retrieve
-	 * @return DeathChest
+	 * @return DeathChest object, or null of no DeathChest exists in map with passed chestUUID
 	 */
 	public DeathChest getDeathChest(final UUID chestUUID) {
 		return this.deathChestMap.get(chestUUID);
@@ -139,7 +139,7 @@ public class ChestManager {
 	/**
 	 * Get DeathChest object by block
 	 * @param block the block to retrieve DeathChest object
-	 * @return DeathChest object, or null if no DeathChest exists in map that contains passed block
+	 * @return DeathChest object, or null if no DeathChest exists in map that contains passed block location
 	 */
 	public DeathChest getDeathChest(final Block block) {
 
@@ -211,9 +211,10 @@ public class ChestManager {
 
 
 	/**
-	 * Test if a block is a DeathChestBlock; either signs or chests with deathchest metadata
+	 * Test if a block is a DeathChestBlock
 	 * @param block The block to test if it is a DeathChestBlock
-	 * @return boolean True if block has deathchest-owner metadata, false if it does not
+	 * @return boolean {@code true} if block is DeathChest material and block location exists in map,
+	 * {@code false} if not
 	 */
 	public boolean isDeathChestComponent(final Block block) {
 
@@ -235,7 +236,7 @@ public class ChestManager {
 	/**
 	 * Test if a block is a DeathChest chest block
 	 * @param block The block to test
-	 * @return true if block is a DeathChest chest, false if not
+	 * @return {@code true} if block is Material.CHEST and block location exists in block map, {@code false} if not
 	 */
 	public boolean isDeathChestChestBlock(final Block block) {
 
@@ -244,20 +245,16 @@ public class ChestManager {
 			return false;
 		}
 
-		// if passed block is not a chest return false
-		if (!block.getType().equals(Material.CHEST)) {
-			return false;
-		}
-
-		// if passed block is in chest block map return true, else return false
-		return chestBlockMap.containsKey(block.getLocation());
+		// if passed block is chest and is in block map, return true; else return false
+		return (!block.getType().equals(Material.CHEST) && chestBlockMap.containsKey(block.getLocation()));
 	}
 
 
 	/**
-	 * Test if a block is a deathchest sign; wall sign or sign post with deathchest metadata
+	 * Test if a block is a deathchest sign
 	 * @param block The block to test if it is a DeathSign
-	 * @return true if block is a deathchest sign, false if not
+	 * @return {@code true} if block is Material.SIGN or Material.WALL_SIGN and block location exists in block map,
+	 * {@code false} if not
 	 */
 	public boolean isDeathChestSignBlock(final Block block) {
 
@@ -266,10 +263,10 @@ public class ChestManager {
 			return false;
 		}
 
-		// if block is wall sign or sign post and has death chest metadata, return true
+		// if block is wall sign or sign post and is in block map, return true; else return false
 		return ((block.getType().equals(Material.WALL_SIGN)
 				|| block.getType().equals(Material.SIGN)))
-				&& block.hasMetadata("deathchest-owner");
+				&& chestBlockMap.containsKey(block.getLocation());
 	}
 
 
@@ -313,7 +310,7 @@ public class ChestManager {
 			return false;
 		}
 
-		// if inventory holder block is a DeathChest return true, else false
+		// if inventory holder block is a DeathChest return true, else return false
 		return plugin.chestManager.isDeathChestChestBlock(block);
 	}
 
