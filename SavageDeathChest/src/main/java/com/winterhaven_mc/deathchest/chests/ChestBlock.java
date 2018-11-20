@@ -71,7 +71,7 @@ public class ChestBlock {
 
 	/**
 	 * Getter method for chest block location
-	 * @return location - the location of this chest block
+	 * @return Location - the location of this chest block
 	 */
 	public Location getLocation() {
 		return location;
@@ -89,7 +89,7 @@ public class ChestBlock {
 
 	/**
 	 * Getter method for chest block chestUUID
-	 * @return the chestUUID for this chest block
+	 * @return UUID - the chestUUID for this chest block
 	 */
 	public UUID getChestUUID() {
 		return chestUUID;
@@ -107,7 +107,7 @@ public class ChestBlock {
 
 	/**
 	 * Getter method for ChestBlockType of this chest block
-	 * @return the ChestBlockType of this chest block
+	 * @return ChestBlockType - the ChestBlockType of this chest block
 	 */
 	public ChestBlockType getType() {
 		return chestBlockType;
@@ -125,7 +125,8 @@ public class ChestBlock {
 
 	/**
 	 * Get DeathChest chest block that DeathSign is attached to
-	 * @return DeathChest chest block; returns null if sign is not a DeathSign or attached block is not a DeathChest
+	 * @return Block - DeathChest chest block;
+	 * returns null if sign is not a DeathSign or attached block is not a DeathChest
 	 */
 	private Block getAttachedBlock() {
 
@@ -242,6 +243,7 @@ public class ChestBlock {
 
 	/**
 	 * Set block metadata
+	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
 	private void setMetadata(final DeathChest deathChest) {
 
@@ -271,7 +273,7 @@ public class ChestBlock {
 
 
 	/**
-	 * Remove metadata from block
+	 * Remove metadata from this chest block
 	 */
 	private void removeMetadata() {
 
