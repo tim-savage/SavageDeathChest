@@ -45,7 +45,8 @@ public class ChestBlock {
 	/**
 	 * Class constructor
 	 * @param deathChest DeathChest object that this ChestBlock is member
-	 * @param block in game block this ChestBlock represents
+	 * @param block in game block this ChestBlock object represents
+	 * @param chestBlockType enum value that represents the type of this ChestBlock
 	 */
 	ChestBlock(final DeathChest deathChest, final Block block, final ChestBlockType chestBlockType) {
 
