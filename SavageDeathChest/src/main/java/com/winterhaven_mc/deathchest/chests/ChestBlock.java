@@ -246,7 +246,7 @@ public class ChestBlock {
 	 * Set block metadata
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
-	private void setMetadata(final DeathChest deathChest) {
+	void setMetadata(final DeathChest deathChest) {
 
 		// get in game block at chest block location
 		Block block = this.getLocation().getBlock();
