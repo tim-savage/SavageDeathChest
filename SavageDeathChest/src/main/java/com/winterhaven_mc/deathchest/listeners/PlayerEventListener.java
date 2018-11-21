@@ -140,7 +140,8 @@ public final class PlayerEventListener implements Listener {
 
 			// if killer looting is enabled and player is killer, loot chest and return
 			if (plugin.getConfig().getBoolean("killer-looting") 
-					&& deathChest.isKiller(player)) {
+					&& deathChest.isKiller(player)
+					&& player.hasPermission("deathchest.loot.killer")) {
 				deathChest.autoLoot(player);
 				return;
 			}
