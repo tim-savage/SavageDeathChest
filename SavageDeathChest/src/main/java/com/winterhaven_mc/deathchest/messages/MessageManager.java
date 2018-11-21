@@ -39,20 +39,15 @@ public final class MessageManager extends AbstractMessageManager {
 //# %PLAYER_DISPLAYNAME%   Player's display name, including prefix/suffix
 //# %EXPIRE_TIME%          Remaining time at chest deployment
 //# %WORLD_NAME%           World name of chest (or player if no chest)
-//# %LOC_X%                Chest coordinates
-//# %LOC_Y%                Chest coordinates
-//# %LOC_Z%                Chest coordinates
+//# %LOC_X%                Chest coordinates (or player if no chest)
+//# %LOC_Y%                Chest coordinates (or player if no chest)
+//# %LOC_Z%                Chest coordinates (or player if no chest)
 
 
 	@Override
 	protected Map<String,String> getDefaultReplacements(CommandSender recipient) {
 
 		Map<String,String> replacements = new HashMap<>();
-
-		// strip color codes
-		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
-		replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
-
 
 		// get expire time from config
 		long expireTime = plugin.getConfig().getLong("expire-time");
@@ -66,12 +61,14 @@ public final class MessageManager extends AbstractMessageManager {
 		}
 
 		replacements.put("%EXPIRE_TIME%",getTimeString(expireTime));
+		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
 
 		if (recipient instanceof Player) {
 			Player player = (Player)recipient;
 			replacements.put("%PLAYER_NICKNAME%",ChatColor.stripColor(player.getPlayerListName()));
 			replacements.put("%PLAYER_DISPLAYNAME%",ChatColor.stripColor(player.getDisplayName()));
 
+			replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
 			replacements.put("%LOC_X%", String.valueOf(player.getLocation().getBlockX()));
 			replacements.put("%LOC_Y%", String.valueOf(player.getLocation().getBlockY()));
 			replacements.put("%LOC_Z%", String.valueOf(player.getLocation().getBlockZ()));
