@@ -138,7 +138,7 @@ public final class PlayerEventListener implements Listener {
 				return;
 			}
 
-			// if killer looting is enabled and player is killer, loot chest and return
+			// if killer looting is enabled and player is killer and has permission, loot chest and return
 			if (plugin.getConfig().getBoolean("killer-looting") 
 					&& deathChest.isKiller(player)
 					&& player.hasPermission("deathchest.loot.killer")) {
@@ -173,9 +173,10 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if killer looting is enabled  and player is killer, open chest inventory and return
+		// if killer looting is enabled  and player is killer and has permission, open chest inventory and return
 		if (plugin.getConfig().getBoolean("killer-looting") 
-				&& deathChest.isKiller(player)) {
+				&& deathChest.isKiller(player)
+				&& player.hasPermission("deathchest.loot.killer")) {
 			chestBlock.openInventory(player);
 		}
 		else {
