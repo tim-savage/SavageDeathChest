@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.messages;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.util.AbstractMessageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -36,8 +37,11 @@ public final class MessageManager extends AbstractMessageManager {
 //# %PLAYER_NAME%          Player's name
 //# %PLAYER_NICKNAME%      Player's nickname
 //# %PLAYER_DISPLAYNAME%   Player's display name, including prefix/suffix
-//# %WORLD_NAME%           World name that player is in
 //# %EXPIRE_TIME%          Remaining time at chest deployment
+//# %WORLD_NAME%           World name of chest (or player if no chest)
+//# %LOC_X%                Chest coordinates
+//# %LOC_Y%                Chest coordinates
+//# %LOC_Z%                Chest coordinates
 
 
 	@Override
@@ -48,6 +52,7 @@ public final class MessageManager extends AbstractMessageManager {
 		// strip color codes
 		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
 		replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
+
 
 		// get expire time from config
 		long expireTime = plugin.getConfig().getLong("expire-time");
@@ -66,6 +71,10 @@ public final class MessageManager extends AbstractMessageManager {
 			Player player = (Player)recipient;
 			replacements.put("%PLAYER_NICKNAME%",ChatColor.stripColor(player.getPlayerListName()));
 			replacements.put("%PLAYER_DISPLAYNAME%",ChatColor.stripColor(player.getDisplayName()));
+
+			replacements.put("%LOC_X%", String.valueOf(player.getLocation().getBlockX()));
+			replacements.put("%LOC_Y%", String.valueOf(player.getLocation().getBlockY()));
+			replacements.put("%LOC_Z%", String.valueOf(player.getLocation().getBlockZ()));
 		}
 
 		return replacements;
@@ -81,6 +90,31 @@ public final class MessageManager extends AbstractMessageManager {
 
 		// get default replacement map
 		Map<String,String> replacements = getDefaultReplacements(recipient);
+
+		// send message
+		//noinspection unchecked
+		sendMessage(recipient, messageId, replacements);
+	}
+
+
+	/**
+	 * Send message to recipient
+	 * @param recipient the recipient to whom to send a message
+	 * @param messageId the message identifier
+	 */
+	public void sendMessage(final CommandSender recipient,
+							final MessageId messageId,
+							final DeathChest deathChest) {
+
+		// get default replacement map
+		Map<String,String> replacements = getDefaultReplacements(recipient);
+
+		if (deathChest != null && deathChest.getLocation() != null) {
+			replacements.put("%WORLD_NAME%",plugin.worldManager.getWorldName(deathChest.getLocation().getWorld()));
+			replacements.put("%LOC_X%",String.valueOf(deathChest.getLocation().getBlockX()));
+			replacements.put("%LOC_Y%",String.valueOf(deathChest.getLocation().getBlockY()));
+			replacements.put("%LOC_Z%",String.valueOf(deathChest.getLocation().getBlockZ()));
+		}
 
 		// send message
 		//noinspection unchecked

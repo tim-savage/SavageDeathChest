@@ -102,7 +102,7 @@ public final class PlayerEventListener implements Listener {
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
 			event.setCancelled(true);
-			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS);
+			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS, deathChest);
 			return;
 		}
 
@@ -113,7 +113,7 @@ public final class PlayerEventListener implements Listener {
 			event.setCancelled(true);
 
 			// send player message
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN, deathChest);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -146,7 +146,7 @@ public final class PlayerEventListener implements Listener {
 			}
 			else {
 				// send player not-owner message
-				plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER);
+				plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
 
 				// play denied access sound
 				plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -179,7 +179,7 @@ public final class PlayerEventListener implements Listener {
 		}
 		else {
 			// send player not-owner message
-			plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER);
+			plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);

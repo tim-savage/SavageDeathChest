@@ -36,8 +36,11 @@ DATE_FORMAT: "MMM d, yyyy"
 # %PLAYER_NAME%          Nom du joueur
 # %PLAYER_NICKNAME%      Pseudo du joueur
 # %PLAYER_DISPLAYNAME%   Nom d'affichage du joueur, incluant préfix/suffix
-# %WORLD_NAME%           Nom du monde dans lequel le joueur est mort
-# %EXPIRE_TIME%			Temps restant avant la disparition du coffre
+# %EXPIRE_TIME%          Temps restant avant la disparition du coffre
+# %WORLD_NAME%           Nom mondial du coffre (ou joueur si pas de coffre)
+# %LOC_X%                Coordonnées de la coffre (ou joueur si pas de coffre)
+# %LOC_Y%                Coordonnées de la coffre (ou joueur si pas de coffre)
+# %LOC_Z%                Coordonnées de la coffre (ou joueur si pas de coffre)
 
 MESSAGES:
   CHEST_SUCCESS:
@@ -95,16 +98,16 @@ MESSAGES:
 
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
-    string: '&cToo many arguments!'
+    string: '&cTrop de paramètres!'
 
   COMMAND_FAIL_RELOAD_PERMISSION:
     enabled: true
-    string: '&cYou do not have permission to reload DeathChest configuration!'
+    string: '&cVous n''êtes pas autorisé à recharger la configuration DeathChest!'
 
   COMMAND_FAIL_STATUS_PERMISSION:
     enabled: true
-    string: '&cYou do not have permission to view DeathChest settings!'
+    string: '&cVous n''êtes pas autorisé à afficher les paramètres de DeathChest!'
 
   COMMAND_SUCCESS_RELOAD:
     enabled: true
-    string: '&7DeathChest configuration reloaded.'
+    string: '&7Configuration de DeathChest rechargée.'
