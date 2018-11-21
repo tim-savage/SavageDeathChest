@@ -567,6 +567,13 @@ public class Deployment {
 	}
 
 
+	/**
+	 * Place a chest block and fill with items
+	 * @param location the location to place the chest block
+	 * @param chestItems the items to place in the chest
+	 * @param chestBlockType the type of chest block (left or right)
+	 * @return List of ItemStack - items that did not fit in chest if any
+	 */
 	private List<ItemStack> placeChest(final Location location,
 									   final List<ItemStack> chestItems,
 									   final ChestBlockType chestBlockType) {
@@ -600,6 +607,13 @@ public class Deployment {
 	}
 
 
+	/**
+	 * Validate chest location for chest size
+	 * @param player the player for whom the chest is being placed
+	 * @param location the location to test
+	 * @param chestSize the size of the chest to be placed (single, double)
+	 * @return Result - the result object for the tested location
+	 */
 	private Result validateChestLocation(final Player player,
 										 final Location location,
 										 final ChestSize chestSize) {
@@ -623,6 +637,13 @@ public class Deployment {
 	}
 
 
+	/**
+	 * Validate chest location for chest type
+	 * @param player the player for whom the chest is being placed
+	 * @param location the location to test
+	 * @param chestBlockType the type of chest block (left, right)
+	 * @return Result - the result object for the tested location
+	 */
 	private Result validateChestLocation(final Player player,
 										 final Location location,
 										 final ChestBlockType chestBlockType) {
