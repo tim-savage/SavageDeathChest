@@ -398,7 +398,7 @@ public final class DeathChest {
 
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED, this);
 		}
 	}
 
@@ -472,7 +472,7 @@ public final class DeathChest {
 	 * Returns null if location could not be derived from chest blocks.
 	 * @return Location - the chest location or null if no location found
 	 */
-	private Location getLocation() {
+	public Location getLocation() {
 
 		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
 			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();

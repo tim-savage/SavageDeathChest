@@ -86,16 +86,10 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// if block is DeathChest sign, set drop items to empty
-		if (plugin.chestManager.isDeathChestSignBlock(block)) {
-			block.getDrops().clear();
-			return;
-		}
-
 		// get instance of DeathChest from event block
 		final DeathChest deathChest = plugin.chestManager.getDeathChest(block);
 
-		// if event block is not a DeathChestBlock, do nothing and return
+		// if returned DeathChest is null, do nothing and return
 		if (deathChest == null) {
 			return;
 		}
@@ -116,7 +110,7 @@ public final class BlockEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE) 
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
-			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS);
+			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS, deathChest);
 			event.setCancelled(true);
 			return;
 		}
@@ -133,7 +127,7 @@ public final class BlockEventListener implements Listener {
 		if (deathChest.getViewerCount() > 0) {
 
 			// send player message
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN);
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN, deathChest);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -155,7 +149,7 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// send player not-owner message
-		plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER);
+		plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
 
 		// play denied access sound
 		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);

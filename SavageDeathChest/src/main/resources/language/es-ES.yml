@@ -36,8 +36,11 @@ DATE_FORMAT: "MMM d, yyyy"
 # %PLAYER_NAME%          Player name
 # %PLAYER_NICKNAME%      Player nickname
 # %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
-# %WORLD_NAME%           Player world name
 # %EXPIRE_TIME%			 Remaining time at chest deployment
+# %WORLD_NAME%           World name of chest (or player if no chest)
+# %LOC_X%                Chest coordinates (or player if no chest)
+# %LOC_Y%                Chest coordinates (or player if no chest)
+# %LOC_Z%                Chest coordinates (or player if no chest)
 
 MESSAGES:
   CHEST_SUCCESS:
@@ -48,9 +51,21 @@ MESSAGES:
     enabled: true
     string: '&cSólo se podía colocar un solo cofre del punto muerte.'
 
+  CHEST_DENIED_PLUGIN:
+    enabled: true
+    string: '&cEl despliegue del cofre de la muerte fue prevenido por %PLUGIN%.'
+
   CHEST_DENIED_BLOCK:
     enabled: true
     string: '&cNo se pudo colocar el cofre de la muerte.'
+
+  CHEST_DENIED_PERMISSION:
+    enabled: false
+    string: '&cNo tienes permiso para cofres de la muerte.'
+
+  CHEST_DENIED_ADJACENT:
+    enabled: true
+    string: '&cEl despliegue del cofre de la muerte fue prevenido por un cofre adyacente existente.'
 
   INVENTORY_EMPTY:
     enabled: true
@@ -83,16 +98,16 @@ MESSAGES:
 
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
-    string: '&cToo many arguments!'
+    string: '&c¡Demasiados parámetros!'
 
   COMMAND_FAIL_RELOAD_PERMISSION:
     enabled: true
-    string: '&cYou do not have permission to reload DeathChest configuration!'
+    string: '&c¡No tienes permiso para recargar la configuración de DeathChest!'
 
   COMMAND_FAIL_STATUS_PERMISSION:
     enabled: true
-    string: '&cYou do not have permission to view DeathChest settings!'
+    string: '&c¡No tienes permiso para ver la configuración de DeathChest!'
 
   COMMAND_SUCCESS_RELOAD:
     enabled: true
-    string: '&7DeathChest configuration reloaded.'
+    string: '&7Configuración del DeathChest recargada.'

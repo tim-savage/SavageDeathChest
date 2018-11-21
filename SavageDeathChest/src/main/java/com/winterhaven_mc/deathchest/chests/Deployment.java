@@ -88,11 +88,11 @@ public class Deployment {
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS);
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS, deathChest);
 				break;
 
 			case PARTIAL_SUCCESS:
-				plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS);
+				plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS, deathChest);
 				break;
 
 			case PROTECTION_PLUGIN:

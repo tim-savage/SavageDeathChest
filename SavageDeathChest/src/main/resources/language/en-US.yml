@@ -36,8 +36,11 @@ DATE_FORMAT: "MMM d, yyyy"
 # %PLAYER_NAME%          Player name
 # %PLAYER_NICKNAME%      Player nickname
 # %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
-# %WORLD_NAME%           Player world name
 # %EXPIRE_TIME%			 Remaining time at chest deployment
+# %WORLD_NAME%           World name of chest (or player if no chest)
+# %LOC_X%                Chest coordinates (or player if no chest)
+# %LOC_Y%                Chest coordinates (or player if no chest)
+# %LOC_Z%                Chest coordinates (or player if no chest)
 
 MESSAGES:
   CHEST_SUCCESS:
