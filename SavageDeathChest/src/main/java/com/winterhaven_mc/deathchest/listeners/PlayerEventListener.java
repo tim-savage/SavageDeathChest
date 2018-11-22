@@ -19,6 +19,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 
+/**
+ * A class that contains {@code EventHandler} methods to process player related events
+ */
+
 public final class PlayerEventListener implements Listener {
 
 	// reference to main class
@@ -138,9 +142,10 @@ public final class PlayerEventListener implements Listener {
 				return;
 			}
 
-			// if killer looting is enabled and player is killer, loot chest and return
+			// if killer looting is enabled and player is killer and has permission, loot chest and return
 			if (plugin.getConfig().getBoolean("killer-looting") 
-					&& deathChest.isKiller(player)) {
+					&& deathChest.isKiller(player)
+					&& player.hasPermission("deathchest.loot.killer")) {
 				deathChest.autoLoot(player);
 				return;
 			}
@@ -172,9 +177,10 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if killer looting is enabled  and player is killer, open chest inventory and return
+		// if killer looting is enabled  and player is killer and has permission, open chest inventory and return
 		if (plugin.getConfig().getBoolean("killer-looting") 
-				&& deathChest.isKiller(player)) {
+				&& deathChest.isKiller(player)
+				&& player.hasPermission("deathchest.loot.killer")) {
 			chestBlock.openInventory(player);
 		}
 		else {

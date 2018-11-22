@@ -17,6 +17,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
+/**
+ * A class that contains {@code EventHandler} methods to process inventory related events
+ */
+
 public final class InventoryEventListener implements Listener {
 
 	// reference to main class

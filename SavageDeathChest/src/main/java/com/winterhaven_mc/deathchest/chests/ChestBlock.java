@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 
+/**
+ * A class that represents a single block that is a component of a death chest
+ */
 public class ChestBlock {
 
 	// static reference to main class
@@ -246,7 +249,7 @@ public class ChestBlock {
 	 * Set block metadata
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
-	private void setMetadata(final DeathChest deathChest) {
+	void setMetadata(final DeathChest deathChest) {
 
 		// get in game block at chest block location
 		Block block = this.getLocation().getBlock();

@@ -13,6 +13,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * A class that tracks the state of death chests and chest blocks
+ */
 public class ChestManager {
 
 	// reference to main class
@@ -129,7 +132,7 @@ public class ChestManager {
 	/**
 	 * Get DeathChest object by chestUUID
 	 * @param chestUUID UUID of DeathChest object to retrieve
-	 * @return DeathChest object, or null of no DeathChest exists in map with passed chestUUID
+	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
 	public DeathChest getDeathChest(final UUID chestUUID) {
 		return this.deathChestMap.get(chestUUID);

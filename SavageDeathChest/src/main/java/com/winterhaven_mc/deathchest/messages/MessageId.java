@@ -1,5 +1,10 @@
 package com.winterhaven_mc.deathchest.messages;
 
+
+/**
+ * An enum whose values represent the text messages displayed to users, corresponding to user
+ * configured text in the language yaml files.
+ */
 public enum MessageId {
 
 	CHEST_SUCCESS,

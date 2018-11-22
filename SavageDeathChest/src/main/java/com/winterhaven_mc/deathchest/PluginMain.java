@@ -15,6 +15,9 @@ import com.winterhaven_mc.util.YamlSoundConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
+/**
+ * The main class for SavageDeathChest plugin
+ */
 public final class PluginMain extends JavaPlugin {
 
 	public static PluginMain instance;

@@ -1,5 +1,9 @@
 package com.winterhaven_mc.deathchest.chests;
 
+
+/**
+ * An enum whose values represent the different sizes of death chests
+ */
 enum ChestSize {
 
 	SINGLE(27),

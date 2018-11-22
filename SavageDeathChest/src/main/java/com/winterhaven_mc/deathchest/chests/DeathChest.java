@@ -11,7 +11,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Collection;
@@ -20,6 +19,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * A class that represents a death chest, which is comprised of a collection of chest blocks
+ */
 public final class DeathChest {
 
 	// reference to main class
@@ -263,37 +265,7 @@ public final class DeathChest {
 
 		// set metadata on blocks in set
 		for (ChestBlock chestBlock : this.getChestBlocks()) {
-			setMetadata(chestBlock);
-		}
-	}
-
-
-	/**
-	 * Set block metadata
-	 */
-	private void setMetadata(final ChestBlock chestBlock) {
-
-		// get in game block at chest block location
-		Block block = chestBlock.getLocation().getBlock();
-
-		// if block is not death chest material, do nothing and return
-		if (!ChestManager.deathChestMaterials.contains(block.getType())) {
-			return;
-		}
-
-		// set chest uuid metadata
-		if (this.chestUUID != null) {
-			block.setMetadata("deathchest-uuid", new FixedMetadataValue(plugin, this.chestUUID));
-		}
-
-		// set owner uuid metadata
-		if (this.ownerUUID != null) {
-			block.setMetadata("deathchest-owner", new FixedMetadataValue(plugin, this.ownerUUID));
-		}
-
-		// set killer uuid metadata
-		if (this.killerUUID != null) {
-			block.setMetadata("deathchest-killer", new FixedMetadataValue(plugin, this.killerUUID));
+			chestBlock.setMetadata(this);
 		}
 	}
 

@@ -1,5 +1,10 @@
 package com.winterhaven_mc.deathchest.sounds;
 
+
+/**
+ * An enum that whose values represent the in game sounds played by the plugin corresponding to
+ * user configured settings in the sounds.yml file.
+ */
 public enum SoundId {
 
 	CHEST_BREAK,
