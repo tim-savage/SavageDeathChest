@@ -51,6 +51,7 @@ public final class DeathChest {
 	// set of chest blocks that make up this death chest
 	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
+
 	/**
 	 * Class constructor
 	 */
