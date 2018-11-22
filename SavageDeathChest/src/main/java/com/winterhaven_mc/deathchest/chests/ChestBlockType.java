@@ -47,7 +47,7 @@ enum ChestBlockType {
 			return ChestBlockType.RIGHT_CHEST;
 		}
 
-		// if block is not a sign or chest, return INVALID
+		// if block is not a sign or chest, return null
 		return null;
 	}
 
