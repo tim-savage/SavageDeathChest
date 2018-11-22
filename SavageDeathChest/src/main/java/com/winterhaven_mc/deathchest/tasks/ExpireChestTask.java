@@ -4,6 +4,9 @@ import com.winterhaven_mc.deathchest.chests.DeathChest;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
+/**
+ * A class that implements a death chest expire task to be run at the appropriate time
+ */
 final public class ExpireChestTask extends BukkitRunnable {
 
 	// death chest block to expire

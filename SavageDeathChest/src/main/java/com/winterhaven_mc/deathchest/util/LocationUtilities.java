@@ -6,6 +6,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 
+/**
+ * A utility class that implements static methods for various location manipulations
+ */
 @SuppressWarnings("unused")
 public final class LocationUtilities {
 

@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * A class that implements player commands for the plugin
+ */
 public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	private final PluginMain plugin;

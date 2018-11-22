@@ -19,6 +19,10 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 
+/**
+ * A class that contains {@code EventHandler} methods to process player related events
+ */
+
 public final class PlayerEventListener implements Listener {
 
 	// reference to main class

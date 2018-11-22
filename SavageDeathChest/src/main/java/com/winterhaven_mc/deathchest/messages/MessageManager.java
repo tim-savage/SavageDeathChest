@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * A class that manages player messages. Tasks include sending player messages,
+ * tracking message cooldown times and replacing message placeholders with appropriate text.
+ */
 public final class MessageManager extends AbstractMessageManager {
 
 	// reference to main class

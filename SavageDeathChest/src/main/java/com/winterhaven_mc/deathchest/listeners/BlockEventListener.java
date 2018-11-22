@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
+/**
+ * A class that contains {@code EventHandler} methods to process block related events
+ */
 public final class BlockEventListener implements Listener {
 
 	// reference to main class
@@ -142,7 +145,7 @@ public final class BlockEventListener implements Listener {
 
 		// if killer looting is enabled and player is killer and has permission, break chest and return
 		// TODO: this will need to be removed when items taken limit is implemented
-		if (plugin.getConfig().getBoolean("killer-looting") 
+		if (plugin.getConfig().getBoolean("killer-looting")
 				&& deathChest.isKiller(player)
 				&& player.hasPermission("deathchest.loot.killer")) {
 			deathChest.destroy();
