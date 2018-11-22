@@ -23,11 +23,11 @@ permissions:
     description: Allows player to quick-loot death chests by sneak-punching.
     default: true
 
-deathchest.loot.killer:
-  description: Allows player to loot death chests of players they have killed.
-  default: true
+  deathchest.loot.killer:
+    description: Allows player to loot death chests of players they have killed.
+    default: true
 
-deathchest.loot.other:
+  deathchest.loot.other:
     description: Allow player to quick-loot other player's chests.
     default: op
 

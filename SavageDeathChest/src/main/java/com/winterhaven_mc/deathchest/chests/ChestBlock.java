@@ -147,18 +147,11 @@ public class ChestBlock {
 			return null;
 		}
 
-		// initialize return block
-		Block returnBlock = null;
+		// get block state cast to Sign
+		Sign sign = (Sign)block.getState().getData();
 
-		// if block is wall sign, set block to attached block
-		if (block.getType().equals(Material.WALL_SIGN)) {
-			Sign sign = (Sign)block.getState().getData();
-			returnBlock = block.getRelative(sign.getAttachedFace());
-		}
-		// else if block is sign post, set block to one block below
-		else if (block.getType().equals(Material.SIGN)) {
-			returnBlock = block.getRelative(0, -1, 0);
-		}
+		// get attached block
+		Block returnBlock = block.getRelative(sign.getAttachedFace());
 
 		// if attached block is not a DeathChest, return null
 		if (!plugin.chestManager.isDeathChestChestBlock(returnBlock)) {
