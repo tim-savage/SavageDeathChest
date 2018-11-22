@@ -231,8 +231,6 @@ public final class DeathChest {
 	 * @param expireTaskId the bukkit task id of the expire task associated with this DeathChest object
 	 */
 	private void setExpireTaskId(final int expireTaskId) {
-
-		// set expire task id in this DeathChest object
 		this.expireTaskId = expireTaskId;
 	}
 
@@ -259,7 +257,7 @@ public final class DeathChest {
 
 
 	/**
-	 * Set chest metadata
+	 * Set chest metadata on all component blocks
 	 */
 	final void setMetadata() {
 
@@ -425,7 +423,7 @@ public final class DeathChest {
 		// get death chest block expire time
 		Long expireTime = this.getExpirationTime();
 
-		// compute ticks remaining until expire time
+		// compute ticks remaining until expire time (millisecond interval divided by 50 yields ticks)
 		long ticksRemaining = (expireTime - currentTime) / 50;
 		if (ticksRemaining < 1) {
 			ticksRemaining = (long) 1;
