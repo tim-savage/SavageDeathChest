@@ -414,7 +414,7 @@ public final class DeathChest {
 		// compute ticks remaining until expire time (millisecond interval divided by 50 yields ticks)
 		long ticksRemaining = (expireTime - currentTime) / 50;
 		if (ticksRemaining < 1) {
-			ticksRemaining = (long) 1;
+			ticksRemaining = 1L;
 		}
 
 		// create task to expire death chest after ticksRemaining
