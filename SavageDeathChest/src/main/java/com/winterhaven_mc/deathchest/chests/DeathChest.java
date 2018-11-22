@@ -96,7 +96,6 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest chestUUID
-	 *
 	 * @return UUID
 	 */
 	public final UUID getChestUUID() {
@@ -106,7 +105,6 @@ public final class DeathChest {
 
 	/**
 	 * Setter method for DeathChest chestUUID
-	 *
 	 * @param chestUUID the chest UUID to set in chestUUID field of the DeathChest object
 	 */
 	public final void setChestUUID(final UUID chestUUID) {
@@ -116,7 +114,6 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest ownerUUID
-	 *
 	 * @return UUID
 	 */
 	public final UUID getOwnerUUID() {
@@ -126,7 +123,6 @@ public final class DeathChest {
 
 	/**
 	 * Setter method for DeathChest ownerUUID
-	 *
 	 * @param ownerUUID the player UUID to set in ownerUUID field of the DeathChest object
 	 */
 	public final void setOwnerUUID(final UUID ownerUUID) {
@@ -136,7 +132,6 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest killerUUID
-	 *
 	 * @return UUID
 	 */
 	public final UUID getKillerUUID() {
@@ -146,7 +141,6 @@ public final class DeathChest {
 
 	/**
 	 * Setter method for DeathChest killerUUID
-	 *
 	 * @param killerUUID the player UUID to set in the killerUUID field of the DeathChest object
 	 */
 	public final void setKillerUUID(final UUID killerUUID) {
@@ -175,7 +169,6 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest placementTime timestamp
-	 *
 	 * @return long placementTime timestamp
 	 */
 	public final long getPlacementTime() {
@@ -185,7 +178,6 @@ public final class DeathChest {
 
 	/**
 	 * Setter method for DeathChest placementTime timestamp
-	 *
 	 * @param placementTime the placementTime time in milliseconds since epoch to set in the
 	 *                  placementTime field of the DeathChest object
 	 */
@@ -196,7 +188,6 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest expirationTime timestamp
-	 *
 	 * @return long expirationTime timestamp
 	 */
 	public final long getExpirationTime() {
@@ -206,7 +197,6 @@ public final class DeathChest {
 
 	/**
 	 * Setter method for DeathChest expirationTime timestamp
-	 *
 	 * @param expirationTime the expirationTime time in milliseconds since epoch to set in the
 	 *                   expirationTime field of the DeathChest object
 	 */
@@ -217,7 +207,6 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest expireTaskId
-	 *
 	 * @return the value of the expireTaskId field in the DeathChest object
 	 */
 	private int getExpireTaskId() {
@@ -227,7 +216,6 @@ public final class DeathChest {
 
 	/**
 	 * Setter method for DeathChest expireTaskId
-	 *
 	 * @param expireTaskId the bukkit task id of the expire task associated with this DeathChest object
 	 */
 	private void setExpireTaskId(final int expireTaskId) {
