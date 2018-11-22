@@ -13,6 +13,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * A class that tracks the state of death chests and chest blocks
+ */
 public class ChestManager {
 
 	// reference to main class

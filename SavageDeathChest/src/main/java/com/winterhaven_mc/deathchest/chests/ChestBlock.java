@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 
+/**
+ * A class that represents a single block that is a component of a death chest
+ */
 public class ChestBlock {
 
 	// static reference to main class

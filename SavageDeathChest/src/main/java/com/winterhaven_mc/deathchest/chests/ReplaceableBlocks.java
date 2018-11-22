@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * A class to manage the configured list of material types that can be replaced by a death chest
+ */
 public class ReplaceableBlocks {
 
 	// reference to main class

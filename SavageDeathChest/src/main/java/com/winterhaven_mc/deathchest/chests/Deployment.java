@@ -23,6 +23,12 @@ import java.util.*;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
+/**
+ * A class that effectuates the deployment of a death chest in response to a player death event.
+ * Tasks include determining the appropriate chest size needed, searching for a suitable location
+ * for chest placement, placing the death chest in game, putting player's dropped items into the chest
+ * and attaching a chest sign with a configured message.
+ */
 public class Deployment {
 
 	// reference to main class

@@ -1,5 +1,9 @@
 package com.winterhaven_mc.deathchest.chests;
 
+
+/**
+ * An enum whose values represent the possible results of a death chest location search
+ */
 enum ResultCode {
 
 	SUCCESS,

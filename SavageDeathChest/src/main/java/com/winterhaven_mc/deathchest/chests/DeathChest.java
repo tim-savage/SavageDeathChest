@@ -19,6 +19,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
+/**
+ * A class that represents a death chest, which is comprised of a collection of chest blocks
+ */
 public final class DeathChest {
 
 	// reference to main class

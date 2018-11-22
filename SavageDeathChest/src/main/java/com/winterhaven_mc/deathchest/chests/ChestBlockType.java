@@ -5,6 +5,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
 
+
+/**
+ * An enum whose values represent the different types of chest blocks
+ */
 enum ChestBlockType {
 
 	SIGN,
