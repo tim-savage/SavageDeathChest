@@ -6,6 +6,9 @@ import com.winterhaven_mc.deathchest.chests.DeathChest;
 import java.util.List;
 
 
+/**
+ * An abstract class that declares methods for managing persistent storage of death chests and chest blocks.
+ */
 public abstract class DataStore {
 
 	private boolean initialized;

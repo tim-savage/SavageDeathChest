@@ -2,6 +2,11 @@ package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 
+
+/**
+ * An enum whose values represent the types of data store available.<br>
+ * Note: Only SQLite data store is implemented at this time.
+ */
 enum DataStoreType {
 
 	SQLITE("SQLite") {

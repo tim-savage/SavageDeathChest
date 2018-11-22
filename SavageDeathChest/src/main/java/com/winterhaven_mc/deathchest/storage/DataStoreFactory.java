@@ -7,6 +7,10 @@ import com.winterhaven_mc.deathchest.chests.DeathChest;
 import java.util.*;
 
 
+/**
+ * A factory class for instantiating a data store of the configured type.<br>
+ * Note: SQLite is the only available data store type at this time
+ */
 public final class DataStoreFactory {
 
 	// static reference to main class instance

@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
 
+
+/**
+ * A utility class that contains static methods for retrieving database queries from the queries properties file.
+ */
 final class Queries {
 
 	private static final String propFileName = "queries.properties";
