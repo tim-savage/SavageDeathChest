@@ -48,7 +48,7 @@ public class ReplaceableBlocks {
 		// iterate over string list
 		for (String materialString : materialStringList) {
 
-			// if material string matches a valid material type, add to replaceableBlocks HashSet
+			// if material string matches a valid material type, add to replaceableBlocks set
 			if (Material.matchMaterial(materialString) != null) {
 				replaceableBlocks.add(Material.matchMaterial(materialString));
 			}
