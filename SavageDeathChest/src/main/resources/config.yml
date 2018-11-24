@@ -68,6 +68,9 @@ quick-loot: true
 # Automatically remove empty chests on closing
 remove-empty: true
 
+# number of DeathChests shown per page in list command
+list-page-size: 5
+
 # Check protection plugin permissions on death chest placement or access
 # If a value is configured true, the protection plugin restrictions will be respected
 # If a value is configured false, the protection plugin restrictions will be ignored

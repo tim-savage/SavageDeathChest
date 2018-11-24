@@ -314,7 +314,12 @@ public class ChestManager {
 		}
 
 		// if inventory holder block is a DeathChest return true, else return false
-		return plugin.chestManager.isDeathChestChestBlock(block);
+		return this.isDeathChestChestBlock(block);
+	}
+
+
+	public Collection<DeathChest> getChestList() {
+		return this.deathChestMap.values();
 	}
 
 }

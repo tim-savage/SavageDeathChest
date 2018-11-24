@@ -2,6 +2,8 @@
 # Traduction des chaînes de temps
 #################################
 TIME_STRINGS:
+  DAY: 'jour'
+  DAYS: 'jours'
   HOUR: 'heure'
   HOUR_PLURAL: 'heures'
   MINUTE: 'minute'
@@ -41,6 +43,10 @@ DATE_FORMAT: "MMM d, yyyy"
 # %LOC_X%                Coordonnées de la coffre (ou joueur si pas de coffre)
 # %LOC_Y%                Coordonnées de la coffre (ou joueur si pas de coffre)
 # %LOC_Z%                Coordonnées de la coffre (ou joueur si pas de coffre)
+
+# %PAGE%                 List page number (only available in LIST_HEADER and LIST_FOOTER messages)
+# %PAGE_COUNT%           List page count (only available in LIST_HEADER and LIST_FOOTER messages)
+# %ITEM_NUMBER%          List item number (only available in list item messages)
 
 MESSAGES:
   CHEST_SUCCESS:
@@ -111,3 +117,28 @@ MESSAGES:
   COMMAND_SUCCESS_RELOAD:
     enabled: true
     string: '&7Configuration de DeathChest rechargée.'
+
+
+  LIST_HEADER:
+    enabled: true
+    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+
+  LIST_FOOTER:
+    enabled: false
+    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+
+  LIST_ITEM:
+    enabled: true
+    string: "%ITEM_NUMBER%) &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n &aRemaining time:&b %REMAINING_TIME% &aKiller:&b %KILLER_NAME%"
+
+  LIST_ITEM_ALL:
+    enabled: true
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER_NAME% &aKiller:&b %KILLER_NAME% \n &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n &aRemaining time:&b %REMAINING_TIME%"
+
+  LIST_EMPTY:
+    enabled: true
+    string: '&bThere are no DeathChests to list!'
+
+  LIST_PLAYER_NOT_FOUND:
+    enabled: true
+    string: '&3That player could not be found!'

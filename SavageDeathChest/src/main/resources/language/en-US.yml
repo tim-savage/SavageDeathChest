@@ -2,6 +2,8 @@
 # Time strings
 ##############
 TIME_STRINGS:
+  DAY: 'day'
+  DAY_PLURAL: 'days'
   HOUR: 'hour'
   HOUR_PLURAL: 'hours'
   MINUTE: 'minute'
@@ -33,14 +35,21 @@ DATE_FORMAT: "MMM d, yyyy"
 # Custom Messages
 #################
 # Variable substitutions:
-# %PLAYER_NAME%          Player name
-# %PLAYER_NICKNAME%      Player nickname
-# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
-# %EXPIRE_TIME%			 Remaining time at chest deployment
+# %PLAYER_NAME%          Player name of message recipient
+# %PLAYER_NICKNAME%      Player nickname of message recipient
+# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix of message recipient
+# %EXPIRE_TIME%			 Configured expire time duration
+# %REMAINING_TIME%       Time Remaining before chest expires (only available in messages that reference a valid chest object)
 # %WORLD_NAME%           World name of chest (or player if no chest)
 # %LOC_X%                Chest coordinates (or player if no chest)
 # %LOC_Y%                Chest coordinates (or player if no chest)
 # %LOC_Z%                Chest coordinates (or player if no chest)
+# %OWNER_NAME%           Chest owner name (only available in messages that reference a valid chest object)
+# %KILLER_NAME%          Chest killer name (only available in messages that reference a valid chest object)
+
+# %PAGE%                 List page number (only available in LIST_HEADER and LIST_FOOTER messages)
+# %PAGE_COUNT%           List page count (only available in LIST_HEADER and LIST_FOOTER messages)
+# %ITEM_NUMBER%          List item number (only available in list item messages)
 
 MESSAGES:
   CHEST_SUCCESS:
@@ -109,6 +118,39 @@ MESSAGES:
     enabled: true
     string: '&cYou do not have permission to view DeathChest settings!'
 
+  COMMAND_FAIL_LIST_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to list DeathChests!'
+
+  COMMAND_FAIL_LIST_OTHER_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to list other player''s DeathChests!'
+
   COMMAND_SUCCESS_RELOAD:
     enabled: true
     string: '&7DeathChest configuration reloaded.'
+
+
+  LIST_HEADER:
+    enabled: true
+    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+
+  LIST_FOOTER:
+    enabled: false
+    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+
+  LIST_ITEM:
+    enabled: true
+    string: "%ITEM_NUMBER%) &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n &aRemaining time:&b %REMAINING_TIME% &aKiller:&b %KILLER_NAME%"
+
+  LIST_ITEM_ALL:
+    enabled: true
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER_NAME% &aKiller:&b %KILLER_NAME% \n &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n &aRemaining time:&b %REMAINING_TIME%"
+
+  LIST_EMPTY:
+    enabled: true
+    string: '&bThere are no DeathChests to list!'
+
+  LIST_PLAYER_NOT_FOUND:
+    enabled: true
+    string: '&3That player could not be found!'
