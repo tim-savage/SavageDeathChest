@@ -49,6 +49,7 @@ public final class DeathChest {
 	private final int expireTaskId;
 
 	// set of chest blocks that make up this death chest
+	//TODO: make map elements immutable for absolute immutability of DeathChest objects
 	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
 
