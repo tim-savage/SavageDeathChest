@@ -30,19 +30,25 @@ public class ChestBlock {
 	private final static PluginMain plugin = PluginMain.instance;
 
 	// chest UUID
-	private UUID chestUUID;
+	private final UUID chestUUID;
 
 	// chest block location
-	private Location location;
-
-	// chest block type
-	private ChestBlockType chestBlockType;
+	private final Location location;
 
 
 	/**
 	 * Class constructor
+	 * @param chestUUID the chest UUID that this ChestBlock is member
+	 * @param location the location of the in game block this ChestBlock object represents
 	 */
-	public ChestBlock() { }
+	public ChestBlock(final UUID chestUUID, final Location location) {
+
+		// set ChestUUID for this ChestBlock
+		this.chestUUID = chestUUID;
+
+		// set location for this ChestBlock
+		this.location = location;
+	}
 
 
 	/**
@@ -59,14 +65,11 @@ public class ChestBlock {
 		// set location for this ChestBlock
 		this.location = block.getLocation();
 
-		// set ChestBlockType
-		this.chestBlockType = chestBlockType;
-
 		// add this ChestBlock to block map
 		plugin.chestManager.addChestBlock(this);
 
 		// add this ChestBlock to passed DeathChest
-		deathChest.addChestBlock(this.chestBlockType, this);
+		deathChest.addChestBlock(chestBlockType, this);
 
 		// set block metadata
 		this.setMetadata(deathChest);
@@ -83,47 +86,11 @@ public class ChestBlock {
 
 
 	/**
-	 * Setter method for chest block location
-	 * @param location the location to set for this chest block
-	 */
-	public void setLocation(final Location location) {
-		this.location = location;
-	}
-
-
-	/**
 	 * Getter method for chest block chestUUID
 	 * @return UUID - the chestUUID for this chest block
 	 */
 	public UUID getChestUUID() {
 		return chestUUID;
-	}
-
-
-	/**
-	 * Setter method for chest block chestUUID
-	 * @param chestUUID the chestUUID to set for this chest block
-	 */
-	public void setChestUUID(final UUID chestUUID) {
-		this.chestUUID = chestUUID;
-	}
-
-
-	/**
-	 * Getter method for ChestBlockType of this chest block
-	 * @return ChestBlockType - the ChestBlockType of this chest block
-	 */
-	public ChestBlockType getType() {
-		return chestBlockType;
-	}
-
-
-	/**
-	 * Setter method for ChestBlockType of this chest block
-	 * @param chestBlockType the ChestBlockType to set for this chest block
-	 */
-	public void setType(final ChestBlockType chestBlockType) {
-		this.chestBlockType = chestBlockType;
 	}
 
 

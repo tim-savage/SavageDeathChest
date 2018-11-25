@@ -22,7 +22,7 @@ public class ReplaceableBlocks {
 
 	/**
 	 * Class Constructor<br>
-	 *     populates set of replaceable blocks from config file
+	 * populates set of replaceable blocks from config file
 	 */
 	ReplaceableBlocks(final PluginMain plugin) {
 

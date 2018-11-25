@@ -103,11 +103,15 @@ final class DataStoreSQLite extends DataStore {
 			while (rs.next()) {
 
 				// create empty DeathChestBlock object
-				ChestBlock chestBlock = new ChestBlock();
+//				ChestBlock chestBlock = new ChestBlock();
+
+				// declare chestUUID
+				UUID chestUUID;
 
 				// try to convert chest uuid from stored string
 				try {
-					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+//					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+					chestUUID = UUID.fromString(rs.getString("ChestUUID"));
 				}
 				catch (Exception e) {
 					plugin.getLogger().warning("[SQLite getAllBlockRecords] An error occurred while trying to set chestUUID.");
@@ -135,8 +139,10 @@ final class DataStoreSQLite extends DataStore {
 						rs.getInt("Y"),
 						rs.getInt("Z"));
 
+				ChestBlock chestBlock = new ChestBlock(chestUUID,location);
+
 				// set other fields in deathChestBlock from database fields
-				chestBlock.setLocation(location);
+//				chestBlock.setLocation(location);
 
 				// add DeathChestObject to results ArrayList
 				results.add(chestBlock);
@@ -177,11 +183,16 @@ final class DataStoreSQLite extends DataStore {
 			while (rs.next()) {
 
 				// create empty DeathChestBlock object
-				DeathChest deathChest = new DeathChest();
+//				DeathChest deathChest = new DeathChest();
+
+				UUID chestUUID;
+				UUID ownerUUID;
+				UUID killerUUID;
 
 				// try to convert chest uuid from stored string
 				try {
-					deathChest.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+//					deathChest.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
+					chestUUID = UUID.fromString(rs.getString("ChestUUID"));
 				}
 				catch (Exception e) {
 					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occurred while trying to set chestUUID.");
@@ -192,7 +203,8 @@ final class DataStoreSQLite extends DataStore {
 
 				// try to convert owner uuid from stored string
 				try {
-					deathChest.setOwnerUUID(UUID.fromString(rs.getString("OwnerUUID")));
+//					deathChest.setOwnerUUID(UUID.fromString(rs.getString("OwnerUUID")));
+					ownerUUID = UUID.fromString(rs.getString("OwnerUUID"));
 				}
 				catch (Exception e) {
 					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occurred while trying to set ownerUUID.");
@@ -203,16 +215,24 @@ final class DataStoreSQLite extends DataStore {
 
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
 				try {
-					deathChest.setKillerUUID(UUID.fromString(rs.getString("KillerUUID")));
+//					deathChest.setKillerUUID(UUID.fromString(rs.getString("KillerUUID")));
+					killerUUID = UUID.fromString(rs.getString("KillerUUID"));
 				}
 				catch (Exception e) {
-					deathChest.setKillerUUID(null);
+//					deathChest.setKillerUUID(null);
+					killerUUID = null;
 				}
 
 				// set other fields in deathChestBlock from database fields
-				deathChest.setItemCount(rs.getInt("ItemCount"));
-				deathChest.setPlacementTime(rs.getLong("PlacementTime"));
-				deathChest.setExpirationTime(rs.getLong("ExpirationTime"));
+//				deathChest.setItemCount(rs.getInt("ItemCount"));
+//				deathChest.setPlacementTime(rs.getLong("PlacementTime"));
+//				deathChest.setExpirationTime(rs.getLong("ExpirationTime"));
+
+				int itemCount = rs.getInt("ItemCount");
+				long placementTime = rs.getLong("PlacementTime");
+				long expirationTime = rs.getLong("ExpirationTime");
+
+				DeathChest deathChest = new DeathChest(chestUUID,ownerUUID,killerUUID,itemCount,placementTime,expirationTime);
 
 				// add DeathChestObject to results ArrayList
 				results.add(deathChest);
