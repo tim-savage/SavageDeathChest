@@ -52,12 +52,6 @@ public final class DeathChest {
 	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
 
-//	/**
-//	 * Class constructor
-//	 */
-//	public DeathChest() { }
-
-
 	public DeathChest (final UUID chestUUID,
 					   final UUID ownerUUID,
 					   final UUID killerUUID,
@@ -110,6 +104,7 @@ public final class DeathChest {
 					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")));
 		}
 
+		// set expireTaskId from new expire task
 		this.expireTaskId = createExpireTask();
 	}
 
@@ -123,15 +118,6 @@ public final class DeathChest {
 	}
 
 
-//	/**
-//	 * Setter method for DeathChest chestUUID
-//	 * @param chestUUID the chest UUID to set in chestUUID field of the DeathChest object
-//	 */
-//	public final void setChestUUID(final UUID chestUUID) {
-//		this.chestUUID = chestUUID;
-//	}
-
-
 	/**
 	 * Getter method for DeathChest ownerUUID
 	 * @return UUID
@@ -141,15 +127,6 @@ public final class DeathChest {
 	}
 
 
-//	/**
-//	 * Setter method for DeathChest ownerUUID
-//	 * @param ownerUUID the player UUID to set in ownerUUID field of the DeathChest object
-//	 */
-//	public final void setOwnerUUID(final UUID ownerUUID) {
-//		this.ownerUUID = ownerUUID;
-//	}
-
-
 	/**
 	 * Getter method for DeathChest killerUUID
 	 * @return UUID
@@ -157,15 +134,6 @@ public final class DeathChest {
 	public final UUID getKillerUUID() {
 		return killerUUID;
 	}
-
-
-//	/**
-//	 * Setter method for DeathChest killerUUID
-//	 * @param killerUUID the player UUID to set in the killerUUID field of the DeathChest object
-//	 */
-//	public final void setKillerUUID(final UUID killerUUID) {
-//		this.killerUUID = killerUUID;
-//	}
 
 
 	/**
@@ -178,15 +146,6 @@ public final class DeathChest {
 	}
 
 
-//	/**
-//	 * Setter method for DeathChest itemCount
-//	 * @param itemCount the itemCount to set
-//	 */
-//	@SuppressWarnings("unused")
-//	public void setItemCount(final int itemCount) {
-//		this.itemCount = itemCount;
-//	}
-
 	/**
 	 * Getter method for DeathChest placementTime timestamp
 	 * @return long placementTime timestamp
@@ -194,16 +153,6 @@ public final class DeathChest {
 	public final long getPlacementTime() {
 		return this.placementTime;
 	}
-
-
-//	/**
-//	 * Setter method for DeathChest placementTime timestamp
-//	 * @param placementTime the placementTime time in milliseconds since epoch to set in the
-//	 *                  placementTime field of the DeathChest object
-//	 */
-//	public final void setPlacementTime(final long placementTime) {
-//		this.placementTime = placementTime;
-//	}
 
 
 	/**
@@ -232,15 +181,6 @@ public final class DeathChest {
 	private int getExpireTaskId() {
 		return this.expireTaskId;
 	}
-
-
-//	/**
-//	 * Setter method for DeathChest expireTaskId
-//	 * @param expireTaskId the bukkit task id of the expire task associated with this DeathChest object
-//	 */
-//	private void setExpireTaskId(final int expireTaskId) {
-//		this.expireTaskId = expireTaskId;
-//	}
 
 
 	/**
@@ -415,36 +355,6 @@ public final class DeathChest {
 		// return number of chest inventory viewers
 		return count;
 	}
-
-
-//	/**
-//	 * Create expire chest task
-//	 */
-//	final void createExpireTask() {
-//
-//		// if DeathChestBlock expirationTime is zero or less, it is set to never expire
-//		if (this.getExpirationTime() < 1) {
-//			return;
-//		}
-//
-//		// get current time
-//		Long currentTime = System.currentTimeMillis();
-//
-//		// get death chest block expire time
-//		Long expireTime = this.getExpirationTime();
-//
-//		// compute ticks remaining until expire time (millisecond interval divided by 50 yields ticks)
-//		long ticksRemaining = (expireTime - currentTime) / 50;
-//		if (ticksRemaining < 1) {
-//			ticksRemaining = 1L;
-//		}
-//
-//		// create task to expire death chest after ticksRemaining
-//		BukkitTask chestExpireTask = new ExpireChestTask(this).runTaskLater(plugin, ticksRemaining);
-//
-//		// set taskId in deathChest object
-//		this.setExpireTaskId(chestExpireTask.getTaskId());
-//	}
 
 
 	/**
