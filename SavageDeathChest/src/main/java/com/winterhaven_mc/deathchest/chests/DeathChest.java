@@ -43,7 +43,7 @@ public final class DeathChest {
 	private final long placementTime;
 
 	// the expirationTime time of this death chest, in milliseconds since epoch
-	private long expirationTime;
+	private final long expirationTime;
 
 	// task id of expire task for this death chest block
 	private final int expireTaskId;
@@ -52,6 +52,15 @@ public final class DeathChest {
 	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
 
+	/**
+	 * Class constructor
+	 * @param chestUUID the chest UUID
+	 * @param ownerUUID the chest owner UUID
+	 * @param killerUUID the chest killer UUID
+	 * @param itemCount the chest item count
+	 * @param placementTime the chest placement time
+	 * @param expirationTime the chest expiration time
+	 */
 	public DeathChest (final UUID chestUUID,
 					   final UUID ownerUUID,
 					   final UUID killerUUID,
@@ -97,11 +106,11 @@ public final class DeathChest {
 		// set expirationTime timestamp
 		// if configured expiration is zero (or negative), set expiration to zero to signify no expiration
 		if (plugin.getConfig().getLong("expire-time") <= 0) {
-			this.setExpirationTime(0);
+			this.expirationTime = 0;
 		} else {
-			// set expiration field based on config setting (in minutes)
-			this.setExpirationTime(System.currentTimeMillis()
-					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")));
+			// set expiration field based on config setting (converting from minutes to milliseconds)
+			this.expirationTime = System.currentTimeMillis()
+					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time"));
 		}
 
 		// set expireTaskId from new expire task
@@ -161,16 +170,6 @@ public final class DeathChest {
 	 */
 	public final long getExpirationTime() {
 		return this.expirationTime;
-	}
-
-
-	/**
-	 * Setter method for DeathChest expirationTime timestamp
-	 * @param expirationTime the expirationTime time in milliseconds since epoch to set in the
-	 *                   expirationTime field of the DeathChest object
-	 */
-	private void setExpirationTime(final long expirationTime) {
-		this.expirationTime = expirationTime;
 	}
 
 
