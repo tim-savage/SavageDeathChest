@@ -166,7 +166,7 @@ public class ChestBlock {
 	 * Open the inventory of this DeathChest for player
 	 * @param player the player for whom to open the DeathChest inventory
 	 */
-	public final void openInventory(final Player player) {
+	public void openInventory(final Player player) {
 
 		// get the block state of block represented by this ChestBlock
 		BlockState blockState = this.getLocation().getBlock().getState();
