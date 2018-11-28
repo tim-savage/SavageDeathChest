@@ -7,7 +7,6 @@ import com.winterhaven_mc.deathchest.chests.DeathChest;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -75,21 +74,14 @@ public final class InventoryEventListener implements Listener {
 		// get inventory holder block (death chest)
 		Block block = null;
 
-		// if inventory is a single chest, get chest block
+		// if inventory is a chest, get chest block
 		if (inventory.getHolder() instanceof Chest) {
 			Chest chest = (Chest) inventory.getHolder();
 			block = chest.getBlock();
 		}
 
-		// if inventory is a double chest, get left chest block
-		else if (inventory.getHolder() instanceof DoubleChest) {
-			DoubleChest chest = (DoubleChest) inventory.getHolder();
-			Chest leftChest = (Chest) chest.getLeftSide();
-			block = leftChest.getBlock();
-		}
-
 		// if block is not a death chest, do nothing and return
-		if (!plugin.chestManager.isDeathChestChestBlock(block)) {
+		if (!plugin.chestManager.isChestBlockChest(block)) {
 			return;
 		}
 
@@ -113,11 +105,6 @@ public final class InventoryEventListener implements Listener {
 	 */
 	@EventHandler
 	public final void onInventoryClose(final InventoryCloseEvent event) {
-
-		// if remove-empty option is not enabled in config, do nothing and return
-		if (!plugin.getConfig().getBoolean("remove-empty")) {
-			return;
-		}
 
 		// get event inventory
 		final Inventory inventory = event.getInventory();

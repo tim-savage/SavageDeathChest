@@ -102,15 +102,11 @@ final class DataStoreSQLite extends DataStore {
 
 			while (rs.next()) {
 
-				// create empty DeathChestBlock object
-//				ChestBlock chestBlock = new ChestBlock();
-
 				// declare chestUUID
 				UUID chestUUID;
 
 				// try to convert chest uuid from stored string
 				try {
-//					chestBlock.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
 					chestUUID = UUID.fromString(rs.getString("ChestUUID"));
 				}
 				catch (Exception e) {
@@ -125,9 +121,6 @@ final class DataStoreSQLite extends DataStore {
 				// check that world is valid
 				if (plugin.getServer().getWorld(worldName) == null) {
 
-					// world does not exist, so output log message and continue to next record
-					// plugin.getLogger().warning("Saved deathchest world '" + worldName + "' does not exist.");
-
 					// delete all records expired more than 30 days in database that have this invalid world
 					deleteOrphanedChests(worldName);
 					continue;
@@ -140,9 +133,6 @@ final class DataStoreSQLite extends DataStore {
 						rs.getInt("Z"));
 
 				ChestBlock chestBlock = new ChestBlock(chestUUID,location);
-
-				// set other fields in deathChestBlock from database fields
-//				chestBlock.setLocation(location);
 
 				// add DeathChestObject to results ArrayList
 				results.add(chestBlock);
@@ -182,16 +172,12 @@ final class DataStoreSQLite extends DataStore {
 
 			while (rs.next()) {
 
-				// create empty DeathChestBlock object
-//				DeathChest deathChest = new DeathChest();
-
 				UUID chestUUID;
 				UUID ownerUUID;
 				UUID killerUUID;
 
 				// try to convert chest uuid from stored string
 				try {
-//					deathChest.setChestUUID(UUID.fromString(rs.getString("ChestUUID")));
 					chestUUID = UUID.fromString(rs.getString("ChestUUID"));
 				}
 				catch (Exception e) {
@@ -203,7 +189,6 @@ final class DataStoreSQLite extends DataStore {
 
 				// try to convert owner uuid from stored string
 				try {
-//					deathChest.setOwnerUUID(UUID.fromString(rs.getString("OwnerUUID")));
 					ownerUUID = UUID.fromString(rs.getString("OwnerUUID"));
 				}
 				catch (Exception e) {
@@ -215,19 +200,13 @@ final class DataStoreSQLite extends DataStore {
 
 				// try to convert killer uuid from stored string, or set to null if invalid uuid
 				try {
-//					deathChest.setKillerUUID(UUID.fromString(rs.getString("KillerUUID")));
 					killerUUID = UUID.fromString(rs.getString("KillerUUID"));
 				}
 				catch (Exception e) {
-//					deathChest.setKillerUUID(null);
 					killerUUID = null;
 				}
 
 				// set other fields in deathChestBlock from database fields
-//				deathChest.setItemCount(rs.getInt("ItemCount"));
-//				deathChest.setPlacementTime(rs.getLong("PlacementTime"));
-//				deathChest.setExpirationTime(rs.getLong("ExpirationTime"));
-
 				int itemCount = rs.getInt("ItemCount");
 				long placementTime = rs.getLong("PlacementTime");
 				long expirationTime = rs.getLong("ExpirationTime");
@@ -330,6 +309,7 @@ final class DataStoreSQLite extends DataStore {
 				}
 
 				// insert each chest block into datastore
+//				for (ChestBlock chestBlock : plugin.chestManager.getChestBlocks(deathChest.getChestUUID())) {
 				for (ChestBlock chestBlock : deathChest.getChestBlocks()) {
 					putBlockRecord(chestBlock);
 				}

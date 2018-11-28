@@ -27,6 +27,9 @@ public class ChestManager {
 	// map of ChestBlocks
 	private final Map<Location, ChestBlock> chestBlockMap;
 
+	// map of ChestBlocks indexed by ChestUUID
+//	private final Map<UUID,EnumMap<ChestBlockType,ChestBlock>> chestBlockIndex;
+
 	public final ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
@@ -53,6 +56,8 @@ public class ChestManager {
 
 		// initialize chestBlockMap
 		chestBlockMap = new ConcurrentHashMap<>();
+
+//		chestBlockIndex = new ConcurrentHashMap<>();
 
 		// load all chests
 		loadDeathChests();
@@ -94,13 +99,7 @@ public class ChestManager {
 
 			else {
 				// add chestBlock to chestBlockMap
-				chestBlockMap.put(chestBlock.getLocation(), chestBlock);
-
-				// add chestBlock to parent DeathChest object
-				DeathChest deathChest = deathChestMap.get(chestBlock.getChestUUID());
-				if (deathChest != null) {
-					deathChest.addChestBlock(chestBlockType, chestBlock);
-				}
+				addChestBlock(chestBlock);
 			}
 		}
 
@@ -111,6 +110,7 @@ public class ChestManager {
 		for (DeathChest deathChest : deathChestMap.values()) {
 
 			// if DeathChest has no children, remove from map and datastore
+//			if (getChestBlocks(deathChest.getChestUUID()).isEmpty()) {
 			if (deathChest.getChestBlocks().isEmpty()) {
 				deathChestMap.remove(deathChest.getChestUUID());
 				plugin.dataStore.deleteChestRecord(deathChest);
@@ -190,6 +190,7 @@ public class ChestManager {
 	 */
 	void addChestBlock(final ChestBlock chestBlock) {
 		this.chestBlockMap.put(chestBlock.getLocation(), chestBlock);
+//		addChestBlockIndex(chestBlock);
 	}
 
 
@@ -199,7 +200,42 @@ public class ChestManager {
 	 */
 	void removeChestBlock(final ChestBlock chestBlock) {
 		this.chestBlockMap.remove(chestBlock.getLocation());
+//		removeChestBlockIndex(chestBlock);
 	}
+
+
+//	private void addChestBlockIndex(final ChestBlock chestBlock) {
+//
+//		ChestBlockType chestBlockType = ChestBlockType.getType(chestBlock.getLocation().getBlock());
+//
+//		if (chestBlockType == null) {
+//			return;
+//		}
+//
+//		// if no chestUUID key in index, create new entry
+//		if (!chestBlockIndex.containsKey(chestBlock.getChestUUID())) {
+//			chestBlockIndex.put(chestBlock.getChestUUID(),new EnumMap<>(ChestBlockType.class));
+//		}
+//		// add chestBlock to index
+//		chestBlockIndex.get(chestBlock.getChestUUID()).put(chestBlockType,chestBlock);
+//	}
+
+
+//	private void removeChestBlockIndex(final ChestBlock chestBlock) {
+//
+//		ChestBlockType chestBlockType = ChestBlockType.getType(chestBlock.getLocation().getBlock());
+//
+//		if (chestBlockType == null) {
+//			return;
+//		}
+//
+//		chestBlockIndex.get(chestBlock.getChestUUID()).remove(chestBlockType);
+//	}
+
+
+//	public Collection<ChestBlock> getChestBlocks(UUID chestUUID) {
+//		return new HashSet<>(this.chestBlockIndex.get(chestUUID).values());
+//	}
 
 
 	/**
@@ -208,18 +244,7 @@ public class ChestManager {
 	 * @return {@code true} if a ChestBlock exists in map with passed block location,
 	 * {@code false} if no ChestBlock exists in map with passed block location
 	 */
-	boolean isChestBlock(final Block block) {
-		return chestBlockMap.containsKey(block.getLocation());
-	}
-
-
-	/**
-	 * Test if a block is a DeathChestBlock
-	 * @param block The block to test if it is a DeathChestBlock
-	 * @return boolean {@code true} if block is DeathChest material and block location exists in map,
-	 * {@code false} if not
-	 */
-	public boolean isDeathChestComponent(final Block block) {
+	public boolean isChestBlock(final Block block) {
 
 		// if passed block is null, return false
 		if (block == null) {
@@ -241,7 +266,7 @@ public class ChestManager {
 	 * @param block The block to test
 	 * @return {@code true} if block is Material.CHEST and block location exists in block map, {@code false} if not
 	 */
-	public boolean isDeathChestChestBlock(final Block block) {
+	public boolean isChestBlockChest(final Block block) {
 
 		// if passed block is null return false
 		if (block == null) {
@@ -259,7 +284,7 @@ public class ChestManager {
 	 * @return {@code true} if block is Material.SIGN or Material.WALL_SIGN and block location exists in block map,
 	 * {@code false} if not
 	 */
-	public boolean isDeathChestSignBlock(final Block block) {
+	public boolean isChestBlockSign(final Block block) {
 
 		// if passed block is null return false
 		if (block == null) {
@@ -314,7 +339,7 @@ public class ChestManager {
 		}
 
 		// if inventory holder block is a DeathChest return true, else return false
-		return this.isDeathChestChestBlock(block);
+		return this.isChestBlockChest(block);
 	}
 
 

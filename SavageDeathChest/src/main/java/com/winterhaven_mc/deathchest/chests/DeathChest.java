@@ -13,6 +13,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A class that represents a death chest, which is comprised of a collection of chest blocks
  */
+@Immutable
 public final class DeathChest {
 
 	// reference to main class
@@ -49,7 +51,6 @@ public final class DeathChest {
 	private final int expireTaskId;
 
 	// set of chest blocks that make up this death chest
-	//TODO: make map elements immutable for absolute immutability of DeathChest objects
 	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
 
 
@@ -193,6 +194,28 @@ public final class DeathChest {
 
 
 	/**
+	 * Get chest location. Attempt to get chest location from right chest, left chest or sign in that order.
+	 * Returns null if location could not be derived from chest blocks.
+	 * @return Location - the chest location or null if no location found
+	 */
+	public Location getLocation() {
+
+		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
+			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();
+		}
+		else if (chestBlocks.containsKey(ChestBlockType.LEFT_CHEST)) {
+			return this.chestBlocks.get(ChestBlockType.LEFT_CHEST).getLocation();
+		}
+		else if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
+			return this.chestBlocks.get(ChestBlockType.SIGN).getLocation();
+		}
+		else {
+			return null;
+		}
+	}
+
+
+	/**
 	 * Add a chest block to this DeathChest
 	 * @param chestBlockType the type of chest block to add to this DeathChest
 	 * @param chestBlock the chest block to add to this DeathChest
@@ -210,7 +233,7 @@ public final class DeathChest {
 	final void setMetadata() {
 
 		// set metadata on blocks in set
-		for (ChestBlock chestBlock : this.getChestBlocks()) {
+		for (ChestBlock chestBlock :  this.getChestBlocks()) {
 			chestBlock.setMetadata(this);
 		}
 	}
@@ -236,7 +259,6 @@ public final class DeathChest {
 	 * @param player The player to test for DeathChest killer
 	 * @return {@code true} if the player is the killer of the DeathChest owner, false if not
 	 */
-	@SuppressWarnings("SimplifiableIfStatement")
 	public final boolean isKiller(final Player player) {
 
 		// if killer uuid is null, return false
@@ -266,6 +288,24 @@ public final class DeathChest {
 
 		// destroy death chest
 		this.destroy();
+	}
+
+
+	/**
+	 * Expire this death chest
+	 */
+	public final void expire() {
+
+		// get player from ownerUUID
+		final Player player = plugin.getServer().getPlayer(this.ownerUUID);
+
+		// destroy DeathChest
+		this.destroy();
+
+		// if player is not null, send player message
+		if (player != null) {
+			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED, this);
+		}
 	}
 
 
@@ -306,38 +346,22 @@ public final class DeathChest {
 
 
 	/**
-	 * Expire this death chest
-	 */
-	public final void expire() {
-
-		// get player from ownerUUID
-		final Player player = plugin.getServer().getPlayer(this.ownerUUID);
-
-		// destroy DeathChest
-		this.destroy();
-
-		// if player is not null, send player message
-		if (player != null) {
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED, this);
-		}
-	}
-
-
-	/**
 	 * Get the number of players currently viewing a DeathChest inventory
 	 * @return The number of inventory viewers
      */
 	public final int getViewerCount() {
 
-		Block block = null;
+//		Block block = null;
 
 		// get chestBlock
-		for (ChestBlock chestBlock : this.chestBlocks.values()) {
-			if (chestBlock.getLocation().getBlock().getType().equals(Material.CHEST)) {
-				block = chestBlock.getLocation().getBlock();
-				break;
-			}
-		}
+		Block block = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation().getBlock();
+
+//		for (ChestBlock chestBlock : this.chestBlocks.values()) {
+//			if (chestBlock.getLocation().getBlock().getType().equals(Material.CHEST)) {
+//				block = chestBlock.getLocation().getBlock();
+//				break;
+//			}
+//		}
 
 		int count = 0;
 		
@@ -381,28 +405,6 @@ public final class DeathChest {
 
 		// return taskId
 		return chestExpireTask.getTaskId();
-	}
-
-
-	/**
-	 * Get chest location. Attempt to get chest location from right chest, left chest or sign in that order.
-	 * Returns null if location could not be derived from chest blocks.
-	 * @return Location - the chest location or null if no location found
-	 */
-	public Location getLocation() {
-
-		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
-			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();
-		}
-		else if (chestBlocks.containsKey(ChestBlockType.LEFT_CHEST)) {
-			return this.chestBlocks.get(ChestBlockType.LEFT_CHEST).getLocation();
-		}
-		else if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
-			return this.chestBlocks.get(ChestBlockType.SIGN).getLocation();
-		}
-		else {
-			return null;
-		}
 	}
 
 }

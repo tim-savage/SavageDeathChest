@@ -15,6 +15,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,8 @@ import java.util.UUID;
 /**
  * A class that represents a single block that is a component of a death chest
  */
-public class ChestBlock {
+@Immutable
+public final class ChestBlock {
 
 	// static reference to main class
 	private final static PluginMain plugin = PluginMain.instance;
@@ -110,7 +112,7 @@ public class ChestBlock {
 		}
 
 		// if block is not a DeathSign, return null
-		if (!plugin.chestManager.isDeathChestSignBlock(block)) {
+		if (!plugin.chestManager.isChestBlockSign(block)) {
 			return null;
 		}
 
@@ -121,7 +123,7 @@ public class ChestBlock {
 		Block returnBlock = block.getRelative(sign.getAttachedFace());
 
 		// if attached block is not a DeathChest, return null
-		if (!plugin.chestManager.isDeathChestChestBlock(returnBlock)) {
+		if (!plugin.chestManager.isChestBlockChest(returnBlock)) {
 			return null;
 		}
 

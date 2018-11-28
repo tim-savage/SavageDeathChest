@@ -59,14 +59,8 @@ expire-time: 60
 # Place sign on death chests
 chest-signs: true
 
-# Drop items that don't fit in death chest
-allow-drops: true
-
 # Allow quick-looting of chests with sneak-punch
 quick-loot: true
-
-# Automatically remove empty chests on closing
-remove-empty: true
 
 # number of DeathChests shown per page in list command
 list-page-size: 5
