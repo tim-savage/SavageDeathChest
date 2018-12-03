@@ -87,9 +87,7 @@ class BlockIndex {
 
 		// if chestUUID exists in map, add values to returnMap
 		if (chestUUID != null && this.uuidMap.containsKey(chestUUID)) {
-			for (ChestBlockType chestBlockType : this.uuidMap.get(chestUUID).keySet()) {
-				returnMap.put(chestBlockType, this.uuidMap.get(chestUUID).get(chestBlockType));
-			}
+			returnMap.putAll(this.uuidMap.get(chestUUID));
 		}
 		return returnMap;
 	}
