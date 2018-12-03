@@ -22,7 +22,6 @@ import org.bukkit.plugin.Plugin;
  * An enum whose values represent supported block protection plugins and includes methods to
  * query player permission to place blocks or access chests at a given location.
  */
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum ProtectionPlugin {
 
 //	FACTIONS("Factions") {
