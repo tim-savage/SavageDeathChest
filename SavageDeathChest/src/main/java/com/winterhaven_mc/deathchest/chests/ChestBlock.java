@@ -29,7 +29,7 @@ import java.util.UUID;
 public final class ChestBlock {
 
 	// static reference to main class
-	private final static PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = PluginMain.instance;
 
 	// chest UUID
 	private final UUID chestUUID;
@@ -48,33 +48,13 @@ public final class ChestBlock {
 		// set ChestUUID for this ChestBlock
 		this.chestUUID = chestUUID;
 
-		// set location for this ChestBlock
-		this.location = location;
-	}
-
-
-	/**
-	 * Class constructor
-	 * @param deathChest DeathChest object that this ChestBlock is member
-	 * @param block in game block this ChestBlock object represents
-	 * @param chestBlockType enum value that represents the type of this ChestBlock
-	 */
-	ChestBlock(final DeathChest deathChest, final Block block, final ChestBlockType chestBlockType) {
-
-		// set ChestUUID for this ChestBlock
-		this.chestUUID = deathChest.getChestUUID();
-
-		// set location for this ChestBlock
-		this.location = block.getLocation();
-
-		// add this ChestBlock to block map
-		plugin.chestManager.addChestBlock(this);
-
-		// add this ChestBlock to passed DeathChest
-		deathChest.addChestBlock(chestBlockType, this);
-
-		// set block metadata
-		this.setMetadata(deathChest);
+		// set location for this ChestBlock with defensive copy of passed location
+		this.location = new Location(location.getWorld(),
+									 location.getX(),
+									 location.getY(),
+									 location.getZ(),
+									 location.getYaw(),
+									 location.getPitch());
 	}
 
 
@@ -269,14 +249,15 @@ public final class ChestBlock {
 		// remove metadata from block
 		this.removeMetadata();
 
-		// set block material to air; this will drop chest contents, but not the block itself
-		block.setType(Material.AIR);
-
 		// remove ChestBlock record from datastore
 		plugin.dataStore.deleteBlockRecord(this);
 
-		// remove ChestBlock from chest block map
+		// remove ChestBlock from block map
 		plugin.chestManager.removeChestBlock(this);
+
+		// set block material to air; this will drop chest contents, but not the block itself
+		// this must be performed last, because above methods do checks for valid in-game chest material block
+		block.setType(Material.AIR);
 	}
 
 }
