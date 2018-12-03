@@ -23,6 +23,11 @@ enum ChestBlockType {
 	 */
 	public static ChestBlockType getType(final Block block) {
 
+		// check for null
+		if (block == null) {
+			return null;
+		}
+
 		// if block material is SIGN or WALL_SIGN, return ChestBlockType.SIGN
 		if (block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN)) {
 			return ChestBlockType.SIGN;
