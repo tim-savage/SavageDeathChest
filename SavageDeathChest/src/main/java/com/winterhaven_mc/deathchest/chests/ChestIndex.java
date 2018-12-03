@@ -30,6 +30,7 @@ class ChestIndex {
 		if (chestUUID == null) {
 			return null;
 		}
+
 		return this.deathChestMap.get(chestUUID);
 	}
 
