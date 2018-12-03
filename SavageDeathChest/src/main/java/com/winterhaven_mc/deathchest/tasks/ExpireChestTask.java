@@ -7,7 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 /**
  * A class that implements a death chest expire task to be run at the appropriate time
  */
-final public class ExpireChestTask extends BukkitRunnable {
+public final class ExpireChestTask extends BukkitRunnable {
 
 	// death chest block to expire
 	private final DeathChest deathChest;
