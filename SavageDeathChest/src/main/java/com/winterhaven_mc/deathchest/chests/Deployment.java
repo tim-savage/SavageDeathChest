@@ -400,6 +400,7 @@ public class Deployment {
 	 * taking into account replaceable blocks, grass path blocks and
 	 * restrictions from other block protection plugins if configured
 	 * @param player Player that deathchest is being deployed for
+	 * @param chestSize enum member denoting size of chest required (SINGLE | DOUBLE)
 	 * @return SearchResult
 	 */
 	private Result findChestLocation(final Player player, final ChestSize chestSize) {
@@ -564,7 +565,13 @@ public class Deployment {
 		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) blockState;
 
 		// create new ChestBlock object
-		new ChestBlock(deathChest, block, chestBlockType);
+		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());
+
+		// add this ChestBlock to block map
+		plugin.chestManager.addChestBlock(chestBlockType, chestBlock);
+
+		// set block metadata
+		chestBlock.setMetadata(deathChest);
 
 		// put items into chest inventory, items that don't fit are returned as List of ItemStack
 		return fillChest(chest, chestItems);
@@ -723,10 +730,13 @@ public class Deployment {
 		sign.update();
 
 		// create ChestBlock for this sign block
-		ChestBlock signChestBlock = new ChestBlock(this.deathChest, signBlock, ChestBlockType.SIGN);
+		ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
 
-		// add sign to chestBlocks
-		this.deathChest.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+		// add this ChestBlock to block map
+		plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+
+		// set block metadata
+		signChestBlock.setMetadata(deathChest);
 
 		// return success
 		return true;
