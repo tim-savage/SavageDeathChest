@@ -75,7 +75,7 @@ public final class PlayerEventListener implements Listener {
 		final Block block = event.getClickedBlock();
 
 		// if block is not DeathChest block, do nothing and return
-		if (!block.hasMetadata("deathchest-owner")) {
+		if (!plugin.chestManager.isChestBlock(block)) {
 			return;
 		}
 
