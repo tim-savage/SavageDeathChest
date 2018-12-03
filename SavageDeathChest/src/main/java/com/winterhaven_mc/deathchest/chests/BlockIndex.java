@@ -98,6 +98,12 @@ class BlockIndex {
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
 	void removeChestBlock(final ChestBlock chestBlock) {
+
+		// check for null key
+		if (chestBlock == null || chestBlock.getLocation() == null) {
+			return;
+		}
+
 		this.locationMap.remove(chestBlock.getLocation());
 	}
 
