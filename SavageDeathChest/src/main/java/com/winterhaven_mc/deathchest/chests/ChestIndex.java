@@ -47,11 +47,26 @@ class ChestIndex {
 	}
 
 
+	/**
+	 * Check if chestUUID key exists in map
+	 * @param chestUUID the chest UUID to check
+	 * @return {@code true} if key exists in map, {@code false} if it does not
+	 */
 	boolean containsKey(final UUID chestUUID) {
+
+		// check for null chestUUID
+		if (chestUUID == null) {
+			return false;
+		}
+
 		return deathChestMap.containsKey(chestUUID);
 	}
 
 
+	/**
+	 * Get collection of all chests in map
+	 * @return Collection of DeathChests in map
+	 */
 	Collection<DeathChest> getChests() {
 		return deathChestMap.values();
 	}

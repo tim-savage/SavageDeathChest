@@ -107,7 +107,13 @@ class BlockIndex {
 	 * @param location the key to check
 	 * @return {@code true} if location key exists in map, {@code false} if it does not
 	 */
-	boolean containsKey(Location location) {
+	boolean containsKey(final Location location) {
+
+		// check for null location
+		if (location == null) {
+			return false;
+		}
+
 		return locationMap.containsKey(location);
 	}
 }
