@@ -293,7 +293,7 @@ final class DataStoreSQLite extends DataStore {
 
 					// output debugging information
 					if (plugin.debug) {
-						plugin.getLogger().info(rowsAffected + " rows affected.");
+						plugin.getLogger().info(rowsAffected + " chest records inserted.");
 					}
 				}
 				catch (SQLException e) {
@@ -309,8 +309,7 @@ final class DataStoreSQLite extends DataStore {
 				}
 
 				// insert each chest block into datastore
-//				for (ChestBlock chestBlock : plugin.chestManager.getChestBlocks(deathChest.getChestUUID())) {
-				for (ChestBlock chestBlock : deathChest.getChestBlocks()) {
+				for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(deathChest.getChestUUID())) {
 					putBlockRecord(chestBlock);
 				}
 
@@ -320,7 +319,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	public synchronized final void putBlockRecord(final ChestBlock chestBlock) {
+	synchronized void putBlockRecord(final ChestBlock chestBlock) {
 
 		// if passed deathChestBlock is null, do nothing and return
 		if (chestBlock == null) {
@@ -357,7 +356,7 @@ final class DataStoreSQLite extends DataStore {
 
 					// output debugging information
 					if (plugin.debug) {
-						plugin.getLogger().info(rowsAffected + " rows inserted.");
+						plugin.getLogger().info(rowsAffected + " block records inserted.");
 					}
 				}
 				catch (SQLException e) {
@@ -400,7 +399,7 @@ final class DataStoreSQLite extends DataStore {
 
 					// output debugging information
 					if (plugin.debug) {
-						plugin.getLogger().info(rowsAffected + " rows deleted.");
+						plugin.getLogger().info(rowsAffected + " chest records deleted.");
 					}
 				}
 				catch (SQLException e) {
@@ -450,7 +449,7 @@ final class DataStoreSQLite extends DataStore {
 
 					// output debugging information
 					if (plugin.debug) {
-						plugin.getLogger().info(rowsAffected + " rows deleted.");
+						plugin.getLogger().info(rowsAffected + " block records deleted.");
 					}
 				}
 				catch (SQLException e) {
