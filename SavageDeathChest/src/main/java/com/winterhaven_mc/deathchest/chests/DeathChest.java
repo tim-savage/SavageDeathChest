@@ -14,8 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.concurrent.Immutable;
-import java.util.Collection;
-import java.util.EnumMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -50,9 +49,6 @@ public final class DeathChest {
 	// task id of expire task for this death chest block
 	private final int expireTaskId;
 
-	// set of chest blocks that make up this death chest
-	private final EnumMap<ChestBlockType, ChestBlock> chestBlocks = new EnumMap<>(ChestBlockType.class);
-
 
 	/**
 	 * Class constructor
@@ -63,12 +59,12 @@ public final class DeathChest {
 	 * @param placementTime the chest placement time
 	 * @param expirationTime the chest expiration time
 	 */
-	public DeathChest (final UUID chestUUID,
-					   final UUID ownerUUID,
-					   final UUID killerUUID,
-					   final int itemCount,
-					   final long placementTime,
-					   final long expirationTime) {
+	public DeathChest(final UUID chestUUID,
+					  final UUID ownerUUID,
+					  final UUID killerUUID,
+					  final int itemCount,
+					  final long placementTime,
+					  final long expirationTime) {
 
 		this.chestUUID = chestUUID;
 		this.ownerUUID = ownerUUID;
@@ -78,6 +74,7 @@ public final class DeathChest {
 		this.expirationTime = expirationTime;
 		this.expireTaskId = createExpireTask();
 	}
+
 
 	/**
 	 * Class constructor
@@ -185,45 +182,25 @@ public final class DeathChest {
 
 
 	/**
-	 * Getter method for DeathChest chestBlocks
-	 * @return List of Blocks in chestBlocks
-	 */
-	public Collection<ChestBlock> getChestBlocks() {
-		return this.chestBlocks.values();
-	}
-
-
-	/**
 	 * Get chest location. Attempt to get chest location from right chest, left chest or sign in that order.
 	 * Returns null if location could not be derived from chest blocks.
 	 * @return Location - the chest location or null if no location found
 	 */
 	public Location getLocation() {
 
-		if (chestBlocks.containsKey(ChestBlockType.RIGHT_CHEST)) {
-			return this.chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation();
-		}
-		else if (chestBlocks.containsKey(ChestBlockType.LEFT_CHEST)) {
-			return this.chestBlocks.get(ChestBlockType.LEFT_CHEST).getLocation();
-		}
-		else if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
-			return this.chestBlocks.get(ChestBlockType.SIGN).getLocation();
-		}
-		else {
-			return null;
-		}
-	}
+		Map<ChestBlockType,ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
-
-	/**
-	 * Add a chest block to this DeathChest
-	 * @param chestBlockType the type of chest block to add to this DeathChest
-	 * @param chestBlock the chest block to add to this DeathChest
-	 */
-	void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
-		if (chestBlock != null) {
-			this.chestBlocks.put(chestBlockType, chestBlock);
+		if (chestBlockMap.containsKey(ChestBlockType.RIGHT_CHEST)) {
+			return chestBlockMap.get(ChestBlockType.RIGHT_CHEST).getLocation();
 		}
+		else if (chestBlockMap.containsKey(ChestBlockType.LEFT_CHEST)) {
+			return chestBlockMap.get(ChestBlockType.LEFT_CHEST).getLocation();
+		}
+		else if (chestBlockMap.containsKey(ChestBlockType.SIGN)) {
+			return chestBlockMap.get(ChestBlockType.SIGN).getLocation();
+		}
+
+		return null;
 	}
 
 
@@ -233,7 +210,7 @@ public final class DeathChest {
 	final void setMetadata() {
 
 		// set metadata on blocks in set
-		for (ChestBlock chestBlock :  this.getChestBlocks()) {
+		for (ChestBlock chestBlock :  plugin.chestManager.getBlockSet(this.chestUUID)) {
 			chestBlock.setMetadata(this);
 		}
 	}
@@ -282,7 +259,7 @@ public final class DeathChest {
 		}
 
 		// transfer contents of any chest blocks to player
-		for (ChestBlock chestBlock : chestBlocks.values()) {
+		for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(this.chestUUID)) {
 			chestBlock.transferContents(player);
 		}
 
@@ -317,20 +294,13 @@ public final class DeathChest {
 		// play chest break sound at chest location
 		plugin.soundConfig.playSound(this.getLocation(), SoundId.CHEST_BREAK);
 
-		// destroy sign blocks first, to prevent detached sign drop
-		if (chestBlocks.containsKey(ChestBlockType.SIGN)) {
-			chestBlocks.get(ChestBlockType.SIGN).destroy();
-			this.chestBlocks.remove(ChestBlockType.SIGN);
-		}
+		// get block map for this chest
+		Map<ChestBlockType,ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
-		// destroy remaining DeathChest blocks
-		for (ChestBlock chestBlock : chestBlocks.values()) {
+		// destroy DeathChest blocks (sign gets destroyed first due to enum order)
+		for (ChestBlock chestBlock : chestBlockMap.values()) {
 			chestBlock.destroy();
 		}
-
-		// remove ChestBlocks from set
-		this.chestBlocks.remove(ChestBlockType.LEFT_CHEST);
-		this.chestBlocks.remove(ChestBlockType.RIGHT_CHEST);
 
 		// delete DeathChest record from datastore
 		plugin.dataStore.deleteChestRecord(this);
@@ -351,17 +321,11 @@ public final class DeathChest {
      */
 	public final int getViewerCount() {
 
-//		Block block = null;
+		// get chest block map
+		Map<ChestBlockType,ChestBlock> chestBlocks = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
 		// get chestBlock
 		Block block = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation().getBlock();
-
-//		for (ChestBlock chestBlock : this.chestBlocks.values()) {
-//			if (chestBlock.getLocation().getBlock().getType().equals(Material.CHEST)) {
-//				block = chestBlock.getLocation().getBlock();
-//				break;
-//			}
-//		}
 
 		int count = 0;
 		
@@ -384,7 +348,7 @@ public final class DeathChest {
 	/**
 	 * Create expire chest task
 	 */
-	final int createExpireTask() {
+	private int createExpireTask() {
 
 		// if DeathChestBlock expirationTime is zero or less, it is set to never expire
 		if (this.getExpirationTime() < 1) {
