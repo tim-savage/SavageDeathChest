@@ -359,6 +359,12 @@ public class Deployment {
 	 * @return boolean
 	 */
 	private boolean containsChest(final Collection<ItemStack> itemStacks) {
+
+		// check for null parameter
+		if (itemStacks == null) {
+			return false;
+		}
+
 		boolean result = false;
 		for (ItemStack itemStack : itemStacks) {
 			if (itemStack.getType().equals(Material.CHEST)) {
@@ -376,6 +382,11 @@ public class Deployment {
 	 * @param itemStacks List of ItemStack to remove chest
 	 */
 	private void removeOneChest(final Collection<ItemStack> itemStacks) {
+
+		// check for null parameter
+		if (itemStacks == null) {
+			return;
+		}
 
 		Iterator<ItemStack> iterator = itemStacks.iterator();
 
@@ -750,6 +761,12 @@ public class Deployment {
 	 */
 	private boolean isValidSignLocation(final Location location) {
 
+		// check for null parameter
+		if (location == null) {
+			return false;
+		}
+
+		// get block at location
 		Block block = location.getBlock();
 
 		// if block at location is above grass path, return negative result
@@ -785,6 +802,12 @@ public class Deployment {
 	 * @return true if passed block is above a grass path block, false if not
 	 */
 	private boolean isAboveGrassPath(final Block block) {
+
+		// check for null parameter
+		if (block == null) {
+			return false;
+		}
+
 		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
 	}
 
