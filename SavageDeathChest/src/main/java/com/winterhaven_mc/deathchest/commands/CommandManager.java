@@ -108,7 +108,6 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		}
 
 		// reload command
-		//noinspection SimplifiableIfStatement
 		if (subcommand.equalsIgnoreCase("reload")) {
 			return reloadCommand(sender);
 		}
@@ -239,7 +238,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	// > /deathchest list [player]
 	// > /deathchest list [player] [page]
 
-	private boolean listCommand(final CommandSender sender, final String args[]) {
+	private boolean listCommand(final CommandSender sender, final String[] args) {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
