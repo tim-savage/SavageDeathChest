@@ -98,11 +98,28 @@ class BlockIndex {
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
 	void removeChestBlock(final ChestBlock chestBlock) {
+
+		// check for null key
+		if (chestBlock == null || chestBlock.getLocation() == null) {
+			return;
+		}
+
 		this.locationMap.remove(chestBlock.getLocation());
 	}
 
 
-	boolean containsKey(Location location) {
+	/**
+	 * Check for location key in map
+	 * @param location the key to check
+	 * @return {@code true} if location key exists in map, {@code false} if it does not
+	 */
+	boolean containsKey(final Location location) {
+
+		// check for null location
+		if (location == null) {
+			return false;
+		}
+
 		return locationMap.containsKey(location);
 	}
 }

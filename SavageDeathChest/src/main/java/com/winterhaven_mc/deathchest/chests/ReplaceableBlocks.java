@@ -62,6 +62,12 @@ public final class ReplaceableBlocks {
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
 	final boolean contains(final Material material) {
+
+		// check for null parameter
+		if (material == null) {
+			return false;
+		}
+
 		return this.replaceableBlocks.contains(material);
 	}
 

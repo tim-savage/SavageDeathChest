@@ -86,14 +86,19 @@ public final class DeathChest {
 		this.chestUUID = UUID.randomUUID();
 
 		// set playerUUID
-		this.ownerUUID = player.getUniqueId();
-
-		// set killerUUID
-		if (player.getKiller() != null) {
-			killerUUID = player.getKiller().getUniqueId();
+		if (player != null && player.getUniqueId() != null) {
+			this.ownerUUID = player.getUniqueId();
 		}
 		else {
-			killerUUID = null;
+			this.ownerUUID = null;
+		}
+
+		// set killerUUID
+		if (player != null && player.getKiller() != null) {
+			this.killerUUID = player.getKiller().getUniqueId();
+		}
+		else {
+			this.killerUUID = null;
 		}
 
 		// set item count

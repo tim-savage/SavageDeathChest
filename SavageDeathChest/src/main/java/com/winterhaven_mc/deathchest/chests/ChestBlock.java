@@ -117,6 +117,11 @@ public final class ChestBlock {
 	 */
 	public void openInventory(final Player player) {
 
+		// check for null object
+		if (player == null) {
+			return;
+		}
+
 		// get the block state of block represented by this ChestBlock
 		BlockState blockState = this.getLocation().getBlock().getState();
 
@@ -150,6 +155,11 @@ public final class ChestBlock {
 	 * @param player the player whose inventory chest items will be placed
 	 */
 	void transferContents(final Player player) {
+
+		// check for null object
+		if (player == null) {
+			return;
+		}
 
 		// get in game block at deathBlock location
 		Block block = this.getLocation().getBlock();
@@ -192,6 +202,11 @@ public final class ChestBlock {
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
 	void setMetadata(final DeathChest deathChest) {
+
+		// check for null object
+		if (deathChest == null || deathChest.getChestUUID() == null) {
+			return;
+		}
 
 		// get in game block at chest block location
 		Block block = this.getLocation().getBlock();
