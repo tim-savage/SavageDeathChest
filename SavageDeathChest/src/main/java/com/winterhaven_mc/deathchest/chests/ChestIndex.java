@@ -25,6 +25,11 @@ class ChestIndex {
 	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
 	DeathChest getDeathChest(final UUID chestUUID) {
+
+		// check for null key
+		if (chestUUID == null) {
+			return null;
+		}
 		return this.deathChestMap.get(chestUUID);
 	}
 
@@ -34,6 +39,12 @@ class ChestIndex {
 	 * @param deathChest the DeathChest object to put in map
 	 */
 	void addChest(final DeathChest deathChest) {
+
+		// check for null key
+		if (deathChest == null || deathChest.getChestUUID() == null) {
+			return;
+		}
+
 		this.deathChestMap.put(deathChest.getChestUUID(),deathChest);
 	}
 
@@ -43,6 +54,12 @@ class ChestIndex {
 	 * @param deathChest the DeathChest object to remove from map
 	 */
 	void removeDeathChest(final DeathChest deathChest) {
+
+		// check for null key
+		if (deathChest == null || deathChest.getChestUUID() == null) {
+			return;
+		}
+
 		this.deathChestMap.remove(deathChest.getChestUUID());
 	}
 
