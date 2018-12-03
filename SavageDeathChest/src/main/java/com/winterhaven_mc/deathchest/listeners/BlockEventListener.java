@@ -65,8 +65,8 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// check for adjacent death chests and cancel event if found
-		if (plugin.chestManager.isDeathChestChestBlock(getBlockToLeft(location))
-				|| plugin.chestManager.isDeathChestChestBlock(getBlockToRight(location))) {
+		if (plugin.chestManager.isChestBlockChest(getBlockToLeft(location))
+				|| plugin.chestManager.isChestBlockChest(getBlockToRight(location))) {
 			event.setCancelled(true);
 		}
 	}
@@ -85,7 +85,7 @@ public final class BlockEventListener implements Listener {
 		final Player player = event.getPlayer();
 
 		// if event block is not a DeathChestBlock, do nothing and return
-		if (!plugin.chestManager.isDeathChestComponent(block)) {
+		if (!plugin.chestManager.isChestBlock(block)) {
 			return;
 		}
 
@@ -176,7 +176,7 @@ public final class BlockEventListener implements Listener {
 		// iterate through all blocks in explosion event and remove those that are DeathChest chests or signs
 		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
-			if (plugin.chestManager.isDeathChestComponent(block)) {
+			if (plugin.chestManager.isChestBlock(block)) {
 				event.blockList().remove(block);
 			}
 		}
@@ -199,7 +199,7 @@ public final class BlockEventListener implements Listener {
 		// iterate through all blocks in explosion event and remove those that are DeathChest chests or signs
 		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
-			if (plugin.chestManager.isDeathChestComponent(block)) {
+			if (plugin.chestManager.isChestBlock(block)) {
 				event.blockList().remove(block);
 			}
 		}
@@ -215,7 +215,7 @@ public final class BlockEventListener implements Listener {
 	public final void signDetachCheck(final BlockPhysicsEvent event) {
 
 		// if event block is a DeathChest component, cancel event
-		if (plugin.chestManager.isDeathChestSignBlock(event.getBlock())) {
+		if (plugin.chestManager.isChestBlockSign(event.getBlock())) {
 			event.setCancelled(true);
 		}
 	}

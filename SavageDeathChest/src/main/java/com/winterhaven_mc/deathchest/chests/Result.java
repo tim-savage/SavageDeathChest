@@ -4,6 +4,7 @@ import com.winterhaven_mc.deathchest.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -11,18 +12,13 @@ import java.util.Collection;
 /**
  * A class that encapsulates fields to be returned as the result of a chest search
  */
-class Result {
+@Immutable
+final class Result {
 
-	private ResultCode resultCode;
-	private Location location;
-	private ProtectionPlugin protectionPlugin;
-	private Collection<ItemStack> remainingItems = new ArrayList<>();
-
-
-	/**
-	 * Class constructor
-	 */
-	Result() { }
+	private final ResultCode resultCode;
+	private final Location location;
+	private final ProtectionPlugin protectionPlugin;
+	private final Collection<ItemStack> remainingItems;
 
 
 	/**
@@ -31,7 +27,62 @@ class Result {
 	 */
 	Result(final ResultCode resultCode) {
 		this.resultCode = resultCode;
+		this.location = null;
+		this.protectionPlugin = null;
+		this.remainingItems = new ArrayList<>();
 	}
+
+
+	/**
+	 * Class constructor
+	 * @param resultCode initial result code for result
+	 */
+	Result(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
+		this.resultCode = resultCode;
+		this.location = null;
+		this.protectionPlugin = null;
+		this.remainingItems = remainingItems;
+	}
+
+
+	/**
+	 * Class constructor
+	 * @param resultCode initial result code for result
+	 */
+	Result(final ResultCode resultCode, final Location location) {
+		this.resultCode = resultCode;
+		this.location = location;
+		this.protectionPlugin = null;
+		this.remainingItems = new ArrayList<>();
+	}
+
+
+	/**
+	 * Class constructor
+	 * @param resultCode initial result code for result
+	 */
+	Result(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
+		this.resultCode = resultCode;
+		this.location = null;
+		this.protectionPlugin = protectionPlugin;
+		this.remainingItems = new ArrayList<>();
+	}
+
+
+	/**
+	 * Class constructor
+	 * @param resultCode initial result code for result
+	 */
+	Result(final ResultCode resultCode,
+		   final Location location,
+		   final ProtectionPlugin protectionPlugin,
+		   final Collection<ItemStack> remainingItems) {
+		this.resultCode = resultCode;
+		this.location = location;
+		this.protectionPlugin = protectionPlugin;
+		this.remainingItems = remainingItems;
+	}
+
 
 	/**
 	 * Getter method for resultCode
@@ -41,13 +92,6 @@ class Result {
 		return resultCode;
 	}
 
-	/**
-	 * Setter method for resultCode
-	 * @param resultCode the result code to set for this result object
-	 */
-	void setResultCode(final ResultCode resultCode) {
-		this.resultCode = resultCode;
-	}
 
 	/**
 	 * Getter method for location
@@ -57,13 +101,6 @@ class Result {
 		return location;
 	}
 
-	/**
-	 * Setter method for location
-	 * @param location the location to set for this result object
-	 */
-	void setLocation(final Location location) {
-		this.location = location.clone();
-	}
 
 	/**
 	 * Getter method for protectionPlugin
@@ -73,14 +110,6 @@ class Result {
 		return protectionPlugin;
 	}
 
-	/**
-	 * Setter method for protectionPlugin
-	 * @param protectionPlugin the protection plugin enum value to set for this result object
-	 */
-	@SuppressWarnings("unused")
-	void setProtectionPlugin(final ProtectionPlugin protectionPlugin) {
-		this.protectionPlugin = protectionPlugin;
-	}
 
 	/**
 	 * Getter method for remainingItems
@@ -88,14 +117,6 @@ class Result {
 	 */
 	Collection<ItemStack> getRemainingItems() {
 		return remainingItems;
-	}
-
-	/**
-	 * Setter method for remainingItems
-	 * @param remainingItems a Collection of ItemStacks to set as the the remaining items for this result object
-	 */
-	void setRemainingItems(final Collection<ItemStack> remainingItems) {
-		this.remainingItems = remainingItems;
 	}
 
 }

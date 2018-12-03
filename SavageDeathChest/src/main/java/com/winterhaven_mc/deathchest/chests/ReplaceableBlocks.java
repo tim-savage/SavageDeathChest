@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * A class to manage the configured list of material types that can be replaced by a death chest
  */
-public class ReplaceableBlocks {
+public final class ReplaceableBlocks {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -22,7 +22,7 @@ public class ReplaceableBlocks {
 
 	/**
 	 * Class Constructor<br>
-	 *     populates set of replaceable blocks from config file
+	 * populates set of replaceable blocks from config file
 	 */
 	ReplaceableBlocks(final PluginMain plugin) {
 
@@ -37,7 +37,7 @@ public class ReplaceableBlocks {
 	/**
 	 * Load list of replaceable blocks from config file
 	 */
-	public void reload() {
+	public final void reload() {
 
 		// clear replaceable blocks
 		replaceableBlocks.clear();
@@ -48,7 +48,7 @@ public class ReplaceableBlocks {
 		// iterate over string list
 		for (String materialString : materialStringList) {
 
-			// if material string matches a valid material type, add to replaceableBlocks HashSet
+			// if material string matches a valid material type, add to replaceableBlocks set
 			if (Material.matchMaterial(materialString) != null) {
 				replaceableBlocks.add(Material.matchMaterial(materialString));
 			}
@@ -61,7 +61,7 @@ public class ReplaceableBlocks {
 	 * @param material the material the test for
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
-	boolean contains(final Material material) {
+	final boolean contains(final Material material) {
 		return this.replaceableBlocks.contains(material);
 	}
 
@@ -71,7 +71,7 @@ public class ReplaceableBlocks {
 	 * @return Formatted string list of materials in replaceableBlocks set
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return this.replaceableBlocks.toString();
 	}
 }

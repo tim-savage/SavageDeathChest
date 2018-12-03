@@ -34,7 +34,7 @@ public final class PluginMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
-		// static reference to plugin instance
+		// reference to plugin instance
 		instance = this;
 
 		// copy default config from jar if it doesn't exist
@@ -54,6 +54,9 @@ public final class PluginMain extends JavaPlugin {
 
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
+
+		// load all chests from datastore
+		chestManager.loadDeathChests();
 
 		// instantiate command manager
 		new CommandManager(this);

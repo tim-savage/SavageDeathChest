@@ -50,7 +50,7 @@ public abstract class DataStore {
 	 * Insert a block record in the datastore
 	 * @param blockRecord the BlockChest object to insert in the datastore
 	 */
-	public abstract void putBlockRecord(final ChestBlock blockRecord);
+	abstract void putBlockRecord(final ChestBlock blockRecord);
 
 
 	/**

@@ -22,7 +22,6 @@ import org.bukkit.plugin.Plugin;
  * An enum whose values represent supported block protection plugins and includes methods to
  * query player permission to place blocks or access chests at a given location.
  */
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum ProtectionPlugin {
 
 //	FACTIONS("Factions") {
@@ -220,11 +219,10 @@ public enum ProtectionPlugin {
 
 	WORLDGUARD("WorldGuard") {
 
-		// get WorldGuard region container
-		final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
-
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
+
+			final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
@@ -240,6 +238,8 @@ public enum ProtectionPlugin {
 
 		@Override
 		public final boolean hasChestPermission(final Player player, final Location location) {
+
+			final RegionContainer regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
 
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {

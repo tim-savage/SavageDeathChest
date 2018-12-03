@@ -129,7 +129,8 @@ public class Deployment {
 		}
 
 		// create expire task for deathChest
-		deathChest.createExpireTask();
+//		deathChest.createExpireTask(); // now performed by constructor
+
 
 		// put DeathChest in DeathChest map
 		plugin.chestManager.addDeathChest(deathChest);
@@ -147,25 +148,31 @@ public class Deployment {
 	 */
 	private Result deployChest(final Player player, final Collection<ItemStack> droppedItems) {
 
+		// if require-chest option is enabled
+		// and player does not have a chest in inventory
+		// and player does not have permission override
+		if (plugin.getConfig().getBoolean("require-chest")
+				&& !player.hasPermission("deathchest.freechest")
+				&& !containsChest(droppedItems)) {
+
+			// return NO_CHEST result
+			return new Result(ResultCode.NO_CHEST, droppedItems);
+		}
+
 		// combine stacks of same items where possible
 		List<ItemStack> remainingItems = consolidateItemStacks(droppedItems);
 
 		// get required chest size
 		ChestSize chestSize = ChestSize.selectFor(remainingItems.size());
 
-		// declare result object
-		Result result;
-
 		// deploy appropriately sized chest
 		if (chestSize.equals(ChestSize.SINGLE)
 				|| !player.hasPermission("deathchest.doublechest")) {
-			result = deploySingleChest(player, remainingItems);
+			return deploySingleChest(player, remainingItems);
 		}
 		else {
-			result = deployDoubleChest(player, remainingItems);
+			return deployDoubleChest(player, remainingItems);
 		}
-
-		return result;
 	}
 
 
@@ -179,28 +186,8 @@ public class Deployment {
 
 		List<ItemStack> remainingItems = droppedItems;
 
-		// initialize new result object
-		Result result = new Result();
-
-		// if require-chest option is enabled
-		// and player does not have a chest in inventory
-		// and player does not have permission override
-		if (plugin.getConfig().getBoolean("require-chest")
-				&& !player.hasPermission("deathchest.freechest")
-				&& !containsChest(remainingItems)) {
-
-			// create result object
-			result.setResultCode(ResultCode.NO_CHEST);
-
-			// put remaining items in result
-			result.setRemainingItems(remainingItems);
-
-			// return result
-			return result;
-		}
-
 		// search for valid chest location
-		result = findChestLocation(player, ChestSize.SINGLE);
+		Result result = findChestLocation(player, ChestSize.SINGLE);
 
 		// if search successful, place chest
 		if (result.getResultCode().equals(ResultCode.SUCCESS)) {
@@ -220,10 +207,8 @@ public class Deployment {
 			placeSign(player, result.getLocation().getBlock());
 		}
 
-		// put remaining items in result
-		result.setRemainingItems(remainingItems);
-
-		return result;
+		// return new result with remaining items
+		return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
 	}
 
 
@@ -237,44 +222,21 @@ public class Deployment {
 
 		List<ItemStack> remainingItems = droppedItems;
 
-		// initialize new result object
-		Result result = new Result();
-
-		// if require-chest option is enabled
-		// and player does not have a chest in inventory
-		// and player does not have permission override
-		if (plugin.getConfig().getBoolean("require-chest")
-				&& !player.hasPermission("deathchest.freechest")
-				&& !containsChest(remainingItems)) {
-
-			// create result object
-			result.setResultCode(ResultCode.NO_CHEST);
-
-			// put remaining items in result
-			result.setRemainingItems(remainingItems);
-
-			// return result
-			return result;
-		}
-
 		// search for valid chest location
-		result = findChestLocation(player, ChestSize.DOUBLE);
+		Result result = findChestLocation(player, ChestSize.DOUBLE);
 
 		// if only single chest location found, deploy single chest
 		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
 			result = deploySingleChest(player, droppedItems);
-			result.setResultCode(ResultCode.PARTIAL_SUCCESS);
-			return result;
+			return new Result(ResultCode.PARTIAL_SUCCESS,
+					result.getLocation(),
+					result.getProtectionPlugin(),
+					result.getRemainingItems());
 		}
 
-		// if search failed, return result
+		// if search failed, return result with remaining items
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-
-			// put remaining items in result
-			result.setRemainingItems(remainingItems);
-
-			// return result
-			return result;
+			return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
 		}
 
 		// if require-chest option is enabled
@@ -301,7 +263,7 @@ public class Deployment {
 				&& !player.hasPermission("deathchest.freechest")
 				&& !containsChest(remainingItems)) {
 
-			result.setRemainingItems(remainingItems);
+			return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
 		}
 		else {
 			// if second chest still needed
@@ -354,10 +316,7 @@ public class Deployment {
 		leftChest.setBlockData(leftBlockData);
 		leftChest.update();
 
-		// put remaining items in result
-		result.setRemainingItems(remainingItems);
-
-		return result;
+		return new Result(result.getResultCode(),result.getLocation(),result.getProtectionPlugin(),remainingItems);
 	}
 
 
@@ -399,7 +358,6 @@ public class Deployment {
 	 * @param itemStacks Collection of ItemStack to check for chest
 	 * @return boolean
 	 */
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private boolean containsChest(final Collection<ItemStack> itemStacks) {
 		boolean result = false;
 		for (ItemStack itemStack : itemStacks) {
@@ -442,6 +400,7 @@ public class Deployment {
 	 * taking into account replaceable blocks, grass path blocks and
 	 * restrictions from other block protection plugins if configured
 	 * @param player Player that deathchest is being deployed for
+	 * @param chestSize enum member denoting size of chest required (SINGLE | DOUBLE)
 	 * @return SearchResult
 	 */
 	private Result findChestLocation(final Player player, final ChestSize chestSize) {
@@ -606,7 +565,13 @@ public class Deployment {
 		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) blockState;
 
 		// create new ChestBlock object
-		new ChestBlock(deathChest, block, chestBlockType);
+		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());
+
+		// add this ChestBlock to block map
+		plugin.chestManager.addChestBlock(chestBlockType, chestBlock);
+
+		// set block metadata
+		chestBlock.setMetadata(deathChest);
 
 		// put items into chest inventory, items that don't fit are returned as List of ItemStack
 		return fillChest(chest, chestItems);
@@ -675,14 +640,10 @@ public class Deployment {
 		// if block at location is protected by plugin, return negative result
 		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 		if (protectionPlugin != null) {
-			Result result = new Result(ResultCode.PROTECTION_PLUGIN);
-			result.setProtectionPlugin(protectionPlugin);
-			return result;
+			return new Result(ResultCode.PROTECTION_PLUGIN, protectionPlugin);
 		}
 
-		Result result = new Result(ResultCode.SUCCESS);
-		result.setLocation(location);
-		return result;
+		return new Result(ResultCode.SUCCESS, location);
 	}
 
 
@@ -769,10 +730,13 @@ public class Deployment {
 		sign.update();
 
 		// create ChestBlock for this sign block
-		ChestBlock signChestBlock = new ChestBlock(this.deathChest, signBlock, ChestBlockType.SIGN);
+		ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
 
-		// add sign to chestBlocks
-		this.deathChest.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+		// add this ChestBlock to block map
+		plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+
+		// set block metadata
+		signChestBlock.setMetadata(deathChest);
 
 		// return success
 		return true;

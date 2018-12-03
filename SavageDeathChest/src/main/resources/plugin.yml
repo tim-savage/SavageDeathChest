@@ -50,6 +50,14 @@ permissions:
     description: Allows overflow items to drop on ground.
     default: true
 
+  deathchest.list:
+    description: Allows viewing list of deathchests.
+    default: false
+
+  deathchest.list.other:
+    description: Allows viewing a list of other player's deathchests.
+    default: op
+
   deathchest.reload:
     description: Allows reloading the config file.
     default: op
@@ -77,3 +85,5 @@ permissions:
       deathchest.allow-place: true
       deathchest.reload: true
       deathchest.status: true
+      deathchest.list: true
+      deathchest.list.other: true

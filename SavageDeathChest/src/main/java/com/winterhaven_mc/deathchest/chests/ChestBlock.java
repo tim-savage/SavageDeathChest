@@ -15,6 +15,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,52 +25,36 @@ import java.util.UUID;
 /**
  * A class that represents a single block that is a component of a death chest
  */
-public class ChestBlock {
+@Immutable
+public final class ChestBlock {
 
 	// static reference to main class
-	private final static PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = PluginMain.instance;
 
 	// chest UUID
-	private UUID chestUUID;
+	private final UUID chestUUID;
 
 	// chest block location
-	private Location location;
-
-	// chest block type
-	private ChestBlockType chestBlockType;
+	private final Location location;
 
 
 	/**
 	 * Class constructor
+	 * @param chestUUID the chest UUID that this ChestBlock is member
+	 * @param location the location of the in game block this ChestBlock object represents
 	 */
-	public ChestBlock() { }
-
-
-	/**
-	 * Class constructor
-	 * @param deathChest DeathChest object that this ChestBlock is member
-	 * @param block in game block this ChestBlock object represents
-	 * @param chestBlockType enum value that represents the type of this ChestBlock
-	 */
-	ChestBlock(final DeathChest deathChest, final Block block, final ChestBlockType chestBlockType) {
+	public ChestBlock(final UUID chestUUID, final Location location) {
 
 		// set ChestUUID for this ChestBlock
-		this.chestUUID = deathChest.getChestUUID();
+		this.chestUUID = chestUUID;
 
-		// set location for this ChestBlock
-		this.location = block.getLocation();
-
-		// set ChestBlockType
-		this.chestBlockType = chestBlockType;
-
-		// add this ChestBlock to block map
-		plugin.chestManager.addChestBlock(this);
-
-		// add this ChestBlock to passed DeathChest
-		deathChest.addChestBlock(this.chestBlockType, this);
-
-		// set block metadata
-		this.setMetadata(deathChest);
+		// set location for this ChestBlock with defensive copy of passed location
+		this.location = new Location(location.getWorld(),
+									 location.getX(),
+									 location.getY(),
+									 location.getZ(),
+									 location.getYaw(),
+									 location.getPitch());
 	}
 
 
@@ -83,47 +68,11 @@ public class ChestBlock {
 
 
 	/**
-	 * Setter method for chest block location
-	 * @param location the location to set for this chest block
-	 */
-	public void setLocation(final Location location) {
-		this.location = location;
-	}
-
-
-	/**
 	 * Getter method for chest block chestUUID
 	 * @return UUID - the chestUUID for this chest block
 	 */
 	public UUID getChestUUID() {
 		return chestUUID;
-	}
-
-
-	/**
-	 * Setter method for chest block chestUUID
-	 * @param chestUUID the chestUUID to set for this chest block
-	 */
-	public void setChestUUID(final UUID chestUUID) {
-		this.chestUUID = chestUUID;
-	}
-
-
-	/**
-	 * Getter method for ChestBlockType of this chest block
-	 * @return ChestBlockType - the ChestBlockType of this chest block
-	 */
-	public ChestBlockType getType() {
-		return chestBlockType;
-	}
-
-
-	/**
-	 * Setter method for ChestBlockType of this chest block
-	 * @param chestBlockType the ChestBlockType to set for this chest block
-	 */
-	public void setType(final ChestBlockType chestBlockType) {
-		this.chestBlockType = chestBlockType;
 	}
 
 
@@ -143,7 +92,7 @@ public class ChestBlock {
 		}
 
 		// if block is not a DeathSign, return null
-		if (!plugin.chestManager.isDeathChestSignBlock(block)) {
+		if (!plugin.chestManager.isChestBlockSign(block)) {
 			return null;
 		}
 
@@ -154,7 +103,7 @@ public class ChestBlock {
 		Block returnBlock = block.getRelative(sign.getAttachedFace());
 
 		// if attached block is not a DeathChest, return null
-		if (!plugin.chestManager.isDeathChestChestBlock(returnBlock)) {
+		if (!plugin.chestManager.isChestBlockChest(returnBlock)) {
 			return null;
 		}
 
@@ -166,7 +115,7 @@ public class ChestBlock {
 	 * Open the inventory of this DeathChest for player
 	 * @param player the player for whom to open the DeathChest inventory
 	 */
-	public final void openInventory(final Player player) {
+	public void openInventory(final Player player) {
 
 		// get the block state of block represented by this ChestBlock
 		BlockState blockState = this.getLocation().getBlock().getState();
@@ -300,14 +249,15 @@ public class ChestBlock {
 		// remove metadata from block
 		this.removeMetadata();
 
-		// set block material to air; this will drop chest contents, but not the block itself
-		block.setType(Material.AIR);
-
 		// remove ChestBlock record from datastore
 		plugin.dataStore.deleteBlockRecord(this);
 
-		// remove ChestBlock from chest block map
+		// remove ChestBlock from block map
 		plugin.chestManager.removeChestBlock(this);
+
+		// set block material to air; this will drop chest contents, but not the block itself
+		// this must be performed last, because above methods do checks for valid in-game chest material block
+		block.setType(Material.AIR);
 	}
 
 }
