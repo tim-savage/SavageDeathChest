@@ -77,6 +77,10 @@ MESSAGES:
     enabled: true
     string: '&cVous aviez votre inventaire vide, aucun coffre n''a donc été placé.'
 
+  INVENTORY_FULL:
+    enabled: true
+    string: '&cCertains articles n''ont pas pu être transférés car votre inventaire est plein.'
+
   NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cLors de votre mort, vous n''aviez pas de coffre dans votre inventaire.'

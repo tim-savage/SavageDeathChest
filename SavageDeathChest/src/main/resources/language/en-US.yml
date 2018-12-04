@@ -80,6 +80,10 @@ MESSAGES:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
 
+  INVENTORY_FULL:
+    enabled: true
+    string: '&cSome items could not be transferred because your inventory is full.'
+
   NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cYou did not have any chests in your inventory.'
@@ -104,7 +108,6 @@ MESSAGES:
   CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cDeath chest is currently being accessed by another player.'
-
 
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
