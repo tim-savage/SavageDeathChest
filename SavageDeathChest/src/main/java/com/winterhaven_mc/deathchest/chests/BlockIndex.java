@@ -104,7 +104,32 @@ class BlockIndex {
 			return;
 		}
 
-		this.locationMap.remove(chestBlock.getLocation());
+		// get chest location
+		Location location = chestBlock.getLocation();
+
+		// remove chest block from location map
+		this.locationMap.remove(location);
+
+		// if passed chest block UUID is not null, remove chest block from uuid map
+		if (chestBlock.getChestUUID() != null) {
+
+			// get chest UUID
+			UUID chestUUID = chestBlock.getChestUUID();
+
+			// iterate over inner map
+			for (ChestBlockType chestBlockType : this.uuidMap.get(chestUUID).keySet()) {
+
+				// if passed chest block location equals mapped chest block location, remove block from inner map
+				if (this.uuidMap.get(chestUUID).get(chestBlockType).getLocation().equals(location)) {
+					this.uuidMap.get(chestUUID).remove(chestBlockType);
+
+					// if inner map is now empty, remove from outer map
+					if (this.uuidMap.get(chestUUID).isEmpty()) {
+						this.uuidMap.remove(chestUUID);
+					}
+				}
+			}
+		}
 	}
 
 
