@@ -128,10 +128,6 @@ public class Deployment {
 			return;
 		}
 
-		// create expire task for deathChest
-//		deathChest.createExpireTask(); // now performed by constructor
-
-
 		// put DeathChest in DeathChest map
 		plugin.chestManager.addDeathChest(deathChest);
 
