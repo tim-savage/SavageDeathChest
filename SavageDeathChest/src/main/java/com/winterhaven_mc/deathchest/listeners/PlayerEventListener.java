@@ -124,8 +124,11 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if player sneak punched block, try auto-loot
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && player.isSneaking()) {
+		// if player sneak punched block and auto-loot is enabled, try auto-loot
+		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
+				&& player.isSneaking()
+				&& plugin.getConfig().getBoolean("auto-loot")
+				&& player.hasPermission("deathchest.loot")) {
 
 			// cancel event
 			event.setCancelled(true);
