@@ -16,10 +16,7 @@ import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.concurrent.Immutable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
@@ -154,46 +151,49 @@ public final class ChestBlock {
 	 * Transfer contents of chest block to player inventory
 	 * @param player the player whose inventory chest items will be placed
 	 */
-	void transferContents(final Player player) {
+	Collection<ItemStack> transferContents(final Player player) {
+
+		// create empty list to contain items that did not fit in chest
+		List<ItemStack> remainingItems = new ArrayList<>();
 
 		// check for null object
-		if (player == null) {
-			return;
-		}
+		if (player != null) {
 
-		// get in game block at deathBlock location
-		Block block = this.getLocation().getBlock();
+			// get in game block at deathBlock location
+			Block block = this.getLocation().getBlock();
 
-		// confirm block is still death chest block
-		if (block.getType().equals(Material.CHEST)
-				&& plugin.chestManager.isChestBlock(block)) {
+			// confirm block is still death chest block
+			if (block.getType().equals(Material.CHEST)
+					&& plugin.chestManager.isChestBlock(block)) {
 
-			// get player inventory object
-			final PlayerInventory playerinventory = player.getInventory();
+				// get player inventory object
+				final PlayerInventory playerinventory = player.getInventory();
 
-			// get chest object
-			final Chest chest = (Chest)block.getState();
+				// get chest object
+				final Chest chest = (Chest) block.getState();
 
-			// get array of ItemStack for chest inventory
-			final List<ItemStack> chestInventory = new ArrayList<>(Arrays.asList(chest.getInventory().getContents()));
+				// get array of ItemStack for chest inventory
+				final List<ItemStack> chestInventory = new ArrayList<>(Arrays.asList(chest.getInventory().getContents()));
 
-			// iterate through all inventory slots in chest inventory
-			for (ItemStack itemStack : chestInventory) {
+				// iterate through all inventory slots in chest inventory
+				for (ItemStack itemStack : chestInventory) {
 
-				// if inventory slot item is not null...
-				if (itemStack != null) {
+					// if inventory slot item is not null...
+					if (itemStack != null) {
 
-					// remove item from chest inventory
-					chest.getInventory().removeItem(itemStack);
+						// remove item from chest inventory
+						chest.getInventory().removeItem(itemStack);
 
-					// add item to player inventory
-					playerinventory.addItem(itemStack);
+						// add item to player inventory
+						remainingItems.addAll(playerinventory.addItem(itemStack).values());
 
-					// play inventory add sound
-					plugin.soundConfig.playSound(player, SoundId.INVENTORY_ADD_ITEM);
+						// play inventory add sound
+						plugin.soundConfig.playSound(player, SoundId.INVENTORY_ADD_ITEM);
+					}
 				}
 			}
 		}
+		return remainingItems;
 	}
 
 
