@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 class BlockIndex {
 
 	// map of ChestBlocks indexed by location
