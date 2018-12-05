@@ -88,7 +88,7 @@ final class Result {
 	 * Getter method for resultCode
 	 * @return ResultCode - the result code currently set for this result object
 	 */
-	ResultCode getResultCode() {
+	final ResultCode getResultCode() {
 		return resultCode;
 	}
 
@@ -97,7 +97,7 @@ final class Result {
 	 * Getter method for location
 	 * @return Location - the location currently set for this result object
 	 */
-	Location getLocation() {
+	final Location getLocation() {
 		return location;
 	}
 
@@ -106,7 +106,7 @@ final class Result {
 	 * Getter method for protectionPlugin
 	 * @return ProtectionPlugin - the protection plugin enum value currently set for this result object
 	 */
-	ProtectionPlugin getProtectionPlugin() {
+	final ProtectionPlugin getProtectionPlugin() {
 		return protectionPlugin;
 	}
 
@@ -115,7 +115,7 @@ final class Result {
 	 * Getter method for remainingItems
 	 * @return Collection of ItemStack - the remaining items currently set for this result object
 	 */
-	Collection<ItemStack> getRemainingItems() {
+	final Collection<ItemStack> getRemainingItems() {
 		return remainingItems;
 	}
 
