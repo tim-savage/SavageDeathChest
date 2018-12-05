@@ -37,7 +37,7 @@ public final class ChestBlock {
 
 	/**
 	 * Class constructor
-	 * @param chestUUID the chest UUID that this ChestBlock is member
+	 * @param chestUUID the UUID of the chest that this ChestBlock is member
 	 * @param location the location of the in game block this ChestBlock object represents
 	 */
 	public ChestBlock(final UUID chestUUID, final Location location) {
@@ -57,7 +57,7 @@ public final class ChestBlock {
 
 	/**
 	 * Getter method for chest block location
-	 * @return Location - the location of this chest block
+	 * @return Location - the in game location of this chest block
 	 */
 	public final Location getLocation() {
 		return location;
@@ -66,7 +66,7 @@ public final class ChestBlock {
 
 	/**
 	 * Getter method for chest block chestUUID
-	 * @return UUID - the chestUUID for this chest block
+	 * @return UUID - the UUID of the chest that this chest block is a member
 	 */
 	public final UUID getChestUUID() {
 		return chestUUID;
@@ -74,9 +74,9 @@ public final class ChestBlock {
 
 
 	/**
-	 * Get DeathChest chest block that DeathSign is attached to
+	 * Get DeathChest chest block that DeathChest sign is attached
 	 * @return Block - DeathChest chest block;
-	 * returns null if sign is not a DeathSign or attached block is not a DeathChest
+	 * returns null if sign is not a DeathChest sign or attached block is not a DeathChest chest block
 	 */
 	private Block getAttachedBlock() {
 
@@ -148,7 +148,7 @@ public final class ChestBlock {
 
 
 	/**
-	 * Transfer contents of chest block to player inventory
+	 * Transfer the contents of this chest block to player inventory
 	 * @param player the player whose inventory chest items will be placed
 	 */
 	final Collection<ItemStack> transferContents(final Player player) {
@@ -163,8 +163,7 @@ public final class ChestBlock {
 			Block block = this.getLocation().getBlock();
 
 			// confirm block is still death chest block
-			if (block.getType().equals(Material.CHEST)
-					&& plugin.chestManager.isChestBlock(block)) {
+			if (plugin.chestManager.isChestBlockChest(block)) {
 
 				// get player inventory object
 				final PlayerInventory playerinventory = player.getInventory();
@@ -249,7 +248,7 @@ public final class ChestBlock {
 
 	/**
 	 * Destroy chest block, dropping any contents on ground.
-	 * Removes block metadata and deletes corresponding block record from datastore.
+	 * Removes block metadata and deletes corresponding block record from block index and datastore.
 	 */
 	final void destroy() {
 
