@@ -41,6 +41,7 @@ permissions:
     
   deathchest.allow-place:
     description: Override restriction on placing items in death chests.
+    default: op
 
   deathchest.doublechest:
     description: Allow placement of double chests if necessary.
@@ -48,7 +49,7 @@ permissions:
 
   deathchest.list:
     description: Allow viewing list of deathchests.
-    default: false
+    default: op
 
   deathchest.list.other:
     description: Allow viewing a list of other player's deathchests.
