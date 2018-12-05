@@ -59,7 +59,7 @@ public final class ChestBlock {
 	 * Getter method for chest block location
 	 * @return Location - the location of this chest block
 	 */
-	public Location getLocation() {
+	public final Location getLocation() {
 		return location;
 	}
 
@@ -68,7 +68,7 @@ public final class ChestBlock {
 	 * Getter method for chest block chestUUID
 	 * @return UUID - the chestUUID for this chest block
 	 */
-	public UUID getChestUUID() {
+	public final UUID getChestUUID() {
 		return chestUUID;
 	}
 
@@ -112,7 +112,7 @@ public final class ChestBlock {
 	 * Open the inventory of this DeathChest for player
 	 * @param player the player for whom to open the DeathChest inventory
 	 */
-	public void openInventory(final Player player) {
+	public final void openInventory(final Player player) {
 
 		// check for null object
 		if (player == null) {
@@ -151,7 +151,7 @@ public final class ChestBlock {
 	 * Transfer contents of chest block to player inventory
 	 * @param player the player whose inventory chest items will be placed
 	 */
-	Collection<ItemStack> transferContents(final Player player) {
+	final Collection<ItemStack> transferContents(final Player player) {
 
 		// create empty list to contain items that did not fit in chest
 		List<ItemStack> remainingItems = new ArrayList<>();
@@ -201,7 +201,7 @@ public final class ChestBlock {
 	 * Set block metadata
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
-	void setMetadata(final DeathChest deathChest) {
+	final void setMetadata(final DeathChest deathChest) {
 
 		// check for null object
 		if (deathChest == null || deathChest.getChestUUID() == null) {
@@ -251,7 +251,7 @@ public final class ChestBlock {
 	 * Destroy chest block, dropping any contents on ground.
 	 * Removes block metadata and deletes corresponding block record from datastore.
 	 */
-	void destroy() {
+	final void destroy() {
 
 		// get in game block at this chestBlock location
 		Block block = this.getLocation().getBlock();
