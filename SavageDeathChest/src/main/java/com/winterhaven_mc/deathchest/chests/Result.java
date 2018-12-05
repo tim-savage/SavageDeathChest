@@ -1,6 +1,6 @@
 package com.winterhaven_mc.deathchest.chests;
 
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
