@@ -16,15 +16,15 @@ commands:
       
 permissions:
   deathchest.chest:
-    description: Allows the creation of a death chest.
+    description: Allow the creation of a death chest.
     default: true
 
   deathchest.loot:
-    description: Allows player to quick-loot death chests by sneak-punching.
+    description: Allow player to quick-loot death chests by sneak-punching.
     default: true
 
   deathchest.loot.killer:
-    description: Allows player to loot death chests of players they have killed.
+    description: Allow player to loot death chests of players they have killed.
     default: true
 
   deathchest.loot.other:
@@ -32,38 +32,34 @@ permissions:
     default: op
 
   deathchest.freechest:
-    description: Overrides require chest in inventory configuration.
+    description: Override require chest in inventory configuration.
     default: op
     
   deathchest.creative-access:
-    description: Overrides restriction on opening death chests in creative mode.
+    description: Override restriction on opening death chests in creative mode.
     default: op
     
   deathchest.allow-place:
-    description: Overrides restriction on placing items in death chests.
+    description: Override restriction on placing items in death chests.
 
   deathchest.doublechest:
-    description: Allows placement of double chests if necessary.
-    default: true
-
-  deathchest.drops:
-    description: Allows overflow items to drop on ground.
+    description: Allow placement of double chests if necessary.
     default: true
 
   deathchest.list:
-    description: Allows viewing list of deathchests.
+    description: Allow viewing list of deathchests.
     default: false
 
   deathchest.list.other:
-    description: Allows viewing a list of other player's deathchests.
+    description: Allow viewing a list of other player's deathchests.
     default: op
 
   deathchest.reload:
-    description: Allows reloading the config file.
+    description: Allow reloading the config file.
     default: op
 
   deathchest.status:
-    description: Allows viewing deathchest status.
+    description: Allow viewing deathchest status.
     default: op
 
   deathchest.player:
@@ -73,10 +69,9 @@ permissions:
       deathchest.chest: true
       deathchest.loot: true
       deathchest.doublechest: true
-      deathchest.drops: true
 
   deathchest.admin:
-    description: Gives access to DeathChest admin commands.
+    description: Give access to DeathChest admin commands.
     default: op
     children:
       deathchest.freechest: true
