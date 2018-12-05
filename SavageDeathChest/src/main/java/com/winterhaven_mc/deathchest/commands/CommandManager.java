@@ -2,7 +2,7 @@ package com.winterhaven_mc.deathchest.commands;
 
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;

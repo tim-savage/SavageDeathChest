@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-class ChestIndex {
+
+final class ChestIndex {
 
 	// map of DeathChests
 	private final Map<UUID, DeathChest> deathChestMap;
@@ -24,7 +25,7 @@ class ChestIndex {
 	 * @param chestUUID UUID of DeathChest object to retrieve
 	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
-	DeathChest getDeathChest(final UUID chestUUID) {
+	final DeathChest getDeathChest(final UUID chestUUID) {
 
 		// check for null key
 		if (chestUUID == null) {
@@ -39,7 +40,7 @@ class ChestIndex {
 	 * Put DeathChest object in map
 	 * @param deathChest the DeathChest object to put in map
 	 */
-	void addChest(final DeathChest deathChest) {
+	final void addChest(final DeathChest deathChest) {
 
 		// check for null key
 		if (deathChest == null || deathChest.getChestUUID() == null) {
@@ -54,7 +55,7 @@ class ChestIndex {
 	 * Remove DeathChest object from map
 	 * @param deathChest the DeathChest object to remove from map
 	 */
-	void removeDeathChest(final DeathChest deathChest) {
+	final void removeDeathChest(final DeathChest deathChest) {
 
 		// check for null key
 		if (deathChest == null || deathChest.getChestUUID() == null) {
@@ -70,7 +71,7 @@ class ChestIndex {
 	 * @param chestUUID the chest UUID to check
 	 * @return {@code true} if key exists in map, {@code false} if it does not
 	 */
-	boolean containsKey(final UUID chestUUID) {
+	final boolean containsKey(final UUID chestUUID) {
 
 		// check for null chestUUID
 		if (chestUUID == null) {
@@ -85,7 +86,7 @@ class ChestIndex {
 	 * Get collection of all chests in map
 	 * @return Collection of DeathChests in map
 	 */
-	Collection<DeathChest> getChests() {
+	final Collection<DeathChest> getChests() {
 		return deathChestMap.values();
 	}
 

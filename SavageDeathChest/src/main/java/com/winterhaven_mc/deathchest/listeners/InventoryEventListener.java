@@ -2,7 +2,7 @@ package com.winterhaven_mc.deathchest.listeners;
 
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 
 import org.bukkit.block.Block;

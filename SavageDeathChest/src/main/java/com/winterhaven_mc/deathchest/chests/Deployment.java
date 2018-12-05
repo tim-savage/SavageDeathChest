@@ -1,7 +1,7 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 
 import org.bukkit.ChatColor;
@@ -29,7 +29,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
  * for chest placement, placing the death chest in game, putting player's dropped items into the chest
  * and attaching a chest sign with a configured message.
  */
-public class Deployment {
+public final class Deployment {
 
 	// reference to main class
 	private final PluginMain plugin = PluginMain.instance;
@@ -128,10 +128,6 @@ public class Deployment {
 			return;
 		}
 
-		// create expire task for deathChest
-//		deathChest.createExpireTask(); // now performed by constructor
-
-
 		// put DeathChest in DeathChest map
 		plugin.chestManager.addDeathChest(deathChest);
 
@@ -184,7 +180,7 @@ public class Deployment {
 	 */
 	private Result deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
 
-		List<ItemStack> remainingItems = droppedItems;
+		Collection<ItemStack> remainingItems = droppedItems;
 
 		// search for valid chest location
 		Result result = findChestLocation(player, ChestSize.SINGLE);
@@ -201,7 +197,10 @@ public class Deployment {
 			}
 
 			// place chest at result location
-			remainingItems = placeChest(result.getLocation(), remainingItems, ChestBlockType.RIGHT_CHEST);
+			placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
+
+			// fill chest
+			remainingItems = deathChest.fill(remainingItems);
 
 			// place sign on chest
 			placeSign(player, result.getLocation().getBlock());
@@ -220,7 +219,7 @@ public class Deployment {
 	 */
 	private Result deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 
-		List<ItemStack> remainingItems = droppedItems;
+		Collection<ItemStack> remainingItems = droppedItems;
 
 		// search for valid chest location
 		Result result = findChestLocation(player, ChestSize.DOUBLE);
@@ -248,7 +247,10 @@ public class Deployment {
 		}
 
 		// place chest at result location
-		remainingItems = placeChest(result.getLocation(), remainingItems, ChestBlockType.RIGHT_CHEST);
+		placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
+
+		// fill chest
+		remainingItems = deathChest.fill(remainingItems);
 
 		// place sign on right chest
 		placeSign(player, result.getLocation().getBlock());
@@ -284,7 +286,8 @@ public class Deployment {
 			if (remainingItems.size() > 0
 					&& result.getResultCode().equals(ResultCode.SUCCESS)) {
 
-				remainingItems = placeChest(getLocationToRight(result.getLocation()), remainingItems, ChestBlockType.LEFT_CHEST);
+				// place chest at result location
+				placeChest(getLocationToRight(result.getLocation()), ChestBlockType.LEFT_CHEST);
 			}
 		}
 
@@ -308,13 +311,20 @@ public class Deployment {
 		BlockData rightBlockData = rightChest.getBlockData();
 		BlockData leftBlockData = leftChest.getBlockData();
 
+		// set chest types in block data
 		((org.bukkit.block.data.type.Chest)rightBlockData).setType(org.bukkit.block.data.type.Chest.Type.RIGHT);
-		rightChest.setBlockData(rightBlockData);
-		rightChest.update();
-
 		((org.bukkit.block.data.type.Chest)leftBlockData).setType(org.bukkit.block.data.type.Chest.Type.LEFT);
+
+		// set block data
+		rightChest.setBlockData(rightBlockData);
 		leftChest.setBlockData(leftBlockData);
+
+		// update block data
+		rightChest.update();
 		leftChest.update();
+
+		// fill chest after left/right chest types have been set, so chest inventory is a double chest inventory
+		remainingItems = deathChest.fill(remainingItems);
 
 		return new Result(result.getResultCode(),result.getLocation(),result.getProtectionPlugin(),remainingItems);
 	}
@@ -546,13 +556,10 @@ public class Deployment {
 	/**
 	 * Place a chest block and fill with items
 	 * @param location the location to place the chest block
-	 * @param chestItems the items to place in the chest
 	 * @param chestBlockType the type of chest block (left or right)
-	 * @return List of ItemStack - items that did not fit in chest if any
 	 */
-	private List<ItemStack> placeChest(final Location location,
-									   final List<ItemStack> chestItems,
-									   final ChestBlockType chestBlockType) {
+	private void placeChest(final Location location,
+							final ChestBlockType chestBlockType) {
 
 		// get current block at location
 		Block block = location.getBlock();
@@ -569,12 +576,6 @@ public class Deployment {
 		// update chest BlockState
 		blockState.update(true, false);
 
-		// get updated BlockState
-		blockState = block.getState();
-
-		// cast to Chest
-		org.bukkit.block.Chest chest = (org.bukkit.block.Chest) blockState;
-
 		// create new ChestBlock object
 		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());
 
@@ -583,9 +584,6 @@ public class Deployment {
 
 		// set block metadata
 		chestBlock.setMetadata(deathChest);
-
-		// put items into chest inventory, items that don't fit are returned as List of ItemStack
-		return fillChest(chest, chestItems);
 	}
 
 
@@ -776,23 +774,6 @@ public class Deployment {
 
 		// check if block at location is a ReplaceableBlock
 		return plugin.chestManager.replaceableBlocks.contains(block.getType());
-	}
-
-
-	/**
-	 * Place dropped items in chest
-	 * @param chest the chest to place items
-	 * @param itemStacks Collection of ItemStacks to place in chest
-	 * @return List of ItemStacks that did not fit in chest
-	 */
-	private List<ItemStack> fillChest(final Chest chest, final Collection<ItemStack> itemStacks) {
-
-		// convert itemStacks list to array
-		ItemStack[] stackArray = new ItemStack[itemStacks.size()];
-		stackArray = itemStacks.toArray(stackArray);
-
-		// return list of items that did not fit in chest
-		return new ArrayList<>(chest.getInventory().addItem(stackArray).values());
 	}
 
 

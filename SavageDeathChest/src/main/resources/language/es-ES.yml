@@ -77,6 +77,10 @@ MESSAGES:
     enabled: true
     string: '&cNo tenías ningún inventario para poner en un cofre de la muerte.'
 
+  INVENTORY_FULL:
+    enabled: true
+    string: '&cAlgunos artículos no se pudieron transferir porque su inventario está lleno.'
+
   NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cNo tenías ningún cofres en su inventario.'

@@ -16,10 +16,7 @@ import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.concurrent.Immutable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
@@ -40,7 +37,7 @@ public final class ChestBlock {
 
 	/**
 	 * Class constructor
-	 * @param chestUUID the chest UUID that this ChestBlock is member
+	 * @param chestUUID the UUID of the chest that this ChestBlock is member
 	 * @param location the location of the in game block this ChestBlock object represents
 	 */
 	public ChestBlock(final UUID chestUUID, final Location location) {
@@ -60,26 +57,26 @@ public final class ChestBlock {
 
 	/**
 	 * Getter method for chest block location
-	 * @return Location - the location of this chest block
+	 * @return Location - the in game location of this chest block
 	 */
-	public Location getLocation() {
+	public final Location getLocation() {
 		return location;
 	}
 
 
 	/**
 	 * Getter method for chest block chestUUID
-	 * @return UUID - the chestUUID for this chest block
+	 * @return UUID - the UUID of the chest that this chest block is a member
 	 */
-	public UUID getChestUUID() {
+	public final UUID getChestUUID() {
 		return chestUUID;
 	}
 
 
 	/**
-	 * Get DeathChest chest block that DeathSign is attached to
+	 * Get DeathChest chest block that DeathChest sign is attached
 	 * @return Block - DeathChest chest block;
-	 * returns null if sign is not a DeathSign or attached block is not a DeathChest
+	 * returns null if sign is not a DeathChest sign or attached block is not a DeathChest chest block
 	 */
 	private Block getAttachedBlock() {
 
@@ -115,7 +112,7 @@ public final class ChestBlock {
 	 * Open the inventory of this DeathChest for player
 	 * @param player the player for whom to open the DeathChest inventory
 	 */
-	public void openInventory(final Player player) {
+	public final void openInventory(final Player player) {
 
 		// check for null object
 		if (player == null) {
@@ -151,49 +148,51 @@ public final class ChestBlock {
 
 
 	/**
-	 * Transfer contents of chest block to player inventory
+	 * Transfer the contents of this chest block to player inventory
 	 * @param player the player whose inventory chest items will be placed
 	 */
-	void transferContents(final Player player) {
+	final Collection<ItemStack> transferContents(final Player player) {
+
+		// create empty list to contain items that did not fit in chest
+		List<ItemStack> remainingItems = new ArrayList<>();
 
 		// check for null object
-		if (player == null) {
-			return;
-		}
+		if (player != null) {
 
-		// get in game block at deathBlock location
-		Block block = this.getLocation().getBlock();
+			// get in game block at deathBlock location
+			Block block = this.getLocation().getBlock();
 
-		// confirm block is still death chest block
-		if (block.getType().equals(Material.CHEST)
-				&& plugin.chestManager.isChestBlock(block)) {
+			// confirm block is still death chest block
+			if (plugin.chestManager.isChestBlockChest(block)) {
 
-			// get player inventory object
-			final PlayerInventory playerinventory = player.getInventory();
+				// get player inventory object
+				final PlayerInventory playerinventory = player.getInventory();
 
-			// get chest object
-			final Chest chest = (Chest)block.getState();
+				// get chest object
+				final Chest chest = (Chest) block.getState();
 
-			// get array of ItemStack for chest inventory
-			final List<ItemStack> chestInventory = new ArrayList<>(Arrays.asList(chest.getInventory().getContents()));
+				// get array of ItemStack for chest inventory
+				final List<ItemStack> chestInventory = new ArrayList<>(Arrays.asList(chest.getInventory().getContents()));
 
-			// iterate through all inventory slots in chest inventory
-			for (ItemStack itemStack : chestInventory) {
+				// iterate through all inventory slots in chest inventory
+				for (ItemStack itemStack : chestInventory) {
 
-				// if inventory slot item is not null...
-				if (itemStack != null) {
+					// if inventory slot item is not null...
+					if (itemStack != null) {
 
-					// remove item from chest inventory
-					chest.getInventory().removeItem(itemStack);
+						// remove item from chest inventory
+						chest.getInventory().removeItem(itemStack);
 
-					// add item to player inventory
-					playerinventory.addItem(itemStack);
+						// add item to player inventory
+						remainingItems.addAll(playerinventory.addItem(itemStack).values());
 
-					// play inventory add sound
-					plugin.soundConfig.playSound(player, SoundId.INVENTORY_ADD_ITEM);
+						// play inventory add sound
+						plugin.soundConfig.playSound(player, SoundId.INVENTORY_ADD_ITEM);
+					}
 				}
 			}
 		}
+		return remainingItems;
 	}
 
 
@@ -201,7 +200,7 @@ public final class ChestBlock {
 	 * Set block metadata
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
-	void setMetadata(final DeathChest deathChest) {
+	final void setMetadata(final DeathChest deathChest) {
 
 		// check for null object
 		if (deathChest == null || deathChest.getChestUUID() == null) {
@@ -249,9 +248,9 @@ public final class ChestBlock {
 
 	/**
 	 * Destroy chest block, dropping any contents on ground.
-	 * Removes block metadata and deletes corresponding block record from datastore.
+	 * Removes block metadata and deletes corresponding block record from block index and datastore.
 	 */
-	void destroy() {
+	final void destroy() {
 
 		// get in game block at this chestBlock location
 		Block block = this.getLocation().getBlock();

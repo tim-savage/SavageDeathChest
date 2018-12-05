@@ -1,7 +1,7 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.chests.Deployment;
@@ -124,8 +124,11 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if player sneak punched block, try auto-loot
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && player.isSneaking()) {
+		// if player sneak punched block and quick-loot is enabled, try auto-loot
+		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
+				&& player.isSneaking()
+				&& plugin.getConfig().getBoolean("quick-loot")
+				&& player.hasPermission("deathchest.loot")) {
 
 			// cancel event
 			event.setCancelled(true);

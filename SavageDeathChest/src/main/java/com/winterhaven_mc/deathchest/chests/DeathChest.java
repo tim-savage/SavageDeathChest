@@ -6,16 +6,15 @@ import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.concurrent.Immutable;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -154,7 +153,7 @@ public final class DeathChest {
 	 * @return integer - itemCount
 	 */
 	@SuppressWarnings("unused")
-	public int getItemCount() {
+	public final int getItemCount() {
 		return itemCount;
 	}
 
@@ -191,7 +190,7 @@ public final class DeathChest {
 	 * Returns null if location could not be derived from chest blocks.
 	 * @return Location - the chest location or null if no location found
 	 */
-	public Location getLocation() {
+	public final Location getLocation() {
 
 		Map<ChestBlockType,ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
@@ -263,13 +262,33 @@ public final class DeathChest {
 			return;
 		}
 
-		// transfer contents of any chest blocks to player
+		// create ArrayList to hold items that did not fit in player inventory
+		Collection<ItemStack> remainingItems = new ArrayList<>();
+
+		// transfer contents of any chest blocks to player, putting any items that did not fit in remainingItems
 		for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(this.chestUUID)) {
-			chestBlock.transferContents(player);
+			remainingItems.addAll(chestBlock.transferContents(player));
 		}
 
-		// destroy death chest
-		this.destroy();
+		// if remainingItems is empty, all chest items fit in player inventory so destroy chest and return
+		if (remainingItems.isEmpty()) {
+			this.destroy();
+			return;
+		}
+
+		// send player message
+		plugin.messageManager.sendMessage(player, MessageId.INVENTORY_FULL, this);
+
+		// try to put remaining items back in chest
+		remainingItems = this.fill(remainingItems);
+
+		// if remainingItems is still not empty, items could not be placed back in chest, so drop items at player location
+		// this should never actually occur, but let's play it safe just in case
+		if (!remainingItems.isEmpty()) {
+			for (ItemStack itemStack : remainingItems) {
+				player.getWorld().dropItem(player.getLocation(),itemStack);
+			}
+		}
 	}
 
 
@@ -321,10 +340,10 @@ public final class DeathChest {
 
 
 	/**
-	 * Get the number of players currently viewing a DeathChest inventory
-	 * @return The number of inventory viewers
-     */
-	public final int getViewerCount() {
+	 * Get inventory associated with this death chest
+	 * @return Inventory - the inventory associated with this death chest
+	 */
+	public final Inventory getInventory() {
 
 		// get chest block map
 		Map<ChestBlockType,ChestBlock> chestBlocks = plugin.chestManager.getChestBlockMap(this.chestUUID);
@@ -332,21 +351,33 @@ public final class DeathChest {
 		// get chestBlock
 		Block block = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation().getBlock();
 
-		int count = 0;
-		
-		// confirm block is a chest
-		if (block != null && block.getType().equals(Material.CHEST)) {
-			
-			// get chest inventory object
-			BlockState state = block.getState();
-			Chest chest = (Chest)state;
-			
-			// get count of inventory viewers
-			count = chest.getInventory().getViewers().size();
+		// if block is chest, return chest inventory
+		if (block.getState() instanceof Chest) {
+			return ((Chest) block.getState()).getInventory();
 		}
-		
-		// return number of chest inventory viewers
-		return count;
+
+		// block is not a chest, return null
+		return null;
+	}
+
+
+	/**
+	 * Get the number of players currently viewing a DeathChest inventory
+	 * @return The number of inventory viewers
+     */
+	public final int getViewerCount() {
+
+		// get chest inventory
+		Inventory inventory = this.getInventory();
+
+		// if inventory is not null, return viewer count
+		if (inventory != null) {
+			return inventory.getViewers().size();
+		}
+		else {
+			// inventory is null, so return 0 for viewer count
+			return 0;
+		}
 	}
 
 
@@ -374,6 +405,29 @@ public final class DeathChest {
 
 		// return taskId
 		return chestExpireTask.getTaskId();
+	}
+
+
+	/**
+	 * Place collection of ItemStacks in chest, returning collection of ItemStacks that did not fit in chest
+	 * @param itemStacks Collection of ItemStacks to place in chest
+	 * @return Collection of ItemStacks that did not fit in chest
+	 */
+	final Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
+
+		// create empty list for return
+		Collection<ItemStack> remainingItems = new ArrayList<>();
+
+		// get inventory for this death chest
+		Inventory inventory = this.getInventory();
+
+		// if inventory is not null, add itemStacks to inventory and put leftovers in remainingItems
+		if (inventory != null) {
+			remainingItems = new ArrayList<>(inventory.addItem(itemStacks.toArray(new ItemStack[0])).values());
+		}
+
+		// return collection of items that did not fit in inventory
+		return remainingItems;
 	}
 
 }
