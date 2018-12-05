@@ -153,7 +153,7 @@ public final class DeathChest {
 	 * @return integer - itemCount
 	 */
 	@SuppressWarnings("unused")
-	public int getItemCount() {
+	public final int getItemCount() {
 		return itemCount;
 	}
 
@@ -190,7 +190,7 @@ public final class DeathChest {
 	 * Returns null if location could not be derived from chest blocks.
 	 * @return Location - the chest location or null if no location found
 	 */
-	public Location getLocation() {
+	public final Location getLocation() {
 
 		Map<ChestBlockType,ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
@@ -413,7 +413,7 @@ public final class DeathChest {
 	 * @param itemStacks Collection of ItemStacks to place in chest
 	 * @return Collection of ItemStacks that did not fit in chest
 	 */
-	Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
+	final Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
 
 		// create empty list for return
 		Collection<ItemStack> remainingItems = new ArrayList<>();
