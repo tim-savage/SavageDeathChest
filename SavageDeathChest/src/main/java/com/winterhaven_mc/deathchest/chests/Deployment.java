@@ -29,7 +29,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
  * for chest placement, placing the death chest in game, putting player's dropped items into the chest
  * and attaching a chest sign with a configured message.
  */
-public class Deployment {
+public final class Deployment {
 
 	// reference to main class
 	private final PluginMain plugin = PluginMain.instance;
