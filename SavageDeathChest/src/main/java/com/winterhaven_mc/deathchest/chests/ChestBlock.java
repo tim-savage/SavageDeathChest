@@ -109,15 +109,12 @@ public final class ChestBlock {
 
 
 	/**
-	 * Open the inventory of this DeathChest for player
-	 * @param player the player for whom to open the DeathChest inventory
+	 * Get the inventory of this ChestBlock
+	 * @return Inventory - the inventory of this ChestBlock;
+	 * if ChestBlock is a sign, return inventory of attached ChestBlock;
+	 * returns null if this ChestBlock (or attached block) is not a chest
 	 */
-	public final void openInventory(final Player player) {
-
-		// check for null object
-		if (player == null) {
-			return;
-		}
+	Inventory getInventory() {
 
 		// get the block state of block represented by this ChestBlock
 		BlockState blockState = this.getLocation().getBlock().getState();
@@ -132,18 +129,38 @@ public final class ChestBlock {
 			if (block != null) {
 				blockState = this.getAttachedBlock().getState();
 			}
-			else return;
+			else {
+				return null;
+			}
 		}
 
-		// if block state is not a chest block, do nothing and return
-		if (!blockState.getType().equals(Material.CHEST)) {
+		// if blockState is a chest object, open inventory for player
+		if (blockState instanceof Chest) {
+			return ((Chest)blockState).getInventory();
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * Open the inventory of this ChestBlock for player
+	 * @param player the player for whom to open the ChestBlock inventory
+	 */
+	public final void openInventory(final Player player) {
+
+		// check for null player object
+		if (player == null) {
 			return;
 		}
 
-		// open chest inventory
-		final Chest chest = (Chest)blockState;
-		final Inventory inventory = chest.getInventory();
-		player.openInventory(inventory);
+		// get inventory for this chest block
+		Inventory inventory = this.getInventory();
+
+		// if inventory is not null, open inventory for player
+		if (inventory != null) {
+			player.openInventory(inventory);
+		}
 	}
 
 

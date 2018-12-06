@@ -6,8 +6,6 @@ import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -341,23 +339,24 @@ public final class DeathChest {
 
 	/**
 	 * Get inventory associated with this death chest
-	 * @return Inventory - the inventory associated with this death chest
+	 * @return Inventory - the inventory associated with this death chest;
+	 * returns null if both right and left chest block inventories are invalid
 	 */
 	public final Inventory getInventory() {
 
 		// get chest block map
 		Map<ChestBlockType,ChestBlock> chestBlocks = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
-		// get chestBlock
-		Block block = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getLocation().getBlock();
+		// get right chest inventory
+		Inventory inventory = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getInventory();
 
-		// if block is chest, return chest inventory
-		if (block.getState() instanceof Chest) {
-			return ((Chest) block.getState()).getInventory();
+		// if right chest inventory is null, try left chest
+		if (inventory == null) {
+			inventory = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getInventory();
 		}
 
-		// block is not a chest, return null
-		return null;
+		// return the inventory, or null if right and left chest inventories were both invalid
+		return inventory;
 	}
 
 
