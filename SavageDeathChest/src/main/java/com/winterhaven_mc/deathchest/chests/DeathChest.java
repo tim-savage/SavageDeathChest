@@ -352,7 +352,7 @@ public final class DeathChest {
 
 		// if right chest inventory is null, try left chest
 		if (inventory == null) {
-			inventory = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getInventory();
+			inventory = chestBlocks.get(ChestBlockType.LEFT_CHEST).getInventory();
 		}
 
 		// return the inventory, or null if right and left chest inventories were both invalid
