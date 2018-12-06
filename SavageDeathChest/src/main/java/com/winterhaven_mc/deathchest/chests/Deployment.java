@@ -366,7 +366,7 @@ public final class Deployment {
 	/**
 	 * Check if Collection of ItemStack contains at least one chest
 	 * @param itemStacks Collection of ItemStack to check for chest
-	 * @return boolean
+	 * @return boolean - {@code true} if collection contains at least one chest, {@code false} if not
 	 */
 	private boolean containsChest(final Collection<ItemStack> itemStacks) {
 
