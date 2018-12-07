@@ -220,7 +220,7 @@ public final class DeathChest {
 
 	/**
 	 * Test if a player is the owner of this DeathChest
-	 * @param player The player to test for DeathChestB ownership
+	 * @param player The player to test for DeathChest ownership
 	 * @return {@code true} if the player is the DeathChest owner, false if not
      */
 	public final boolean isOwner(final Player player) {
@@ -249,8 +249,8 @@ public final class DeathChest {
 
 
 	/**
-	 * Transfer all chest contents to player inventory and remove in-game chest.
-	 * Items that do not fit in player inventory will be dropped on ground.
+	 * Transfer all chest contents to player inventory and remove in-game chest if empty.
+	 * Items that do not fit in player inventory will retained in chest.
 	 * @param player the player whose inventory the chest contents will be transferred
 	 */
 	public final void autoLoot(final Player player) {
