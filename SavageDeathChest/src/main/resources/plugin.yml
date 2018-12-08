@@ -9,7 +9,6 @@ commands:
    deathchest:
       aliases: sdc
       description: This is the DeathChest command.
-      permission: deathchest.admin
       permission-message: You don't have required permission <permission>.
       usage:
         /<command> reload - Reloads the configuration file
@@ -45,6 +44,10 @@ permissions:
 
   deathchest.doublechest:
     description: Allow placement of double chests if necessary.
+    default: true
+
+  deathchest.help:
+    description: Allow viewing plugin help.
     default: true
 
   deathchest.list:
