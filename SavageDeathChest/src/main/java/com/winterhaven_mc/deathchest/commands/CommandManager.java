@@ -258,6 +258,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	// > /deathchest list [player]
 	// > /deathchest list [player] [page]
 
+	/**
+	 * list command
+	 *
+	 * @param sender command sender
+	 * @return always returns true, to prevent bukkit command help display
+	 */
 	private boolean listCommand(final CommandSender sender, final String[] args) {
 
 		// if command sender does not have permission to list death chests, output error message and return true
@@ -402,6 +408,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	}
 
 
+	/**
+	 * help command
+	 *
+	 * @param sender command sender
+	 * @return always returns true, to prevent bukkit command help display
+	 */
 	private boolean helpCommand(final CommandSender sender, final String[] args) {
 
 		// if command sender does not have permission to list death chests, output error message and return true
