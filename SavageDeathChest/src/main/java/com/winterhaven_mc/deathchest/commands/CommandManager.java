@@ -95,6 +95,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * Command handler for DeathChest
+	 * @param sender the command sender
+	 * @param cmd the command typed
+	 * @param label the command label
+	 * @param args additional command arguments
+	 * @return always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	@Override
 	public final boolean onCommand(final CommandSender sender,
@@ -140,7 +145,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * Status command
 	 *
 	 * @param sender Command sender
-	 * @return true if command executed without error, false to output help message
+	 * @return always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean statusCommand(final CommandSender sender) {
 
@@ -211,7 +216,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * reload command
 	 *
 	 * @param sender command sender
-	 * @return always returns true, to prevent bukkit command help display
+	 * @return always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean reloadCommand(final CommandSender sender) {
 
@@ -262,7 +267,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * list command
 	 *
 	 * @param sender command sender
-	 * @return always returns true, to prevent bukkit command help display
+	 * @param args additional command arguments
+	 * @return always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean listCommand(final CommandSender sender, final String[] args) {
 
@@ -412,7 +418,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * help command
 	 *
 	 * @param sender command sender
-	 * @return always returns true, to prevent bukkit command help display
+	 * @param args additional command arguments
+	 * @return always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean helpCommand(final CommandSender sender, final String[] args) {
 
@@ -452,7 +459,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	/**
 	 * Display command usage
 	 *
-	 * @param sender        the command sender
+	 * @param sender the command sender
 	 * @param passedCommand the command for which to display usage
 	 */
 	private void displayUsage(final CommandSender sender, final String passedCommand) {
