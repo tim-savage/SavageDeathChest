@@ -82,7 +82,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 				for (String subcommand : subcommands) {
 					if (sender.hasPermission("deathchest." + subcommand)
-							&& subcommand.startsWith(args[0].toLowerCase())) {
+							&& subcommand.startsWith(args[1].toLowerCase())) {
 						returnList.add(subcommand);
 					}
 				}
@@ -106,7 +106,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		// if no arguments passed, set subcommand to status
 		if (args.length < 1) {
-			subcommand = "status";
+			subcommand = "help";
 		} else {
 			subcommand = args[0];
 		}
