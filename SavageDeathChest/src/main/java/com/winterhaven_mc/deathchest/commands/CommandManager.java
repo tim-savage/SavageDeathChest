@@ -47,6 +47,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * Tab completer for DeathChest
+ 	 * @param sender the command sender
+	 * @param command the command typed
+	 * @param alias alias for the command
+	 * @param args additional command arguments
+	 * @return List of String - the possible matching values for tab completion
 	 */
 	@Override
 	public final List<String> onTabComplete(final CommandSender sender,
@@ -99,7 +104,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @param cmd the command typed
 	 * @param label the command label
 	 * @param args additional command arguments
-	 * @return always returns {@code true}, to suppress bukkit builtin help message
+	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	@Override
 	public final boolean onCommand(final CommandSender sender,
@@ -145,7 +150,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * Status command
 	 *
 	 * @param sender Command sender
-	 * @return always returns {@code true}, to suppress bukkit builtin help message
+	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean statusCommand(final CommandSender sender) {
 
@@ -216,7 +221,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * reload command
 	 *
 	 * @param sender command sender
-	 * @return always returns {@code true}, to suppress bukkit builtin help message
+	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean reloadCommand(final CommandSender sender) {
 
@@ -268,7 +273,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 *
 	 * @param sender command sender
 	 * @param args additional command arguments
-	 * @return always returns {@code true}, to suppress bukkit builtin help message
+	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean listCommand(final CommandSender sender, final String[] args) {
 
@@ -419,7 +424,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 *
 	 * @param sender command sender
 	 * @param args additional command arguments
-	 * @return always returns {@code true}, to suppress bukkit builtin help message
+	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean helpCommand(final CommandSender sender, final String[] args) {
 
