@@ -113,13 +113,9 @@ MESSAGES:
     enabled: true
     string: '&cToo many arguments!'
 
-  COMMAND_FAIL_RELOAD_PERMISSION:
+  COMMAND_FAIL_HELP_PERMISSION:
     enabled: true
-    string: '&cYou do not have permission to reload DeathChest configuration!'
-
-  COMMAND_FAIL_STATUS_PERMISSION:
-    enabled: true
-    string: '&cYou do not have permission to view DeathChest settings!'
+    string: '&cYou do not have permission to display DeathChest help!'
 
   COMMAND_FAIL_LIST_PERMISSION:
     enabled: true
@@ -128,6 +124,14 @@ MESSAGES:
   COMMAND_FAIL_LIST_OTHER_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to list other player''s DeathChests!'
+
+  COMMAND_FAIL_RELOAD_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to reload DeathChest configuration!'
+
+  COMMAND_FAIL_STATUS_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to view DeathChest settings!'
 
   COMMAND_SUCCESS_RELOAD:
     enabled: true

@@ -110,6 +110,18 @@ MESSAGES:
     enabled: true
     string: '&c¡Demasiados parámetros!'
 
+  COMMAND_FAIL_HELP_PERMISSION:
+    enabled: true
+    string: '&c¡No tienes permiso para mostrar la ayuda de DeathChest!'
+
+  COMMAND_FAIL_LIST_PERMISSION:
+    enabled: true
+    string: '&c¡No tienes permiso para listar DeathChests!'
+
+  COMMAND_FAIL_LIST_OTHER_PERMISSION:
+    enabled: true
+    string: '&c¡No tienes permiso para enumerar los DeathChests de otros jugadores!'
+
   COMMAND_FAIL_RELOAD_PERMISSION:
     enabled: true
     string: '&c¡No tienes permiso para recargar la configuración de DeathChest!'

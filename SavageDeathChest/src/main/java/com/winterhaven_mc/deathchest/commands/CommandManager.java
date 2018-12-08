@@ -28,10 +28,13 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	private final PluginMain plugin;
 	private final String pluginName;
 
+	private final static ChatColor helpColor = ChatColor.YELLOW;
+	private final static ChatColor usageColor = ChatColor.GOLD;
+
 	// constant List of subcommands
 	private final static List<String> subcommands =
 			Collections.unmodifiableList(new ArrayList<>(
-					Arrays.asList("list","reload","status")));
+					Arrays.asList("help", "list", "reload", "status")));
 
 
 	public CommandManager(final PluginMain plugin) {
@@ -63,19 +66,26 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 					returnList.add(subcommand);
 				}
 			}
-		}
-
-		else if (args.length == 2) {
+		} else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("list")
 					&& sender.hasPermission("deathchest.list.other")) {
 
 				// get map of chest ownerUUID,name from all current chests
-				Map<UUID,String> chestOwners = new HashMap<>();
+				Map<UUID, String> chestOwners = new HashMap<>();
 				for (DeathChest deathChest : plugin.chestManager.getChestList()) {
 					chestOwners.put(deathChest.getOwnerUUID(),
 							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName());
 				}
 				returnList.addAll(chestOwners.values());
+			} else if (args[0].equalsIgnoreCase("help")
+					&& sender.hasPermission("deathchest.help")) {
+
+				for (String subcommand : subcommands) {
+					if (sender.hasPermission("deathchest." + subcommand)
+							&& subcommand.startsWith(args[0].toLowerCase())) {
+						returnList.add(subcommand);
+					}
+				}
 			}
 		}
 
@@ -97,8 +107,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		// if no arguments passed, set subcommand to status
 		if (args.length < 1) {
 			subcommand = "status";
-		}
-		else {
+		} else {
 			subcommand = args[0];
 		}
 
@@ -117,6 +126,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			return listCommand(sender, args);
 		}
 
+		// list command
+		if (subcommand.equalsIgnoreCase("help")) {
+			return helpCommand(sender, args);
+		}
+
 		// return true to suppress display of bukkit command help
 		return true;
 	}
@@ -124,6 +138,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * Status command
+	 *
 	 * @param sender Command sender
 	 * @return true if command executed without error, false to output help message
 	 */
@@ -132,10 +147,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		if (!sender.hasPermission("deathchest.status")) {
 			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_STATUS_PERMISSION);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+			return true;
 		}
 
 		String versionString = this.plugin.getDescription().getVersion();
-		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: " 
+		sender.sendMessage(ChatColor.DARK_AQUA + pluginName + ChatColor.AQUA + "Version: "
 				+ ChatColor.RESET + versionString);
 
 		if (plugin.debug) {
@@ -149,22 +165,24 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 				+ ChatColor.RESET + plugin.dataStore.getName());
 
 		int expireTime = plugin.getConfig().getInt("expire-time");
-		if (expireTime == 0) { expireTime = -1;	}
+		if (expireTime == 0) {
+			expireTime = -1;
+		}
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
 				+ ChatColor.RESET + plugin.messageManager.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
 
 		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
-		
+
 		int count = 0;
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
-			
+
 			if (pp.isInstalled()) {
-				
+
 				List<String> pluginSettings = new ArrayList<>();
-				
+
 				count++;
 				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
-				
+
 				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".check-on-place")) {
 					pluginSettings.add("check-on-place");
 				}
@@ -174,12 +192,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 				statusString = statusString + ChatColor.RESET + pluginSettings.toString();
 				sender.sendMessage(statusString);
 			}
-		}		
+		}
 		if (count == 0) {
 			sender.sendMessage(ChatColor.AQUA + "  [ NONE ENABLED ]");
 		}
-		
-		sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET + 
+
+		sender.sendMessage(ChatColor.GREEN + "Enabled Worlds: " + ChatColor.RESET +
 				plugin.worldManager.getEnabledWorldNames().toString());
 
 		sender.sendMessage(ChatColor.GREEN + "Replaceable Blocks: " + ChatColor.RESET +
@@ -191,6 +209,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * reload command
+	 *
 	 * @param sender command sender
 	 * @return always returns true, to prevent bukkit command help display
 	 */
@@ -199,23 +218,24 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		if (!sender.hasPermission("deathchest.reload")) {
 			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_RELOAD_PERMISSION);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+			return true;
 		}
 
 		// copy default config from jar if it doesn't exist
 		plugin.saveDefaultConfig();
-		
+
 		// reload config file
 		plugin.reloadConfig();
-		
+
 		// reload replaceable blocks
 		plugin.chestManager.replaceableBlocks.reload();
-		
+
 		// update debug field
 		plugin.debug = plugin.getConfig().getBoolean("debug");
-		
+
 		// update enabledWorlds list
 		plugin.worldManager.reload();
-		
+
 		// reload messages
 		plugin.messageManager.reload();
 
@@ -279,8 +299,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			// if second argument not a number, try to match player name
 			try {
 				page = Integer.parseInt(args[1]);
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				// if sender does not have list other permission, send message and return
 				if (!sender.hasPermission("deathchest.list.other")) {
 					plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_LIST_OTHER_PERMISSION);
@@ -354,7 +373,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			page = pageCount;
 		}
 		int startIndex = ((page - 1) * itemsPerPage);
-		int endIndex = Math.min((page*itemsPerPage),displayRecords.size());
+		int endIndex = Math.min((page * itemsPerPage), displayRecords.size());
 
 		List<DeathChest> displayRange = displayRecords.subList(startIndex, endIndex);
 
@@ -372,8 +391,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (passedPlayerName.equals("*")) {
 				plugin.messageManager.sendMessage(sender, MessageId.LIST_ITEM_ALL, deathChest, listCount);
-			}
-			else {
+			} else {
 				plugin.messageManager.sendMessage(sender, MessageId.LIST_ITEM, deathChest, listCount);
 			}
 		}
@@ -381,6 +399,81 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		// display list footer
 		plugin.messageManager.sendMessage(sender, MessageId.LIST_FOOTER, page, pageCount);
 		return true;
+	}
+
+
+	private boolean helpCommand(final CommandSender sender, final String[] args) {
+
+		// if command sender does not have permission to list death chests, output error message and return true
+		if (!sender.hasPermission("deathchest.help")) {
+			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_HELP_PERMISSION);
+			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+			return true;
+		}
+
+		String command = "help";
+
+		if (args.length > 1) {
+			command = args[1];
+		}
+
+		String helpMessage = "That is not a valid command.";
+
+		if (command.equalsIgnoreCase("help")) {
+			helpMessage = "Displays help for DeathChest commands.";
+		}
+		if (command.equalsIgnoreCase("list")) {
+			helpMessage = "Displays a list of DeathChests.";
+		}
+		if (command.equalsIgnoreCase("reload")) {
+			helpMessage = "Reloads the configuration without needing to restart the server.";
+		}
+		if (command.equalsIgnoreCase("status")) {
+			helpMessage = "Displays current configuration settings.";
+		}
+		sender.sendMessage(helpColor + helpMessage);
+		displayUsage(sender, command);
+		return true;
+	}
+
+
+	/**
+	 * Display command usage
+	 *
+	 * @param sender        the command sender
+	 * @param passedCommand the command for which to display usage
+	 */
+	private void displayUsage(final CommandSender sender, final String passedCommand) {
+
+		String command = passedCommand;
+
+		if (command.isEmpty() || command.equalsIgnoreCase("help")) {
+			command = "all";
+		}
+
+		if ((command.equalsIgnoreCase("help")
+				|| command.equalsIgnoreCase("all"))
+				&& sender.hasPermission("deathchest.help")) {
+			sender.sendMessage(usageColor + "/deathchest help [command]");
+		}
+		if ((command.equalsIgnoreCase("list")
+				|| command.equalsIgnoreCase("all"))
+				&& sender.hasPermission("deathchest.list")) {
+			sender.sendMessage(usageColor + "/deathchest list [page]");
+			if (sender.hasPermission("deathchest.list.other")) {
+				sender.sendMessage(usageColor + "/deathchest list [username] [page]");
+			}
+		}
+		if ((command.equalsIgnoreCase("reload")
+				|| command.equalsIgnoreCase("all"))
+				&& sender.hasPermission("deathchest.reload")) {
+			sender.sendMessage(usageColor + "/deathchest reload");
+		}
+		if ((command.equalsIgnoreCase("status")
+				|| command.equalsIgnoreCase("all"))
+				&& sender.hasPermission("deathchest.status")) {
+			sender.sendMessage(usageColor + "/deathchest status");
+		}
 	}
 
 }
