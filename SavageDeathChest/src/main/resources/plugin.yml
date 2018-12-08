@@ -11,8 +11,8 @@ commands:
       description: This is the DeathChest command.
       permission-message: You don't have required permission <permission>.
       usage:
-        /<command> reload - Reloads the configuration file
-      
+        /<command> [command]
+
 permissions:
   deathchest.chest:
     description: Allow the creation of a death chest.
