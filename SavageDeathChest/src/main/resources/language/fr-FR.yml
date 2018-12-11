@@ -11,6 +11,7 @@ TIME_STRINGS:
   SECOND: 'seconde'
   SECOND_PLURAL: 'secondes'
   UNLIMITED: 'temps illimité'
+  LESS_THAN_ONE: 'moins d''un'
 
 
 ##########################
