@@ -74,6 +74,10 @@ MESSAGES:
     enabled: true
     string: '&cLe déploiement dans la poitrine de la mort a été empêché par une poitrine adjacente existante.'
 
+  CHEST_DENIED_SPAWN_RADIUS:
+    enabled: true
+    string: '&cLe déploiement de la salle de la mort a été empêché par la protection d''origine mondiale.'
+
   INVENTORY_EMPTY:
     enabled: true
     string: '&cVous aviez votre inventaire vide, aucun coffre n''a donc été placé.'

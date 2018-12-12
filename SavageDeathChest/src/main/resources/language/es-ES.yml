@@ -74,6 +74,10 @@ MESSAGES:
     enabled: true
     string: '&cEl despliegue del cofre de la muerte fue prevenido por un cofre adyacente existente.'
 
+  CHEST_DENIED_SPAWN_RADIUS:
+    enabled: true
+    string: '&cEl despliegue del cofre de la muerte fue prevenido por protección de origen mundial.'
+
   INVENTORY_EMPTY:
     enabled: true
     string: '&cNo tenías ningún inventario para poner en un cofre de la muerte.'

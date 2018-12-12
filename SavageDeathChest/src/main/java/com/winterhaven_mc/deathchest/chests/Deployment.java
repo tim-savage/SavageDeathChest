@@ -120,6 +120,10 @@ public final class Deployment {
 			case NO_CHEST:
 				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
 				break;
+
+			case SPAWN_RADIUS:
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_SPAWN_RADIUS);
+				break;
 		}
 
 		// if result is negative, return now
@@ -198,6 +202,13 @@ public final class Deployment {
 
 			// place chest at result location
 			placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
+
+			// set chest type to single chest
+			Chest chest = (Chest) result.getLocation().getBlock().getState();
+			BlockData chestBlockData = chest.getBlockData();
+			((org.bukkit.block.data.type.Chest)chestBlockData).setType(org.bukkit.block.data.type.Chest.Type.SINGLE);
+			chest.setBlockData(chestBlockData);
+			chest.update();
 
 			// fill chest
 			remainingItems = deathChest.fill(remainingItems);
@@ -599,7 +610,7 @@ public final class Deployment {
 										 final ChestSize chestSize) {
 
 		// test left chest location
-		Result result = validateChestLocation(player, location, ChestBlockType.LEFT_CHEST);
+		Result result = validateChestLocation(player, location);
 
 		// if left chest is not successful, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
@@ -610,7 +621,7 @@ public final class Deployment {
 		if (chestSize.equals(ChestSize.DOUBLE)) {
 
 			// test right chest block location
-			result = validateChestLocation(player, location, ChestBlockType.RIGHT_CHEST);
+			result = validateChestLocation(player, getLocationToRight(location));
 		}
 
 		return result;
@@ -621,20 +632,11 @@ public final class Deployment {
 	 * Validate chest location for chest type
 	 * @param player the player for whom the chest is being placed
 	 * @param location the location to test
-	 * @param chestBlockType the type of chest block (left, right)
 	 * @return Result - the result object for the tested location
 	 */
-	private Result validateChestLocation(final Player player,
-										 final Location location,
-										 final ChestBlockType chestBlockType) {
+	private Result validateChestLocation(final Player player, final Location location) {
 
-		Location testLocation = location;
-
-		if (chestBlockType.equals(ChestBlockType.RIGHT_CHEST)) {
-			testLocation = getLocationToRight(location);
-		}
-
-		Block block = testLocation.getBlock();
+		Block block = location.getBlock();
 
 		// if block at location is not replaceable block, return negative result
 		if (!plugin.chestManager.replaceableBlocks.contains(block.getType())) {
@@ -650,6 +652,11 @@ public final class Deployment {
 		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 		if (protectionPlugin != null) {
 			return new Result(ResultCode.PROTECTION_PLUGIN, protectionPlugin);
+		}
+
+		// if block at location is within spawn protection radius, return negative result
+		if (isSpawnProtected(location)) {
+			return new Result(ResultCode.SPAWN_RADIUS);
 		}
 
 		return new Result(ResultCode.SUCCESS, location);
@@ -790,6 +797,29 @@ public final class Deployment {
 		}
 
 		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
+	}
+
+
+	/**
+	 * Check if location is within world spawn protection radius
+	 * @param location the location to check
+	 * @return {@code true) if passed location is within world spawn protection radius, {@code false) if not
+	 */
+	private boolean isSpawnProtected(final Location location) {
+
+		// check for null parameter
+		if (location == null) {
+			return false;
+		}
+
+		// get world spawn location
+		Location worldSpawn = plugin.worldManager.getSpawnLocation(location.getWorld());
+
+		// get spawn protection radius
+		int spawnRadius = plugin.getServer().getSpawnRadius();
+
+		// if location is within spawn radius of world spawn location, return true; else return false
+		return location.distanceSquared(worldSpawn) < (spawnRadius ^ 2);
 	}
 
 }
