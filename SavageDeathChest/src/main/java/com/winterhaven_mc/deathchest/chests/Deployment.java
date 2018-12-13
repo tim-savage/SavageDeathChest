@@ -428,7 +428,7 @@ public final class Deployment {
 
 
 	/**
-	 * Search for a valid location to place a single chest,
+	 * Search for a valid location to place a chest,
 	 * taking into account replaceable blocks, grass path blocks and
 	 * restrictions from other block protection plugins if configured
 	 * @param player Player that deathchest is being deployed for
