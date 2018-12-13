@@ -11,6 +11,7 @@ TIME_STRINGS:
   SECOND: 'second'
   SECOND_PLURAL: 'seconds'
   UNLIMITED: 'unlimited time'
+  LESS_THAN_ONE: 'less than one'
 
 
 ##################
@@ -76,6 +77,10 @@ MESSAGES:
     enabled: true
     string: '&cDeath chest deployment was prevented by an existing adjacent chest.'
 
+  CHEST_DENIED_SPAWN_RADIUS:
+    enabled: true
+    string: '&cDeath chest deployment was prevented by world spawn protection.'
+
   INVENTORY_EMPTY:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
@@ -113,13 +118,9 @@ MESSAGES:
     enabled: true
     string: '&cToo many arguments!'
 
-  COMMAND_FAIL_RELOAD_PERMISSION:
+  COMMAND_FAIL_HELP_PERMISSION:
     enabled: true
-    string: '&cYou do not have permission to reload DeathChest configuration!'
-
-  COMMAND_FAIL_STATUS_PERMISSION:
-    enabled: true
-    string: '&cYou do not have permission to view DeathChest settings!'
+    string: '&cYou do not have permission to display DeathChest help!'
 
   COMMAND_FAIL_LIST_PERMISSION:
     enabled: true
@@ -128,6 +129,14 @@ MESSAGES:
   COMMAND_FAIL_LIST_OTHER_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to list other player''s DeathChests!'
+
+  COMMAND_FAIL_RELOAD_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to reload DeathChest configuration!'
+
+  COMMAND_FAIL_STATUS_PERMISSION:
+    enabled: true
+    string: '&cYou do not have permission to view DeathChest settings!'
 
   COMMAND_SUCCESS_RELOAD:
     enabled: true

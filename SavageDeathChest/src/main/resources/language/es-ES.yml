@@ -11,6 +11,7 @@ TIME_STRING:
   SECOND: 'segundo'
   SECOND_PLURAL: 'segundos'
   UNLIMITED: 'tiempo ilimitado'
+  LESS_THAN_ONE: 'menos de un'
 
 
 ##################
@@ -73,6 +74,10 @@ MESSAGES:
     enabled: true
     string: '&cEl despliegue del cofre de la muerte fue prevenido por un cofre adyacente existente.'
 
+  CHEST_DENIED_SPAWN_RADIUS:
+    enabled: true
+    string: '&cEl despliegue del cofre de la muerte fue prevenido por protección de origen mundial.'
+
   INVENTORY_EMPTY:
     enabled: true
     string: '&cNo tenías ningún inventario para poner en un cofre de la muerte.'
@@ -109,6 +114,18 @@ MESSAGES:
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
     string: '&c¡Demasiados parámetros!'
+
+  COMMAND_FAIL_HELP_PERMISSION:
+    enabled: true
+    string: '&c¡No tienes permiso para mostrar la ayuda de DeathChest!'
+
+  COMMAND_FAIL_LIST_PERMISSION:
+    enabled: true
+    string: '&c¡No tienes permiso para listar DeathChests!'
+
+  COMMAND_FAIL_LIST_OTHER_PERMISSION:
+    enabled: true
+    string: '&c¡No tienes permiso para enumerar los DeathChests de otros jugadores!'
 
   COMMAND_FAIL_RELOAD_PERMISSION:
     enabled: true

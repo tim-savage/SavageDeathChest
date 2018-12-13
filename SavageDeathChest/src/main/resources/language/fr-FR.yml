@@ -11,6 +11,7 @@ TIME_STRINGS:
   SECOND: 'seconde'
   SECOND_PLURAL: 'secondes'
   UNLIMITED: 'temps illimité'
+  LESS_THAN_ONE: 'moins d''un'
 
 
 ##########################
@@ -73,6 +74,10 @@ MESSAGES:
     enabled: true
     string: '&cLe déploiement dans la poitrine de la mort a été empêché par une poitrine adjacente existante.'
 
+  CHEST_DENIED_SPAWN_RADIUS:
+    enabled: true
+    string: '&cLe déploiement de la salle de la mort a été empêché par la protection d''origine mondiale.'
+
   INVENTORY_EMPTY:
     enabled: true
     string: '&cVous aviez votre inventaire vide, aucun coffre n''a donc été placé.'
@@ -109,6 +114,18 @@ MESSAGES:
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
     string: '&cTrop de paramètres!'
+
+  COMMAND_FAIL_HELP_PERMISSION:
+    enabled: true
+    string: '&cVous n''êtes pas autorisé à afficher l''aide de DeathChest!'
+
+  COMMAND_FAIL_LIST_PERMISSION:
+    enabled: true
+    string: '&cVous n''avez pas la permission de lister DeathChests!'
+
+  COMMAND_FAIL_LIST_OTHER_PERMISSION:
+    enabled: true
+    string: '&cVous n''avez pas la permission de lister les DeathChests des autres joueurs!'
 
   COMMAND_FAIL_RELOAD_PERMISSION:
     enabled: true
