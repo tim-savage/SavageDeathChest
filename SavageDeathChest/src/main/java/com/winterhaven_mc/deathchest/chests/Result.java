@@ -61,6 +61,20 @@ final class Result {
 	 * Class constructor
 	 * @param resultCode initial result code for result
 	 */
+	Result(final ResultCode resultCode,
+		   final Location location,
+		   final Collection<ItemStack> remainingItems) {
+		this.resultCode = resultCode;
+		this.location = location;
+		this.protectionPlugin = null;
+		this.remainingItems = remainingItems;
+	}
+
+
+	/**
+	 * Class constructor
+	 * @param resultCode initial result code for result
+	 */
 	Result(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
 		this.resultCode = resultCode;
 		this.location = null;

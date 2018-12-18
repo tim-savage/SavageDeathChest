@@ -148,17 +148,6 @@ public final class Deployment {
 	 */
 	private Result deployChest(final Player player, final Collection<ItemStack> droppedItems) {
 
-		// if require-chest option is enabled
-		// and player does not have a chest in inventory
-		// and player does not have permission override
-		if (plugin.getConfig().getBoolean("require-chest")
-				&& !player.hasPermission("deathchest.freechest")
-				&& !containsChest(droppedItems)) {
-
-			// return NO_CHEST result
-			return new Result(ResultCode.NO_CHEST, droppedItems);
-		}
-
 		// combine stacks of same items where possible
 		List<ItemStack> remainingItems = consolidateItemStacks(droppedItems);
 
@@ -182,23 +171,32 @@ public final class Deployment {
 	 * @param droppedItems the player's items dropped on death
 	 * @return Result - the result of the attempted DeathChest deployment
 	 */
-	private Result deploySingleChest(final Player player, final List<ItemStack> droppedItems) {
+	private Result deploySingleChest(final Player player, final Collection<ItemStack> droppedItems) {
 
-		Collection<ItemStack> remainingItems = droppedItems;
+		// make copy of dropped items
+		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
+
+		// if require-chest option is enabled
+		// and player does not have permission override
+		// remove one chest from chest items
+		if (plugin.getConfig().getBoolean("require-chest")
+				&& !player.hasPermission("deathchest.freechest")) {
+
+			// check that player has chest in inventory
+			if (containsChest(remainingItems)) {
+				remainingItems = removeOneChest(remainingItems);
+			}
+			// else return NO_CHEST result
+			else {
+				return new Result(ResultCode.NO_CHEST, remainingItems);
+			}
+		}
 
 		// search for valid chest location
 		Result result = findChestLocation(player, ChestSize.SINGLE);
 
 		// if search successful, place chest
 		if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-
-			// if require-chest option is enabled
-			// and player does not have permission override
-			// remove one chest from chest items
-			if (plugin.getConfig().getBoolean("require-chest")
-					&& !player.hasPermission("deathchest.freechest")) {
-				removeOneChest(remainingItems);
-			}
 
 			// place chest at result location
 			placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
@@ -230,84 +228,86 @@ public final class Deployment {
 	 */
 	private Result deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 
-		Collection<ItemStack> remainingItems = droppedItems;
+		// make copy of dropped items
+		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
 
 		// search for valid chest location
 		Result result = findChestLocation(player, ChestSize.DOUBLE);
 
 		// if only single chest location found, deploy single chest
 		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
-			result = deploySingleChest(player, droppedItems);
-			return new Result(ResultCode.PARTIAL_SUCCESS,
-					result.getLocation(),
-					result.getProtectionPlugin(),
-					result.getRemainingItems());
+			result = deploySingleChest(player, remainingItems);
+
+			// if single chest deployment was successful, return PARTIAL_SUCCESS result
+			if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+				return new Result(ResultCode.PARTIAL_SUCCESS,
+						result.getLocation(),
+						result.getProtectionPlugin(),
+						result.getRemainingItems());
+			}
+			// else return unsuccessful result of single chest deployment
+			else {
+				return result;
+			}
 		}
 
 		// if search failed, return result with remaining items
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-			return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
+			return new Result(result.getResultCode(),
+					result.getLocation(),
+					result.getProtectionPlugin(),
+					remainingItems);
 		}
 
 		// if require-chest option is enabled
 		// and player does not have permission override
-		// remove one chest from chest items
 		if (plugin.getConfig().getBoolean("require-chest")
 				&& !player.hasPermission("deathchest.freechest")) {
-			removeOneChest(remainingItems);
+
+			// check that player has chest in inventory
+			if (containsChest(remainingItems)) {
+
+				// remove one chest from remaining items
+				remainingItems = removeOneChest(remainingItems);
+			}
+			// else return NO_CHEST result
+			else {
+				return new Result(ResultCode.NO_CHEST, remainingItems);
+			}
 		}
 
 		// place chest at result location
 		placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
 
-		// fill chest
-		remainingItems = deathChest.fill(remainingItems);
-
 		// place sign on right chest
 		placeSign(player, result.getLocation().getBlock());
 
-		// if second chest still needed
-		// and require-chest option is enabled
+		// attempt to place second chest
+
+		// if require-chest option is enabled
 		// and player does not have permission override
-		// and player does not have a chest in inventory
-		// set remaining items in result
-		if (remainingItems.size() > 0
-				&& plugin.getConfig().getBoolean("require-chest")
-				&& !player.hasPermission("deathchest.freechest")
-				&& !containsChest(remainingItems)) {
+		if (plugin.getConfig().getBoolean("require-chest")
+				&& !player.hasPermission("deathchest.freechest")) {
 
-			return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
-		}
-		else {
-			// if second chest still needed
-			// and require-chest option is enabled
-			// and player does not have permission override
-			// and player does have chest in inventory
-			// remove one chest from remaining items
-			if (remainingItems.size() > 0
-					&& plugin.getConfig().getBoolean("require-chest")
-					&& !player.hasPermission("deathchest.freechest")
-					&& containsChest(remainingItems)) {
-				removeOneChest(remainingItems);
+			// check that player has chest in inventory
+			if (containsChest(remainingItems)) {
+				remainingItems = removeOneChest(remainingItems);
 			}
-
-			// if second chest still needed
-			// and valid double chest location was found,
-			// place second chest at location to right of result location
-			if (remainingItems.size() > 0
-					&& result.getResultCode().equals(ResultCode.SUCCESS)) {
-
-				// place chest at result location
-				placeChest(getLocationToRight(result.getLocation()), ChestBlockType.LEFT_CHEST);
+			// else return new PARTIAL_SUCCESS result with location and remaining items after filling chest
+			else {
+				return new Result(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
 			}
 		}
+
+		// place chest at result location
+		placeChest(getLocationToRight(result.getLocation()), ChestBlockType.LEFT_CHEST);
 
 		// set chest type to left/right for double chest
 
 		// get right chest block
 		Block rightBlock = result.getLocation().getBlock();
 
-		// left block is to player's right
+		// get left chest block (left chest block is to player's right)
 		Block leftBlock = getLocationToRight(result.getLocation()).getBlock();
 
 		// get left and right chest block state
@@ -334,10 +334,8 @@ public final class Deployment {
 		rightChest.update();
 		leftChest.update();
 
-		// fill chest after left/right chest types have been set, so chest inventory is a double chest inventory
-		remainingItems = deathChest.fill(remainingItems);
-
-		return new Result(result.getResultCode(),result.getLocation(),result.getProtectionPlugin(),remainingItems);
+		// return new result with remaining items after filling chest
+		return new Result(result.getResultCode(), result.getLocation(),	deathChest.fill(remainingItems));
 	}
 
 
@@ -402,14 +400,11 @@ public final class Deployment {
 	 * the list and return. If a stack contains more than one chest, decrease the stack amount by one and return.
 	 * @param itemStacks List of ItemStack to remove chest
 	 */
-	private void removeOneChest(final Collection<ItemStack> itemStacks) {
+	private Collection<ItemStack> removeOneChest(final Collection<ItemStack> itemStacks) {
 
-		// check for null parameter
-		if (itemStacks == null) {
-			return;
-		}
+		Collection<ItemStack> remainingItems = new ArrayList<>(itemStacks);
 
-		Iterator<ItemStack> iterator = itemStacks.iterator();
+		Iterator<ItemStack> iterator = remainingItems.iterator();
 
 		while (iterator.hasNext()) {
 
@@ -424,6 +419,7 @@ public final class Deployment {
 				break;
 			}
 		}
+		return remainingItems;
 	}
 
 
@@ -820,6 +816,15 @@ public final class Deployment {
 
 		// if location is within spawn radius of world spawn location, return true; else return false
 		return location.distanceSquared(worldSpawn) < (spawnRadius ^ 2);
+	}
+
+
+	@SuppressWarnings("unused")
+	private void logResult(Result result) {
+		plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
+		plugin.getLogger().info("Location: " + result.getLocation().toString());
+		plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin().getPluginName());
+		plugin.getLogger().info("Remaining Items: " + result.getRemainingItems().toString());
 	}
 
 }
