@@ -181,6 +181,9 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
 				+ ChatColor.RESET + plugin.messageManager.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
 
+		sender.sendMessage(ChatColor.GREEN + "Require Chest: "
+				+ ChatColor.RESET + plugin.getConfig().getString("require-chest"));
+
 		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
 
 		int count = 0;
