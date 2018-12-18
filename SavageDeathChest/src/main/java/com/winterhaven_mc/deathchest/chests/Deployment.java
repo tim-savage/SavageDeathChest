@@ -178,12 +178,13 @@ public final class Deployment {
 
 		// if require-chest option is enabled
 		// and player does not have permission override
-		// remove one chest from chest items
 		if (plugin.getConfig().getBoolean("require-chest")
 				&& !player.hasPermission("deathchest.freechest")) {
 
 			// check that player has chest in inventory
 			if (containsChest(remainingItems)) {
+
+				// remove one chest from remaining items
 				remainingItems = removeOneChest(remainingItems);
 			}
 			// else return NO_CHEST result
