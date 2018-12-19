@@ -408,6 +408,18 @@ public final class DeathChest {
 
 
 	/**
+	 * Cancel expire task for this death chest
+	 */
+	void cancelExpireTask() {
+
+		// if task id is positive integer, cancel task
+		if (this.expireTaskId > 0) {
+			plugin.getServer().getScheduler().cancelTask(this.expireTaskId);
+		}
+	}
+
+
+	/**
 	 * Place collection of ItemStacks in chest, returning collection of ItemStacks that did not fit in chest
 	 * @param itemStacks Collection of ItemStacks to place in chest
 	 * @return Collection of ItemStacks that did not fit in chest
