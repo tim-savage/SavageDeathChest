@@ -34,7 +34,8 @@ public final class Deployment {
 	// reference to main class
 	private final PluginMain plugin = PluginMain.instance;
 
-	private DeathChest deathChest;
+	// death chest object
+	private final DeathChest deathChest;
 
 
 	/**
@@ -48,6 +49,9 @@ public final class Deployment {
 
 		// get dropped items
 		List<ItemStack> droppedItems = event.getDrops();
+
+		// create new deathChest object for player
+		this.deathChest = new DeathChest(player);
 
 		// if player's current world is not enabled in config, do nothing
 		// and allow inventory items to drop on ground
@@ -78,9 +82,6 @@ public final class Deployment {
 			plugin.messageManager.sendMessage(player, MessageId.INVENTORY_EMPTY);
 			return;
 		}
-
-		// create new deathChest object for player
-		this.deathChest = new DeathChest(player);
 
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
 		Result result = deployChest(player, droppedItems);
