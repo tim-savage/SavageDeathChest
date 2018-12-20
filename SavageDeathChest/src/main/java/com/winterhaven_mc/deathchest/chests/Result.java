@@ -4,7 +4,6 @@ import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,7 +11,6 @@ import java.util.Collection;
 /**
  * A class that encapsulates fields to be returned as the result of a chest search
  */
-@Immutable
 final class Result {
 
 	private final ResultCode resultCode;
