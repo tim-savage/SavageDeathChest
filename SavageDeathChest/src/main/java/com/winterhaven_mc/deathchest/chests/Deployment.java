@@ -92,6 +92,11 @@ public final class Deployment {
 		// drop any items that couldn't be placed in a death chest
 		event.getDrops().addAll(result.getRemainingItems());
 
+		// if debugging, log result
+		if (plugin.debug) {
+			logResult(result);
+		}
+
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
@@ -127,9 +132,12 @@ public final class Deployment {
 				break;
 		}
 
-		// if result is negative, return now
+		// if result is negative, cancel expire task and return
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)
 				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
+
+			// cancel DeathChest expire task
+			deathChest.cancelExpireTask();
 			return;
 		}
 
@@ -823,10 +831,18 @@ public final class Deployment {
 
 	@SuppressWarnings("unused")
 	private void logResult(Result result) {
-		plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
-		plugin.getLogger().info("Location: " + result.getLocation().toString());
-		plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin().getPluginName());
-		plugin.getLogger().info("Remaining Items: " + result.getRemainingItems().toString());
+		if (result.getResultCode() != null) {
+			plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
+		}
+		if (result.getLocation() != null) {
+			plugin.getLogger().info("Location: " + result.getLocation().toString());
+		}
+		if (result.getProtectionPlugin() != null) {
+			plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin().getPluginName());
+		}
+		if (result.getRemainingItems() != null) {
+			plugin.getLogger().info("Remaining Items: " + result.getRemainingItems().toString());
+		}
 	}
 
 }
