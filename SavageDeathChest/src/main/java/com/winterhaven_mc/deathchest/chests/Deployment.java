@@ -615,18 +615,18 @@ public final class Deployment {
 										 final Location location,
 										 final ChestSize chestSize) {
 
-		// test left chest location
+		// test right chest location
 		Result result = validateChestLocation(player, location);
 
-		// if left chest is not successful, return result
+		// if right chest is not successful, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
 		}
 
-		// if chest is to be a double chest, test right chest location
+		// if chest is to be a double chest, test left chest location
 		if (chestSize.equals(ChestSize.DOUBLE)) {
 
-			// test right chest block location
+			// test left chest block location (to player's right)
 			result = validateChestLocation(player, getLocationToRight(location));
 		}
 
