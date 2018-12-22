@@ -409,6 +409,8 @@ public final class Deployment {
 	 * Remove one chest from list of item stacks. If a stack contains only one chest, remove the stack from
 	 * the list and return. If a stack contains more than one chest, decrease the stack amount by one and return.
 	 * @param itemStacks List of ItemStack to remove chest
+	 * @return Collection of ItemStacks with one chest item removed. If passed collection contained no chest items,
+	 * the returned collection will be a copy of the passed collection.
 	 */
 	private Collection<ItemStack> removeOneChest(final Collection<ItemStack> itemStacks) {
 
@@ -464,8 +466,8 @@ public final class Deployment {
 			testLocation.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
 		}
 
-		// declare search result object
-		Result result;
+		// declare default search result object
+		Result result = new Result(ResultCode.NON_REPLACEABLE_BLOCK);
 
 		// iterate over all locations with search distance until a valid location is found
 		for (int y = 0; y < radius; y = y + 1) {
@@ -566,7 +568,7 @@ public final class Deployment {
 			plugin.getLogger().info("Locations tested: " + testCount);
 		}
 
-		return new Result(ResultCode.NON_REPLACEABLE_BLOCK);
+		return result;
 	}
 
 
@@ -831,6 +833,12 @@ public final class Deployment {
 
 	@SuppressWarnings("unused")
 	private void logResult(Result result) {
+
+		if (result == null) {
+			plugin.getLogger().info("Result is null!");
+			return;
+		}
+
 		if (result.getResultCode() != null) {
 			plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
 		}
