@@ -60,7 +60,14 @@ public final class ChestBlock {
 	 * @return Location - the in game location of this chest block
 	 */
 	public final Location getLocation() {
-		return location;
+
+		// return defensive copy of location
+		return new Location(this.location.getWorld(),
+				this.location.getX(),
+				this.location.getY(),
+				this.location.getZ(),
+				this.location.getYaw(),
+				this.location.getPitch());
 	}
 
 
