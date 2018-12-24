@@ -31,7 +31,7 @@ final class BlockIndex {
 	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 
 		// if passed key or value is null, do nothing and return
-		if (chestBlockType == null || chestBlock == null || chestBlock.getLocation() == null) {
+		if (chestBlockType == null || chestBlock == null) {
 			return;
 		}
 
@@ -101,7 +101,7 @@ final class BlockIndex {
 	final void removeChestBlock(final ChestBlock chestBlock) {
 
 		// check for null key
-		if (chestBlock == null || chestBlock.getLocation() == null) {
+		if (chestBlock == null) {
 			return;
 		}
 
