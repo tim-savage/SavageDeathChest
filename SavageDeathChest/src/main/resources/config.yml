@@ -65,33 +65,31 @@ quick-loot: true
 # number of DeathChests shown per page in list command
 list-page-size: 5
 
-# Check protection plugin permissions on death chest placement or access
-# If a value is configured true, the protection plugin restrictions will be respected
-# If a value is configured false, the protection plugin restrictions will be ignored
+# Ignore protection plugin permissions on death chest placement or access
 protection-plugins:
   Factions:
-    check-on-place: true
-    check-on-access: false
+    ignore-on-place: false
+    ignore-on-access: true
 
   GriefPrevention:
-    check-on-place: true
-    check-on-access: false
+    ignore-on-place: false
+    ignore-on-access: true
 
   PreciousStones:
-    check-on-place: true
-    check-on-access: false
+    ignore-on-place: false
+    ignore-on-access: true
 
   RoadBlock:
-    check-on-place: true
-    check-on-access: false
+    ignore-on-place: false
+    ignore-on-access: true
 
   Towny:
-    check-on-place: true
-    check-on-access: false
+    ignore-on-place: false
+    ignore-on-access: true
 
   WorldGuard:
-    check-on-place: true
-    check-on-access: false
+    ignore-on-place: false
+    ignore-on-access: true
 
 
 # List of block materials that can be replaced by a chest
