@@ -47,10 +47,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * Tab completer for DeathChest
- 	 * @param sender the command sender
+	 *
+	 * @param sender  the command sender
 	 * @param command the command typed
-	 * @param alias alias for the command
-	 * @param args additional command arguments
+	 * @param alias   alias for the command
+	 * @param args    additional command arguments
 	 * @return List of String - the possible matching values for tab completion
 	 */
 	@Override
@@ -71,7 +72,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 					returnList.add(subcommand);
 				}
 			}
-		} else if (args.length == 2) {
+		}
+		else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("list")
 					&& sender.hasPermission("deathchest.list.other")) {
 
@@ -82,7 +84,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName());
 				}
 				returnList.addAll(chestOwners.values());
-			} else if (args[0].equalsIgnoreCase("help")
+			}
+			else if (args[0].equalsIgnoreCase("help")
 					&& sender.hasPermission("deathchest.help")) {
 
 				for (String subcommand : subcommands) {
@@ -100,10 +103,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * Command handler for DeathChest
+	 *
 	 * @param sender the command sender
-	 * @param cmd the command typed
-	 * @param label the command label
-	 * @param args additional command arguments
+	 * @param cmd    the command typed
+	 * @param label  the command label
+	 * @param args   additional command arguments
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	@Override
@@ -117,7 +121,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		// if no arguments passed, set subcommand to status
 		if (args.length < 1) {
 			subcommand = "help";
-		} else {
+		}
+		else {
 			subcommand = args[0];
 		}
 
@@ -196,11 +201,17 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 				count++;
 				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
 
-				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".check-on-place")) {
-					pluginSettings.add("check-on-place");
+				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-place")) {
+					pluginSettings.add("ignore on placement");
 				}
-				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".check-on-access")) {
-					pluginSettings.add("check-on-access");
+				else {
+					pluginSettings.add("comply on placement");
+				}
+				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-access")) {
+					pluginSettings.add("ignore on access");
+				}
+				else {
+					pluginSettings.add("comply on access");
 				}
 				statusString = statusString + ChatColor.RESET + pluginSettings.toString();
 				sender.sendMessage(statusString);
@@ -266,16 +277,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	}
 
 
-	// > /deathchest list
-	// > /deathchest list [page]
-	// > /deathchest list [player]
-	// > /deathchest list [player] [page]
-
 	/**
 	 * list command
 	 *
 	 * @param sender command sender
-	 * @param args additional command arguments
+	 * @param args   additional command arguments
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean listCommand(final CommandSender sender, final String[] args) {
@@ -319,7 +325,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			// if second argument not a number, try to match player name
 			try {
 				page = Integer.parseInt(args[1]);
-			} catch (NumberFormatException e) {
+			}
+			catch (NumberFormatException e) {
 				// if sender does not have list other permission, send message and return
 				if (!sender.hasPermission("deathchest.list.other")) {
 					plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_LIST_OTHER_PERMISSION);
@@ -342,7 +349,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		if (args.length == 3) {
 			try {
 				page = Integer.parseInt(args[2]);
-			} catch (NumberFormatException e) {
+			}
+			catch (NumberFormatException e) {
 				// third argument not a number, ignore
 			}
 		}
@@ -411,7 +419,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (passedPlayerName.equals("*")) {
 				plugin.messageManager.sendMessage(sender, MessageId.LIST_ITEM_ALL, deathChest, listCount);
-			} else {
+			}
+			else {
 				plugin.messageManager.sendMessage(sender, MessageId.LIST_ITEM, deathChest, listCount);
 			}
 		}
@@ -426,7 +435,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * help command
 	 *
 	 * @param sender command sender
-	 * @param args additional command arguments
+	 * @param args   additional command arguments
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	private boolean helpCommand(final CommandSender sender, final String[] args) {
@@ -467,7 +476,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	/**
 	 * Display command usage
 	 *
-	 * @param sender the command sender
+	 * @param sender        the command sender
 	 * @param passedCommand the command for which to display usage
 	 */
 	private void displayUsage(final CommandSender sender, final String passedCommand) {

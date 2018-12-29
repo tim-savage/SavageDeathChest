@@ -67,7 +67,6 @@ public enum ProtectionPlugin {
 //	},
 
 	GRIEFPREVENTION("GriefPrevention") {
-
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
@@ -84,7 +83,6 @@ public enum ProtectionPlugin {
 			catch (Exception e) {
 				logPlaceError();
 			}
-
 			return true;
 		}
 
@@ -104,10 +102,8 @@ public enum ProtectionPlugin {
 			catch (Exception e) {
 				logAccessError();
 			}
-
 			return true;
 		}
-
 	},
 
 //	PRECIOUSSTONES("PreciousStones") {
@@ -147,7 +143,6 @@ public enum ProtectionPlugin {
 //	},
 
 	ROADBLOCK("RoadBlock") {
-
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
@@ -180,14 +175,11 @@ public enum ProtectionPlugin {
 			catch (Exception e) {
 				logAccessError();
 			}
-
 			return true;
 		}
-
 	},
 
 	TOWNY("Towny") {
-
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
@@ -218,11 +210,9 @@ public enum ProtectionPlugin {
 			}
 			return true;
 		}
-
 	},
 
 	WORLDGUARD("WorldGuard") {
-
 		@Override
 		public final boolean hasPlacePermission(final Player player, final Location location) {
 
@@ -236,7 +226,6 @@ public enum ProtectionPlugin {
 			catch (Exception e) {
 				logPlaceError();
 			}
-
 			return true;
 		}
 
@@ -253,10 +242,8 @@ public enum ProtectionPlugin {
 			catch (Exception e) {
 				logAccessError();
 			}
-
 			return true;
 		}
-
 	};
 
 	// static reference to main class
@@ -268,6 +255,7 @@ public enum ProtectionPlugin {
 
 	/**
 	 * Enum constructor
+	 *
 	 * @param pluginName the official case-sensitive plugin name
 	 */
 	ProtectionPlugin(final String pluginName) {
@@ -297,25 +285,28 @@ public enum ProtectionPlugin {
 
 	/**
 	 * Check if player has block place permission at location as allowed by plugin
-	 * @param player the player to test for block place permission
+	 *
+	 * @param player   the player to test for block place permission
 	 * @param location the location to test for block place permission
 	 * @return {@code true} if this plugin allows the player to place blocks at the given location,
-	 * 			else {@code false}
+	 * else {@code false}
 	 */
 	public abstract boolean hasPlacePermission(final Player player, final Location location);
 
 
 	/**
 	 * Check if player has chest access permission at location as allowed by plugin
-	 * @param player the player to test for chest access permission
+	 *
+	 * @param player   the player to test for chest access permission
 	 * @param location the location to test for chest access permisssion
 	 * @return {@code true} if this plugin allows the player chest access permission at the given location
 	 */
-	public abstract boolean hasChestPermission(final Player player, final Location location);	
+	public abstract boolean hasChestPermission(final Player player, final Location location);
 
 
 	/**
 	 * Get plugin name
+	 *
 	 * @return the name of the plugin
 	 */
 	public final String getPluginName() {
@@ -323,6 +314,11 @@ public enum ProtectionPlugin {
 	}
 
 
+	/**
+	 * Get plugin version
+	 *
+	 * @return String - plugin version
+	 */
 	private String getVersion() {
 
 		if (plugin.getServer().getPluginManager().getPlugin(this.getPluginName()) != null) {
@@ -333,28 +329,32 @@ public enum ProtectionPlugin {
 
 
 	/**
-	 * Check if protection plugin is enabled for check on place in config
+	 * Check if protection plugin is configured to be ignored on death chest placement
+	 *
+	 * @return {@code true} if the protection plugin is enabled for check on placement, {@code false} if not
 	 */
-	private boolean isConfigEnabledPlace() {
+	private boolean isIgnoredOnPlace() {
 
 		// if plugin is not enabled in config, return false
-		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".check-on-place"));
+		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".ignore-on-place"));
 	}
 
 
 	/**
-	 * Check if protection plugin is enabled for check on access in config
+	 * Check if protection plugin is configured to be ignored on death chest access
+	 *
 	 * @return {@code true} if the protection plugin is enabled for check on access, {@code false} if not
 	 */
-	private boolean isConfigEnabledAccess() {
+	private boolean isIgnoredOnAccess() {
 
 		// if plugin is not enabled in config, return false
-		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".check-on-access"));
+		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".ignore-on-access"));
 	}
 
 
 	/**
 	 * Check if protection plugin is installed and operational
+	 *
 	 * @return {@code true} if the protection plugin is installed, {@code false} if it is not
 	 */
 	public final boolean isInstalled() {
@@ -376,7 +376,7 @@ public enum ProtectionPlugin {
 			if (pp.isInstalled()) {
 				plugin.getLogger().info(pp.getPluginName() + " v" + pp.getVersion() + " detected.");
 			}
-		}		
+		}
 	}
 
 
@@ -385,8 +385,8 @@ public enum ProtectionPlugin {
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
 
-			// if plugin is installed and in check-on-place is true, check required permission
-			if (pp.isInstalled() && pp.isConfigEnabledPlace()) {
+			// if plugin is installed and ignore-on-place is false, check required permission
+			if (pp.isInstalled() && !pp.isIgnoredOnPlace()) {
 
 				// if build permission is denied, return ProtectionPlugin object
 				if (!pp.hasPlacePermission(player, block.getLocation())) {
@@ -405,8 +405,8 @@ public enum ProtectionPlugin {
 		// iterate through protection plugins
 		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
 
-			// if plugin is installed and in check-on-access is true, check for access permission
-			if (pp.isInstalled() && pp.isConfigEnabledAccess()) {
+			// if plugin is installed and ignore-on-access is false, check for access permission
+			if (pp.isInstalled() && !pp.isIgnoredOnAccess()) {
 
 				// if access permission is denied, return ProtectionPlugin object
 				if (!pp.hasChestPermission(player, block.getLocation())) {
