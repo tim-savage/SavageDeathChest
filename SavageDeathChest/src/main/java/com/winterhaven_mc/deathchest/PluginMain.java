@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class PluginMain extends JavaPlugin {
 
+	// static reference to plugin instance
 	public static PluginMain instance;
 
 	public WorldManager worldManager;
@@ -35,7 +36,7 @@ public final class PluginMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
-		// reference to plugin instance
+		// set reference to plugin instance
 		instance = this;
 
 		// copy default config from jar if it doesn't exist
