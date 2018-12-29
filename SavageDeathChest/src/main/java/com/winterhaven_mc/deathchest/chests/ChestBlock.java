@@ -37,8 +37,9 @@ public final class ChestBlock {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param chestUUID the UUID of the chest that this ChestBlock is member
-	 * @param location the location of the in game block this ChestBlock object represents
+	 * @param location  the location of the in game block this ChestBlock object represents
 	 */
 	public ChestBlock(final UUID chestUUID, final Location location) {
 
@@ -47,16 +48,17 @@ public final class ChestBlock {
 
 		// set location for this ChestBlock with defensive copy of passed location
 		this.location = new Location(location.getWorld(),
-									 location.getX(),
-									 location.getY(),
-									 location.getZ(),
-									 location.getYaw(),
-									 location.getPitch());
+				location.getX(),
+				location.getY(),
+				location.getZ(),
+				location.getYaw(),
+				location.getPitch());
 	}
 
 
 	/**
 	 * Getter method for chest block location
+	 *
 	 * @return Location - the in game location of this chest block
 	 */
 	public final Location getLocation() {
@@ -73,6 +75,7 @@ public final class ChestBlock {
 
 	/**
 	 * Getter method for chest block chestUUID
+	 *
 	 * @return UUID - the UUID of the chest that this chest block is a member
 	 */
 	public final UUID getChestUUID() {
@@ -82,6 +85,7 @@ public final class ChestBlock {
 
 	/**
 	 * Get DeathChest chest block that DeathChest sign is attached
+	 *
 	 * @return Block - DeathChest chest block;
 	 * returns null if sign is not a DeathChest sign or attached block is not a DeathChest chest block
 	 */
@@ -101,7 +105,7 @@ public final class ChestBlock {
 		}
 
 		// get block state cast to Sign
-		Sign sign = (Sign)block.getState().getData();
+		Sign sign = (Sign) block.getState().getData();
 
 		// get attached block
 		Block returnBlock = block.getRelative(sign.getAttachedFace());
@@ -117,6 +121,7 @@ public final class ChestBlock {
 
 	/**
 	 * Get the inventory of this ChestBlock
+	 *
 	 * @return Inventory - the inventory of this ChestBlock;
 	 * if ChestBlock is a sign, return inventory of attached ChestBlock;
 	 * returns null if this ChestBlock (or attached block) is not a chest
@@ -143,7 +148,7 @@ public final class ChestBlock {
 
 		// if blockState is a chest object, open inventory for player
 		if (blockState instanceof Chest) {
-			return ((Chest)blockState).getInventory();
+			return ((Chest) blockState).getInventory();
 		}
 
 		return null;
@@ -152,6 +157,7 @@ public final class ChestBlock {
 
 	/**
 	 * Open the inventory of this ChestBlock for player
+	 *
 	 * @param player the player for whom to open the ChestBlock inventory
 	 */
 	public final void openInventory(final Player player) {
@@ -173,6 +179,7 @@ public final class ChestBlock {
 
 	/**
 	 * Transfer the contents of this chest block to player inventory
+	 *
 	 * @param player the player whose inventory chest items will be placed
 	 */
 	final Collection<ItemStack> transferContents(final Player player) {
@@ -222,6 +229,7 @@ public final class ChestBlock {
 
 	/**
 	 * Set block metadata
+	 *
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
 	final void setMetadata(final DeathChest deathChest) {

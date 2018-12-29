@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 final class BlockIndex {
 
 	// map of ChestBlocks indexed by location
-	private final Map<Location,ChestBlock> locationMap;
+	private final Map<Location, ChestBlock> locationMap;
 
 	// nested map of ChestBlocks indexed by ChestUUID, ChestBlockType
-	private final Map<UUID, EnumMap<ChestBlockType,ChestBlock>> uuidMap;
+	private final Map<UUID, EnumMap<ChestBlockType, ChestBlock>> uuidMap;
 
 
 	/**
@@ -26,6 +26,7 @@ final class BlockIndex {
 
 	/**
 	 * Put ChestBlock object in map
+	 *
 	 * @param chestBlock the ChestBlock to put in map
 	 */
 	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
@@ -50,6 +51,7 @@ final class BlockIndex {
 
 	/**
 	 * Get ChestBlock object by location
+	 *
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
@@ -60,6 +62,7 @@ final class BlockIndex {
 
 	/**
 	 * Getter method for DeathChest chestBlocks
+	 *
 	 * @param chestUUID the UUID of the chest of which to retrieve a set of chest blocks
 	 * @return Set of Blocks in uuidMap, or empty set if no blocks exist for chest UUID
 	 */
@@ -78,13 +81,14 @@ final class BlockIndex {
 
 	/**
 	 * Getter method for DeathChest chestBlocks
+	 *
 	 * @param chestUUID the UUID of the chest of which to retrieve a map of chest blocks
 	 * @return Map of Blocks in uuidMap, or empty map if no blocks exist for chest UUID
 	 */
-	final Map<ChestBlockType,ChestBlock> getChestBlockMap(final UUID chestUUID) {
+	final Map<ChestBlockType, ChestBlock> getChestBlockMap(final UUID chestUUID) {
 
 		// create empty map for return
-		Map<ChestBlockType,ChestBlock> returnMap = new EnumMap<>(ChestBlockType.class);
+		Map<ChestBlockType, ChestBlock> returnMap = new EnumMap<>(ChestBlockType.class);
 
 		// if chestUUID exists in map, add values to returnMap
 		if (chestUUID != null && this.uuidMap.containsKey(chestUUID)) {
@@ -96,6 +100,7 @@ final class BlockIndex {
 
 	/**
 	 * Remove ChestBlock object from map
+	 *
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
 	final void removeChestBlock(final ChestBlock chestBlock) {
@@ -136,6 +141,7 @@ final class BlockIndex {
 
 	/**
 	 * Check for location key in map
+	 *
 	 * @param location the key to check
 	 * @return {@code true} if location key exists in map, {@code false} if it does not
 	 */

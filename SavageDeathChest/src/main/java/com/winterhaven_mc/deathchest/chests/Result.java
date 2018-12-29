@@ -21,6 +21,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode) {
@@ -33,6 +34,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
@@ -45,6 +47,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode, final Location location) {
@@ -57,6 +60,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode,
@@ -71,6 +75,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
@@ -83,6 +88,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode,
@@ -98,6 +104,7 @@ final class Result {
 
 	/**
 	 * Getter method for resultCode
+	 *
 	 * @return ResultCode - the result code currently set for this result object
 	 */
 	final ResultCode getResultCode() {
@@ -107,6 +114,7 @@ final class Result {
 
 	/**
 	 * Getter method for location
+	 *
 	 * @return Location - the location currently set for this result object
 	 */
 	final Location getLocation() {
@@ -116,6 +124,7 @@ final class Result {
 
 	/**
 	 * Getter method for protectionPlugin
+	 *
 	 * @return ProtectionPlugin - the protection plugin enum value currently set for this result object
 	 */
 	final ProtectionPlugin getProtectionPlugin() {
@@ -125,6 +134,7 @@ final class Result {
 
 	/**
 	 * Getter method for remainingItems
+	 *
 	 * @return Collection of ItemStack - the remaining items currently set for this result object
 	 */
 	final Collection<ItemStack> getRemainingItems() {

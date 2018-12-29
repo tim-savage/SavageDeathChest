@@ -14,6 +14,7 @@ enum ChestSize {
 
 	/**
 	 * Constructor
+	 *
 	 * @param size the chest inventory size
 	 */
 	ChestSize(int size) {
@@ -23,6 +24,7 @@ enum ChestSize {
 
 	/**
 	 * Determine chest size required for a given inventory size
+	 *
 	 * @param itemCount the number of ItemStacks to be considered for chest size
 	 * @return ChestSize enum value, SINGLE or DOUBLE
 	 */

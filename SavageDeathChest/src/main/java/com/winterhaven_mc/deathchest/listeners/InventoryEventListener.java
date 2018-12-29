@@ -26,8 +26,9 @@ public final class InventoryEventListener implements Listener {
 	private final PluginMain plugin;
 
 
-	/** class constructor
-	 * 
+	/**
+	 * class constructor
+	 *
 	 * @param plugin reference to main class
 	 */
 	public InventoryEventListener(final PluginMain plugin) {
@@ -45,9 +46,10 @@ public final class InventoryEventListener implements Listener {
 	 * Uncancels an event that was cancelled by a protection plugin
 	 * if configured to override the protection plugin and thereby allow
 	 * death chest access where chest access would normally be restricted
+	 *
 	 * @param event the event being handled by this method
 	 */
-	@EventHandler(priority=EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.HIGH)
 	public final void onInventoryOpen(final InventoryOpenEvent event) {
 
 		// if event is not cancelled, do nothing and return
@@ -101,6 +103,7 @@ public final class InventoryEventListener implements Listener {
 
 	/**
 	 * Remove empty death chest on inventory close event
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
@@ -143,6 +146,7 @@ public final class InventoryEventListener implements Listener {
 
 	/**
 	 * Prevent hoppers from removing or inserting items in death chests
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
@@ -176,6 +180,7 @@ public final class InventoryEventListener implements Listener {
 
 	/**
 	 * Prevent placing items in death chests if configured
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
@@ -195,10 +200,10 @@ public final class InventoryEventListener implements Listener {
 		final InventoryAction action = event.getAction();
 
 		// if inventory is a death chest inventory
-	    if (plugin.chestManager.isDeathChestInventory(inventory)) {
+		if (plugin.chestManager.isDeathChestInventory(inventory)) {
 
 			// if click action is place, test for chest slots
-			if (action.equals(InventoryAction.PLACE_ALL) 
+			if (action.equals(InventoryAction.PLACE_ALL)
 					|| action.equals(InventoryAction.PLACE_SOME)
 					|| action.equals(InventoryAction.PLACE_ONE)
 					|| action.equals(InventoryAction.SWAP_WITH_CURSOR)) {
@@ -225,12 +230,13 @@ public final class InventoryEventListener implements Listener {
 					}
 				}
 			}
-	    }
+		}
 	}
 
 
 	/**
 	 * Prevent placing items in death chests if configured
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
@@ -244,7 +250,7 @@ public final class InventoryEventListener implements Listener {
 		final Inventory inventory = event.getInventory();
 
 		// if inventory is a death chest inventory
-	    if (plugin.chestManager.isDeathChestInventory(inventory)) {
+		if (plugin.chestManager.isDeathChestInventory(inventory)) {
 
 			// if prevent-item-placement is configured false, do nothing and return
 			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
@@ -263,25 +269,25 @@ public final class InventoryEventListener implements Listener {
 					break;
 				}
 			}
-	    }
+		}
 	}
 
 
 	/**
 	 * Test if inventory is empty
-	 * 
+	 *
 	 * @param inventory the inventory to test for emptiness
 	 * @return true if inventory is empty, false if inventory has any contents
 	 */
 	private boolean isEmpty(final Inventory inventory) {
 
-	    final ItemStack[] items = inventory.getContents();
-	    for (ItemStack item : items) {
-	    	if (item != null) {
-	    		return false;
-	    	}
-	    }
-	    return true;
+		final ItemStack[] items = inventory.getContents();
+		for (ItemStack item : items) {
+			if (item != null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

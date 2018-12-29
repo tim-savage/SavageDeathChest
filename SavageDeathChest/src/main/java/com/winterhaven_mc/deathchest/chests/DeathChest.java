@@ -49,11 +49,12 @@ public final class DeathChest {
 
 	/**
 	 * Class constructor
-	 * @param chestUUID the chest UUID
-	 * @param ownerUUID the chest owner UUID
-	 * @param killerUUID the chest killer UUID
-	 * @param itemCount the chest item count
-	 * @param placementTime the chest placement time
+	 *
+	 * @param chestUUID      the chest UUID
+	 * @param ownerUUID      the chest owner UUID
+	 * @param killerUUID     the chest killer UUID
+	 * @param itemCount      the chest item count
+	 * @param placementTime  the chest placement time
 	 * @param expirationTime the chest expiration time
 	 */
 	public DeathChest(final UUID chestUUID,
@@ -75,6 +76,7 @@ public final class DeathChest {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param player the death chest owner
 	 */
 	public DeathChest(final Player player) {
@@ -108,7 +110,8 @@ public final class DeathChest {
 		// if configured expiration is zero (or negative), set expiration to zero to signify no expiration
 		if (plugin.getConfig().getLong("expire-time") <= 0) {
 			this.expirationTime = 0;
-		} else {
+		}
+		else {
 			// set expiration field based on config setting (converting from minutes to milliseconds)
 			this.expirationTime = System.currentTimeMillis()
 					+ TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time"));
@@ -121,6 +124,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest chestUUID
+	 *
 	 * @return UUID
 	 */
 	public final UUID getChestUUID() {
@@ -130,6 +134,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest ownerUUID
+	 *
 	 * @return UUID
 	 */
 	public final UUID getOwnerUUID() {
@@ -139,6 +144,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest killerUUID
+	 *
 	 * @return UUID
 	 */
 	public final UUID getKillerUUID() {
@@ -148,6 +154,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest itemCount
+	 *
 	 * @return integer - itemCount
 	 */
 	@SuppressWarnings("unused")
@@ -158,6 +165,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest placementTime timestamp
+	 *
 	 * @return long placementTime timestamp
 	 */
 	public final long getPlacementTime() {
@@ -167,6 +175,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest expirationTime timestamp
+	 *
 	 * @return long expirationTime timestamp
 	 */
 	public final long getExpirationTime() {
@@ -176,6 +185,7 @@ public final class DeathChest {
 
 	/**
 	 * Getter method for DeathChest expireTaskId
+	 *
 	 * @return the value of the expireTaskId field in the DeathChest object
 	 */
 	private int getExpireTaskId() {
@@ -186,11 +196,12 @@ public final class DeathChest {
 	/**
 	 * Get chest location. Attempt to get chest location from right chest, left chest or sign in that order.
 	 * Returns null if location could not be derived from chest blocks.
+	 *
 	 * @return Location - the chest location or null if no location found
 	 */
 	public final Location getLocation() {
 
-		Map<ChestBlockType,ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
+		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
 		if (chestBlockMap.containsKey(ChestBlockType.RIGHT_CHEST)) {
 			return chestBlockMap.get(ChestBlockType.RIGHT_CHEST).getLocation();
@@ -212,7 +223,7 @@ public final class DeathChest {
 	final void setMetadata() {
 
 		// set metadata on blocks in set
-		for (ChestBlock chestBlock :  plugin.chestManager.getBlockSet(this.chestUUID)) {
+		for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(this.chestUUID)) {
 			chestBlock.setMetadata(this);
 		}
 	}
@@ -220,13 +231,14 @@ public final class DeathChest {
 
 	/**
 	 * Test if a player is the owner of this DeathChest
+	 *
 	 * @param player The player to test for DeathChest ownership
 	 * @return {@code true} if the player is the DeathChest owner, false if not
-     */
+	 */
 	public final boolean isOwner(final Player player) {
 
 		// if ownerUUID is null, return false
-		if (this.getOwnerUUID() == null ) {
+		if (this.getOwnerUUID() == null) {
 			return false;
 		}
 		return this.getOwnerUUID().equals(player.getUniqueId());
@@ -235,6 +247,7 @@ public final class DeathChest {
 
 	/**
 	 * Test if a player is the killer of this DeathChest owner
+	 *
 	 * @param player The player to test for DeathChest killer
 	 * @return {@code true} if the player is the killer of the DeathChest owner, false if not
 	 */
@@ -251,6 +264,7 @@ public final class DeathChest {
 	/**
 	 * Transfer all chest contents to player inventory and remove in-game chest if empty.
 	 * Items that do not fit in player inventory will retained in chest.
+	 *
 	 * @param player the player whose inventory the chest contents will be transferred
 	 */
 	public final void autoLoot(final Player player) {
@@ -284,7 +298,7 @@ public final class DeathChest {
 		// this should never actually occur, but let's play it safe just in case
 		if (!remainingItems.isEmpty()) {
 			for (ItemStack itemStack : remainingItems) {
-				player.getWorld().dropItem(player.getLocation(),itemStack);
+				player.getWorld().dropItem(player.getLocation(), itemStack);
 			}
 		}
 	}
@@ -317,7 +331,7 @@ public final class DeathChest {
 		plugin.soundConfig.playSound(this.getLocation(), SoundId.CHEST_BREAK);
 
 		// get block map for this chest
-		Map<ChestBlockType,ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
+		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
 		// destroy DeathChest blocks (sign gets destroyed first due to enum order)
 		for (ChestBlock chestBlock : chestBlockMap.values()) {
@@ -339,13 +353,14 @@ public final class DeathChest {
 
 	/**
 	 * Get inventory associated with this death chest
+	 *
 	 * @return Inventory - the inventory associated with this death chest;
 	 * returns null if both right and left chest block inventories are invalid
 	 */
 	public final Inventory getInventory() {
 
 		// get chest block map
-		Map<ChestBlockType,ChestBlock> chestBlocks = plugin.chestManager.getChestBlockMap(this.chestUUID);
+		Map<ChestBlockType, ChestBlock> chestBlocks = plugin.chestManager.getChestBlockMap(this.chestUUID);
 
 		// get right chest inventory
 		Inventory inventory = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getInventory();
@@ -362,8 +377,9 @@ public final class DeathChest {
 
 	/**
 	 * Get the number of players currently viewing a DeathChest inventory
+	 *
 	 * @return The number of inventory viewers
-     */
+	 */
 	public final int getViewerCount() {
 
 		// get chest inventory
@@ -421,6 +437,7 @@ public final class DeathChest {
 
 	/**
 	 * Place collection of ItemStacks in chest, returning collection of ItemStacks that did not fit in chest
+	 *
 	 * @param itemStacks Collection of ItemStacks to place in chest
 	 * @return Collection of ItemStacks that did not fit in chest
 	 */

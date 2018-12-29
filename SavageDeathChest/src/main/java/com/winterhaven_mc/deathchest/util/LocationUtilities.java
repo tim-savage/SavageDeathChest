@@ -24,7 +24,7 @@ public final class LocationUtilities {
 	 * Get the cardinal compass direction.<br>
 	 * Converts direction in degrees to BlockFace cardinal direction (N,E,S,W)
 	 *
-	 * @param yaw	Direction in degrees
+	 * @param yaw Direction in degrees
 	 * @return BlockFace of cardinal direction
 	 */
 	private static BlockFace getCardinalDirection(final float yaw) {
@@ -73,6 +73,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get location to right of location based on yaw
+	 *
 	 * @param location initial location
 	 * @return location one block to right, preserving original yaw
 	 */
@@ -88,6 +89,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get location to left of location based on yaw
+	 *
 	 * @param location initial location
 	 * @return location one block to left, preserving original yaw
 	 */
@@ -103,6 +105,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get location to front of passed location based on yaw
+	 *
 	 * @param location initial location
 	 * @return location one block in front, preserving original yaw
 	 */
@@ -118,6 +121,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get block to left of location based on yaw
+	 *
 	 * @param location initial location
 	 * @return block to left of location
 	 */
@@ -129,6 +133,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get block to right of location based on yaw
+	 *
 	 * @param location inital location
 	 * @return block to right of initial location
 	 */
@@ -140,6 +145,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get block in front of location based on yaw
+	 *
 	 * @param location initial location
 	 * @return block in front of initial location
 	 */
@@ -151,6 +157,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get block to rear of location based on yaw
+	 *
 	 * @param location initial location
 	 * @return block behind inital location
 	 */
@@ -162,6 +169,7 @@ public final class LocationUtilities {
 
 	/**
 	 * Get BlockFace to left of passed BlockFace
+	 *
 	 * @param blockFace the original BlockFace
 	 * @return BlockFace to left of passed BlockFace
 	 */
