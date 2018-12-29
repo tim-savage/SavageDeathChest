@@ -18,6 +18,7 @@ enum ChestBlockType {
 
 	/**
 	 * Get chest block type from passed block
+	 *
 	 * @param block block to determine chest type
 	 * @return ChestBlockType enum value, or null if block is not a chest or sign
 	 */
@@ -43,7 +44,7 @@ enum ChestBlockType {
 			BlockData blockData = chest.getBlockData();
 
 			// if chest is left chest, return LEFT_CHEST
-			if (((org.bukkit.block.data.type.Chest)blockData).getType()
+			if (((org.bukkit.block.data.type.Chest) blockData).getType()
 					.equals(org.bukkit.block.data.type.Chest.Type.LEFT)) {
 				return ChestBlockType.LEFT_CHEST;
 			}

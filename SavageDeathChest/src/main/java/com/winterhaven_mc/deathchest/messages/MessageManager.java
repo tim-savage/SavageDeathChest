@@ -26,6 +26,7 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param plugin reference to main class
 	 */
 	public MessageManager(final PluginMain plugin) {
@@ -49,9 +50,9 @@ public final class MessageManager extends AbstractMessageManager {
 
 
 	@Override
-	protected Map<String,String> getDefaultReplacements(CommandSender recipient) {
+	protected Map<String, String> getDefaultReplacements(CommandSender recipient) {
 
-		Map<String,String> replacements = new HashMap<>();
+		Map<String, String> replacements = new HashMap<>();
 
 		// get expire time from config
 		long expireTime = plugin.getConfig().getLong("expire-time");
@@ -64,15 +65,15 @@ public final class MessageManager extends AbstractMessageManager {
 			expireTime = -1;
 		}
 
-		replacements.put("%EXPIRE_TIME%",getTimeString(expireTime));
-		replacements.put("%PLAYER_NAME%",ChatColor.stripColor(recipient.getName()));
+		replacements.put("%EXPIRE_TIME%", getTimeString(expireTime));
+		replacements.put("%PLAYER_NAME%", ChatColor.stripColor(recipient.getName()));
 
 		if (recipient instanceof Player) {
-			Player player = (Player)recipient;
-			replacements.put("%PLAYER_NICKNAME%",ChatColor.stripColor(player.getPlayerListName()));
-			replacements.put("%PLAYER_DISPLAYNAME%",ChatColor.stripColor(player.getDisplayName()));
+			Player player = (Player) recipient;
+			replacements.put("%PLAYER_NICKNAME%", ChatColor.stripColor(player.getPlayerListName()));
+			replacements.put("%PLAYER_DISPLAYNAME%", ChatColor.stripColor(player.getDisplayName()));
 
-			replacements.put("%WORLD_NAME%",ChatColor.stripColor(getWorldName(recipient)));
+			replacements.put("%WORLD_NAME%", ChatColor.stripColor(getWorldName(recipient)));
 			replacements.put("%LOC_X%", String.valueOf(player.getLocation().getBlockX()));
 			replacements.put("%LOC_Y%", String.valueOf(player.getLocation().getBlockY()));
 			replacements.put("%LOC_Z%", String.valueOf(player.getLocation().getBlockZ()));
@@ -84,13 +85,14 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Send message to recipient
+	 *
 	 * @param recipient the recipient to whom to send a message
 	 * @param messageId the message identifier
 	 */
 	public void sendMessage(final CommandSender recipient, final MessageId messageId) {
 
 		// get default replacement map
-		Map<String,String> replacements = getDefaultReplacements(recipient);
+		Map<String, String> replacements = getDefaultReplacements(recipient);
 
 		// send message
 		//noinspection unchecked
@@ -100,8 +102,9 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Send message to recipient
-	 * @param recipient the recipient to whom to send a message
-	 * @param messageId the message identifier
+	 *
+	 * @param recipient  the recipient to whom to send a message
+	 * @param messageId  the message identifier
 	 * @param deathChest the chest being referenced in this message
 	 */
 	public void sendMessage(final CommandSender recipient,
@@ -109,7 +112,7 @@ public final class MessageManager extends AbstractMessageManager {
 							final DeathChest deathChest) {
 
 		// get default replacement map
-		Map<String,String> replacements = getDefaultReplacements(recipient);
+		Map<String, String> replacements = getDefaultReplacements(recipient);
 
 		if (deathChest != null) {
 			if (deathChest.getLocation() != null) {
@@ -118,6 +121,7 @@ public final class MessageManager extends AbstractMessageManager {
 				replacements.put("%LOC_Y%", String.valueOf(deathChest.getLocation().getBlockY()));
 				replacements.put("%LOC_Z%", String.valueOf(deathChest.getLocation().getBlockZ()));
 			}
+
 			replacements.put("%OWNER_NAME%",
 					ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getOwnerUUID()).getName()));
 
@@ -141,10 +145,11 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Send message to recipient
-	 * @param recipient the recipient to whom to send a message
-	 * @param messageId the message identifier
+	 *
+	 * @param recipient  the recipient to whom to send a message
+	 * @param messageId  the message identifier
 	 * @param deathChest the chest being referenced in this message
-	 * @param listCount the item number of a list of which this message is a single entry
+	 * @param listCount  the item number of a list of which this message is a single entry
 	 */
 	public void sendMessage(final CommandSender recipient,
 							final MessageId messageId,
@@ -152,7 +157,7 @@ public final class MessageManager extends AbstractMessageManager {
 							final int listCount) {
 
 		// get default replacement map
-		Map<String,String> replacements = getDefaultReplacements(recipient);
+		Map<String, String> replacements = getDefaultReplacements(recipient);
 
 		if (deathChest != null) {
 			if (deathChest.getLocation() != null) {
@@ -187,8 +192,9 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Send message to recipient
-	 * @param recipient the recipient to whom to send a message
-	 * @param messageId the message identifier
+	 *
+	 * @param recipient        the recipient to whom to send a message
+	 * @param messageId        the message identifier
 	 * @param protectionPlugin the protection plugin whose name will be used in the message
 	 */
 	public void sendMessage(final CommandSender recipient,
@@ -201,9 +207,9 @@ public final class MessageManager extends AbstractMessageManager {
 		}
 
 		// get default replacement map
-		Map<String,String> replacements = getDefaultReplacements(recipient);
+		Map<String, String> replacements = getDefaultReplacements(recipient);
 
-		replacements.put("%PLUGIN%",protectionPlugin.getPluginName());
+		replacements.put("%PLUGIN%", protectionPlugin.getPluginName());
 
 		// send message
 		//noinspection unchecked
@@ -222,10 +228,10 @@ public final class MessageManager extends AbstractMessageManager {
 		}
 
 		// get default replacement map
-		Map<String,String> replacements = getDefaultReplacements(recipient);
+		Map<String, String> replacements = getDefaultReplacements(recipient);
 
-		replacements.put("%PAGE%",String.valueOf(page));
-		replacements.put("%PAGE_COUNT%",String.valueOf(pageCount));
+		replacements.put("%PAGE%", String.valueOf(page));
+		replacements.put("%PAGE_COUNT%", String.valueOf(pageCount));
 
 		// send message
 		//noinspection unchecked
@@ -235,6 +241,7 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Get sign text from language file
+	 *
 	 * @return List of String - lines of sign text
 	 */
 	public List<String> getSignText() {
@@ -244,6 +251,7 @@ public final class MessageManager extends AbstractMessageManager {
 
 	/**
 	 * Get date format string from language file
+	 *
 	 * @return String - date format string
 	 */
 	public String getDateFormat() {

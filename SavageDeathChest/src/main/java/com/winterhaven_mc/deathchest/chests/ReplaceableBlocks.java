@@ -58,6 +58,7 @@ public final class ReplaceableBlocks {
 
 	/**
 	 * Check if replaceableBlocks set contains passed material
+	 *
 	 * @param material the material the test for
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
@@ -74,6 +75,7 @@ public final class ReplaceableBlocks {
 
 	/**
 	 * Get string representation of replaceableBlocks set
+	 *
 	 * @return Formatted string list of materials in replaceableBlocks set
 	 */
 	@Override

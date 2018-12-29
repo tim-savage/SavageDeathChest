@@ -33,16 +33,17 @@ public final class BlockEventListener implements Listener {
 	// reference to main class
 	private final PluginMain plugin;
 
-	
+
 	/**
 	 * Class constructor
+	 *
 	 * @param plugin reference to main class
 	 */
 	public BlockEventListener(final PluginMain plugin) {
-		
+
 		// set reference to main class
 		this.plugin = plugin;
-		
+
 		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
@@ -50,7 +51,8 @@ public final class BlockEventListener implements Listener {
 
 	/**
 	 * Block place event handler<br>
-	 *     prevent placing chests adjacent to existing death chest
+	 * prevent placing chests adjacent to existing death chest
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
@@ -74,11 +76,12 @@ public final class BlockEventListener implements Listener {
 
 	/**
 	 * Block break event handler<br>
-	 * checks for ownership of death chests and prevents breakage by non-owners
+	 * Checks for ownership of death chests and prevents breakage by non-owners.<br>
+	 * Listens at EventPriority.LOW to handle event before protection plugins
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler(priority = EventPriority.LOW)
-	//TODO: Make sure we're using the right priority. Use NORMAL if possible.
 	public final void onBlockBreak(final BlockBreakEvent event) {
 
 		final Block block = event.getBlock();
@@ -96,7 +99,7 @@ public final class BlockEventListener implements Listener {
 		if (deathChest == null) {
 			return;
 		}
-		
+
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
@@ -105,19 +108,19 @@ public final class BlockEventListener implements Listener {
 			}
 			return;
 		}
-		
-		// if player is in creative mode 
+
+		// if player is in creative mode
 		// and creative-access is configured false
 		// and player does not have override permission:
 		// cancel event, send message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE) 
+		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
 			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS, deathChest);
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		// if chest-protection option is not enabled, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
 			return;
@@ -125,7 +128,7 @@ public final class BlockEventListener implements Listener {
 
 		// cancel event
 		event.setCancelled(true);
-		
+
 		// if chest is already open, disallow breakage; send message and return
 		if (deathChest.getViewerCount() > 0) {
 
@@ -163,16 +166,17 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Entity explode event handler<br>
 	 * Make death chests explosion proof if chest-protection is enabled
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onEntityExplode(final EntityExplodeEvent event) {
-		
+
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
 			return;
 		}
-		
+
 		// iterate through all blocks in explosion event and remove those that are DeathChest chests or signs
 		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
@@ -186,16 +190,17 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Block explode event handler<br>
 	 * Make death chests explosion proof if chest-protection is enabled
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
 	public final void onBlockExplode(final BlockExplodeEvent event) {
-		
+
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
 			return;
 		}
-		
+
 		// iterate through all blocks in explosion event and remove those that are DeathChest chests or signs
 		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
@@ -209,6 +214,7 @@ public final class BlockEventListener implements Listener {
 	/**
 	 * Block physics event handler<br>
 	 * remove detached death chest signs from game to prevent players gaining additional signs
+	 *
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler

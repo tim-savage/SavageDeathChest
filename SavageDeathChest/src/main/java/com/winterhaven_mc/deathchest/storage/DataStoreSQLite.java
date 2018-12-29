@@ -19,8 +19,8 @@ import static com.winterhaven_mc.deathchest.storage.Queries.getQuery;
 /**
  * SQLite implementation of Datastore
  * for persistent storage of death chests and chest block objects
- * @author Tim Savage
  *
+ * @author Tim Savage
  */
 
 
@@ -35,9 +35,10 @@ final class DataStoreSQLite extends DataStore {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param plugin reference to main class
 	 */
-	DataStoreSQLite (final PluginMain plugin) {
+	DataStoreSQLite(final PluginMain plugin) {
 
 		// set reference to main class
 		this.plugin = plugin;
@@ -55,7 +56,7 @@ final class DataStoreSQLite extends DataStore {
 	 * create table if one doesn't already exist
 	 */
 	@Override
-	final void initialize() throws SQLException,ClassNotFoundException {
+	final void initialize() throws SQLException, ClassNotFoundException {
 
 		// register the driver
 		final String jdbcDriverName = "org.sqlite.JDBC";
@@ -132,7 +133,7 @@ final class DataStoreSQLite extends DataStore {
 						rs.getInt("Y"),
 						rs.getInt("Z"));
 
-				ChestBlock chestBlock = new ChestBlock(chestUUID,location);
+				ChestBlock chestBlock = new ChestBlock(chestUUID, location);
 
 				// add DeathChestObject to results ArrayList
 				results.add(chestBlock);
@@ -211,7 +212,7 @@ final class DataStoreSQLite extends DataStore {
 				long placementTime = rs.getLong("PlacementTime");
 				long expirationTime = rs.getLong("ExpirationTime");
 
-				DeathChest deathChest = new DeathChest(chestUUID,ownerUUID,killerUUID,itemCount,placementTime,expirationTime);
+				DeathChest deathChest = new DeathChest(chestUUID, ownerUUID, killerUUID, itemCount, placementTime, expirationTime);
 
 				// add DeathChestObject to results ArrayList
 				results.add(deathChest);
@@ -471,6 +472,7 @@ final class DataStoreSQLite extends DataStore {
 
 	/**
 	 * Delete orphaned chests in nonexistent world {@code worldName}
+	 *
 	 * @param worldName the world name of orphaned chests to delete
 	 */
 	private void deleteOrphanedChests(final String worldName) {
@@ -480,7 +482,7 @@ final class DataStoreSQLite extends DataStore {
 
 		try {
 			// create prepared statement
-			PreparedStatement preparedStatement = 
+			PreparedStatement preparedStatement =
 					connection.prepareStatement(getQuery("DeleteOrphanedChests"));
 
 			preparedStatement.setString(1, worldName);
@@ -517,7 +519,7 @@ final class DataStoreSQLite extends DataStore {
 		if (isInitialized()) {
 			try {
 				connection.close();
-				plugin.getLogger().info(this.getName() + " datastore connection closed.");		
+				plugin.getLogger().info(this.getName() + " datastore connection closed.");
 			}
 			catch (SQLException e) {
 

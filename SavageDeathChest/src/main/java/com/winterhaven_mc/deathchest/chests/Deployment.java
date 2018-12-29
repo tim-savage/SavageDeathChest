@@ -34,20 +34,25 @@ public final class Deployment {
 	// reference to main class
 	private final PluginMain plugin = PluginMain.instance;
 
-	private DeathChest deathChest;
+	// death chest object
+	private final DeathChest deathChest;
 
 
 	/**
 	 * Class constructor for DeathChest deployment
+	 *
 	 * @param event player death event that triggers DeathChest deployment
 	 */
-	public Deployment (final PlayerDeathEvent event) {
+	public Deployment(final PlayerDeathEvent event) {
 
 		// get player from event
 		Player player = event.getEntity();
 
 		// get dropped items
 		List<ItemStack> droppedItems = event.getDrops();
+
+		// create new deathChest object for player
+		this.deathChest = new DeathChest(player);
 
 		// if player's current world is not enabled in config, do nothing
 		// and allow inventory items to drop on ground
@@ -79,9 +84,6 @@ public final class Deployment {
 			return;
 		}
 
-		// create new deathChest object for player
-		this.deathChest = new DeathChest(player);
-
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
 		Result result = deployChest(player, droppedItems);
 
@@ -90,6 +92,11 @@ public final class Deployment {
 
 		// drop any items that couldn't be placed in a death chest
 		event.getDrops().addAll(result.getRemainingItems());
+
+		// if debugging, log result
+		if (plugin.debug) {
+			logResult(result);
+		}
 
 		// send message based on result
 		switch (result.getResultCode()) {
@@ -102,7 +109,7 @@ public final class Deployment {
 				break;
 
 			case PROTECTION_PLUGIN:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN,result.getProtectionPlugin());
+				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
 				break;
 
 			case ABOVE_GRASS_PATH:
@@ -126,9 +133,12 @@ public final class Deployment {
 				break;
 		}
 
-		// if result is negative, return now
+		// if result is negative, cancel expire task and return
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)
 				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
+
+			// cancel DeathChest expire task
+			deathChest.cancelExpireTask();
 			return;
 		}
 
@@ -142,7 +152,8 @@ public final class Deployment {
 
 	/**
 	 * Deploy a DeathChest for player and fill with dropped items on player death
-	 * @param player the player who died
+	 *
+	 * @param player       the player who died
 	 * @param droppedItems the player's items dropped on death
 	 * @return Result - the result of the attempted DeathChest deployment
 	 */
@@ -167,7 +178,8 @@ public final class Deployment {
 
 	/**
 	 * Deploy a single chest for player and fill with dropped items on player death
-	 * @param player the player who died
+	 *
+	 * @param player       the player who died
 	 * @param droppedItems the player's items dropped on death
 	 * @return Result - the result of the attempted DeathChest deployment
 	 */
@@ -178,12 +190,13 @@ public final class Deployment {
 
 		// if require-chest option is enabled
 		// and player does not have permission override
-		// remove one chest from chest items
 		if (plugin.getConfig().getBoolean("require-chest")
 				&& !player.hasPermission("deathchest.freechest")) {
 
 			// check that player has chest in inventory
 			if (containsChest(remainingItems)) {
+
+				// remove one chest from remaining items
 				remainingItems = removeOneChest(remainingItems);
 			}
 			// else return NO_CHEST result
@@ -204,7 +217,7 @@ public final class Deployment {
 			// set chest type to single chest
 			Chest chest = (Chest) result.getLocation().getBlock().getState();
 			BlockData chestBlockData = chest.getBlockData();
-			((org.bukkit.block.data.type.Chest)chestBlockData).setType(org.bukkit.block.data.type.Chest.Type.SINGLE);
+			((org.bukkit.block.data.type.Chest) chestBlockData).setType(org.bukkit.block.data.type.Chest.Type.SINGLE);
 			chest.setBlockData(chestBlockData);
 			chest.update();
 
@@ -222,7 +235,8 @@ public final class Deployment {
 
 	/**
 	 * Deploy a double chest for player and fill with dropped items on player death
-	 * @param player the player who died
+	 *
+	 * @param player       the player who died
 	 * @param droppedItems the player's items dropped on death
 	 * @return Result - the result of the attempted DeathChest deployment
 	 */
@@ -323,8 +337,8 @@ public final class Deployment {
 		BlockData leftBlockData = leftChest.getBlockData();
 
 		// set chest types in block data
-		((org.bukkit.block.data.type.Chest)rightBlockData).setType(org.bukkit.block.data.type.Chest.Type.RIGHT);
-		((org.bukkit.block.data.type.Chest)leftBlockData).setType(org.bukkit.block.data.type.Chest.Type.LEFT);
+		((org.bukkit.block.data.type.Chest) rightBlockData).setType(org.bukkit.block.data.type.Chest.Type.RIGHT);
+		((org.bukkit.block.data.type.Chest) leftBlockData).setType(org.bukkit.block.data.type.Chest.Type.LEFT);
 
 		// set block data
 		rightChest.setBlockData(rightBlockData);
@@ -335,12 +349,13 @@ public final class Deployment {
 		leftChest.update();
 
 		// return new result with remaining items after filling chest
-		return new Result(result.getResultCode(), result.getLocation(),	deathChest.fill(remainingItems));
+		return new Result(result.getResultCode(), result.getLocation(), deathChest.fill(remainingItems));
 	}
 
 
 	/**
 	 * Combine ItemStacks of same material up to max stack size
+	 *
 	 * @param itemStacks Collection of ItemStacks to combine
 	 * @return List of ItemStack with same materials combined
 	 */
@@ -359,9 +374,9 @@ public final class Deployment {
 				}
 				if (checkStack.isSimilar(itemStack)) {
 					int transferAmount =
-							Math.min(itemStack.getAmount(),checkStack.getMaxStackSize() - checkStack.getAmount());
+							Math.min(itemStack.getAmount(), checkStack.getMaxStackSize() - checkStack.getAmount());
 					itemStack.setAmount(itemStack.getAmount() - transferAmount);
-					checkStack.setAmount(checkStack.getAmount()	+ transferAmount);
+					checkStack.setAmount(checkStack.getAmount() + transferAmount);
 				}
 			}
 			if (itemStack.getAmount() > 0) {
@@ -374,6 +389,7 @@ public final class Deployment {
 
 	/**
 	 * Check if Collection of ItemStack contains at least one chest
+	 *
 	 * @param itemStacks Collection of ItemStack to check for chest
 	 * @return boolean - {@code true} if collection contains at least one chest, {@code false} if not
 	 */
@@ -398,7 +414,10 @@ public final class Deployment {
 	/**
 	 * Remove one chest from list of item stacks. If a stack contains only one chest, remove the stack from
 	 * the list and return. If a stack contains more than one chest, decrease the stack amount by one and return.
+	 *
 	 * @param itemStacks List of ItemStack to remove chest
+	 * @return Collection of ItemStacks with one chest item removed. If passed collection contained no chest items,
+	 * the returned collection will be a copy of the passed collection.
 	 */
 	private Collection<ItemStack> removeOneChest(final Collection<ItemStack> itemStacks) {
 
@@ -413,7 +432,8 @@ public final class Deployment {
 			if (itemStack.getType().equals(Material.CHEST)) {
 				if (itemStack.getAmount() == 1) {
 					iterator.remove();
-				} else {
+				}
+				else {
 					itemStack.setAmount(itemStack.getAmount() - 1);
 				}
 				break;
@@ -427,7 +447,8 @@ public final class Deployment {
 	 * Search for a valid location to place a chest,
 	 * taking into account replaceable blocks, grass path blocks and
 	 * restrictions from other block protection plugins if configured
-	 * @param player Player that deathchest is being deployed for
+	 *
+	 * @param player    Player that deathchest is being deployed for
 	 * @param chestSize enum member denoting size of chest required (SINGLE | DOUBLE)
 	 * @return SearchResult
 	 */
@@ -454,8 +475,8 @@ public final class Deployment {
 			testLocation.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
 		}
 
-		// declare search result object
-		Result result;
+		// declare default search result object
+		Result result = new Result(ResultCode.NON_REPLACEABLE_BLOCK);
 
 		// iterate over all locations with search distance until a valid location is found
 		for (int y = 0; y < radius; y = y + 1) {
@@ -463,7 +484,7 @@ public final class Deployment {
 				for (int z = 0; z < radius; z = z + 1) {
 
 					// set new test location
-					testLocation.add(x,y,z);
+					testLocation.add(x, y, z);
 
 					// get result for test location
 					result = validateChestLocation(player, testLocation, chestSize);
@@ -478,7 +499,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(-x,-y,-z);
+						testLocation.add(-x, -y, -z);
 					}
 
 					// location 0,y,0 has already been checked, so skip ahead
@@ -487,7 +508,7 @@ public final class Deployment {
 					}
 
 					// set new test location
-					testLocation.add(-x,y,z);
+					testLocation.add(-x, y, z);
 
 					// get result for test location
 					result = validateChestLocation(player, testLocation, chestSize);
@@ -502,7 +523,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(x,-y,-z);
+						testLocation.add(x, -y, -z);
 					}
 
 					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
@@ -511,7 +532,7 @@ public final class Deployment {
 					}
 
 					// set new test location
-					testLocation.add(-x,y,-z);
+					testLocation.add(-x, y, -z);
 
 					// get result for test location
 					result = validateChestLocation(player, testLocation, chestSize);
@@ -526,11 +547,11 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(x,-y,z);
+						testLocation.add(x, -y, z);
 					}
 
 					// set new test location
-					testLocation.add(x,y,-z);
+					testLocation.add(x, y, -z);
 
 					// get result for test location
 					result = validateChestLocation(player, testLocation, chestSize);
@@ -545,7 +566,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(-x,-y,z);
+						testLocation.add(-x, -y, z);
 					}
 				}
 			}
@@ -556,13 +577,14 @@ public final class Deployment {
 			plugin.getLogger().info("Locations tested: " + testCount);
 		}
 
-		return new Result(ResultCode.NON_REPLACEABLE_BLOCK);
+		return result;
 	}
 
 
 	/**
 	 * Place a chest block and fill with items
-	 * @param location the location to place the chest block
+	 *
+	 * @param location       the location to place the chest block
 	 * @param chestBlockType the type of chest block (left or right)
 	 */
 	private void placeChest(final Location location,
@@ -596,8 +618,9 @@ public final class Deployment {
 
 	/**
 	 * Validate chest location for chest size
-	 * @param player the player for whom the chest is being placed
-	 * @param location the location to test
+	 *
+	 * @param player    the player for whom the chest is being placed
+	 * @param location  the location to test
 	 * @param chestSize the size of the chest to be placed (single, double)
 	 * @return Result - the result object for the tested location
 	 */
@@ -605,18 +628,18 @@ public final class Deployment {
 										 final Location location,
 										 final ChestSize chestSize) {
 
-		// test left chest location
+		// test right chest location
 		Result result = validateChestLocation(player, location);
 
-		// if left chest is not successful, return result
+		// if right chest is not successful, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
 			return result;
 		}
 
-		// if chest is to be a double chest, test right chest location
+		// if chest is to be a double chest, test left chest location
 		if (chestSize.equals(ChestSize.DOUBLE)) {
 
-			// test right chest block location
+			// test left chest block location (to player's right)
 			result = validateChestLocation(player, getLocationToRight(location));
 		}
 
@@ -626,8 +649,9 @@ public final class Deployment {
 
 	/**
 	 * Validate chest location for chest type
-	 * @param player the player for whom the chest is being placed
-	 * @param location the location to test
+	 *
+	 * @param player    the player for whom the chest is being placed
+	 * @param location  the location to test
 	 * @return Result - the result object for the tested location
 	 */
 	private Result validateChestLocation(final Player player, final Location location) {
@@ -661,9 +685,10 @@ public final class Deployment {
 
 	/**
 	 * Place sign on chest
-	 * @param player		Chest owner
-	 * @param chestBlock	Chest block
-	 * @return boolean		Success or failure to place sign
+	 *
+	 * @param player     Chest owner
+	 * @param chestBlock Chest block
+	 * @return boolean - Success or failure to place sign
 	 */
 	@SuppressWarnings("UnusedReturnValue")
 	private boolean placeSign(final Player player, final Block chestBlock) {
@@ -693,15 +718,15 @@ public final class Deployment {
 		}
 
 		// get block state of sign block
-		BlockState signblockState = signBlock.getState();
+		BlockState signBlockState = signBlock.getState();
 
 		// if block has not been successfully transformed into a sign, return false
-		if (!(signblockState instanceof org.bukkit.block.Sign)) {
+		if (!(signBlockState instanceof org.bukkit.block.Sign)) {
 			return false;
 		}
 
 		// Place text on sign with player name and death date
-		org.bukkit.block.Sign sign = (org.bukkit.block.Sign)signblockState;
+		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
 		String dateFormat = plugin.messageManager.getDateFormat();
 		String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
 
@@ -734,7 +759,7 @@ public final class Deployment {
 		}
 
 		// set sign facing direction
-		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signblockState.getData();
+		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signBlockState.getData();
 		signData.setFacingDirection(getCardinalDirection(player));
 		sign.setData(signData);
 
@@ -755,10 +780,11 @@ public final class Deployment {
 	}
 
 
-	/** Check if sign can be placed at location
+	/**
+	 * Check if sign can be placed at location
 	 *
-	 * @param location	Location to check
-	 * @return boolean
+	 * @param location Location to check
+	 * @return boolean {@code true} if location is valid for sign placement, {@code false} if not
 	 */
 	private boolean isValidSignLocation(final Location location) {
 
@@ -782,6 +808,7 @@ public final class Deployment {
 
 	/**
 	 * Check if block is above a grass path block
+	 *
 	 * @param block the block to check underneath
 	 * @return true if passed block is above a grass path block, false if not
 	 */
@@ -798,6 +825,7 @@ public final class Deployment {
 
 	/**
 	 * Check if location is within world spawn protection radius
+	 *
 	 * @param location the location to check
 	 * @return {@code true) if passed location is within world spawn protection radius, {@code false) if not
 	 */
@@ -821,10 +849,24 @@ public final class Deployment {
 
 	@SuppressWarnings("unused")
 	private void logResult(Result result) {
-		plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
-		plugin.getLogger().info("Location: " + result.getLocation().toString());
-		plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin().getPluginName());
-		plugin.getLogger().info("Remaining Items: " + result.getRemainingItems().toString());
+
+		if (result == null) {
+			plugin.getLogger().info("Result is null!");
+			return;
+		}
+
+		if (result.getResultCode() != null) {
+			plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
+		}
+		if (result.getLocation() != null) {
+			plugin.getLogger().info("Location: " + result.getLocation().toString());
+		}
+		if (result.getProtectionPlugin() != null) {
+			plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin().getPluginName());
+		}
+		if (result.getRemainingItems() != null) {
+			plugin.getLogger().info("Remaining Items: " + result.getRemainingItems().toString());
+		}
 	}
 
 }

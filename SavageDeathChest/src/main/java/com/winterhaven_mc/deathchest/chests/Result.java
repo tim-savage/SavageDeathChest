@@ -4,7 +4,6 @@ import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,7 +11,6 @@ import java.util.Collection;
 /**
  * A class that encapsulates fields to be returned as the result of a chest search
  */
-@Immutable
 final class Result {
 
 	private final ResultCode resultCode;
@@ -23,6 +21,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode) {
@@ -35,6 +34,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
@@ -47,6 +47,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode, final Location location) {
@@ -59,6 +60,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode,
@@ -73,6 +75,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
@@ -85,6 +88,7 @@ final class Result {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param resultCode initial result code for result
 	 */
 	Result(final ResultCode resultCode,
@@ -100,6 +104,7 @@ final class Result {
 
 	/**
 	 * Getter method for resultCode
+	 *
 	 * @return ResultCode - the result code currently set for this result object
 	 */
 	final ResultCode getResultCode() {
@@ -109,6 +114,7 @@ final class Result {
 
 	/**
 	 * Getter method for location
+	 *
 	 * @return Location - the location currently set for this result object
 	 */
 	final Location getLocation() {
@@ -118,6 +124,7 @@ final class Result {
 
 	/**
 	 * Getter method for protectionPlugin
+	 *
 	 * @return ProtectionPlugin - the protection plugin enum value currently set for this result object
 	 */
 	final ProtectionPlugin getProtectionPlugin() {
@@ -127,6 +134,7 @@ final class Result {
 
 	/**
 	 * Getter method for remainingItems
+	 *
 	 * @return Collection of ItemStack - the remaining items currently set for this result object
 	 */
 	final Collection<ItemStack> getRemainingItems() {

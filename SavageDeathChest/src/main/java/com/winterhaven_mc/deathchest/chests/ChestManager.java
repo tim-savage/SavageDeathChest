@@ -36,6 +36,7 @@ public final class ChestManager {
 
 	/**
 	 * Class constructor
+	 *
 	 * @param plugin reference to main class
 	 */
 	public ChestManager(final PluginMain plugin) {
@@ -105,6 +106,7 @@ public final class ChestManager {
 
 	/**
 	 * Put DeathChest object in map
+	 *
 	 * @param deathChest the DeathChest object to put in map
 	 */
 	final void addDeathChest(final DeathChest deathChest) {
@@ -114,6 +116,7 @@ public final class ChestManager {
 
 	/**
 	 * Get DeathChest object by chestUUID
+	 *
 	 * @param chestUUID UUID of DeathChest object to retrieve
 	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
@@ -124,6 +127,7 @@ public final class ChestManager {
 
 	/**
 	 * Get DeathChest object by block
+	 *
 	 * @param block the block to retrieve DeathChest object
 	 * @return DeathChest object, or null if no DeathChest exists in map that contains passed block location
 	 */
@@ -141,6 +145,7 @@ public final class ChestManager {
 
 	/**
 	 * Remove DeathChest object from chest index
+	 *
 	 * @param deathChest the DeathChest object to remove from map
 	 */
 	final void removeDeathChest(final DeathChest deathChest) {
@@ -150,15 +155,17 @@ public final class ChestManager {
 
 	/**
 	 * Put ChestBlock object in block index
+	 *
 	 * @param chestBlock the ChestBlock to put in map
 	 */
 	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
-		this.blockIndex.addChestBlock(chestBlockType,chestBlock);
+		this.blockIndex.addChestBlock(chestBlockType, chestBlock);
 	}
 
 
 	/**
 	 * Get ChestBlock object from block index by location
+	 *
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
@@ -169,6 +176,7 @@ public final class ChestManager {
 
 	/**
 	 * Get chestBlock set from block index by chest uuid
+	 *
 	 * @param chestUUID the UUID of the chest of which to retrieve a set of chest blocks
 	 * @return Set of Blocks in uuidBlockMap, or empty set if no blocks exist for chest UUID
 	 */
@@ -179,16 +187,18 @@ public final class ChestManager {
 
 	/**
 	 * Get chestBlock map from block index by chest uuid
+	 *
 	 * @param chestUUID the UUID of the chest of which to retrieve a map of chest blocks
 	 * @return Map of Blocks in uuidBlockMap, or empty map if no blocks exist for chest UUID
 	 */
-	final Map<ChestBlockType,ChestBlock> getChestBlockMap(final UUID chestUUID) {
+	final Map<ChestBlockType, ChestBlock> getChestBlockMap(final UUID chestUUID) {
 		return this.blockIndex.getChestBlockMap(chestUUID);
 	}
 
 
 	/**
 	 * Remove ChestBlock object from map
+	 *
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
 	final void removeChestBlock(final ChestBlock chestBlock) {
@@ -198,6 +208,7 @@ public final class ChestManager {
 
 	/**
 	 * Test if ChestBlock exists in map with passed block location
+	 *
 	 * @param block the block to check for existence in map
 	 * @return {@code true} if a ChestBlock exists in map with passed block location,
 	 * {@code false} if no ChestBlock exists in map with passed block location
@@ -221,6 +232,7 @@ public final class ChestManager {
 
 	/**
 	 * Test if a block is a DeathChest chest block
+	 *
 	 * @param block The block to test
 	 * @return {@code true} if block is Material.CHEST and block location exists in block map, {@code false} if not
 	 */
@@ -238,6 +250,7 @@ public final class ChestManager {
 
 	/**
 	 * Test if a block is a deathchest sign
+	 *
 	 * @param block The block to test if it is a DeathSign
 	 * @return {@code true} if block is Material.SIGN or Material.WALL_SIGN and block location exists in block map,
 	 * {@code false} if not
@@ -258,6 +271,7 @@ public final class ChestManager {
 
 	/**
 	 * Test that inventory is a death chest inventory
+	 *
 	 * @param inventory The inventory whose holder will be tested to see if it is a DeathChest
 	 * @return {@code true} if the inventory's holder is a DeathChest, {@code false} if not
 	 */
@@ -287,7 +301,8 @@ public final class ChestManager {
 				chest = (Chest) inventory.getHolder();
 				block = chest.getBlock();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (plugin.debug) {
 				plugin.getLogger().warning("isDeathChest(inventory) threw an exception "
 						+ "while trying to get inventory holder block.");

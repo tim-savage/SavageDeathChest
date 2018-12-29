@@ -29,8 +29,9 @@ public final class PlayerEventListener implements Listener {
 	private final PluginMain plugin;
 
 
-	/** class constructor
-	 * 
+	/**
+	 * class constructor
+	 *
 	 * @param plugin reference to main class
 	 */
 	public PlayerEventListener(final PluginMain plugin) {
@@ -45,10 +46,13 @@ public final class PlayerEventListener implements Listener {
 
 	/**
 	 * Event listener for PlayerDeathEvent<p>
-	 * Attempt to deploy a death chest on player death
-	 * @param event	PlayerDeathEvent
+	 * Attempt to deploy a death chest on player death.<br>
+	 * Listens at EventPriority.HIGH to allow other plugins to process event first,
+	 * in order to manipulate player's dropped items on death before placement in chest
+	 *
+	 * @param event PlayerDeathEvent
 	 */
-	@EventHandler(priority=EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.HIGH)
 	public final void onPlayerDeath(final PlayerDeathEvent event) {
 
 		// deploy DeathChest
@@ -56,17 +60,14 @@ public final class PlayerEventListener implements Listener {
 	}
 
 
-	/** prevent deathchest opening by non-owners or creative players
-	 * 
+	/**
+	 * Prevent deathchest opening by non-owners or creative players.<br>
+	 * Listens at EventPriority.LOW to handle event before protection plugins
+	 *
 	 * @param event PlayerInteractEvent
 	 */
-	@EventHandler(priority=EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.LOW)
 	public final void onPlayerInteract(final PlayerInteractEvent event) {
-
-		// if event is already cancelled, do nothing and return
-		if (event.isCancelled()) {
-			return;
-		}
 
 		// get player
 		final Player player = event.getPlayer();
@@ -79,12 +80,15 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
+		// get ChestBlock at clicked block location
 		ChestBlock chestBlock = plugin.chestManager.getChestBlock(block.getLocation());
+
+		// if chest block returned null, do nothing and return
 		if (chestBlock == null) {
 			return;
 		}
 
-		// get DeathChest
+		// get DeathChest from ChestBlock
 		DeathChest deathChest = plugin.chestManager.getDeathChest(chestBlock.getChestUUID());
 
 		// if DeathChest returned null, do nothing and return
@@ -95,6 +99,10 @@ public final class PlayerEventListener implements Listener {
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		final ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
+			if (plugin.debug) {
+				plugin.getLogger().info("Death chest playerInteractEvent was blocked by "
+						+ blockingPlugin.getPluginName());
+			}
 			return;
 		}
 
@@ -111,7 +119,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// if chest inventory is already being viewed: cancel event, send message and return
-		if (deathChest.getViewerCount() > 0 ) {
+		if (deathChest.getViewerCount() > 0) {
 
 			// cancel event
 			event.setCancelled(true);
@@ -146,7 +154,7 @@ public final class PlayerEventListener implements Listener {
 			}
 
 			// if killer looting is enabled and player is killer and has permission, loot chest and return
-			if (plugin.getConfig().getBoolean("killer-looting") 
+			if (plugin.getConfig().getBoolean("killer-looting")
 					&& deathChest.isKiller(player)
 					&& player.hasPermission("deathchest.loot.killer")) {
 				deathChest.autoLoot(player);
@@ -181,7 +189,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// if killer looting is enabled  and player is killer and has permission, open chest inventory and return
-		if (plugin.getConfig().getBoolean("killer-looting") 
+		if (plugin.getConfig().getBoolean("killer-looting")
 				&& deathChest.isKiller(player)
 				&& player.hasPermission("deathchest.loot.killer")) {
 			chestBlock.openInventory(player);
