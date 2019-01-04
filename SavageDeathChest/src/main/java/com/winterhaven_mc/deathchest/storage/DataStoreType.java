@@ -24,6 +24,11 @@ enum DataStoreType {
 
 	private final static DataStoreType defaultType = DataStoreType.SQLITE;
 
+
+	/**
+	 * Get new instance of DataStore of configured type
+	 * @return new instance of DataStore
+	 */
 	public abstract DataStore create();
 
 
