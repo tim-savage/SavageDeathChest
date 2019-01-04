@@ -88,11 +88,12 @@ public final class ChestManager {
 		// expire chests with no blocks or past expiration
 		for (DeathChest deathChest : chestIndex.getChests()) {
 
-			// if DeathChest has no children, remove from map and datastore
+			// if DeathChest has no children, remove from index and datastore
 			if (this.getBlockSet(deathChest.getChestUUID()).isEmpty()) {
 				chestIndex.removeDeathChest(deathChest);
 				plugin.dataStore.deleteChestRecord(deathChest);
 			}
+			// if DeathChest is past expiration, expire chest
 			else if (deathChest.getExpirationTime() < currentTime) {
 				deathChest.expire();
 			}
