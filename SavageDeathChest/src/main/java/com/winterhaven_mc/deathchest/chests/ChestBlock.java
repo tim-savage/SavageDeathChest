@@ -126,7 +126,7 @@ public final class ChestBlock {
 	 * if ChestBlock is a sign, return inventory of attached ChestBlock;
 	 * returns null if this ChestBlock (or attached block) is not a chest
 	 */
-	Inventory getInventory() {
+	final Inventory getInventory() {
 
 		// get the block state of block represented by this ChestBlock
 		BlockState blockState = this.getLocation().getBlock().getState();
