@@ -2,11 +2,11 @@ package com.winterhaven_mc.deathchest.commands;
 
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -267,7 +267,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		plugin.soundConfig.reload();
 
 		// reload datastore if changed
-		DataStoreFactory.reload();
+		DataStore.reload();
 
 		// send success message
 		plugin.messageManager.sendMessage(sender, MessageId.COMMAND_SUCCESS_RELOAD);

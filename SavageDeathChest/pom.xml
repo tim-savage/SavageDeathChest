@@ -36,14 +36,14 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>world-manager-lib</artifactId>
-			<version>1.0.6</version>
+			<version>1.0.7</version>
 		</dependency>
 
 		<!-- MessageManagerLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>message-manager-lib</artifactId>
-			<version>1.0.4</version>
+			<version>1.0.5</version>
 		</dependency>
 
 		<!-- SoundConfigLib -->
