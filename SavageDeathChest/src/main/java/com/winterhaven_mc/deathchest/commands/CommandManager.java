@@ -79,7 +79,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 				// get map of chest ownerUUID,name from all current chests
 				Map<UUID, String> chestOwners = new HashMap<>();
-				for (DeathChest deathChest : plugin.chestManager.getChestList()) {
+				for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
 					chestOwners.put(deathChest.getOwnerUUID(),
 							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName());
 				}
@@ -360,7 +360,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		int itemsPerPage = plugin.getConfig().getInt("list-page-size");
 
 		// get all records from chest manager
-		final Collection<DeathChest> chestList = plugin.chestManager.getChestList();
+		final Collection<DeathChest> chestList = plugin.chestManager.getAllChests();
 
 		// create empty list of records
 		List<DeathChest> displayRecords = new ArrayList<>();

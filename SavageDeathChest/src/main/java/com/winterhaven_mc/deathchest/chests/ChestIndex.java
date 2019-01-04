@@ -91,7 +91,7 @@ final class ChestIndex {
 	 *
 	 * @return Collection of DeathChests in map
 	 */
-	final Collection<DeathChest> getChests() {
+	final Collection<DeathChest> getAllChests() {
 		return deathChestMap.values();
 	}
 
