@@ -13,17 +13,22 @@ enum DataStoreType {
 		@Override
 		public DataStore create() {
 
-			// create new sqlite datastore object
+			// create new SQLite datastore object
 			return new DataStoreSQLite(plugin);
 		}
 	};
 
-	private final String displayName;
-
 	private final static PluginMain plugin = PluginMain.instance;
+
+	private final String displayName;
 
 	private final static DataStoreType defaultType = DataStoreType.SQLITE;
 
+
+	/**
+	 * Get new instance of DataStore of configured type
+	 * @return new instance of DataStore
+	 */
 	public abstract DataStore create();
 
 
@@ -37,12 +42,23 @@ enum DataStoreType {
 	}
 
 
+	/**
+	 * Get display name of DataStoreType
+	 *
+	 * @return String - display name of DataStoreType
+	 */
 	@Override
 	public final String toString() {
 		return this.displayName;
 	}
 
 
+	/**
+	 * Attempt to match a DataStoreType by name
+	 * @param name the name to attempt to match to a DataStoreType
+	 * @return A DataStoreType whose name matched the passed string,
+	 * or the default DataStoreType if no match
+	 */
 	public static DataStoreType match(final String name) {
 		for (DataStoreType type : DataStoreType.values()) {
 			if (type.toString().equalsIgnoreCase(name)) {
@@ -54,6 +70,10 @@ enum DataStoreType {
 	}
 
 
+	/**
+	 * Get the default DataStoreType
+	 * @return DataStoreType - the default DataStoreType
+	 */
 	public static DataStoreType getDefaultType() {
 		return defaultType;
 	}

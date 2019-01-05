@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -86,13 +87,14 @@ public final class ChestManager {
 		long currentTime = System.currentTimeMillis();
 
 		// expire chests with no blocks or past expiration
-		for (DeathChest deathChest : chestIndex.getChests()) {
+		for (DeathChest deathChest : chestIndex.getAllChests()) {
 
-			// if DeathChest has no children, remove from map and datastore
+			// if DeathChest has no children, remove from index and datastore
 			if (this.getBlockSet(deathChest.getChestUUID()).isEmpty()) {
 				chestIndex.removeDeathChest(deathChest);
 				plugin.dataStore.deleteChestRecord(deathChest);
 			}
+			// if DeathChest is past expiration, expire chest
 			else if (deathChest.getExpirationTime() < currentTime) {
 				deathChest.expire();
 			}
@@ -209,7 +211,7 @@ public final class ChestManager {
 	/**
 	 * Test if ChestBlock exists in map with passed block location
 	 *
-	 * @param block the block to check for existence in map
+	 * @param block the block to check for existence in block index
 	 * @return {@code true} if a ChestBlock exists in map with passed block location,
 	 * {@code false} if no ChestBlock exists in map with passed block location
 	 */
@@ -234,7 +236,7 @@ public final class ChestManager {
 	 * Test if a block is a DeathChest chest block
 	 *
 	 * @param block The block to test
-	 * @return {@code true} if block is Material.CHEST and block location exists in block map, {@code false} if not
+	 * @return {@code true} if block is Material.CHEST and block location exists in block index, {@code false} if not
 	 */
 	public final boolean isChestBlockChest(final Block block) {
 
@@ -252,7 +254,7 @@ public final class ChestManager {
 	 * Test if a block is a deathchest sign
 	 *
 	 * @param block The block to test if it is a DeathSign
-	 * @return {@code true} if block is Material.SIGN or Material.WALL_SIGN and block location exists in block map,
+	 * @return {@code true} if block is Material.SIGN or Material.WALL_SIGN and block location exists in block index,
 	 * {@code false} if not
 	 */
 	public final boolean isChestBlockSign(final Block block) {
@@ -262,7 +264,7 @@ public final class ChestManager {
 			return false;
 		}
 
-		// if block is sign or wall sign material and exists in block map, return true
+		// if block is sign or wall sign material and exists in block index, return true
 		return ((block.getType().equals(Material.SIGN)
 				|| block.getType().equals(Material.WALL_SIGN))
 				&& blockIndex.containsKey(block.getLocation()));
@@ -270,12 +272,17 @@ public final class ChestManager {
 
 
 	/**
-	 * Test that inventory is a death chest inventory
+	 * Test if an inventory is a death chest inventory
 	 *
 	 * @param inventory The inventory whose holder will be tested to see if it is a DeathChest
 	 * @return {@code true} if the inventory's holder is a DeathChest, {@code false} if not
 	 */
 	public final boolean isDeathChestInventory(final Inventory inventory) {
+
+		// if passed inventory is null, return false
+		if (inventory == null) {
+			return false;
+		}
 
 		// if inventory type is not a chest inventory, return false
 		if (!inventory.getType().equals(InventoryType.CHEST)) {
@@ -316,8 +323,12 @@ public final class ChestManager {
 	}
 
 
-	public final Collection<DeathChest> getChestList() {
-		return this.chestIndex.getChests();
+	/**
+	 * Get all death chests in chest index
+	 * @return Collection of DeathChest - all death chests in the chest index
+	 */
+	public final Collection<DeathChest> getAllChests() {
+		return this.chestIndex.getAllChests();
 	}
 
 }

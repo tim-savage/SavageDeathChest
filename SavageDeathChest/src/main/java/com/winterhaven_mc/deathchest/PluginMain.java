@@ -5,7 +5,6 @@ import com.winterhaven_mc.deathchest.listeners.BlockEventListener;
 import com.winterhaven_mc.deathchest.listeners.InventoryEventListener;
 import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
 import com.winterhaven_mc.deathchest.storage.DataStore;
-import com.winterhaven_mc.deathchest.storage.DataStoreFactory;
 import com.winterhaven_mc.deathchest.commands.CommandManager;
 import com.winterhaven_mc.deathchest.messages.MessageManager;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
@@ -52,7 +51,7 @@ public final class PluginMain extends JavaPlugin {
 		soundConfig = new YamlSoundConfiguration(this);
 
 		// instantiate datastore
-		dataStore = DataStoreFactory.create();
+		dataStore = DataStore.create();
 
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
