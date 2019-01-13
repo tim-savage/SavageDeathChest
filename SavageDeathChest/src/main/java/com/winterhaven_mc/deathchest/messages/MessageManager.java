@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -23,6 +24,7 @@ public final class MessageManager extends AbstractMessageManager {
 
 	// reference to main class
 	private final PluginMain plugin;
+
 
 	/**
 	 * Class constructor
@@ -51,6 +53,9 @@ public final class MessageManager extends AbstractMessageManager {
 
 	@Override
 	protected Map<String, String> getDefaultReplacements(CommandSender recipient) {
+
+		// check for null parameter
+		Objects.requireNonNull(recipient);
 
 		Map<String, String> replacements = new HashMap<>();
 
@@ -88,8 +93,13 @@ public final class MessageManager extends AbstractMessageManager {
 	 *
 	 * @param recipient the recipient to whom to send a message
 	 * @param messageId the message identifier
+	 * @throws NullPointerException if parameter is null
 	 */
 	public void sendMessage(final CommandSender recipient, final MessageId messageId) {
+
+		// check for null parameters
+		Objects.requireNonNull(recipient);
+		Objects.requireNonNull(messageId);
 
 		// get default replacement map
 		Map<String, String> replacements = getDefaultReplacements(recipient);
@@ -106,36 +116,40 @@ public final class MessageManager extends AbstractMessageManager {
 	 * @param recipient  the recipient to whom to send a message
 	 * @param messageId  the message identifier
 	 * @param deathChest the chest being referenced in this message
+	 * @throws NullPointerException if parameter is null
 	 */
 	public void sendMessage(final CommandSender recipient,
 							final MessageId messageId,
 							final DeathChest deathChest) {
 
+		// check for null parameters
+		Objects.requireNonNull(recipient);
+		Objects.requireNonNull(messageId);
+		Objects.requireNonNull(deathChest);
+
 		// get default replacement map
 		Map<String, String> replacements = getDefaultReplacements(recipient);
 
-		if (deathChest != null) {
-			if (deathChest.getLocation() != null) {
-				replacements.put("%WORLD_NAME%", plugin.worldManager.getWorldName(deathChest.getLocation().getWorld()));
-				replacements.put("%LOC_X%", String.valueOf(deathChest.getLocation().getBlockX()));
-				replacements.put("%LOC_Y%", String.valueOf(deathChest.getLocation().getBlockY()));
-				replacements.put("%LOC_Z%", String.valueOf(deathChest.getLocation().getBlockZ()));
-			}
-
-			replacements.put("%OWNER_NAME%",
-					ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getOwnerUUID()).getName()));
-
-			if (deathChest.getKillerUUID() == null) {
-				replacements.put("%KILLER_NAME%", "-");
-			}
-			else {
-				replacements.put("%KILLER_NAME%",
-						ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getKillerUUID()).getName()));
-			}
-
-			replacements.put("%REMAINING_TIME%",
-					getTimeString(deathChest.getExpirationTime() - System.currentTimeMillis()));
+		if (deathChest.getLocation() != null) {
+			replacements.put("%WORLD_NAME%", plugin.worldManager.getWorldName(deathChest.getLocation().getWorld()));
+			replacements.put("%LOC_X%", String.valueOf(deathChest.getLocation().getBlockX()));
+			replacements.put("%LOC_Y%", String.valueOf(deathChest.getLocation().getBlockY()));
+			replacements.put("%LOC_Z%", String.valueOf(deathChest.getLocation().getBlockZ()));
 		}
+
+		replacements.put("%OWNER_NAME%",
+				ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getOwnerUUID()).getName()));
+
+		if (deathChest.getKillerUUID() == null) {
+			replacements.put("%KILLER_NAME%", "-");
+		}
+		else {
+			replacements.put("%KILLER_NAME%",
+					ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getKillerUUID()).getName()));
+		}
+
+		replacements.put("%REMAINING_TIME%",
+				getTimeString(deathChest.getExpirationTime() - System.currentTimeMillis()));
 
 		// send message
 		//noinspection unchecked
@@ -150,39 +164,43 @@ public final class MessageManager extends AbstractMessageManager {
 	 * @param messageId  the message identifier
 	 * @param deathChest the chest being referenced in this message
 	 * @param listCount  the item number of a list of which this message is a single entry
+	 * @throws NullPointerException if parameter is null
 	 */
 	public void sendMessage(final CommandSender recipient,
 							final MessageId messageId,
 							final DeathChest deathChest,
 							final int listCount) {
 
+		// check for null parameters
+		Objects.requireNonNull(recipient);
+		Objects.requireNonNull(messageId);
+		Objects.requireNonNull(deathChest);
+
 		// get default replacement map
 		Map<String, String> replacements = getDefaultReplacements(recipient);
 
-		if (deathChest != null) {
-			if (deathChest.getLocation() != null) {
-				replacements.put("%WORLD_NAME%", plugin.worldManager.getWorldName(deathChest.getLocation().getWorld()));
-				replacements.put("%LOC_X%", String.valueOf(deathChest.getLocation().getBlockX()));
-				replacements.put("%LOC_Y%", String.valueOf(deathChest.getLocation().getBlockY()));
-				replacements.put("%LOC_Z%", String.valueOf(deathChest.getLocation().getBlockZ()));
-			}
-
-			replacements.put("%OWNER_NAME%",
-					ChatColor.stripColor(plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName()));
-
-			if (deathChest.getKillerUUID() == null) {
-				replacements.put("%KILLER_NAME%", "-");
-			}
-			else {
-				replacements.put("%KILLER_NAME%",
-						ChatColor.stripColor(plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName()));
-			}
-
-			replacements.put("%REMAINING_TIME%",
-					getTimeString(deathChest.getExpirationTime() - System.currentTimeMillis(), TimeUnit.MINUTES));
-
-			replacements.put("%ITEM_NUMBER%", String.valueOf(listCount));
+		if (deathChest.getLocation() != null) {
+			replacements.put("%WORLD_NAME%", plugin.worldManager.getWorldName(deathChest.getLocation().getWorld()));
+			replacements.put("%LOC_X%", String.valueOf(deathChest.getLocation().getBlockX()));
+			replacements.put("%LOC_Y%", String.valueOf(deathChest.getLocation().getBlockY()));
+			replacements.put("%LOC_Z%", String.valueOf(deathChest.getLocation().getBlockZ()));
 		}
+
+		replacements.put("%OWNER_NAME%",
+				ChatColor.stripColor(plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName()));
+
+		if (deathChest.getKillerUUID() == null) {
+			replacements.put("%KILLER_NAME%", "-");
+		}
+		else {
+			replacements.put("%KILLER_NAME%",
+					ChatColor.stripColor(plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName()));
+		}
+
+		replacements.put("%REMAINING_TIME%",
+				getTimeString(deathChest.getExpirationTime() - System.currentTimeMillis(), TimeUnit.MINUTES));
+
+		replacements.put("%ITEM_NUMBER%", String.valueOf(listCount));
 
 		// send message
 		//noinspection unchecked
@@ -196,15 +214,16 @@ public final class MessageManager extends AbstractMessageManager {
 	 * @param recipient        the recipient to whom to send a message
 	 * @param messageId        the message identifier
 	 * @param protectionPlugin the protection plugin whose name will be used in the message
+	 * @throws NullPointerException if parameter is null
 	 */
 	public void sendMessage(final CommandSender recipient,
 							final MessageId messageId,
 							final ProtectionPlugin protectionPlugin) {
 
-		// if recipient is null, do nothing and return
-		if (recipient == null) {
-			return;
-		}
+		// check for null parameters
+		Objects.requireNonNull(recipient);
+		Objects.requireNonNull(messageId);
+		Objects.requireNonNull(protectionPlugin);
 
 		// get default replacement map
 		Map<String, String> replacements = getDefaultReplacements(recipient);
@@ -222,10 +241,9 @@ public final class MessageManager extends AbstractMessageManager {
 							final int page,
 							final int pageCount) {
 
-		// if recipient is null, do nothing and return
-		if (recipient == null) {
-			return;
-		}
+		// check for null parameters
+		Objects.requireNonNull(recipient);
+		Objects.requireNonNull(messageId);
 
 		// get default replacement map
 		Map<String, String> replacements = getDefaultReplacements(recipient);
