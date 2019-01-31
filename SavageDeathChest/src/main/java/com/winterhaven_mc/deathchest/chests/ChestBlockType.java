@@ -24,7 +24,7 @@ enum ChestBlockType {
 	 */
 	public static ChestBlockType getType(final Block block) {
 
-		// check for null
+		// check for null parameter
 		if (block == null) {
 			return null;
 		}
