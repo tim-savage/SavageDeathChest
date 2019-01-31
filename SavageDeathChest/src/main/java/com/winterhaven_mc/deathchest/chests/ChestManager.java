@@ -21,10 +21,13 @@ public final class ChestManager {
 	// reference to main class
 	private final PluginMain plugin;
 
+	// map of death chests
 	private final ChestIndex chestIndex;
 
+	// map of chest blocks
 	private final BlockIndex blockIndex;
 
+	// set of replaceable blocks
 	public final ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
@@ -45,6 +48,7 @@ public final class ChestManager {
 		// set reference to main class
 		this.plugin = plugin;
 
+		// initialize replaceableBlocks
 		replaceableBlocks = new ReplaceableBlocks(plugin);
 
 		// initialize chestIndex
