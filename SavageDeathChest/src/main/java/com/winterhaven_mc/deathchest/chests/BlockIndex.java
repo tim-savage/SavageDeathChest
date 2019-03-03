@@ -19,7 +19,11 @@ final class BlockIndex {
 	 * Constructor
 	 */
 	BlockIndex() {
+
+		// initialize location map
 		locationMap = new ConcurrentHashMap<>();
+
+		// initialize uuid map
 		uuidMap = new ConcurrentHashMap<>();
 	}
 
@@ -27,6 +31,7 @@ final class BlockIndex {
 	/**
 	 * Put ChestBlock object in map
 	 *
+	 * @param chestBlockType the ChestBlockType of ChestBlock to put in map
 	 * @param chestBlock the ChestBlock to put in map
 	 */
 	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {

@@ -156,8 +156,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 *
 	 * @param sender Command sender
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
+	 * @throws NullPointerException if parameter is null
 	 */
 	private boolean statusCommand(final CommandSender sender) {
+
+		// check for null parameter
+		Objects.requireNonNull(sender);
 
 		if (!sender.hasPermission("deathchest.status")) {
 			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_STATUS_PERMISSION);
@@ -236,8 +240,12 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 *
 	 * @param sender command sender
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
+	 * @throws NullPointerException if parameter is null
 	 */
 	private boolean reloadCommand(final CommandSender sender) {
+
+		// check for null parameter
+		Objects.requireNonNull(sender);
 
 		if (!sender.hasPermission("deathchest.reload")) {
 			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_RELOAD_PERMISSION);
@@ -283,8 +291,13 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @param sender command sender
 	 * @param args   additional command arguments
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
+	 * @throws NullPointerException if parameter is null
 	 */
 	private boolean listCommand(final CommandSender sender, final String[] args) {
+
+		// check for null parameters
+		Objects.requireNonNull(sender);
+		Objects.requireNonNull(args);
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
@@ -437,8 +450,13 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @param sender command sender
 	 * @param args   additional command arguments
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
+	 * @throws NullPointerException if parameter is null
 	 */
 	private boolean helpCommand(final CommandSender sender, final String[] args) {
+
+		// check for null parameters
+		Objects.requireNonNull(sender);
+		Objects.requireNonNull(args);
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.help")) {
@@ -476,12 +494,14 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	/**
 	 * Display command usage
 	 *
-	 * @param sender        the command sender
-	 * @param passedCommand the command for which to display usage
+	 * @param sender       the command sender
+	 * @param passedString the command for which to display usage
 	 */
-	private void displayUsage(final CommandSender sender, final String passedCommand) {
+	private void displayUsage(final CommandSender sender, final String passedString) {
 
-		String command = passedCommand;
+		// check for null parameters
+		Objects.requireNonNull(sender);
+		String command = Objects.requireNonNull(passedString);
 
 		if (command.isEmpty() || command.equalsIgnoreCase("help")) {
 			command = "all";
