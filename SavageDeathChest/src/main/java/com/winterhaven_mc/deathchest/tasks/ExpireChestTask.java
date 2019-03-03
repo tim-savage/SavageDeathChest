@@ -15,6 +15,7 @@ public final class ExpireChestTask extends BukkitRunnable {
 
 	/**
 	 * Class constructor
+	 * @param deathChest the death chest to expire
 	 */
 	public ExpireChestTask(final DeathChest deathChest) {
 
