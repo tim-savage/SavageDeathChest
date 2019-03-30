@@ -112,11 +112,6 @@ public final class InventoryEventListener implements Listener {
 		// get event inventory
 		final Inventory inventory = event.getInventory();
 
-		// if inventory is null, do nothing and return
-		if (inventory == null) {
-			return;
-		}
-
 		// if inventory type is not a chest, do nothing and return
 		if (!inventory.getType().equals(InventoryType.CHEST)) {
 			return;
