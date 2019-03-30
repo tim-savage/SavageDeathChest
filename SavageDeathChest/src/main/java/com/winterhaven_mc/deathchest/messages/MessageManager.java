@@ -137,15 +137,22 @@ public final class MessageManager extends AbstractMessageManager {
 			replacements.put("%LOC_Z%", String.valueOf(deathChest.getLocation().getBlockZ()));
 		}
 
-		replacements.put("%OWNER_NAME%",
-				ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getOwnerUUID()).getName()));
+		if (deathChest.getOwnerUUID() == null
+				|| plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName() == null) {
+			replacements.put("%OWNER_NAME%", "-");
+		}
+		else {
+			replacements.put("%OWNER_NAME%",
+					ChatColor.stripColor(plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName()));
+		}
 
-		if (deathChest.getKillerUUID() == null) {
+		if (deathChest.getKillerUUID() == null
+				|| plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName() == null) {
 			replacements.put("%KILLER_NAME%", "-");
 		}
 		else {
 			replacements.put("%KILLER_NAME%",
-					ChatColor.stripColor(plugin.getServer().getPlayer(deathChest.getKillerUUID()).getName()));
+					ChatColor.stripColor(plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName()));
 		}
 
 		replacements.put("%REMAINING_TIME%",
