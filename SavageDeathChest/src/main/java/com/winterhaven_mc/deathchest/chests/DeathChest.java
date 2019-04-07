@@ -85,7 +85,7 @@ public final class DeathChest {
 		this.chestUUID = UUID.randomUUID();
 
 		// set playerUUID
-		if (player != null && player.getUniqueId() != null) {
+		if (player != null) {
 			this.ownerUUID = player.getUniqueId();
 		}
 		else {
@@ -407,7 +407,7 @@ public final class DeathChest {
 		}
 
 		// get current time
-		Long currentTime = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
 
 		// compute ticks remaining until expire time (millisecond interval divided by 50 yields ticks)
 		long ticksRemaining = (this.expirationTime - currentTime) / 50;

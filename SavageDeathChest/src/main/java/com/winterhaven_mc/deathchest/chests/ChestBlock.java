@@ -94,11 +94,6 @@ public final class ChestBlock {
 		// get block represented by this DeathChestBlock
 		final Block block = this.getLocation().getBlock();
 
-		// if block is null return null
-		if (block == null) {
-			return null;
-		}
-
 		// if block is not a DeathSign, return null
 		if (!plugin.chestManager.isChestBlockSign(block)) {
 			return null;
@@ -248,9 +243,7 @@ public final class ChestBlock {
 		}
 
 		// set chest uuid metadata
-		if (deathChest.getChestUUID() != null) {
-			block.setMetadata("deathchest-uuid", new FixedMetadataValue(plugin, deathChest.getChestUUID()));
-		}
+		block.setMetadata("deathchest-uuid", new FixedMetadataValue(plugin, deathChest.getChestUUID()));
 
 		// set owner uuid metadata
 		if (deathChest.getOwnerUUID() != null) {

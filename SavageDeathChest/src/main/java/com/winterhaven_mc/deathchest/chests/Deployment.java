@@ -117,6 +117,7 @@ public final class Deployment {
 				break;
 
 			case NON_REPLACEABLE_BLOCK:
+				//noinspection DuplicateBranchesInSwitch
 				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
 				break;
 

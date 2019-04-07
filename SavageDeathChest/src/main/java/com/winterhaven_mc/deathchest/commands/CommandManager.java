@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +41,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	public CommandManager(final PluginMain plugin) {
 
 		this.plugin = plugin;
-		plugin.getCommand("deathchest").setExecutor(this);
+		Objects.requireNonNull(plugin.getCommand("deathchest")).setExecutor(this);
 		pluginName = "[" + this.plugin.getName() + "] ";
 	}
 
@@ -55,9 +56,9 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @return List of String - the possible matching values for tab completion
 	 */
 	@Override
-	public final List<String> onTabComplete(final CommandSender sender,
-											final Command command,
-											final String alias,
+	public final List<String> onTabComplete(final @Nonnull CommandSender sender,
+											final @Nonnull Command command,
+											final @Nonnull String alias,
 											final String[] args) {
 
 		// initialize return list
@@ -111,9 +112,9 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	@Override
-	public final boolean onCommand(final CommandSender sender,
-								   final Command cmd,
-								   final String label,
+	public final boolean onCommand(final @Nonnull CommandSender sender,
+								   final @Nonnull Command cmd,
+								   final @Nonnull String label,
 								   final String[] args) {
 
 		String subcommand;
@@ -347,7 +348,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 					return true;
 				}
 				for (OfflinePlayer offlinePlayer : offlinePlayers) {
-					if (offlinePlayer.getName().equalsIgnoreCase(args[1])) {
+					if (args[1].equalsIgnoreCase(offlinePlayer.getName())) {
 						targetPlayer = offlinePlayer;
 					}
 				}
