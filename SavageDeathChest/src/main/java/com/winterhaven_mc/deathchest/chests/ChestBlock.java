@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.Material.OAK_SIGN;
+import org.bukkit.Material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.concurrent.Immutable;

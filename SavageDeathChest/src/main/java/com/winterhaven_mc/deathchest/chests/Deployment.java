@@ -760,7 +760,7 @@ public final class Deployment {
 		}
 
 		// set sign facing direction
-		org.bukkit.Material.OAK_SIGN signData = (org.bukkit.Material.OAK_SIGN) signBlockState.getData();
+		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signBlockState.getData();
 		signData.setFacingDirection(getCardinalDirection(player));
 		sign.setData(signData);
 
