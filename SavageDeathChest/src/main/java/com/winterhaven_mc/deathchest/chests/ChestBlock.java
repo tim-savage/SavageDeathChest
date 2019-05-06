@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.material.Sign;
+import org.bukkit.Material.OAK_SIGN;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.concurrent.Immutable;
@@ -127,7 +127,7 @@ public final class ChestBlock {
 		BlockState blockState = this.getLocation().getBlock().getState();
 
 		// if block is a sign or wall sign, get attached block
-		if (blockState.getType().equals(Material.SIGN) || blockState.getType().equals((Material.WALL_SIGN))) {
+		if (blockState.getType().equals(Material.OAK_SIGN) || blockState.getType().equals((Material.OAK_WALL_SIGN))) {
 
 			// get attached block
 			Block block = this.getAttachedBlock();

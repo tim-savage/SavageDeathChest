@@ -704,13 +704,13 @@ public final class Deployment {
 
 		// if chest face is valid location, create wall sign
 		if (isValidSignLocation(signBlock.getLocation())) {
-			signBlock.setType(Material.WALL_SIGN);
+			signBlock.setType(Material.OAK_WALL_SIGN);
 		}
 		else {
 			// create sign post on top of chest if chest face was invalid location
 			signBlock = chestBlock.getRelative(BlockFace.UP);
 			if (isValidSignLocation(signBlock.getLocation())) {
-				signBlock.setType(Material.SIGN);
+				signBlock.setType(Material.OAK_SIGN);
 			}
 			else {
 				// if top of chest is also an invalid location, do nothing and return
@@ -760,7 +760,7 @@ public final class Deployment {
 		}
 
 		// set sign facing direction
-		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signBlockState.getData();
+		org.bukkit.Material.OAK_SIGN signData = (org.bukkit.Material.OAK_SIGN) signBlockState.getData();
 		signData.setFacingDirection(getCardinalDirection(player));
 		sign.setData(signData);
 
