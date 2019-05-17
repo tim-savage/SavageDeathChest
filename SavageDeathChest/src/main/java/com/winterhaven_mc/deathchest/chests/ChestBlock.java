@@ -127,7 +127,7 @@ public final class ChestBlock {
 		BlockState blockState = this.getLocation().getBlock().getState();
 
 		// if block is a sign or wall sign, get attached block
-		if (blockState.getType().equals(Material.SIGN) || blockState.getType().equals((Material.WALL_SIGN))) {
+		if (blockState.getType().equals(Material.OAK_SIGN) || blockState.getType().equals((Material.OAK_WALL_SIGN))) {
 
 			// get attached block
 			Block block = this.getAttachedBlock();
