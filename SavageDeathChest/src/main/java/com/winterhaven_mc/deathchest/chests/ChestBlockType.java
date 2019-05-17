@@ -30,7 +30,7 @@ enum ChestBlockType {
 		}
 
 		// if block material is SIGN or WALL_SIGN, return ChestBlockType.SIGN
-		if (block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN)) {
+		if (block.getType().equals(Material.OAK_SIGN) || block.getType().equals(Material.OAK_WALL_SIGN)) {
 			return ChestBlockType.SIGN;
 		}
 
