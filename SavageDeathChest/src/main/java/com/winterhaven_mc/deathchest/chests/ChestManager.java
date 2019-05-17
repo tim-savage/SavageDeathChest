@@ -34,8 +34,8 @@ public final class ChestManager {
 	final static Set<Material> deathChestMaterials =
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 					Material.CHEST,
-					Material.WALL_SIGN,
-					Material.SIGN)));
+					Material.OAK_WALL_SIGN,
+					Material.OAK_SIGN)));
 
 
 	/**
@@ -269,8 +269,8 @@ public final class ChestManager {
 		}
 
 		// if block is sign or wall sign material and exists in block index, return true
-		return ((block.getType().equals(Material.SIGN)
-				|| block.getType().equals(Material.WALL_SIGN))
+		return ((block.getType().equals(Material.OAK_SIGN)
+				|| block.getType().equals(Material.OAK_WALL_SIGN))
 				&& blockIndex.containsKey(block.getLocation()));
 	}
 
