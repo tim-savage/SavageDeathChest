@@ -294,7 +294,7 @@ public final class Deployment {
 		// place chest at result location
 		placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
 
-		// place sign on right chest
+		// place sign on chest
 		placeSign(player, result.getLocation().getBlock());
 
 		// attempt to place second chest
@@ -699,85 +699,104 @@ public final class Deployment {
 			return false;
 		}
 
-		// get block adjacent to chest facing player direction
-		Block signBlock = chestBlock.getRelative(getCardinalDirection(player));
+		// try placing sign on chest, catching any exception thrown
+		try {
+			// get block adjacent to chest facing player direction
+			Block signBlock = chestBlock.getRelative(getCardinalDirection(player));
 
-		// if chest face is valid location, create wall sign
-		if (isValidSignLocation(signBlock.getLocation())) {
-			signBlock.setType(Material.WALL_SIGN);
-		}
-		else {
-			// create sign post on top of chest if chest face was invalid location
-			signBlock = chestBlock.getRelative(BlockFace.UP);
+			// if chest face is valid location, create wall sign
 			if (isValidSignLocation(signBlock.getLocation())) {
-				signBlock.setType(Material.SIGN);
+
+				signBlock.setType(Material.OAK_WALL_SIGN);
+
+				BlockState bs = signBlock.getState();
+				org.bukkit.block.data.type.WallSign signBlockDataType = (org.bukkit.block.data.type.WallSign) bs.getBlockData();
+				signBlockDataType.setFacing(getCardinalDirection(player));
+				bs.setBlockData(signBlockDataType);
+				bs.update();
 			}
 			else {
-				// if top of chest is also an invalid location, do nothing and return
-				return false;
-			}
-		}
+				// create sign post on top of chest if chest face was invalid location
+				signBlock = chestBlock.getRelative(BlockFace.UP);
+				if (isValidSignLocation(signBlock.getLocation())) {
 
-		// get block state of sign block
-		BlockState signBlockState = signBlock.getState();
+					signBlock.setType(Material.OAK_SIGN);
 
-		// if block has not been successfully transformed into a sign, return false
-		if (!(signBlockState instanceof org.bukkit.block.Sign)) {
-			return false;
-		}
-
-		// Place text on sign with player name and death date
-		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
-		String dateFormat = plugin.messageManager.getDateFormat();
-		String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
-
-		// get sign text from language file
-		List<String> lines = plugin.messageManager.getSignText();
-
-		if (lines.isEmpty()) {
-			sign.setLine(0, ChatColor.BOLD + "R.I.P.");
-			sign.setLine(1, ChatColor.RESET + player.getName());
-			sign.setLine(3, "D: " + dateString);
-		}
-		else {
-			// use try..catch block so chest will still deploy even if error exists in yaml
-			try {
-				int lineCount = 0;
-				for (String line : lines) {
-					line = line.replace("%PLAYER_NAME%", player.getName());
-					line = line.replace("%DATE%", dateString);
-					line = line.replace("%WORLD_NAME%", plugin.worldManager.getWorldName(player.getWorld()));
-					line = ChatColor.translateAlternateColorCodes('&', line);
-					sign.setLine(lineCount, line);
-					lineCount++;
+					BlockState bs = signBlock.getState();
+					org.bukkit.block.data.type.Sign signBlockDataType = (org.bukkit.block.data.type.Sign) bs.getBlockData();
+					signBlockDataType.setRotation(getCardinalDirection(player));
+					bs.setBlockData(signBlockDataType);
+					bs.update();
+				}
+				else {
+					// if top of chest is also an invalid location, do nothing and return
+					return false;
 				}
 			}
-			catch (Exception e) {
-				sign.setLine(0, ChatColor.BOLD + "R.I.P.");
-				sign.setLine(1, ChatColor.RESET + player.getName());
-				sign.setLine(3, "D: " + dateString);
+
+			// get block state of sign block
+			BlockState signBlockState = signBlock.getState();
+
+			// if block has not been successfully transformed into a sign, return false
+			if (!(signBlockState instanceof org.bukkit.block.Sign)) {
+				return false;
 			}
+
+			// Place text on sign with player name and death date
+			// cast signBlockState to org.bukkit.block.Sign type object
+			org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
+
+			// get configured date format from language file
+			String dateFormat = plugin.messageManager.getDateFormat();
+
+			// create formatted date string from current time
+			String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
+
+			// get sign text from language file
+			List<String> lines = plugin.messageManager.getSignText();
+
+			int lineCount = 0;
+			for (String line : lines) {
+
+				// stop after four lines (zero indexed)
+				if (lineCount > 3) {
+					break;
+				}
+
+				// do string replacements
+				line = line.replace("%PLAYER_NAME%", player.getName());
+				line = line.replace("%DATE%", dateString);
+				line = line.replace("%WORLD_NAME%", plugin.worldManager.getWorldName(player.getWorld()));
+				line = ChatColor.translateAlternateColorCodes('&', line);
+
+				// set sign text
+				sign.setLine(lineCount, line);
+				lineCount++;
+			}
+
+			// update sign block with text and direction
+			sign.update();
+
+			// create ChestBlock for this sign block
+			ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
+
+			// add this ChestBlock to block map
+			plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+
+			// set sign block metadata
+			signChestBlock.setMetadata(deathChest);
+
+			// return success
+			return true;
 		}
-
-		// set sign facing direction
-		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signBlockState.getData();
-		signData.setFacingDirection(getCardinalDirection(player));
-		sign.setData(signData);
-
-		// update sign block with text and direction
-		sign.update();
-
-		// create ChestBlock for this sign block
-		ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
-
-		// add this ChestBlock to block map
-		plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
-
-		// set block metadata
-		signChestBlock.setMetadata(deathChest);
-
-		// return success
-		return true;
+		catch (Exception e) {
+			plugin.getLogger().severe("An error occurred while trying to place the death chest sign.");
+			plugin.getLogger().severe(e.getLocalizedMessage());
+			if (plugin.debug) {
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
 
 
