@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.14.1-R0.1-SNAPSHOT</version>
+			<version>1.14.4-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -109,7 +109,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>RoadBlock</artifactId>
-			<version>1.13.1</version>
+			<version>1.14.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
