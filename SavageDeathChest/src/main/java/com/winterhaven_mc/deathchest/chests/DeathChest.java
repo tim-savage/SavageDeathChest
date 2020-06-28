@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.concurrent.Immutable;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public final class DeathChest {
 
 	// reference to main class
-	private final PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// the UUID of this death chest
 	private final UUID chestUUID;

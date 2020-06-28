@@ -9,7 +9,8 @@ import java.util.Collection;
 
 
 /**
- * A class that encapsulates fields to be returned as the result of a chest search
+ * A class that encapsulates fields to be returned
+ * as the result of a search for a valid chest location
  */
 final class Result {
 
@@ -36,6 +37,8 @@ final class Result {
 	 * Class constructor
 	 *
 	 * @param resultCode initial result code for result
+	 * @param remainingItems player dropped items remaining
+	 *
 	 */
 	Result(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
 		this.resultCode = resultCode;
@@ -49,6 +52,7 @@ final class Result {
 	 * Class constructor
 	 *
 	 * @param resultCode initial result code for result
+	 * @param location chest location
 	 */
 	Result(final ResultCode resultCode, final Location location) {
 		this.resultCode = resultCode;
@@ -62,6 +66,8 @@ final class Result {
 	 * Class constructor
 	 *
 	 * @param resultCode initial result code for result
+	 * @param location chest location
+	 * @param remainingItems player dropped items remaining
 	 */
 	Result(final ResultCode resultCode,
 		   final Location location,
@@ -77,6 +83,7 @@ final class Result {
 	 * Class constructor
 	 *
 	 * @param resultCode initial result code for result
+	 * @param protectionPlugin plugin that prevented chest placement
 	 */
 	Result(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
 		this.resultCode = resultCode;
@@ -90,6 +97,9 @@ final class Result {
 	 * Class constructor
 	 *
 	 * @param resultCode initial result code for result
+	 * @param location chest location
+	 * @param protectionPlugin plugin that prevented chest placement
+	 * @param remainingItems player dropped items remaining
 	 */
 	Result(final ResultCode resultCode,
 		   final Location location,

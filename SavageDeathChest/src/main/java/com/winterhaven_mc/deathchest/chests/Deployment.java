@@ -4,10 +4,7 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.messages.MessageId;
 
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -16,6 +13,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,7 +30,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 public final class Deployment {
 
 	// reference to main class
-	private final PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// death chest object
 	private final DeathChest deathChest;
@@ -149,6 +147,7 @@ public final class Deployment {
 		// put DeathChest in datastore
 		plugin.dataStore.putChestRecord(deathChest);
 	}
+
 
 
 	/**
@@ -461,7 +460,7 @@ public final class Deployment {
 		// get distance to search from config
 		int radius = plugin.getConfig().getInt("search-distance");
 
-		// get clone of player death location
+		// get copy of player death location
 		Location testLocation = player.getLocation().clone();
 
 		// if player died in the void, start search at y=1 if place-above-void configured true
@@ -479,13 +478,28 @@ public final class Deployment {
 		// declare default search result object
 		Result result = new Result(ResultCode.NON_REPLACEABLE_BLOCK);
 
-		// iterate over all locations with search distance until a valid location is found
-		for (int y = 0; y < radius; y = y + 1) {
-			for (int x = 0; x < radius; x = x + 1) {
-				for (int z = 0; z < radius; z = z + 1) {
+		if (plugin.debug) {
+			plugin.getLogger().info("initial death location: " + testLocation.toString());
+		}
+
+		// iterate over all locations within search distance until a valid location is found
+
+		// iterate height starting at death location and incrementing up by one until search distance is reached
+		for (int y = 0; y < radius; y++) {
+
+			// perform spiral search around death location until search distance is reached
+
+
+
+			for (int x = 0; x < radius; x++) {
+				for (int z = 0; z < radius; z++) {
 
 					// set new test location
 					testLocation.add(x, y, z);
+
+					if (plugin.debug) {
+						plugin.getLogger().info("test location: " + testLocation.toString());
+					}
 
 					// get result for test location
 					result = validateChestLocation(player, testLocation, chestSize);
@@ -857,6 +871,12 @@ public final class Deployment {
 		}
 
 		// get world spawn location
+		World world = location.getWorld();
+
+		if (world == null) {
+			return false;
+		}
+
 		Location worldSpawn = plugin.worldManager.getSpawnLocation(location.getWorld());
 
 		// get spawn protection radius

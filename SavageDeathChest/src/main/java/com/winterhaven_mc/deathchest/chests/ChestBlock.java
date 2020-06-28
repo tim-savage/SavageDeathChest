@@ -14,19 +14,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.*;
 
 
 /**
- * A class that represents a single block that is a component of a death chest
+ * A class that represents a single block that is a component of a death chest.
+ * Block may be a left chest, a right chest, or an attached sign
  */
-@Immutable
 public final class ChestBlock {
 
-	// static reference to main class
-	private final PluginMain plugin = PluginMain.instance;
+	// reference to main class
+	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// chest UUID
 	private final UUID chestUUID;

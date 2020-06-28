@@ -20,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 
 /**
@@ -247,7 +248,7 @@ public enum ProtectionPlugin {
 	};
 
 	// static reference to main class
-	private final static PluginMain plugin = PluginMain.instance;
+	private final static PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// protection plugin name
 	private final String pluginName;
@@ -321,8 +322,10 @@ public enum ProtectionPlugin {
 	 */
 	private String getVersion() {
 
-		if (plugin.getServer().getPluginManager().getPlugin(this.getPluginName()) != null) {
-			return plugin.getServer().getPluginManager().getPlugin(this.getPluginName()).getDescription().getVersion();
+		Plugin thisPlugin = plugin.getServer().getPluginManager().getPlugin(this.getPluginName());
+
+		if (thisPlugin != null) {
+			return thisPlugin.getDescription().getVersion();
 		}
 		return " (unknown version)";
 	}

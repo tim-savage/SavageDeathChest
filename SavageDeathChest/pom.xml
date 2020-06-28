@@ -57,12 +57,10 @@
 			<version>1.0.3</version>
 		</dependency>
 
-		<!-- Bukkit -->
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.14.4-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.16.1-R0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- WorldEdit Bukkit -->
@@ -109,7 +107,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>RoadBlock</artifactId>
-			<version>1.14.0</version>
+			<version>1.15.1</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
