@@ -1,9 +1,9 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
 import org.bukkit.GameMode;
@@ -23,6 +23,8 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import java.util.ArrayList;
 
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
+
 
 
 /**
@@ -116,7 +118,7 @@ public final class BlockEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
-			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS, deathChest);
+			Message.create(player, NO_CREATIVE_ACCESS).send();
 			event.setCancelled(true);
 			return;
 		}
@@ -133,7 +135,7 @@ public final class BlockEventListener implements Listener {
 		if (deathChest.getViewerCount() > 0) {
 
 			// send player message
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN, deathChest);
+			Message.create(player, CHEST_CURRENTLY_OPEN).send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -156,7 +158,7 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// send player not-owner message
-		plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
+		Message.create(player, NOT_OWNER).send();
 
 		// play denied access sound
 		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
