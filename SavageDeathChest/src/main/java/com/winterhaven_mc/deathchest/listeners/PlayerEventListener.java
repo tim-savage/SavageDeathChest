@@ -1,11 +1,11 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.chests.Deployment;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
 import org.bukkit.GameMode;
@@ -17,6 +17,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 
 
 /**
@@ -114,7 +116,7 @@ public final class PlayerEventListener implements Listener {
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
 			event.setCancelled(true);
-			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS, deathChest);
+			Message.create(player, NO_CREATIVE_ACCESS).send();
 			return;
 		}
 
@@ -125,7 +127,7 @@ public final class PlayerEventListener implements Listener {
 			event.setCancelled(true);
 
 			// send player message
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN, deathChest);
+			Message.create(player, CHEST_CURRENTLY_OPEN).send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -162,7 +164,7 @@ public final class PlayerEventListener implements Listener {
 			}
 			else {
 				// send player not-owner message
-				plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
+				Message.create(player, NOT_OWNER).send();
 
 				// play denied access sound
 				plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -196,7 +198,7 @@ public final class PlayerEventListener implements Listener {
 		}
 		else {
 			// send player not-owner message
-			plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
+			Message.create(player, NOT_OWNER).send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
