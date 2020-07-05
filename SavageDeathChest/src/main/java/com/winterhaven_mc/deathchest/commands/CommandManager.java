@@ -2,6 +2,8 @@ package com.winterhaven_mc.deathchest.commands;
 
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Macro;
+import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
@@ -19,6 +21,8 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 
 
 /**
@@ -165,7 +169,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		Objects.requireNonNull(sender);
 
 		if (!sender.hasPermission("deathchest.status")) {
-			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_STATUS_PERMISSION);
+			Message.create(sender, COMMAND_FAIL_STATUS_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -249,7 +253,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		Objects.requireNonNull(sender);
 
 		if (!sender.hasPermission("deathchest.reload")) {
-			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_RELOAD_PERMISSION);
+			Message.create(sender, COMMAND_FAIL_RELOAD_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -279,7 +283,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		DataStore.reload();
 
 		// send success message
-		plugin.messageManager.sendMessage(sender, MessageId.COMMAND_SUCCESS_RELOAD);
+		Message.create(sender, COMMAND_SUCCESS_RELOAD).send();
 
 		// return true to prevent bukkit command help display
 		return true;
@@ -302,7 +306,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
-			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_LIST_PERMISSION);
+			Message.create(sender, COMMAND_FAIL_LIST_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -318,7 +322,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		int maxArgs = 3;
 
 		if (args.length > maxArgs) {
-			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_ARGS_COUNT_OVER);
+			Message.create(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -343,7 +347,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			catch (NumberFormatException e) {
 				// if sender does not have list other permission, send message and return
 				if (!sender.hasPermission("deathchest.list.other")) {
-					plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_LIST_OTHER_PERMISSION);
+					Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
 					plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 					return true;
 				}
@@ -353,7 +357,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 					}
 				}
 				if (targetPlayer == null && !passedPlayerName.equals("*")) {
-					plugin.messageManager.sendMessage(sender, MessageId.LIST_PLAYER_NOT_FOUND);
+					Message.create(sender, LIST_PLAYER_NOT_FOUND).send();
 					plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 					return true;
 				}
@@ -402,7 +406,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		// if display list is empty, output list empty message and return
 		if (displayRecords.isEmpty()) {
-			plugin.messageManager.sendMessage(sender, MessageId.LIST_EMPTY);
+			Message.create(sender, LIST_EMPTY).send();
 			return true;
 		}
 
@@ -423,24 +427,51 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		int listCount = startIndex;
 
 		// display list header
-		plugin.messageManager.sendMessage(sender, MessageId.LIST_HEADER, page, pageCount);
+		Message.create(sender, LIST_HEADER)
+				.setMacro(Macro.PAGE_NUMBER, page)
+				.setMacro(Macro.PAGE_TOTAL, pageCount)
+				.send();
 
 		for (DeathChest deathChest : displayRange) {
 
 			// increment list counter
 			listCount++;
 
+			String ownerName = "-";
+			if (deathChest.getOwnerUUID() != null) {
+				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+			}
+
+			String killerName = "-";
+			if (deathChest.getKillerUUID() != null) {
+				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+			}
+
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (passedPlayerName.equals("*")) {
-				plugin.messageManager.sendMessage(sender, MessageId.LIST_ITEM_ALL, deathChest, listCount);
+				Message.create(sender, LIST_ITEM_ALL)
+						.setMacro(Macro.ITEM_NUMBER, listCount)
+						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.OWNER_NAME, ownerName)
+						.setMacro(Macro.KILLER_NAME, killerName)
+						.send();
 			}
 			else {
-				plugin.messageManager.sendMessage(sender, MessageId.LIST_ITEM, deathChest, listCount);
+				Message.create(sender, LIST_ITEM)
+						.setMacro(Macro.ITEM_NUMBER, listCount)
+						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.OWNER_NAME, ownerName)
+						.setMacro(Macro.KILLER_NAME, killerName)
+						.send();
 			}
 		}
 
 		// display list footer
-		plugin.messageManager.sendMessage(sender, MessageId.LIST_FOOTER, page, pageCount);
+		Message.create(sender, LIST_FOOTER)
+				.setMacro(Macro.PAGE_NUMBER, page)
+				.setMacro(Macro.PAGE_TOTAL, pageCount)
+				.send();
+
 		return true;
 	}
 
