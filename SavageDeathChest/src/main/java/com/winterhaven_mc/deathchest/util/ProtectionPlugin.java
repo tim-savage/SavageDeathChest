@@ -316,6 +316,16 @@ public enum ProtectionPlugin {
 
 
 	/**
+	 * Override toString() method to print plugin name
+	 * @return String - the plugin name
+	 */
+	@Override
+	public String toString() {
+		return this.pluginName;
+	}
+
+
+	/**
 	 * Get plugin version
 	 *
 	 * @return String - plugin version
