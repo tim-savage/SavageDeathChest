@@ -6,8 +6,8 @@ import com.winterhaven_mc.deathchest.listeners.InventoryEventListener;
 import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
 import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.commands.CommandManager;
-import com.winterhaven_mc.deathchest.messages.MessageManager;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
+import com.winterhaven_mc.util.LanguageManager;
 import com.winterhaven_mc.util.SoundConfiguration;
 import com.winterhaven_mc.util.WorldManager;
 import com.winterhaven_mc.util.YamlSoundConfiguration;
@@ -21,7 +21,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class PluginMain extends JavaPlugin {
 
 	public WorldManager worldManager;
-	public MessageManager messageManager;
 	public SoundConfiguration soundConfig;
 	public DataStore dataStore;
 	public ChestManager chestManager;
@@ -35,11 +34,11 @@ public final class PluginMain extends JavaPlugin {
 		// copy default config from jar if it doesn't exist
 		saveDefaultConfig();
 
+		// initialize language manager
+		LanguageManager.init();
+
 		// instantiate world manager
 		worldManager = new WorldManager(this);
-
-		// instantiate message manager
-		messageManager = new MessageManager(this);
 
 		// instantiate sound configuration
 		soundConfig = new YamlSoundConfiguration(this);
