@@ -39,9 +39,7 @@ DATE_FORMAT: "MMM d, yyyy"
 #################
 # Variable substitutions:
 # %PLAYER_NAME%          Player name of message recipient
-# %PLAYER_NICKNAME%      Player nickname of message recipient
-# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix of message recipient
-# %EXPIRE_TIME%			 Configured expire time duration
+# %DURATION%			 Configured expire time duration
 # %REMAINING_TIME%       Time Remaining before chest expires (only available in messages that reference a valid chest object)
 # %WORLD_NAME%           World name of chest (or player if no chest)
 # %LOC_X%                Chest coordinates (or player if no chest)
@@ -49,6 +47,7 @@ DATE_FORMAT: "MMM d, yyyy"
 # %LOC_Z%                Chest coordinates (or player if no chest)
 # %OWNER_NAME%           Chest owner name (only available in messages that reference a valid chest object)
 # %KILLER_NAME%          Chest killer name (only available in messages that reference a valid chest object)
+# %PLUGIN%               Protection plugin name
 
 # %PAGE%                 List page number (only available in LIST_HEADER and LIST_FOOTER messages)
 # %PAGE_COUNT%           List page count (only available in LIST_HEADER and LIST_FOOTER messages)
@@ -57,7 +56,7 @@ DATE_FORMAT: "MMM d, yyyy"
 MESSAGES:
   CHEST_SUCCESS:
     enabled: true
-    string: '&cSuccessfully placed death chest. You have %EXPIRE_TIME% to retrieve your items.'
+    string: '&cSuccessfully placed death chest. You have %DURATION% to retrieve your items.'
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
@@ -147,11 +146,11 @@ MESSAGES:
 
   LIST_HEADER:
     enabled: true
-    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+    string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
 
   LIST_FOOTER:
     enabled: false
-    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+    string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
 
   LIST_ITEM:
     enabled: true

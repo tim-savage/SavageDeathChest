@@ -7,7 +7,6 @@ import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
 import org.bukkit.ChatColor;
@@ -492,7 +491,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.help")) {
-			plugin.messageManager.sendMessage(sender, MessageId.COMMAND_FAIL_HELP_PERMISSION);
+			Message.create(sender, COMMAND_FAIL_HELP_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}

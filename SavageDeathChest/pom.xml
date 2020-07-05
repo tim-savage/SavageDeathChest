@@ -40,7 +40,14 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>world-manager-lib</artifactId>
-			<version>1.0.8</version>
+			<version>1.16.0</version>
+		</dependency>
+
+		<!-- MessageManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>messenger-lib</artifactId>
+			<version>1.16.0</version>
 		</dependency>
 
 		<!-- MessageManagerLib -->
@@ -54,13 +61,15 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>sound-config-lib</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.5</version>
 		</dependency>
 
+		<!-- Spigot API -->
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
 			<version>1.16.1-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- WorldEdit Bukkit -->
@@ -107,14 +116,12 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>RoadBlock</artifactId>
-			<version>1.15.1</version>
+			<version>1.16.1</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-
 		<!-- Resources -->
 		<resources>
 			<resource>
@@ -150,6 +157,7 @@
 							<artifactSet>
 								<includes>
 									<include>com.winterhaven-mc:message-manager-lib</include>
+									<include>com.winterhaven-mc:messenger-lib</include>
 									<include>com.winterhaven-mc:world-manager-lib</include>
 									<include>com.winterhaven-mc:sound-config-lib</include>
 								</includes>

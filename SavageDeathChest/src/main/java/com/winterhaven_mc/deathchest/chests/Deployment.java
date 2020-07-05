@@ -1,15 +1,17 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 
+import com.winterhaven_mc.deathchest.messages.Message;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
@@ -61,7 +65,7 @@ public final class Deployment {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PERMISSION);
+			Message.create(player, CHEST_DENIED_PERMISSION).send();
 			return;
 		}
 
@@ -72,13 +76,13 @@ public final class Deployment {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-deploy")
 				&& !player.hasPermission("deathchest.creative-deploy")) {
-			plugin.messageManager.sendMessage(player, MessageId.CREATIVE_MODE);
+			Message.create(player, CREATIVE_MODE).send();
 			return;
 		}
 
 		// if player inventory is empty, output message and return
 		if (droppedItems.isEmpty()) {
-			plugin.messageManager.sendMessage(player, MessageId.INVENTORY_EMPTY);
+			Message.create(player, INVENTORY_EMPTY).send();
 			return;
 		}
 
@@ -99,36 +103,37 @@ public final class Deployment {
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS, deathChest);
+				Message.create(player, CHEST_SUCCESS)
+						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")))
+						.send();
 				break;
 
 			case PARTIAL_SUCCESS:
-				plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS, deathChest);
+				Message.create(player, DOUBLECHEST_PARTIAL_SUCCESS).send();
 				break;
 
 			case PROTECTION_PLUGIN:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
+				Message.create(player, CHEST_DENIED_PLUGIN)
+						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
+						.send();
 				break;
 
 			case ABOVE_GRASS_PATH:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
-				break;
-
 			case NON_REPLACEABLE_BLOCK:
-				//noinspection DuplicateBranchesInSwitch
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
+				Message.create(player, CHEST_DENIED_BLOCK).send();
 				break;
 
 			case ADJACENT_CHEST:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_ADJACENT);
+				Message.create(player, CHEST_DENIED_ADJACENT).send();
 				break;
 
 			case NO_CHEST:
-				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+				Message.create(player, NO_CHEST_IN_INVENTORY).send();
 				break;
 
 			case SPAWN_RADIUS:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_SPAWN_RADIUS);
+				Message.create(player, CHEST_DENIED_SPAWN_RADIUS).send();
 				break;
 		}
 
@@ -608,17 +613,29 @@ public final class Deployment {
 		// get current block at location
 		Block block = location.getBlock();
 
-		// get block state
-		BlockState blockState = block.getState();
+		// set block material to chest
+		block.setType(Material.CHEST);
 
-		// set material to chest
-		blockState.setType(Material.CHEST);
+		// get block direction
+		Directional blockData = (Directional) block.getBlockData();
 
-		// set direction
-		blockState.setData(new org.bukkit.material.Chest(getCardinalDirection(location)));
+		// set new direction
+		blockData.setFacing(getCardinalDirection(location));
 
-		// update chest BlockState
-		blockState.update(true, false);
+		// set block data
+		block.setBlockData(blockData);
+
+//		// get block state
+//		BlockState blockState = block.getState();
+//
+//		// set material to chest
+//		blockState.setType(Material.CHEST);
+//
+//		// set direction
+//		blockState.setData(new org.bukkit.material.Chest(getCardinalDirection(location)));
+//
+//		// update chest BlockState
+//		blockState.update(true, false);
 
 		// create new ChestBlock object
 		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());

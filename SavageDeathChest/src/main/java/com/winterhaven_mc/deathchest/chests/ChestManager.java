@@ -5,8 +5,11 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
@@ -268,9 +271,12 @@ public final class ChestManager {
 			return false;
 		}
 
-		// if block is sign or wall sign material and exists in block index, return true
-		return ((block.getType().equals(Material.OAK_SIGN)
-				|| block.getType().equals(Material.OAK_WALL_SIGN))
+		// get block state
+		BlockState blockState = block.getState();
+
+		// if block is sign or wall sign and exists in block index, return true
+		return ((blockState instanceof WallSign
+				|| blockState instanceof Sign)
 				&& blockIndex.containsKey(block.getLocation()));
 	}
 
