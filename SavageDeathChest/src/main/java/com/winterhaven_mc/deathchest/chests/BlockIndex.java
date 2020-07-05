@@ -16,7 +16,7 @@ final class BlockIndex {
 
 
 	/**
-	 * Constructor
+	 * Class constructor
 	 */
 	BlockIndex() {
 
