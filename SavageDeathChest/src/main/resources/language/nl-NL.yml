@@ -1,0 +1,171 @@
+##############
+# Time strings
+##############
+TIME_STRINGS:
+  DAY: 'dag'
+  DAY_PLURAL: 'dagen'
+  HOUR: 'uur'
+  HOUR_PLURAL: 'uren'
+  MINUTE: 'minuut'
+  MINUTE_PLURAL: 'minuten'
+  SECOND: 'seconde'
+  SECOND_PLURAL: 'seconden'
+  UNLIMITED: 'onbeperkt de tijd'
+  LESS_THAN_ONE: 'minder dan één'
+
+
+##################
+# Custom sign text
+##################
+# Variable substitutions:
+# %PLAYER_NAME%	Player's name
+# %WORLD_NAME%	World name
+# %DATE%		Death date
+SIGN_TEXT:
+  - '&lRust zacht&r'
+  - '%PLAYER_NAME%'
+  - ''
+  - 'D: %DATE%'
+
+# Date format documentation:
+# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+DATE_FORMAT: "d MMMM yyyy"
+
+
+#################
+# Custom Messages
+#################
+# Variable substitutions:
+# %PLAYER_NAME%          Player name of message recipient
+# %PLAYER_NICKNAME%      Player nickname of message recipient
+# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix of message recipient
+# %EXPIRE_TIME%			 Configured expire time duration
+# %REMAINING_TIME%       Time Remaining before chest expires (only available in messages that reference a valid chest object)
+# %WORLD_NAME%           World name of chest (or player if no chest)
+# %LOC_X%                Chest coordinates (or player if no chest)
+# %LOC_Y%                Chest coordinates (or player if no chest)
+# %LOC_Z%                Chest coordinates (or player if no chest)
+# %OWNER_NAME%           Chest owner name (only available in messages that reference a valid chest object)
+# %KILLER_NAME%          Chest killer name (only available in messages that reference a valid chest object)
+
+# %PAGE%                 List page number (only available in LIST_HEADER and LIST_FOOTER messages)
+# %PAGE_COUNT%           List page count (only available in LIST_HEADER and LIST_FOOTER messages)
+# %ITEM_NUMBER%          List item number (only available in list item messages)
+
+MESSAGES:
+  CHEST_SUCCESS:
+    enabled: true
+    string: '&eJe bezittingen zijn achtergebleven in een dodenkist!'
+
+  DOUBLECHEST_PARTIAL_SUCCESS:
+    enabled: true
+    string: '&cOmdat er niet genoeg ruimte was voor een dubbele kist, kon een deel van je bezittingen niet veiliggesteld worden.'
+
+  CHEST_DENIED_PLUGIN:
+    enabled: true
+    string: '&cHet plaatsen van een dodenkist was niet mogelijk vanwege een conflict met %PLUGIN%.'
+
+  CHEST_DENIED_BLOCK:
+    enabled: true
+    string: '&cEr is niet genoeg ruimte om een dodenkist te plaatsen.'
+
+  CHEST_DENIED_PERMISSION:
+    enabled: false
+    string: '&cJe hebt niet de benodigde rechten voor het gebruik van dodenkisten.'
+
+  CHEST_DENIED_ADJACENT:
+    enabled: true
+    string: '&cHet plaatsen van een dodenkist was niet mogelijk omdat er al een andere dodenkist stond.'
+
+  CHEST_DENIED_SPAWN_RADIUS:
+    enabled: true
+    string: '&cHet plaatsen van een dodenkist was niet mogelijk vanwege de world spawn protection.'
+
+  INVENTORY_EMPTY:
+    enabled: false
+    string: '&cJe had geen bezittingen waarvoor een dodenkist gemaakt moest worden.'
+
+  INVENTORY_FULL:
+    enabled: true
+    string: '&cNiet alle bezittingen kunnen worden overgezet omdat je inventaris vol is.'
+
+  NO_CHEST_IN_INVENTORY:
+    enabled: true
+    string: '&cJe had geen kist in je inventaris.'
+
+  NOT_OWNER:
+    enabled: true
+    string: '&cHé! Deze dodenkist is niet van jou.'
+
+  CHEST_EXPIRED:
+    enabled: true
+    string: '&cJe hebt de dodenkist helaas niet op tijd gevonden.'
+    repeat-delay: 1
+
+  CREATIVE_MODE:
+    enabled: true
+    string: '&cEr is geen dodenkist gemaakt omdat je in creatieve modus speelt.'
+
+  NO_CREATIVE_ACCESS:
+    enabled: true
+    string: '&cToegang tot dodenkisten is niet mogelijk in de creatieve speelmodus.'
+
+  CHEST_CURRENTLY_OPEN:
+    enabled: true
+    string: '&cDeze dodenkist wordt al bekeken.'
+
+  COMMAND_FAIL_ARGS_COUNT_OVER:
+    enabled: true
+    string: '&cTeveel waarden opgegeven!'
+
+  COMMAND_FAIL_HELP_PERMISSION:
+    enabled: true
+    string: '&cJe hebt niet de benodigde rechten om het help-commando te kunnen gebruiken!'
+
+  COMMAND_FAIL_LIST_PERMISSION:
+    enabled: true
+    string: '&cJe hebt niet de benodigde rechten om de lijst met dodenkisten te kunnen zien!'
+
+  COMMAND_FAIL_LIST_OTHER_PERMISSION:
+    enabled: true
+    string: '&cJe hebt niet de benodigde rechten om de dodenkisten van andere spelers te kunnen inzien!'
+
+  COMMAND_FAIL_RELOAD_PERMISSION:
+    enabled: true
+    string: '&cJe hebt niet de benodigde rechten om de instellingen te kunnen herladen!'
+
+  COMMAND_FAIL_STATUS_PERMISSION:
+    enabled: true
+    string: '&cJe hebt niet de benodigde rechten om de instellingen te kunnen bekijken!'
+
+  COMMAND_SUCCESS_RELOAD:
+    enabled: true
+    string: '&7Instellingen opnieuw ingeladen.'
+
+
+  LIST_HEADER:
+    enabled: true
+    string: '&3Pagina &b%PAGE%&3 van &b%PAGE_COUNT%'
+
+  LIST_FOOTER:
+    enabled: false
+    string: '&3Pagina &b%PAGE%&3 van &b%PAGE_COUNT%'
+
+  LIST_ITEM:
+    enabled: true
+    string: "%ITEM_NUMBER%) &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n
+    &aResterende tijd:&b %REMAINING_TIME% &aVermoord door:&b %KILLER_NAME%"
+
+  LIST_ITEM_ALL:
+    enabled: true
+    string: "%ITEM_NUMBER%) &aEigenaar:&b %OWNER_NAME% &aVermoord door:&b %KILLER_NAME% \n
+    &aLocatie:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n
+    &aResterende tijd:&b %REMAINING_TIME%"
+
+  LIST_EMPTY:
+    enabled: true
+    string: '&bEr zijn geen dodenkisten om te tonen!'
+
+  LIST_PLAYER_NOT_FOUND:
+    enabled: true
+    string: '&3Deze speler is onbekend!'
