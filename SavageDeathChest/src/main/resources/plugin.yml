@@ -2,7 +2,7 @@ name: ${project.name}
 main: com.winterhaven_mc.deathchest.PluginMain
 author: ${project.author}
 version: ${project.version}
-api-version: 1.14
+api-version: 1.16
 softdepend: [Factions,GriefPrevention,Multiverse-Core,PreciousStones,ProClaim,RoadBlock,Towny,WorldGuard]
 
 commands:
