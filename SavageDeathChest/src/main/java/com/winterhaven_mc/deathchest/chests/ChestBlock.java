@@ -8,11 +8,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -99,11 +100,18 @@ public final class ChestBlock {
 			return null;
 		}
 
-		// get block state cast to Sign
-		Sign sign = (Sign) block.getState().getData();
+		Block returnBlock = null;
 
-		// get attached block
-		Block returnBlock = block.getRelative(sign.getAttachedFace());
+		// if block is a wall sign, get block behind
+		if (block.getBlockData() instanceof WallSign) {
+			WallSign wallSign = (WallSign) block.getBlockData();
+			returnBlock = block.getRelative(wallSign.getFacing().getOppositeFace());
+		}
+
+		// else if block is a sign post, get block below
+		else if (block.getBlockData() instanceof Sign) {
+			returnBlock = block.getRelative(0, 1, 0);
+		}
 
 		// if attached block is not a DeathChest, return null
 		if (!plugin.chestManager.isChestBlockChest(returnBlock)) {
