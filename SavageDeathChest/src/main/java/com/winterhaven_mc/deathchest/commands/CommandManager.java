@@ -9,6 +9,7 @@ import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
+import com.winterhaven_mc.util.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -192,7 +193,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 			expireTime = -1;
 		}
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
-				+ ChatColor.RESET + plugin.messageManager.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
+				+ ChatColor.RESET + LanguageManager.getInstance().getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
 
 		sender.sendMessage(ChatColor.GREEN + "Require Chest: "
 				+ ChatColor.RESET + plugin.getConfig().getString("require-chest"));
@@ -273,7 +274,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		plugin.worldManager.reload();
 
 		// reload messages
-		plugin.messageManager.reload();
+		LanguageManager.reload();
 
 		// reload sounds
 		plugin.soundConfig.reload();
