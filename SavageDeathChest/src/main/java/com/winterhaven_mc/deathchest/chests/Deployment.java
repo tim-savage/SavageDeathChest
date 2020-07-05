@@ -777,14 +777,19 @@ public final class Deployment {
 			// cast signBlockState to org.bukkit.block.Sign type object
 			org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
 
-			// get configured date format from language file
-			String dateFormat = plugin.messageManager.getDateFormat();
+			// get configured date format from config file
+			String dateFormat = plugin.getConfig().getString("DATE_FORMAT");
+
+			// if configured date format is null or empty, use default format
+			if (dateFormat == null || dateFormat.isEmpty()) {
+				dateFormat = "MMM d, yyyy";
+			}
 
 			// create formatted date string from current time
 			String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
 
-			// get sign text from language file
-			List<String> lines = plugin.messageManager.getSignText();
+			// get sign text from config file
+			List<String> lines = plugin.getConfig().getStringList("SIGN_TEXT");
 
 			int lineCount = 0;
 			for (String line : lines) {
