@@ -56,30 +56,33 @@ place-below-max: true
 # Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
 expire-time: 60
 
-# Place sign on death chests
-chest-signs: true
-
 # Allow quick-looting of chests with sneak-punch
 quick-loot: true
 
 # number of DeathChests shown per page in list command
 list-page-size: 5
 
+# Place sign on death chests
+chest-signs: true
+
+# Custom sign text
+# Variable substitutions:
+# %PLAYER_NAME%	Player's name
+# %WORLD_NAME%	World name
+# %DATE%		Death date
+SIGN_TEXT:
+  - '&lR.I.P.&r'
+  - '%PLAYER_NAME%'
+  - ''
+  - 'D: %DATE%'
+
+# Date format documentation:
+# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+DATE_FORMAT: "MMM d, yyyy"
+
 # Ignore protection plugin permissions on death chest placement or access
 protection-plugins:
-  Factions:
-    ignore-on-place: false
-    ignore-on-access: true
-
-  GriefPrevention:
-    ignore-on-place: false
-    ignore-on-access: true
-
-  PreciousStones:
-    ignore-on-place: false
-    ignore-on-access: true
-
-  RoadBlock:
+  WorldGuard:
     ignore-on-place: false
     ignore-on-access: true
 
@@ -87,7 +90,15 @@ protection-plugins:
     ignore-on-place: false
     ignore-on-access: true
 
-  WorldGuard:
+  GriefPrevention:
+    ignore-on-place: false
+    ignore-on-access: true
+
+  RoadBlock:
+    ignore-on-place: false
+    ignore-on-access: true
+
+  PreciousStones:
     ignore-on-place: false
     ignore-on-access: true
 
