@@ -1,7 +1,7 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.messages.MessageId;
+import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 
@@ -15,6 +15,9 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.concurrent.Immutable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static com.winterhaven_mc.deathchest.messages.MessageId.CHEST_EXPIRED;
+import static com.winterhaven_mc.deathchest.messages.MessageId.INVENTORY_FULL;
 
 
 /**
@@ -290,7 +293,7 @@ public final class DeathChest {
 		}
 
 		// send player message
-		plugin.messageManager.sendMessage(player, MessageId.INVENTORY_FULL, this);
+		Message.create(player, INVENTORY_FULL).send();
 
 		// try to put remaining items back in chest
 		remainingItems = this.fill(remainingItems);
@@ -318,7 +321,7 @@ public final class DeathChest {
 
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED, this);
+			Message.create(player, CHEST_EXPIRED).send();
 		}
 	}
 
