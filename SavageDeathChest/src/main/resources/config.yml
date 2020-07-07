@@ -67,12 +67,12 @@ chest-signs: true
 
 # Custom sign text
 # Variable substitutions:
-# %PLAYER_NAME%	Player's name
-# %WORLD_NAME%	World name
-# %DATE%		Death date
+# %PLAYER%  Player's name
+# %WORLD%   World name
+# %DATE%    Death date
 SIGN_TEXT:
   - '&lR.I.P.&r'
-  - '%PLAYER_NAME%'
+  - '%PLAYER%'
   - ''
   - 'D: %DATE%'
 
