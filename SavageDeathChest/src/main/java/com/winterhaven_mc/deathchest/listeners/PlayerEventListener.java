@@ -18,6 +18,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import static com.winterhaven_mc.deathchest.messages.Macro.*;
+import static com.winterhaven_mc.deathchest.messages.Macro.VIEWER;
 import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 
 
@@ -116,7 +118,9 @@ public final class PlayerEventListener implements Listener {
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
 			event.setCancelled(true);
-			Message.create(player, NO_CREATIVE_ACCESS).send();
+			Message.create(player, NO_CREATIVE_ACCESS)
+					.setMacro(LOCATION, player.getLocation()
+					).send();
 			return;
 		}
 
@@ -126,8 +130,28 @@ public final class PlayerEventListener implements Listener {
 			// cancel event
 			event.setCancelled(true);
 
+			// only one chest viewer allowed, so get name viewer at index 0
+			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
+
+			// get owner name from uuid
+			String ownerName = "-";
+			if (deathChest.getOwnerUUID() != null) {
+				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+			}
+
+			// get killer name from uuid
+			String killerName = "-";
+			if (deathChest.getKillerUUID() != null) {
+				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+			}
+
 			// send player message
-			Message.create(player, CHEST_CURRENTLY_OPEN).send();
+			Message.create(player, CHEST_CURRENTLY_OPEN)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(OWNER, ownerName)
+					.setMacro(KILLER, killerName)
+					.setMacro(VIEWER, viewerName)
+					.send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
