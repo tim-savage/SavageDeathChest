@@ -65,7 +65,9 @@ public final class Deployment {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			Message.create(player, CHEST_DENIED_PERMISSION).send();
+			Message.create(player, CHEST_DENIED_PERMISSION)
+					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.send();
 			return;
 		}
 
@@ -76,13 +78,17 @@ public final class Deployment {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-deploy")
 				&& !player.hasPermission("deathchest.creative-deploy")) {
-			Message.create(player, CREATIVE_MODE).send();
+			Message.create(player, CREATIVE_MODE)
+					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.send();
 			return;
 		}
 
 		// if player inventory is empty, output message and return
 		if (droppedItems.isEmpty()) {
-			Message.create(player, INVENTORY_EMPTY).send();
+			Message.create(player, INVENTORY_EMPTY)
+					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.send();
 			return;
 		}
 
@@ -100,40 +106,55 @@ public final class Deployment {
 			logResult(result);
 		}
 
+		// get configured expire-time
+		long expireTime = plugin.getConfig().getLong("expire-time");
+
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
 				Message.create(player, CHEST_SUCCESS)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
-						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("expire-time")))
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
 						.send();
 				break;
 
 			case PARTIAL_SUCCESS:
-				Message.create(player, DOUBLECHEST_PARTIAL_SUCCESS).send();
+				Message.create(player, DOUBLECHEST_PARTIAL_SUCCESS)
+						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.send();
 				break;
 
 			case PROTECTION_PLUGIN:
 				Message.create(player, CHEST_DENIED_PLUGIN)
+						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
 						.send();
 				break;
 
 			case ABOVE_GRASS_PATH:
 			case NON_REPLACEABLE_BLOCK:
-				Message.create(player, CHEST_DENIED_BLOCK).send();
+				Message.create(player, CHEST_DENIED_BLOCK)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 
 			case ADJACENT_CHEST:
-				Message.create(player, CHEST_DENIED_ADJACENT).send();
+				Message.create(player, CHEST_DENIED_ADJACENT)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 
 			case NO_CHEST:
-				Message.create(player, NO_CHEST_IN_INVENTORY).send();
+				Message.create(player, NO_CHEST_IN_INVENTORY)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 
 			case SPAWN_RADIUS:
-				Message.create(player, CHEST_DENIED_SPAWN_RADIUS).send();
+				Message.create(player, CHEST_DENIED_SPAWN_RADIUS)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 		}
 
@@ -233,8 +254,11 @@ public final class Deployment {
 			placeSign(player, result.getLocation().getBlock());
 		}
 
-		// return new result with remaining items
-		return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
+		// set remaining items in result
+		result.setRemainingItems(remainingItems);
+
+		// return result
+		return result;
 	}
 
 
@@ -257,25 +281,19 @@ public final class Deployment {
 		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
 			result = deploySingleChest(player, remainingItems);
 
-			// if single chest deployment was successful, return PARTIAL_SUCCESS result
+			// if single chest deployment was successful, set PARTIAL_SUCCESS result
 			if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-				return new Result(ResultCode.PARTIAL_SUCCESS,
-						result.getLocation(),
-						result.getProtectionPlugin(),
-						result.getRemainingItems());
+				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
 			}
-			// else return unsuccessful result of single chest deployment
-			else {
-				return result;
-			}
+
+			// return result
+			return result;
 		}
 
 		// if search failed, return result with remaining items
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-			return new Result(result.getResultCode(),
-					result.getLocation(),
-					result.getProtectionPlugin(),
-					remainingItems);
+			result.setRemainingItems(remainingItems);
+			return result;
 		}
 
 		// if require-chest option is enabled
@@ -291,7 +309,10 @@ public final class Deployment {
 			}
 			// else return NO_CHEST result
 			else {
-				return new Result(ResultCode.NO_CHEST, remainingItems);
+				result.setResultCode(ResultCode.NO_CHEST);
+				result.setRemainingItems(remainingItems);
+				return result;
+//				return new Result(ResultCode.NO_CHEST, remainingItems);
 			}
 		}
 
@@ -314,7 +335,10 @@ public final class Deployment {
 			}
 			// else return new PARTIAL_SUCCESS result with location and remaining items after filling chest
 			else {
-				return new Result(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
+				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
+				result.setRemainingItems(deathChest.fill(remainingItems));
+				return result;
+//				return new Result(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
 			}
 		}
 
@@ -353,8 +377,11 @@ public final class Deployment {
 		rightChest.update();
 		leftChest.update();
 
-		// return new result with remaining items after filling chest
-		return new Result(result.getResultCode(), result.getLocation(), deathChest.fill(remainingItems));
+		// put remaining items after filling chest in result
+		result.setRemainingItems(deathChest.fill(remainingItems));
+
+		// return result
+		return result;
 	}
 
 
@@ -465,36 +492,37 @@ public final class Deployment {
 		// get distance to search from config
 		int radius = plugin.getConfig().getInt("search-distance");
 
-		// get copy of player death location
-		Location testLocation = player.getLocation().clone();
+		// get player death location
+		Location origin = player.getLocation();
 
 		// if player died in the void, start search at y=1 if place-above-void configured true
 		if (plugin.getConfig().getBoolean("place-above-void")
-				&& testLocation.getY() < 1) {
-			testLocation.setY(1);
+				&& origin.getY() < 1) {
+			origin.setY(1);
+//			testLocation.setY(1);
 		}
 
 		// if player died above world build height, start search at build height minus search distance
 		else if (plugin.getConfig().getBoolean("place-below-max")
-				&& testLocation.getY() >= player.getWorld().getMaxHeight()) {
-			testLocation.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
+				&& origin.getY() >= player.getWorld().getMaxHeight()) {
+			origin.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
 		}
 
-		// declare default search result object
+		// declare default search result object, with locatino set to origin
 		Result result = new Result(ResultCode.NON_REPLACEABLE_BLOCK);
+		result.setLocation(origin);
 
 		if (plugin.debug) {
-			plugin.getLogger().info("initial death location: " + testLocation.toString());
+			plugin.getLogger().info("initial death location: " + origin.toString());
 		}
 
 		// iterate over all locations within search distance until a valid location is found
+		Location testLocation = origin.clone();
 
 		// iterate height starting at death location and incrementing up by one until search distance is reached
 		for (int y = 0; y < radius; y++) {
 
-			// perform spiral search around death location until search distance is reached
-
-
+			// perform search starting at death location until search distance is reached
 
 			for (int x = 0; x < radius; x++) {
 				for (int z = 0; z < radius; z++) {
@@ -519,7 +547,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(-x, -y, -z);
+						testLocation = origin.clone();
 					}
 
 					// location 0,y,0 has already been checked, so skip ahead
@@ -543,7 +571,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(x, -y, -z);
+						testLocation = origin.clone();
 					}
 
 					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
@@ -567,7 +595,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(x, -y, z);
+						testLocation = origin.clone();
 					}
 
 					// set new test location
@@ -586,7 +614,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(-x, -y, z);
+						testLocation = origin.clone();
 					}
 				}
 			}
@@ -625,18 +653,6 @@ public final class Deployment {
 		// set block data
 		block.setBlockData(blockData);
 
-//		// get block state
-//		BlockState blockState = block.getState();
-//
-//		// set material to chest
-//		blockState.setType(Material.CHEST);
-//
-//		// set direction
-//		blockState.setData(new org.bukkit.material.Chest(getCardinalDirection(location)));
-//
-//		// update chest BlockState
-//		blockState.update(true, false);
-
 		// create new ChestBlock object
 		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());
 
@@ -673,6 +689,7 @@ public final class Deployment {
 
 			// test left chest block location (to player's right)
 			result = validateChestLocation(player, getLocationToRight(location));
+			result.setLocation(location);
 		}
 
 		return result;
@@ -800,9 +817,9 @@ public final class Deployment {
 				}
 
 				// do string replacements
-				line = line.replace("%PLAYER_NAME%", player.getName());
+				line = line.replace("%PLAYER%", player.getName());
 				line = line.replace("%DATE%", dateString);
-				line = line.replace("%WORLD_NAME%", plugin.worldManager.getWorldName(player.getWorld()));
+				line = line.replace("%WORLD%", plugin.worldManager.getWorldName(player.getWorld()));
 				line = ChatColor.translateAlternateColorCodes('&', line);
 
 				// set sign text
