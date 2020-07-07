@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
@@ -293,7 +294,9 @@ public final class DeathChest {
 		}
 
 		// send player message
-		Message.create(player, INVENTORY_FULL).send();
+		Message.create(player, INVENTORY_FULL)
+				.setMacro(Macro.LOCATION, player.getLocation())
+				.send();
 
 		// try to put remaining items back in chest
 		remainingItems = this.fill(remainingItems);
@@ -321,7 +324,9 @@ public final class DeathChest {
 
 		// if player is not null, send player message
 		if (player != null) {
-			Message.create(player, CHEST_EXPIRED).send();
+			Message.create(player, CHEST_EXPIRED)
+					.setMacro(Macro.LOCATION, this.getLocation())
+					.send();
 		}
 	}
 

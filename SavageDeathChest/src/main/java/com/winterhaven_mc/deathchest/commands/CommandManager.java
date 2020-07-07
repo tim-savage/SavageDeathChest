@@ -447,21 +447,26 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
 			}
 
+			// get remaining time
+			Long remainingTime = deathChest.getExpirationTime() - System.currentTimeMillis();
+
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (passedPlayerName.equals("*")) {
 				Message.create(sender, LIST_ITEM_ALL)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
-						.setMacro(Macro.OWNER_NAME, ownerName)
-						.setMacro(Macro.KILLER_NAME, killerName)
+						.setMacro(Macro.OWNER, ownerName)
+						.setMacro(Macro.KILLER, killerName)
+						.setMacro(Macro.DURATION, remainingTime)
 						.send();
 			}
 			else {
 				Message.create(sender, LIST_ITEM)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
-						.setMacro(Macro.OWNER_NAME, ownerName)
-						.setMacro(Macro.KILLER_NAME, killerName)
+						.setMacro(Macro.OWNER, ownerName)
+						.setMacro(Macro.KILLER, killerName)
+						.setMacro(Macro.DURATION, remainingTime)
 						.send();
 			}
 		}
