@@ -139,11 +139,14 @@ MESSAGES:
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% > \n &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
+    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
+    &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
 
   LIST_ITEM_ALL:
     enabled: true
-    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n &aLocation:&b %LOCATION% > \n &aRemaining time:&b %DURATION%"
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
+    &aLocation:&b %LOCATION% \n
+    &aRemaining time:&b %DURATION%"
 
   LIST_EMPTY:
     enabled: true
