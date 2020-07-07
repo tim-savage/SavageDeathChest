@@ -8,25 +8,26 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.material.Sign;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.*;
 
 
 /**
- * A class that represents a single block that is a component of a death chest
+ * A class that represents a single block that is a component of a death chest.
+ * Block may be a left chest, a right chest, or an attached sign
  */
-@Immutable
 public final class ChestBlock {
 
-	// static reference to main class
-	private final PluginMain plugin = PluginMain.instance;
+	// reference to main class
+	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// chest UUID
 	private final UUID chestUUID;
@@ -99,11 +100,18 @@ public final class ChestBlock {
 			return null;
 		}
 
-		// get block state cast to Sign
-		Sign sign = (Sign) block.getState().getData();
+		Block returnBlock = null;
 
-		// get attached block
-		Block returnBlock = block.getRelative(sign.getAttachedFace());
+		// if block is a wall sign, get block behind
+		if (block.getBlockData() instanceof WallSign) {
+			WallSign wallSign = (WallSign) block.getBlockData();
+			returnBlock = block.getRelative(wallSign.getFacing().getOppositeFace());
+		}
+
+		// else if block is a sign post, get block below
+		else if (block.getBlockData() instanceof Sign) {
+			returnBlock = block.getRelative(0, 1, 0);
+		}
 
 		// if attached block is not a DeathChest, return null
 		if (!plugin.chestManager.isChestBlockChest(returnBlock)) {
@@ -127,7 +135,7 @@ public final class ChestBlock {
 		BlockState blockState = this.getLocation().getBlock().getState();
 
 		// if block is a sign or wall sign, get attached block
-		if (blockState.getType().equals(Material.SIGN) || blockState.getType().equals((Material.WALL_SIGN))) {
+		if (blockState.getType().equals(Material.OAK_SIGN) || blockState.getType().equals((Material.OAK_WALL_SIGN))) {
 
 			// get attached block
 			Block block = this.getAttachedBlock();

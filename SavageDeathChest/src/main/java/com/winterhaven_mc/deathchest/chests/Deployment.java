@@ -1,25 +1,27 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import com.winterhaven_mc.deathchest.messages.Message;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 
 
@@ -32,7 +34,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 public final class Deployment {
 
 	// reference to main class
-	private final PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// death chest object
 	private final DeathChest deathChest;
@@ -63,7 +65,9 @@ public final class Deployment {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PERMISSION);
+			Message.create(player, CHEST_DENIED_PERMISSION)
+					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.send();
 			return;
 		}
 
@@ -74,13 +78,17 @@ public final class Deployment {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-deploy")
 				&& !player.hasPermission("deathchest.creative-deploy")) {
-			plugin.messageManager.sendMessage(player, MessageId.CREATIVE_MODE);
+			Message.create(player, CREATIVE_MODE)
+					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.send();
 			return;
 		}
 
 		// if player inventory is empty, output message and return
 		if (droppedItems.isEmpty()) {
-			plugin.messageManager.sendMessage(player, MessageId.INVENTORY_EMPTY);
+			Message.create(player, INVENTORY_EMPTY)
+					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.send();
 			return;
 		}
 
@@ -98,39 +106,55 @@ public final class Deployment {
 			logResult(result);
 		}
 
+		// get configured expire-time
+		long expireTime = plugin.getConfig().getLong("expire-time");
+
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_SUCCESS, deathChest);
+				Message.create(player, CHEST_SUCCESS)
+						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.send();
 				break;
 
 			case PARTIAL_SUCCESS:
-				plugin.messageManager.sendMessage(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS, deathChest);
+				Message.create(player, DOUBLECHEST_PARTIAL_SUCCESS)
+						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.send();
 				break;
 
 			case PROTECTION_PLUGIN:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_PLUGIN, result.getProtectionPlugin());
+				Message.create(player, CHEST_DENIED_PLUGIN)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
+						.send();
 				break;
 
 			case ABOVE_GRASS_PATH:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
-				break;
-
 			case NON_REPLACEABLE_BLOCK:
-				//noinspection DuplicateBranchesInSwitch
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_BLOCK);
+				Message.create(player, CHEST_DENIED_BLOCK)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 
 			case ADJACENT_CHEST:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_ADJACENT);
+				Message.create(player, CHEST_DENIED_ADJACENT)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 
 			case NO_CHEST:
-				plugin.messageManager.sendMessage(player, MessageId.NO_CHEST_IN_INVENTORY);
+				Message.create(player, NO_CHEST_IN_INVENTORY)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 
 			case SPAWN_RADIUS:
-				plugin.messageManager.sendMessage(player, MessageId.CHEST_DENIED_SPAWN_RADIUS);
+				Message.create(player, CHEST_DENIED_SPAWN_RADIUS)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 				break;
 		}
 
@@ -149,6 +173,7 @@ public final class Deployment {
 		// put DeathChest in datastore
 		plugin.dataStore.putChestRecord(deathChest);
 	}
+
 
 
 	/**
@@ -229,8 +254,11 @@ public final class Deployment {
 			placeSign(player, result.getLocation().getBlock());
 		}
 
-		// return new result with remaining items
-		return new Result(result.getResultCode(), result.getLocation(), result.getProtectionPlugin(), remainingItems);
+		// set remaining items in result
+		result.setRemainingItems(remainingItems);
+
+		// return result
+		return result;
 	}
 
 
@@ -253,25 +281,19 @@ public final class Deployment {
 		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
 			result = deploySingleChest(player, remainingItems);
 
-			// if single chest deployment was successful, return PARTIAL_SUCCESS result
+			// if single chest deployment was successful, set PARTIAL_SUCCESS result
 			if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-				return new Result(ResultCode.PARTIAL_SUCCESS,
-						result.getLocation(),
-						result.getProtectionPlugin(),
-						result.getRemainingItems());
+				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
 			}
-			// else return unsuccessful result of single chest deployment
-			else {
-				return result;
-			}
+
+			// return result
+			return result;
 		}
 
 		// if search failed, return result with remaining items
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-			return new Result(result.getResultCode(),
-					result.getLocation(),
-					result.getProtectionPlugin(),
-					remainingItems);
+			result.setRemainingItems(remainingItems);
+			return result;
 		}
 
 		// if require-chest option is enabled
@@ -287,14 +309,17 @@ public final class Deployment {
 			}
 			// else return NO_CHEST result
 			else {
-				return new Result(ResultCode.NO_CHEST, remainingItems);
+				result.setResultCode(ResultCode.NO_CHEST);
+				result.setRemainingItems(remainingItems);
+				return result;
+//				return new Result(ResultCode.NO_CHEST, remainingItems);
 			}
 		}
 
 		// place chest at result location
 		placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
 
-		// place sign on right chest
+		// place sign on chest
 		placeSign(player, result.getLocation().getBlock());
 
 		// attempt to place second chest
@@ -310,7 +335,10 @@ public final class Deployment {
 			}
 			// else return new PARTIAL_SUCCESS result with location and remaining items after filling chest
 			else {
-				return new Result(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
+				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
+				result.setRemainingItems(deathChest.fill(remainingItems));
+				return result;
+//				return new Result(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
 			}
 		}
 
@@ -349,8 +377,11 @@ public final class Deployment {
 		rightChest.update();
 		leftChest.update();
 
-		// return new result with remaining items after filling chest
-		return new Result(result.getResultCode(), result.getLocation(), deathChest.fill(remainingItems));
+		// put remaining items after filling chest in result
+		result.setRemainingItems(deathChest.fill(remainingItems));
+
+		// return result
+		return result;
 	}
 
 
@@ -461,31 +492,47 @@ public final class Deployment {
 		// get distance to search from config
 		int radius = plugin.getConfig().getInt("search-distance");
 
-		// get clone of player death location
-		Location testLocation = player.getLocation().clone();
+		// get player death location
+		Location origin = player.getLocation();
 
 		// if player died in the void, start search at y=1 if place-above-void configured true
 		if (plugin.getConfig().getBoolean("place-above-void")
-				&& testLocation.getY() < 1) {
-			testLocation.setY(1);
+				&& origin.getY() < 1) {
+			origin.setY(1);
+//			testLocation.setY(1);
 		}
 
 		// if player died above world build height, start search at build height minus search distance
 		else if (plugin.getConfig().getBoolean("place-below-max")
-				&& testLocation.getY() >= player.getWorld().getMaxHeight()) {
-			testLocation.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
+				&& origin.getY() >= player.getWorld().getMaxHeight()) {
+			origin.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
 		}
 
-		// declare default search result object
+		// declare default search result object, with locatino set to origin
 		Result result = new Result(ResultCode.NON_REPLACEABLE_BLOCK);
+		result.setLocation(origin);
 
-		// iterate over all locations with search distance until a valid location is found
-		for (int y = 0; y < radius; y = y + 1) {
-			for (int x = 0; x < radius; x = x + 1) {
-				for (int z = 0; z < radius; z = z + 1) {
+		if (plugin.debug) {
+			plugin.getLogger().info("initial death location: " + origin.toString());
+		}
+
+		// iterate over all locations within search distance until a valid location is found
+		Location testLocation = origin.clone();
+
+		// iterate height starting at death location and incrementing up by one until search distance is reached
+		for (int y = 0; y < radius; y++) {
+
+			// perform search starting at death location until search distance is reached
+
+			for (int x = 0; x < radius; x++) {
+				for (int z = 0; z < radius; z++) {
 
 					// set new test location
 					testLocation.add(x, y, z);
+
+					if (plugin.debug) {
+						plugin.getLogger().info("test location: " + testLocation.toString());
+					}
 
 					// get result for test location
 					result = validateChestLocation(player, testLocation, chestSize);
@@ -500,7 +547,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(-x, -y, -z);
+						testLocation = origin.clone();
 					}
 
 					// location 0,y,0 has already been checked, so skip ahead
@@ -524,7 +571,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(x, -y, -z);
+						testLocation = origin.clone();
 					}
 
 					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
@@ -548,7 +595,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(x, -y, z);
+						testLocation = origin.clone();
 					}
 
 					// set new test location
@@ -567,7 +614,7 @@ public final class Deployment {
 					}
 					else {
 						// reset test location
-						testLocation.add(-x, -y, z);
+						testLocation = origin.clone();
 					}
 				}
 			}
@@ -594,17 +641,17 @@ public final class Deployment {
 		// get current block at location
 		Block block = location.getBlock();
 
-		// get block state
-		BlockState blockState = block.getState();
+		// set block material to chest
+		block.setType(Material.CHEST);
 
-		// set material to chest
-		blockState.setType(Material.CHEST);
+		// get block direction
+		Directional blockData = (Directional) block.getBlockData();
 
-		// set direction
-		blockState.setData(new org.bukkit.material.Chest(getCardinalDirection(location)));
+		// set new direction
+		blockData.setFacing(getCardinalDirection(location));
 
-		// update chest BlockState
-		blockState.update(true, false);
+		// set block data
+		block.setBlockData(blockData);
 
 		// create new ChestBlock object
 		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());
@@ -642,6 +689,7 @@ public final class Deployment {
 
 			// test left chest block location (to player's right)
 			result = validateChestLocation(player, getLocationToRight(location));
+			result.setLocation(location);
 		}
 
 		return result;
@@ -699,85 +747,109 @@ public final class Deployment {
 			return false;
 		}
 
-		// get block adjacent to chest facing player direction
-		Block signBlock = chestBlock.getRelative(getCardinalDirection(player));
+		// try placing sign on chest, catching any exception thrown
+		try {
+			// get block adjacent to chest facing player direction
+			Block signBlock = chestBlock.getRelative(getCardinalDirection(player));
 
-		// if chest face is valid location, create wall sign
-		if (isValidSignLocation(signBlock.getLocation())) {
-			signBlock.setType(Material.WALL_SIGN);
-		}
-		else {
-			// create sign post on top of chest if chest face was invalid location
-			signBlock = chestBlock.getRelative(BlockFace.UP);
+			// if chest face is valid location, create wall sign
 			if (isValidSignLocation(signBlock.getLocation())) {
-				signBlock.setType(Material.SIGN);
+
+				signBlock.setType(Material.OAK_WALL_SIGN);
+
+				BlockState bs = signBlock.getState();
+				org.bukkit.block.data.type.WallSign signBlockDataType = (org.bukkit.block.data.type.WallSign) bs.getBlockData();
+				signBlockDataType.setFacing(getCardinalDirection(player));
+				bs.setBlockData(signBlockDataType);
+				bs.update();
 			}
 			else {
-				// if top of chest is also an invalid location, do nothing and return
-				return false;
-			}
-		}
+				// create sign post on top of chest if chest face was invalid location
+				signBlock = chestBlock.getRelative(BlockFace.UP);
+				if (isValidSignLocation(signBlock.getLocation())) {
 
-		// get block state of sign block
-		BlockState signBlockState = signBlock.getState();
+					signBlock.setType(Material.OAK_SIGN);
 
-		// if block has not been successfully transformed into a sign, return false
-		if (!(signBlockState instanceof org.bukkit.block.Sign)) {
-			return false;
-		}
-
-		// Place text on sign with player name and death date
-		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
-		String dateFormat = plugin.messageManager.getDateFormat();
-		String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
-
-		// get sign text from language file
-		List<String> lines = plugin.messageManager.getSignText();
-
-		if (lines.isEmpty()) {
-			sign.setLine(0, ChatColor.BOLD + "R.I.P.");
-			sign.setLine(1, ChatColor.RESET + player.getName());
-			sign.setLine(3, "D: " + dateString);
-		}
-		else {
-			// use try..catch block so chest will still deploy even if error exists in yaml
-			try {
-				int lineCount = 0;
-				for (String line : lines) {
-					line = line.replace("%PLAYER_NAME%", player.getName());
-					line = line.replace("%DATE%", dateString);
-					line = line.replace("%WORLD_NAME%", plugin.worldManager.getWorldName(player.getWorld()));
-					line = ChatColor.translateAlternateColorCodes('&', line);
-					sign.setLine(lineCount, line);
-					lineCount++;
+					BlockState bs = signBlock.getState();
+					org.bukkit.block.data.type.Sign signBlockDataType = (org.bukkit.block.data.type.Sign) bs.getBlockData();
+					signBlockDataType.setRotation(getCardinalDirection(player));
+					bs.setBlockData(signBlockDataType);
+					bs.update();
+				}
+				else {
+					// if top of chest is also an invalid location, do nothing and return
+					return false;
 				}
 			}
-			catch (Exception e) {
-				sign.setLine(0, ChatColor.BOLD + "R.I.P.");
-				sign.setLine(1, ChatColor.RESET + player.getName());
-				sign.setLine(3, "D: " + dateString);
+
+			// get block state of sign block
+			BlockState signBlockState = signBlock.getState();
+
+			// if block has not been successfully transformed into a sign, return false
+			if (!(signBlockState instanceof org.bukkit.block.Sign)) {
+				return false;
 			}
+
+			// Place text on sign with player name and death date
+			// cast signBlockState to org.bukkit.block.Sign type object
+			org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
+
+			// get configured date format from config file
+			String dateFormat = plugin.getConfig().getString("DATE_FORMAT");
+
+			// if configured date format is null or empty, use default format
+			if (dateFormat == null || dateFormat.isEmpty()) {
+				dateFormat = "MMM d, yyyy";
+			}
+
+			// create formatted date string from current time
+			String dateString = new SimpleDateFormat(dateFormat).format(System.currentTimeMillis());
+
+			// get sign text from config file
+			List<String> lines = plugin.getConfig().getStringList("SIGN_TEXT");
+
+			int lineCount = 0;
+			for (String line : lines) {
+
+				// stop after four lines (zero indexed)
+				if (lineCount > 3) {
+					break;
+				}
+
+				// do string replacements
+				line = line.replace("%PLAYER%", player.getName());
+				line = line.replace("%DATE%", dateString);
+				line = line.replace("%WORLD%", plugin.worldManager.getWorldName(player.getWorld()));
+				line = ChatColor.translateAlternateColorCodes('&', line);
+
+				// set sign text
+				sign.setLine(lineCount, line);
+				lineCount++;
+			}
+
+			// update sign block with text and direction
+			sign.update();
+
+			// create ChestBlock for this sign block
+			ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
+
+			// add this ChestBlock to block map
+			plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+
+			// set sign block metadata
+			signChestBlock.setMetadata(deathChest);
+
+			// return success
+			return true;
 		}
-
-		// set sign facing direction
-		org.bukkit.material.Sign signData = (org.bukkit.material.Sign) signBlockState.getData();
-		signData.setFacingDirection(getCardinalDirection(player));
-		sign.setData(signData);
-
-		// update sign block with text and direction
-		sign.update();
-
-		// create ChestBlock for this sign block
-		ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
-
-		// add this ChestBlock to block map
-		plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
-
-		// set block metadata
-		signChestBlock.setMetadata(deathChest);
-
-		// return success
-		return true;
+		catch (Exception e) {
+			plugin.getLogger().severe("An error occurred while trying to place the death chest sign.");
+			plugin.getLogger().severe(e.getLocalizedMessage());
+			if (plugin.debug) {
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
 
 
@@ -838,6 +910,12 @@ public final class Deployment {
 		}
 
 		// get world spawn location
+		World world = location.getWorld();
+
+		if (world == null) {
+			return false;
+		}
+
 		Location worldSpawn = plugin.worldManager.getSpawnLocation(location.getWorld());
 
 		// get spawn protection radius

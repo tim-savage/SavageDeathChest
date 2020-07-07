@@ -16,153 +16,162 @@ TIME_STRINGS:
   LESS_THAN_ONE: 'less than one'
 
 
-##################
-# Custom sign text
-##################
-# Variable substitutions:
-# %PLAYER_NAME%	Player's name
-# %WORLD_NAME%	World name
-# %DATE%		Death date
-SIGN_TEXT:
-  - '&lR.I.P.&r'
-  - '%PLAYER_NAME%'
-  - ''
-  - 'D: %DATE%'
-
-# Date format documentation:
-# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-DATE_FORMAT: "MMM d, yyyy"
+## SIGN_TEXT and DATE_FORMAT have been moved to plugin.yml
 
 
 #################
 # Custom Messages
 #################
 # Variable substitutions:
-# %PLAYER_NAME%          Player name of message recipient
-# %PLAYER_NICKNAME%      Player nickname of message recipient
-# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix of message recipient
-# %EXPIRE_TIME%			 Configured expire time duration
-# %REMAINING_TIME%       Time Remaining before chest expires (only available in messages that reference a valid chest object)
-# %WORLD_NAME%           World name of chest (or player if no chest)
-# %LOC_X%                Chest coordinates (or player if no chest)
-# %LOC_Y%                Chest coordinates (or player if no chest)
-# %LOC_Z%                Chest coordinates (or player if no chest)
-# %OWNER_NAME%           Chest owner name (only available in messages that reference a valid chest object)
-# %KILLER_NAME%          Chest killer name (only available in messages that reference a valid chest object)
+# %PLAYER%        Player name of message recipient
+# %DURATION%      A time duration string
+# %OWNER%         Chest owner name (only available in messages that reference a valid chest object)
+# %KILLER%        Chest killer name (only available in messages that reference a valid chest object)
+# %VIEWER%        Chest viewer name
+# %PLUGIN%        Protection plugin name
+# %LOCATION%      Chest location formatted: world [x, y, z]
+#   The following substitutions are available in all messages that support %LOCATION%
+# %WORLD%         World name of chest (or player if no chest)
+# %LOC_X%         Chest coordinates (or player if no chest)
+# %LOC_Y%         Chest coordinates (or player if no chest)
+# %LOC_Z%         Chest coordinates (or player if no chest)
 
-# %PAGE%                 List page number (only available in LIST_HEADER and LIST_FOOTER messages)
-# %PAGE_COUNT%           List page count (only available in LIST_HEADER and LIST_FOOTER messages)
-# %ITEM_NUMBER%          List item number (only available in list item messages)
+# %PAGE_NUMBER%   List page number (only available in LIST_HEADER and LIST_FOOTER messages)
+# %PAGE_TOTAL%    List total page count (only available in LIST_HEADER and LIST_FOOTER messages)
+# %ITEM_NUMBER%   List item number (only available in list item messages)
 
 MESSAGES:
   CHEST_SUCCESS:
     enabled: true
-    string: '&cSuccessfully placed death chest. You have %EXPIRE_TIME% to retrieve your items.'
+    string: '&cSuccessfully placed death chest. You have %DURATION% to retrieve your items.'
+    # available subs: %PLAYER%, %DURATION%, %LOCATION%
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cOnly a single chest could be placed at your death location. Some items were dropped.'
+    # available subs: %PLAYER%, %DURATION%, %LOCATION%
 
   CHEST_DENIED_PLUGIN:
     enabled: true
     string: '&cDeath chest deployment was prevented by %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
 
   CHEST_DENIED_BLOCK:
     enabled: true
     string: '&cAn open space could not be found to place a chest.'
+    # available subs: %PLAYER%, %LOCATION%
 
   CHEST_DENIED_PERMISSION:
     enabled: false
     string: '&cYou do not have permission for death chests.'
+    # available subs: %PLAYER%, %LOCATION%
 
   CHEST_DENIED_ADJACENT:
     enabled: true
     string: '&cDeath chest deployment was prevented by an existing adjacent chest.'
+    # available subs: %PLAYER%, %LOCATION%
 
   CHEST_DENIED_SPAWN_RADIUS:
     enabled: true
     string: '&cDeath chest deployment was prevented by world spawn protection.'
+    # available subs: %PLAYER%, %LOCATION%
 
   INVENTORY_EMPTY:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
+    # available subs: %PLAYER%, %LOCATION%
 
   INVENTORY_FULL:
     enabled: true
     string: '&cSome items could not be transferred because your inventory is full.'
+    # available subs: %PLAYER%, %LOCATION%
 
   NO_CHEST_IN_INVENTORY:
     enabled: true
     string: '&cYou did not have any chests in your inventory.'
+    # available subs: %PLAYER%, %LOCATION%
 
   NOT_OWNER:
     enabled: true
     string: '&cThat death chest does not belong to you.'
+    # available subs: %PLAYER%, %LOCATION%, %OWNER%, %KILLER%
 
   CHEST_EXPIRED:
     enabled: true
     string: '&cYour death chest has expired.'
     repeat-delay: 1
+    # available subs: %PLAYER%, %LOCATION%
 
   CREATIVE_MODE:
     enabled: true
     string: '&cCreative mode inventory is not saved in death chests.'
+    # available subs: %PLAYER%, %LOCATION%
+
 
   NO_CREATIVE_ACCESS:
     enabled: true
     string: '&cAccess to death chests in creative mode is not allowed.'
+    # available subs: %PLAYER%, %LOCATION%
 
   CHEST_CURRENTLY_OPEN:
     enabled: true
     string: '&cDeath chest is currently being accessed by another player.'
+    # available subs: %PLAYER%, %LOCATION%, %OWNER%, %KILLER%, %VIEWER%
 
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
     string: '&cToo many arguments!'
+    # available subs: %PLAYER%
 
   COMMAND_FAIL_HELP_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to display DeathChest help!'
+    # available subs: %PLAYER%
 
   COMMAND_FAIL_LIST_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to list DeathChests!'
+    # available subs: %PLAYER%
 
   COMMAND_FAIL_LIST_OTHER_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to list other player''s DeathChests!'
+    # available subs: %PLAYER%
 
   COMMAND_FAIL_RELOAD_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to reload DeathChest configuration!'
+    # available subs: %PLAYER%
 
   COMMAND_FAIL_STATUS_PERMISSION:
     enabled: true
     string: '&cYou do not have permission to view DeathChest settings!'
+    # available subs: %PLAYER%
 
   COMMAND_SUCCESS_RELOAD:
     enabled: true
     string: '&7DeathChest configuration reloaded.'
+    # available subs: %PLAYER%
 
 
   LIST_HEADER:
     enabled: true
-    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+    string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
 
   LIST_FOOTER:
     enabled: false
-    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+    string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n
-    &aRemaining time:&b %REMAINING_TIME% &aKiller:&b %KILLER_NAME%"
+    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
+    &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
 
   LIST_ITEM_ALL:
     enabled: true
-    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER_NAME% &aKiller:&b %KILLER_NAME% \n
-    &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n
-    &aRemaining time:&b %REMAINING_TIME%"
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
+    &aLocation:&b %LOCATION% \n
+    &aRemaining time:&b %DURATION%"
 
   LIST_EMPTY:
     enabled: true

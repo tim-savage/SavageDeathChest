@@ -14,45 +14,34 @@ TIME_STRING:
   LESS_THAN_ONE: 'menos de un'
 
 
-##################
-# Custom sign text
-##################
-# Variable substitutions:
-# %PLAYER_NAME%	Player's name
-# %WORLD_NAME%	World name
-# %DATE%		Death date
-SIGN_TEXT:
-  - '&lR.I.P.&r'
-  - '%PLAYER_NAME%'
-  - ''
-  - 'D: %DATE%'
-
-# Date format documentation:
-# https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-DATE_FORMAT: "MMM d, yyyy"
+## SIGN_TEXT and DATE_FORMAT have been moved to plugin.yml
 
 
 #################
 # Custom Messages
 #################
 # Variable substitutions:
-# %PLAYER_NAME%          Player name
-# %PLAYER_NICKNAME%      Player nickname
-# %PLAYER_DISPLAYNAME%   Player display name, including prefix/suffix
-# %EXPIRE_TIME%			 Remaining time at chest deployment
-# %WORLD_NAME%           World name of chest (or player if no chest)
-# %LOC_X%                Chest coordinates (or player if no chest)
-# %LOC_Y%                Chest coordinates (or player if no chest)
-# %LOC_Z%                Chest coordinates (or player if no chest)
+# %PLAYER%        Player name of message recipient
+# %DURATION%      A time duration string
+# %OWNER%         Chest owner name (only available in messages that reference a valid chest object)
+# %KILLER%        Chest killer name (only available in messages that reference a valid chest object)
+# %VIEWER%        Chest viewer name
+# %PLUGIN%        Protection plugin name
+# %LOCATION%      Chest location formatted: world [x, y, z]
+#   The following substitutions are available in all messages that support %LOCATION%
+# %WORLD%         World name of chest (or player if no chest)
+# %LOC_X%         Chest coordinates (or player if no chest)
+# %LOC_Y%         Chest coordinates (or player if no chest)
+# %LOC_Z%         Chest coordinates (or player if no chest)
 
-# %PAGE%                 List page number (only available in LIST_HEADER and LIST_FOOTER messages)
-# %PAGE_COUNT%           List page count (only available in LIST_HEADER and LIST_FOOTER messages)
-# %ITEM_NUMBER%          List item number (only available in list item messages)
+# %PAGE%          List page number (only available in LIST_HEADER and LIST_FOOTER messages)
+# %PAGE_COUNT%    List page count (only available in LIST_HEADER and LIST_FOOTER messages)
+# %ITEM_NUMBER%   List item number (only available in list item messages)
 
 MESSAGES:
   CHEST_SUCCESS:
     enabled: true
-    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %EXPIRE_TIME% para recuperar tu artículos.'
+    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %DURATION% para recuperar tu artículos.'
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
@@ -142,19 +131,22 @@ MESSAGES:
 
   LIST_HEADER:
     enabled: true
-    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+    string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
 
   LIST_FOOTER:
     enabled: false
-    string: '&3Page &b%PAGE%&3 of &b%PAGE_COUNT%'
+    string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n &aRemaining time:&b %REMAINING_TIME% &aKiller:&b %KILLER_NAME%"
+    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
+    &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
 
   LIST_ITEM_ALL:
     enabled: true
-    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER_NAME% &aKiller:&b %KILLER_NAME% \n &aLocation:&b %WORLD_NAME% < %LOC_X%, %LOC_Y%, %LOC_Z% > \n &aRemaining time:&b %REMAINING_TIME%"
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
+    &aLocation:&b %LOCATION% \n
+    &aRemaining time:&b %DURATION%"
 
   LIST_EMPTY:
     enabled: true

@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest.storage;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import org.bukkit.plugin.java.JavaPlugin;
 
 
 /**
@@ -18,7 +19,7 @@ enum DataStoreType {
 		}
 	};
 
-	private final static PluginMain plugin = PluginMain.instance;
+	private final static PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	private final String displayName;
 

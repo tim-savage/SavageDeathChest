@@ -1,9 +1,9 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 
 import org.bukkit.GameMode;
@@ -21,8 +21,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import static com.winterhaven_mc.deathchest.messages.Macro.*;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
+
 
 
 /**
@@ -116,7 +120,9 @@ public final class BlockEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
-			plugin.messageManager.sendMessage(player, MessageId.NO_CREATIVE_ACCESS, deathChest);
+			Message.create(player, NO_CREATIVE_ACCESS)
+					.setMacro(LOCATION, player.getLocation())
+					.send();
 			event.setCancelled(true);
 			return;
 		}
@@ -132,8 +138,26 @@ public final class BlockEventListener implements Listener {
 		// if chest is already open, disallow breakage; send message and return
 		if (deathChest.getViewerCount() > 0) {
 
+			// only one chest viewer allowed, so get name viewer at index 0
+			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
+
+			String ownerName = "-";
+			if (deathChest.getOwnerUUID() != null) {
+				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+			}
+
+			String killerName = "-";
+			if (deathChest.getKillerUUID() != null) {
+				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+			}
+
 			// send player message
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_CURRENTLY_OPEN, deathChest);
+			Message.create(player, CHEST_CURRENTLY_OPEN)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(OWNER, ownerName)
+					.setMacro(KILLER, killerName)
+					.setMacro(VIEWER, viewerName)
+					.send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -155,8 +179,26 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
+		// get owner name
+		String ownerName = "-";
+		UUID ownerUid = deathChest.getOwnerUUID();
+		if (ownerUid != null) {
+			ownerName = plugin.getServer().getOfflinePlayer(ownerUid).getName();
+		}
+
+		// get killer name
+		String killerName = "-";
+		UUID killerUid = deathChest.getKillerUUID();
+		if (killerUid != null) {
+			killerName = plugin.getServer().getOfflinePlayer(killerUid).getName();
+		}
+
 		// send player not-owner message
-		plugin.messageManager.sendMessage(player, MessageId.NOT_OWNER, deathChest);
+		Message.create(player, NOT_OWNER)
+				.setMacro(LOCATION, deathChest.getLocation())
+				.setMacro(OWNER, ownerName)
+				.setMacro(KILLER, killerName)
+				.send();
 
 		// play denied access sound
 		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);

@@ -1,7 +1,8 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.messages.MessageId;
+import com.winterhaven_mc.deathchest.messages.Macro;
+import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 import com.winterhaven_mc.deathchest.tasks.ExpireChestTask;
 
@@ -9,11 +10,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.concurrent.Immutable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static com.winterhaven_mc.deathchest.messages.MessageId.CHEST_EXPIRED;
+import static com.winterhaven_mc.deathchest.messages.MessageId.INVENTORY_FULL;
 
 
 /**
@@ -23,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public final class DeathChest {
 
 	// reference to main class
-	private final PluginMain plugin = PluginMain.instance;
+	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	// the UUID of this death chest
 	private final UUID chestUUID;
@@ -289,7 +294,9 @@ public final class DeathChest {
 		}
 
 		// send player message
-		plugin.messageManager.sendMessage(player, MessageId.INVENTORY_FULL, this);
+		Message.create(player, INVENTORY_FULL)
+				.setMacro(Macro.LOCATION, player.getLocation())
+				.send();
 
 		// try to put remaining items back in chest
 		remainingItems = this.fill(remainingItems);
@@ -317,7 +324,9 @@ public final class DeathChest {
 
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageManager.sendMessage(player, MessageId.CHEST_EXPIRED, this);
+			Message.create(player, CHEST_EXPIRED)
+					.setMacro(Macro.LOCATION, this.getLocation())
+					.send();
 		}
 	}
 

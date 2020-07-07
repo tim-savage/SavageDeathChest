@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.storage;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ import java.util.*;
 public abstract class DataStore {
 
 	// static reference to main class instance
-	private final static PluginMain plugin = PluginMain.instance;
+	private static final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
 
 	private boolean initialized;
 
