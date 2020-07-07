@@ -8,7 +8,8 @@ public enum Macro {
 	ITEM_NUMBER,
 	PAGE_NUMBER,
 	PAGE_TOTAL,
-	OWNER_NAME,
-	KILLER_NAME,
+	OWNER,
+	KILLER,
+	VIEWER,
 
 }
