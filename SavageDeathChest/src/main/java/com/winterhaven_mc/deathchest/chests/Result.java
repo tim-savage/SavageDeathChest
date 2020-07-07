@@ -14,10 +14,10 @@ import java.util.Collection;
  */
 final class Result {
 
-	private final ResultCode resultCode;
-	private final Location location;
-	private final ProtectionPlugin protectionPlugin;
-	private final Collection<ItemStack> remainingItems;
+	private ResultCode resultCode;
+	private Location location;
+	private ProtectionPlugin protectionPlugin;
+	private Collection<ItemStack> remainingItems;
 
 
 	/**
@@ -69,6 +69,7 @@ final class Result {
 	 * @param location chest location
 	 * @param remainingItems player dropped items remaining
 	 */
+	@SuppressWarnings("unused")
 	Result(final ResultCode resultCode,
 		   final Location location,
 		   final Collection<ItemStack> remainingItems) {
@@ -101,6 +102,7 @@ final class Result {
 	 * @param protectionPlugin plugin that prevented chest placement
 	 * @param remainingItems player dropped items remaining
 	 */
+	@SuppressWarnings("unused")
 	Result(final ResultCode resultCode,
 		   final Location location,
 		   final ProtectionPlugin protectionPlugin,
@@ -123,12 +125,30 @@ final class Result {
 
 
 	/**
+	 * Setter method for resultCode
+	 * @param resultCode - the result code to set for this result object
+	 */
+	final void setResultCode(ResultCode resultCode) {
+		this.resultCode = resultCode;
+	}
+
+
+	/**
 	 * Getter method for location
 	 *
 	 * @return Location - the location currently set for this result object
 	 */
 	final Location getLocation() {
 		return location;
+	}
+
+
+	/**
+	 * Setter method for location
+	 * @param location - the locatin to set for this result object
+	 */
+	final void setLocation(Location location) {
+		this.location = location;
 	}
 
 
@@ -143,12 +163,31 @@ final class Result {
 
 
 	/**
+	 * Setter method for protectionPlugin
+	 * @param protectionPlugin - the protection plugin enum value to set for this result object
+	 */
+	@SuppressWarnings("unused")
+	final void setProtectionPlugin(ProtectionPlugin protectionPlugin) {
+		this.protectionPlugin = protectionPlugin;
+	}
+
+
+	/**
 	 * Getter method for remainingItems
 	 *
 	 * @return Collection of ItemStack - the remaining items currently set for this result object
 	 */
 	final Collection<ItemStack> getRemainingItems() {
 		return remainingItems;
+	}
+
+
+	/**
+	 * Setter method for remainingItems
+	 * @param remainingItems Collection of ItemStack - the remaining items to set for this result object
+	 */
+	final void setRemainingItems(Collection<ItemStack> remainingItems) {
+		this.remainingItems = remainingItems;
 	}
 
 }
