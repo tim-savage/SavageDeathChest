@@ -14,7 +14,7 @@ TIME_STRING:
   LESS_THAN_ONE: 'menos de un'
 
 
-## SIGN_TEXT and DATE_FORMAT have been moved to plugin.yml
+## SIGN_TEXT and DATE_FORMAT have been moved to config.yml
 
 
 #################
