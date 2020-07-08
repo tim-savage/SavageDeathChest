@@ -37,7 +37,7 @@ public abstract class DataStore {
 	 *
 	 * @return List of DeathChest
 	 */
-	public abstract List<DeathChest> getAllChestRecords();
+	public abstract List<DeathChest> selectAllChestRecords();
 
 
 	/**
@@ -45,7 +45,7 @@ public abstract class DataStore {
 	 *
 	 * @param deathChest the DeathChest object to insert into the datastore
 	 */
-	public abstract void putChestRecord(final DeathChest deathChest);
+	public abstract void insertChestRecord(final DeathChest deathChest);
 
 
 	/**
@@ -61,7 +61,7 @@ public abstract class DataStore {
 	 *
 	 * @return List of ChestBlock
 	 */
-	public abstract List<ChestBlock> getAllBlockRecords();
+	public abstract List<ChestBlock> selectAllBlockRecords();
 
 
 	/**
@@ -69,7 +69,7 @@ public abstract class DataStore {
 	 *
 	 * @param blockRecord the BlockChest object to insert in the datastore
 	 */
-	abstract void putBlockRecord(final ChestBlock blockRecord);
+	abstract void insertBlockRecord(final ChestBlock blockRecord);
 
 
 	/**
@@ -265,28 +265,28 @@ public abstract class DataStore {
 				}
 			}
 
-			Collection<DeathChest> allChestRecords = oldDataStore.getAllChestRecords();
+			Collection<DeathChest> allChestRecords = oldDataStore.selectAllChestRecords();
 
 			Iterator<DeathChest> chestIterator = allChestRecords.iterator();
 
 			int recordCount = 0;
 
 			while (chestIterator.hasNext()) {
-				newDataStore.putChestRecord(chestIterator.next());
+				newDataStore.insertChestRecord(chestIterator.next());
 				recordCount++;
 			}
 
 			plugin.getLogger().info(recordCount + " records converted to "
 					+ newDataStore.getName() + " datastore.");
 
-			Collection<ChestBlock> allBlockRecords = oldDataStore.getAllBlockRecords();
+			Collection<ChestBlock> allBlockRecords = oldDataStore.selectAllBlockRecords();
 
 			Iterator<ChestBlock> blockIterator = allBlockRecords.iterator();
 
 			recordCount = 0;
 
 			while (blockIterator.hasNext()) {
-				newDataStore.putBlockRecord(blockIterator.next());
+				newDataStore.insertBlockRecord(blockIterator.next());
 				recordCount++;
 			}
 

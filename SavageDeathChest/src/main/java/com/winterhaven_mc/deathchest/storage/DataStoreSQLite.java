@@ -4,6 +4,7 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -89,7 +90,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	public final List<ChestBlock> getAllBlockRecords() {
+	public final List<ChestBlock> selectAllBlockRecords() {
 
 		final List<ChestBlock> results = new ArrayList<>();
 
@@ -143,7 +144,7 @@ final class DataStoreSQLite extends DataStore {
 
 			// output simple error message
 			plugin.getLogger().warning("An error occurred while trying to "
-					+ "fetch all block records from the SQLite database.");
+					+ "select all block records from the SQLite database.");
 			plugin.getLogger().warning(e.getMessage());
 
 			// if debugging is enabled, output stack trace
@@ -152,14 +153,14 @@ final class DataStoreSQLite extends DataStore {
 			}
 		}
 		if (plugin.debug) {
-			plugin.getLogger().info(results.size() + " block records fetched from SQLite datastore.");
+			plugin.getLogger().info(results.size() + " block records selected from SQLite datastore.");
 		}
 		return results;
 	}
 
 
 	@Override
-	public final List<DeathChest> getAllChestRecords() {
+	public final List<DeathChest> selectAllChestRecords() {
 
 		final List<DeathChest> results = new ArrayList<>();
 
@@ -182,8 +183,8 @@ final class DataStoreSQLite extends DataStore {
 					chestUUID = UUID.fromString(rs.getString("ChestUUID"));
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occurred while trying to set chestUUID.");
-					plugin.getLogger().warning("[SQLite getAllChestRecords] chestUUID string: " + rs.getString("ChestUUID"));
+					plugin.getLogger().warning("[SQLite selectAllChestRecords] An error occurred while trying to set chestUUID.");
+					plugin.getLogger().warning("[SQLite selectAllChestRecords] chestUUID string: " + rs.getString("ChestUUID"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
 				}
@@ -193,8 +194,8 @@ final class DataStoreSQLite extends DataStore {
 					ownerUUID = UUID.fromString(rs.getString("OwnerUUID"));
 				}
 				catch (Exception e) {
-					plugin.getLogger().warning("[SQLite getAllChestRecords] An error occurred while trying to set ownerUUID.");
-					plugin.getLogger().warning("[SQLite getAllChestRecords] ownerUUID string: " + rs.getString("OwnerUUID"));
+					plugin.getLogger().warning("[SQLite selectAllChestRecords] An error occurred while trying to set ownerUUID.");
+					plugin.getLogger().warning("[SQLite selectAllChestRecords] ownerUUID string: " + rs.getString("OwnerUUID"));
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					continue;
 				}
@@ -221,7 +222,8 @@ final class DataStoreSQLite extends DataStore {
 		catch (SQLException e) {
 
 			// output simple error message
-			plugin.getLogger().warning("An error occurred while trying to fetch all chest records from the SQLite database.");
+			plugin.getLogger().warning("An error occurred while trying to " +
+					"select all chest records from the SQLite database.");
 			plugin.getLogger().warning(e.getMessage());
 
 			// if debugging is enabled, output stack trace
@@ -230,14 +232,14 @@ final class DataStoreSQLite extends DataStore {
 			}
 		}
 		if (plugin.debug) {
-			plugin.getLogger().info(results.size() + " chest records fetched from SQLite datastore.");
+			plugin.getLogger().info(results.size() + " chest records selected from SQLite datastore.");
 		}
 		return results;
 	}
 
 
 	@Override
-	public synchronized final void putChestRecord(final DeathChest deathChest) {
+	public synchronized final void insertChestRecord(final DeathChest deathChest) {
 
 		// if passed deathChestBlock is null, do nothing and return
 		if (deathChest == null) {
@@ -311,7 +313,7 @@ final class DataStoreSQLite extends DataStore {
 
 				// insert each chest block into datastore
 				for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(deathChest.getChestUUID())) {
-					putBlockRecord(chestBlock);
+					insertBlockRecord(chestBlock);
 				}
 
 			}
@@ -320,12 +322,28 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	synchronized void putBlockRecord(final ChestBlock chestBlock) {
+	synchronized void insertBlockRecord(final ChestBlock chestBlock) {
 
 		// if passed deathChestBlock is null, do nothing and return
 		if (chestBlock == null) {
 			return;
 		}
+
+		// get chestBlock location
+		Location location = chestBlock.getLocation();
+
+		// confirm chestBlock world is valid
+		World world = location.getWorld();
+		if (world == null) {
+			plugin.getLogger().warning("ChestBlock world is invalid.");
+			return;
+		}
+
+		// get location components
+		String worldName = world.getName();
+		int x = location.getBlockX();
+		int y = location.getBlockY();
+		int z = location.getBlockZ();
 
 		new BukkitRunnable() {
 			@Override
@@ -347,10 +365,10 @@ final class DataStoreSQLite extends DataStore {
 							connection.prepareStatement(getQuery("InsertBlockRecord"));
 
 					preparedStatement.setString(1, chestUUID);
-					preparedStatement.setString(2, chestBlock.getLocation().getWorld().getName());
-					preparedStatement.setInt(3, chestBlock.getLocation().getBlockX());
-					preparedStatement.setInt(4, chestBlock.getLocation().getBlockY());
-					preparedStatement.setInt(5, chestBlock.getLocation().getBlockZ());
+					preparedStatement.setString(2, worldName);
+					preparedStatement.setInt(3, x);
+					preparedStatement.setInt(4, y);
+					preparedStatement.setInt(5, z);
 
 					// execute prepared statement
 					int rowsAffected = preparedStatement.executeUpdate();
@@ -432,6 +450,19 @@ final class DataStoreSQLite extends DataStore {
 		// get chest block location
 		final Location location = chestBlock.getLocation();
 
+		// confirm chestBlock world is valid
+		World world = chestBlock.getLocation().getWorld();
+		if (world == null) {
+			plugin.getLogger().warning("ChestBlock world is invalid.");
+			return;
+		}
+
+		int x = location.getBlockX();
+		int y = location.getBlockY();
+		int z = location.getBlockZ();
+
+		String worldName = world.getName();
+
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -440,10 +471,10 @@ final class DataStoreSQLite extends DataStore {
 					PreparedStatement preparedStatement =
 							connection.prepareStatement(getQuery("DeleteBlockByLocation"));
 
-					preparedStatement.setString(1, location.getWorld().getName());
-					preparedStatement.setInt(2, location.getBlockX());
-					preparedStatement.setInt(3, location.getBlockY());
-					preparedStatement.setInt(4, location.getBlockZ());
+					preparedStatement.setString(1, worldName);
+					preparedStatement.setInt(2, x);
+					preparedStatement.setInt(3, y);
+					preparedStatement.setInt(4, z);
 
 					// execute prepared statement
 					int rowsAffected = preparedStatement.executeUpdate();

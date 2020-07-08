@@ -70,12 +70,12 @@ public final class ChestManager {
 	public final void loadDeathChests() {
 
 		// populate chestIndex with all death chest records retrieved from datastore
-		for (DeathChest deathChest : plugin.dataStore.getAllChestRecords()) {
+		for (DeathChest deathChest : plugin.dataStore.selectAllChestRecords()) {
 			this.addDeathChest(deathChest);
 		}
 
 		// populate chest block map with all valid chest blocks retrieved from datastore
-		for (ChestBlock chestBlock : plugin.dataStore.getAllBlockRecords()) {
+		for (ChestBlock chestBlock : plugin.dataStore.selectAllBlockRecords()) {
 
 			// get chest block type from in game block
 			ChestBlockType chestBlockType = ChestBlockType.getType(chestBlock.getLocation().getBlock());

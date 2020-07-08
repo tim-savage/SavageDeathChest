@@ -171,7 +171,7 @@ public final class Deployment {
 		plugin.chestManager.addDeathChest(deathChest);
 
 		// put DeathChest in datastore
-		plugin.dataStore.putChestRecord(deathChest);
+		plugin.dataStore.insertChestRecord(deathChest);
 	}
 
 
