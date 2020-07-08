@@ -545,10 +545,24 @@ public final class Deployment {
 						}
 						return result;
 					}
-					else {
-						// reset test location
-						testLocation = origin.clone();
+
+					// rotate test location 90 degrees
+					testLocation.setYaw(testLocation.getYaw() - 90);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if test location is valid, return search result object
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
 					}
+
+					// reset test location
+					testLocation = origin.clone();
 
 					// location 0,y,0 has already been checked, so skip ahead
 					if (x == 0 && z == 0) {
@@ -569,10 +583,24 @@ public final class Deployment {
 						}
 						return result;
 					}
-					else {
-						// reset test location
-						testLocation = origin.clone();
+
+					// rotate test location 90 degrees
+					testLocation.setYaw(testLocation.getYaw() - 90);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if test location is valid, return search result object
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
 					}
+
+					// reset test location
+					testLocation = origin.clone();
 
 					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
 					if (x == 0 || z == 0) {
@@ -593,10 +621,24 @@ public final class Deployment {
 						}
 						return result;
 					}
-					else {
-						// reset test location
-						testLocation = origin.clone();
+
+					// rotate test location 90 degrees
+					testLocation.setYaw(testLocation.getYaw() - 90);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if test location is valid, return search result object
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
 					}
+
+					// reset test location
+					testLocation = origin.clone();
 
 					// set new test location
 					testLocation.add(x, y, -z);
@@ -612,10 +654,24 @@ public final class Deployment {
 						}
 						return result;
 					}
-					else {
-						// reset test location
-						testLocation = origin.clone();
+
+					// rotate test location 90 degrees
+					testLocation.setYaw(testLocation.getYaw() - 90);
+
+					// get result for test location
+					result = validateChestLocation(player, testLocation, chestSize);
+					testCount = testCount + 1;
+
+					// if test location is valid, return search result object
+					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+						if (plugin.debug) {
+							plugin.getLogger().info("Locations tested: " + testCount);
+						}
+						return result;
 					}
+
+					// reset test location
+					testLocation = origin.clone();
 				}
 			}
 		}
