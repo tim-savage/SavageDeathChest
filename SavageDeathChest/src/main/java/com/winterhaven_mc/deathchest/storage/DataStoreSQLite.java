@@ -20,11 +20,7 @@ import static com.winterhaven_mc.deathchest.storage.Queries.getQuery;
 /**
  * SQLite implementation of Datastore
  * for persistent storage of death chests and chest block objects
- *
- * @author Tim Savage
  */
-
-
 final class DataStoreSQLite extends DataStore {
 
 	// reference to main class
