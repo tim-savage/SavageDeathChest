@@ -156,6 +156,11 @@ public final class Deployment {
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
 				break;
+
+			case VOID:
+				Message.create(player, CHEST_DENIED_VOID)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
 		}
 
 		// if result is negative, cancel expire task and return
@@ -173,7 +178,6 @@ public final class Deployment {
 		// put DeathChest in datastore
 		plugin.dataStore.insertChestRecord(deathChest);
 	}
-
 
 
 	/**
@@ -495,19 +499,23 @@ public final class Deployment {
 		// get player death location
 		Location origin = player.getLocation();
 
-		// if player died in the void, start search at y=1 if place-above-void configured true
-		if (plugin.getConfig().getBoolean("place-above-void")
-				&& origin.getY() < 1) {
-			origin.setY(1);
+		// if place-above-void configured true and player died in the void, start search at y=1
+		if (plugin.getConfig().getBoolean("place-above-void")) {
+			origin.setY(Math.max(1, origin.getY()));
+		}
+		else {
+			SearchResult result = new SearchResult(ResultCode.VOID);
+			result.setLocation(player.getLocation());
+			return result;
 		}
 
-		// if player died above world build height, start search at build height minus search distance
-		else if (plugin.getConfig().getBoolean("place-below-max")
-				&& origin.getY() >= player.getWorld().getMaxHeight()) {
-			origin.setY(player.getWorld().getMaxHeight() - 1);
+		// if player died above world max build height, start search 1 block below max build height
+		// TODO: remove configuration setting and always perform this check
+		if (plugin.getConfig().getBoolean("place-below-max")) {
+			origin.setY(Math.min(origin.getY(), player.getWorld().getMaxHeight() - 1));
 		}
 
-		// declare default search result object, with locatino set to origin
+		// declare default search result object, with location set to origin
 		SearchResult result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
 		result.setLocation(origin);
 
@@ -523,7 +531,7 @@ public final class Deployment {
 			for (int y = 0; y < searchDistance; y++) {
 
 				// if world max height reached, break loop
-				if (y * verticalAxis.yFactor + testLocation.getY()  >= player.getWorld().getMaxHeight()) {
+				if (y * verticalAxis.yFactor + testLocation.getY() >= player.getWorld().getMaxHeight()) {
 					break;
 				}
 
@@ -532,14 +540,19 @@ public final class Deployment {
 					break;
 				}
 
+				// only test y == 0 in upper vertical axis
+				if (verticalAxis.ordinal() != 0 && y == 0) {
+					continue;
+				}
+
 				for (int x = 0; x < searchDistance; x++) {
 					for (int z = 0; z < searchDistance; z++) {
 
 						// search x,z coordinates in each quadrant
 						for (Quadrant quadrant : Quadrant.values()) {
 
-							// only test x = 0 or y = 0 or z = 0 in first quadrant
-							if (quadrant.ordinal() != 0 && (x == 0 || y == 0 || z == 0)) {
+							// only test x == 0 or z == 0 in first quadrant
+							if (quadrant.ordinal() != 0 && (x == 0 || z == 0)) {
 								continue;
 							}
 
