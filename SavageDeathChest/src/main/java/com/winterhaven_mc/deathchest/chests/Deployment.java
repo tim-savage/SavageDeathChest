@@ -490,7 +490,7 @@ public final class Deployment {
 		int testCount = 0;
 
 		// get distance to search from config
-		int radius = plugin.getConfig().getInt("search-distance");
+		int searchDistance = plugin.getConfig().getInt("search-distance");
 
 		// get player death location
 		Location origin = player.getLocation();
@@ -499,13 +499,12 @@ public final class Deployment {
 		if (plugin.getConfig().getBoolean("place-above-void")
 				&& origin.getY() < 1) {
 			origin.setY(1);
-//			testLocation.setY(1);
 		}
 
 		// if player died above world build height, start search at build height minus search distance
 		else if (plugin.getConfig().getBoolean("place-below-max")
 				&& origin.getY() >= player.getWorld().getMaxHeight()) {
-			origin.setY(player.getWorld().getMaxHeight() - plugin.getConfig().getInt("search-distance"));
+			origin.setY(player.getWorld().getMaxHeight() - 1);
 		}
 
 		// declare default search result object, with locatino set to origin
@@ -519,159 +518,75 @@ public final class Deployment {
 		// iterate over all locations within search distance until a valid location is found
 		Location testLocation = origin.clone();
 
-		// iterate height starting at death location and incrementing up by one until search distance is reached
-		for (int y = 0; y < radius; y++) {
+		// search all locations in vertical axis upward, then downward
+		for (VerticalAxis verticalAxis : VerticalAxis.values()) {
+			for (int y = 0; y < searchDistance; y++) {
 
-			// perform search starting at death location until search distance is reached
+				// if world max height reached, break loop
+				if (y * verticalAxis.yFactor + testLocation.getY()  >= player.getWorld().getMaxHeight()) {
+					break;
+				}
 
-			for (int x = 0; x < radius; x++) {
-				for (int z = 0; z < radius; z++) {
+				// if world min height reached, break loop
+				if (y * verticalAxis.yFactor + testLocation.getY() <= 0) {
+					break;
+				}
 
-					// set new test location
-					testLocation.add(x, y, z);
+				for (int x = 0; x < searchDistance; x++) {
+					for (int z = 0; z < searchDistance; z++) {
 
-					if (plugin.debug) {
-						plugin.getLogger().info("test location: " + testLocation.toString());
-					}
+						// search x,z coordinates in each quadrant
+						for (Quadrant quadrant : Quadrant.values()) {
 
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
+							// only test x = 0 or y = 0 or z = 0 in first quadrant
+							if (quadrant.ordinal() != 0 && (x == 0 || y == 0 || z == 0)) {
+								continue;
+							}
 
-					// if test location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
+							// set new test location
+							testLocation.add(x * quadrant.xFactor,
+											 y * verticalAxis.yFactor,
+											 z * quadrant.zFactor);
+
+							if (plugin.debug) {
+								plugin.getLogger().info("test location: " + testLocation.toString());
+							}
+
+							// get result for test location
+							result = validateChestLocation(player, testLocation, chestSize);
+							testCount = testCount + 1;
+
+							// if test location is valid, return search result object
+							if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+								if (plugin.debug) {
+									plugin.getLogger().info("Locations tested: " + testCount);
+								}
+								return result;
+							}
+
+							// rotate test location 90 degrees
+							testLocation.setYaw(testLocation.getYaw() - 90);
+
+							if (plugin.debug) {
+								plugin.getLogger().info("test location: " + testLocation.toString());
+							}
+
+							// get result for test location
+							result = validateChestLocation(player, testLocation, chestSize);
+							testCount = testCount + 1;
+
+							// if test location is valid, return search result object
+							if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+								if (plugin.debug) {
+									plugin.getLogger().info("Locations tested: " + testCount);
+								}
+								return result;
+							}
+
+							// reset test location
+							testLocation = origin.clone();
 						}
-						return result;
 					}
-
-					// rotate test location 90 degrees
-					testLocation.setYaw(testLocation.getYaw() - 90);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if test location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// reset test location
-					testLocation = origin.clone();
-
-					// location 0,y,0 has already been checked, so skip ahead
-					if (x == 0 && z == 0) {
-						continue;
-					}
-
-					// set new test location
-					testLocation.add(-x, y, z);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// rotate test location 90 degrees
-					testLocation.setYaw(testLocation.getYaw() - 90);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if test location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// reset test location
-					testLocation = origin.clone();
-
-					// locations 0,y,z and x,y,0 had already been checked, so skip ahead
-					if (x == 0 || z == 0) {
-						continue;
-					}
-
-					// set new test location
-					testLocation.add(-x, y, -z);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// rotate test location 90 degrees
-					testLocation.setYaw(testLocation.getYaw() - 90);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if test location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// reset test location
-					testLocation = origin.clone();
-
-					// set new test location
-					testLocation.add(x, y, -z);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// rotate test location 90 degrees
-					testLocation.setYaw(testLocation.getYaw() - 90);
-
-					// get result for test location
-					result = validateChestLocation(player, testLocation, chestSize);
-					testCount = testCount + 1;
-
-					// if test location is valid, return search result object
-					if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-						if (plugin.debug) {
-							plugin.getLogger().info("Locations tested: " + testCount);
-						}
-						return result;
-					}
-
-					// reset test location
-					testLocation = origin.clone();
 				}
 			}
 		}
