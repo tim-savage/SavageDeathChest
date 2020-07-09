@@ -500,8 +500,8 @@ public final class Deployment {
 		Location origin = player.getLocation();
 
 		// if place-above-void configured true and player died in the void, start search at y=1
-		if (plugin.getConfig().getBoolean("place-above-void")) {
-			origin.setY(Math.max(1, origin.getY()));
+		if (plugin.getConfig().getBoolean("place-above-void") && origin.getY() < 1) {
+			origin.setY(1);
 		}
 		else {
 			SearchResult result = new SearchResult(ResultCode.VOID);
