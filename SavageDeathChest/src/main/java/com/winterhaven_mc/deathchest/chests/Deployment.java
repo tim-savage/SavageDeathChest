@@ -12,9 +12,8 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -210,12 +209,20 @@ public final class Deployment {
 			// place chest at result location
 			placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
 
-			// set chest type to single chest
-			Chest chest = (Chest) result.getLocation().getBlock().getState();
-			BlockData chestBlockData = chest.getBlockData();
-			((org.bukkit.block.data.type.Chest) chestBlockData).setType(org.bukkit.block.data.type.Chest.Type.SINGLE);
-			chest.setBlockData(chestBlockData);
-			chest.update();
+			// get chest block state
+			BlockState chestBlockState = result.getLocation().getBlock().getState();
+
+			// get chest block data
+			Chest chestBlockData = (Chest) chestBlockState.getBlockData();
+
+			// set chest block data type to single chest
+			chestBlockData.setType(Chest.Type.SINGLE);
+
+			// set chest block data
+			chestBlockState.setBlockData(chestBlockData);
+
+			// update chest block state
+			chestBlockState.update();
 
 			// fill chest
 			remainingItems = deathChest.fill(remainingItems);
@@ -317,35 +324,25 @@ public final class Deployment {
 
 		// set chest type to left/right for double chest
 
-		// get right chest block
-		Block rightBlock = result.getLocation().getBlock();
-
-		// get left chest block (left chest block is to player's right)
-		Block leftBlock = getLocationToRight(result.getLocation()).getBlock();
-
 		// get left and right chest block state
-		BlockState rightChestState = rightBlock.getState();
-		BlockState leftChestState = leftBlock.getState();
+		BlockState rightChestState = result.getLocation().getBlock().getState();
+		BlockState leftChestState = getLocationToRight(result.getLocation()).getBlock().getState();
 
-		// cast to (Block) chest
-		Chest rightChest = (Chest) rightChestState;
-		Chest leftChest = (Chest) leftChestState;
+		// get left and right chest block data
+		Chest rightChestBlockData = (Chest) rightChestState.getBlockData();
+		Chest leftChestBlockData = (Chest) leftChestState.getBlockData();
 
-		// get block data
-		BlockData rightBlockData = rightChest.getBlockData();
-		BlockData leftBlockData = leftChest.getBlockData();
+		// set left and right chest types in block data
+		rightChestBlockData.setType(Chest.Type.RIGHT);
+		leftChestBlockData.setType(Chest.Type.LEFT);
 
-		// set chest types in block data
-		((org.bukkit.block.data.type.Chest) rightBlockData).setType(org.bukkit.block.data.type.Chest.Type.RIGHT);
-		((org.bukkit.block.data.type.Chest) leftBlockData).setType(org.bukkit.block.data.type.Chest.Type.LEFT);
+		// set left and right block data
+		rightChestState.setBlockData(rightChestBlockData);
+		leftChestState.setBlockData(leftChestBlockData);
 
-		// set block data
-		rightChest.setBlockData(rightBlockData);
-		leftChest.setBlockData(leftBlockData);
-
-		// update block data
-		rightChest.update();
-		leftChest.update();
+		// update left and right chest block data
+		rightChestState.update();
+		leftChestState.update();
 
 		// put remaining items after filling chest in result
 		result.setRemainingItems(deathChest.fill(remainingItems));
