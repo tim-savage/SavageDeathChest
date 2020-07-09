@@ -55,42 +55,6 @@ public final class Deployment {
 		// create new deathChest object for player
 		this.deathChest = new DeathChest(player);
 
-		// if player's current world is not enabled in config, do nothing
-		// and allow inventory items to drop on ground
-		if (!plugin.worldManager.isEnabled(player.getWorld())) {
-			return;
-		}
-
-		// if player does not have permission for death chest creation,
-		// do nothing and allow inventory items to drop on ground
-		if (!player.hasPermission("deathchest.chest")) {
-			Message.create(player, CHEST_DENIED_PERMISSION)
-					.setMacro(Macro.LOCATION, player.getLocation())
-					.send();
-			return;
-		}
-
-		// if player is in creative mode,
-		// and creative-deploy is configured false,
-		// and player does not have creative-deploy permission override:
-		// output message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE)
-				&& !plugin.getConfig().getBoolean("creative-deploy")
-				&& !player.hasPermission("deathchest.creative-deploy")) {
-			Message.create(player, CREATIVE_MODE)
-					.setMacro(Macro.LOCATION, player.getLocation())
-					.send();
-			return;
-		}
-
-		// if player inventory is empty, output message and return
-		if (droppedItems.isEmpty()) {
-			Message.create(player, INVENTORY_EMPTY)
-					.setMacro(Macro.LOCATION, player.getLocation())
-					.send();
-			return;
-		}
-
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
 		SearchResult result = deployChest(player, droppedItems);
 

@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
@@ -17,6 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 import static com.winterhaven_mc.deathchest.messages.Macro.*;
 import static com.winterhaven_mc.deathchest.messages.Macro.VIEWER;
@@ -59,8 +63,50 @@ public final class PlayerEventListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public final void onPlayerDeath(final PlayerDeathEvent event) {
 
+		// get event player
+		Player player = event.getEntity();
+
+		// get event dropped items
+		List<ItemStack> droppedItems = event.getDrops();
+
+		// if player's current world is not enabled in config, do nothing
+		// and allow inventory items to drop on ground
+		if (!plugin.worldManager.isEnabled(player.getWorld())) {
+			return;
+		}
+
+		// if player does not have permission for death chest creation,
+		// do nothing and allow inventory items to drop on ground
+		if (!player.hasPermission("deathchest.chest")) {
+			Message.create(player, CHEST_DENIED_PERMISSION)
+					.setMacro(Macro.LOCATION, player.getLocation())
+					.send();
+			return;
+		}
+
+		// if player is in creative mode,
+		// and creative-deploy is configured false,
+		// and player does not have creative-deploy permission override:
+		// output message and return
+		if (player.getGameMode().equals(GameMode.CREATIVE)
+				&& !plugin.getConfig().getBoolean("creative-deploy")
+				&& !player.hasPermission("deathchest.creative-deploy")) {
+			Message.create(player, CREATIVE_MODE)
+					.setMacro(Macro.LOCATION, player.getLocation())
+					.send();
+			return;
+		}
+
+		// if player inventory is empty, output message and return
+		if (droppedItems.isEmpty()) {
+			Message.create(player, INVENTORY_EMPTY)
+					.setMacro(Macro.LOCATION, player.getLocation())
+					.send();
+			return;
+		}
+
 		// deploy DeathChest
-		new Deployment(plugin, event.getEntity(), event.getDrops());
+		new Deployment(plugin, player, droppedItems);
 	}
 
 
