@@ -116,14 +116,14 @@ public final class Deployment {
 		switch (result.getResultCode()) {
 			case SUCCESS:
 				Message.create(player, CHEST_SUCCESS)
-						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
 						.send();
 				break;
 
 			case PARTIAL_SUCCESS:
 				Message.create(player, DOUBLECHEST_PARTIAL_SUCCESS)
-						.setMacro(Macro.LOCATION, deathChest.getLocation())
+						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
 						.send();
 				break;
@@ -164,6 +164,7 @@ public final class Deployment {
 				Message.create(player, CHEST_DENIED_VOID)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
+				break;
 		}
 
 		// if result is negative, cancel expire task and return
@@ -323,7 +324,6 @@ public final class Deployment {
 				result.setResultCode(ResultCode.NO_CHEST);
 				result.setRemainingItems(remainingItems);
 				return result;
-//				return new SearchResult(ResultCode.NO_CHEST, remainingItems);
 			}
 		}
 
@@ -349,7 +349,6 @@ public final class Deployment {
 				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
 				result.setRemainingItems(deathChest.fill(remainingItems));
 				return result;
-//				return new SearchResult(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
 			}
 		}
 
@@ -659,9 +658,6 @@ public final class Deployment {
 		Block block = location.getBlock();
 
 		// if block at location is above grass path, return negative result
-//		if (isAboveGrassPath(block)) {
-//			return false;
-//		}
 		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
 			return false;
 		}
