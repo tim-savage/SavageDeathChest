@@ -3,9 +3,9 @@ package com.winterhaven_mc.deathchest.chests;
 import com.winterhaven_mc.deathchest.PluginMain;
 import org.bukkit.Material;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -17,7 +17,7 @@ public final class ReplaceableBlocks {
 	private final PluginMain plugin;
 
 	// material types that can be replaced by death chests
-	private final Set<Material> replaceableBlocks;
+	private final Set<Material> materialSet;
 
 
 	/**
@@ -28,7 +28,7 @@ public final class ReplaceableBlocks {
 
 		this.plugin = plugin;
 
-		this.replaceableBlocks = new HashSet<>();
+		this.materialSet = ConcurrentHashMap.newKeySet();
 
 		this.reload();
 	}
@@ -40,7 +40,7 @@ public final class ReplaceableBlocks {
 	public final void reload() {
 
 		// clear replaceable blocks
-		replaceableBlocks.clear();
+		materialSet.clear();
 
 		// get string list of materials from config file
 		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
@@ -50,7 +50,7 @@ public final class ReplaceableBlocks {
 
 			// if material string matches a valid material type, add to replaceableBlocks set
 			if (Material.matchMaterial(materialString) != null) {
-				replaceableBlocks.add(Material.matchMaterial(materialString));
+				materialSet.add(Material.matchMaterial(materialString));
 			}
 		}
 	}
@@ -69,7 +69,7 @@ public final class ReplaceableBlocks {
 			return false;
 		}
 
-		return this.replaceableBlocks.contains(material);
+		return this.materialSet.contains(material);
 	}
 
 
@@ -80,6 +80,6 @@ public final class ReplaceableBlocks {
 	 */
 	@Override
 	public final String toString() {
-		return this.replaceableBlocks.toString();
+		return this.materialSet.toString();
 	}
 }
