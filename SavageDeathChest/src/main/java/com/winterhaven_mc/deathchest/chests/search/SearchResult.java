@@ -48,34 +48,6 @@ public final class SearchResult {
 
 
 	/**
-	 * Class constructor
-	 *
-	 * @param resultCode initial result code for result
-	 * @param location chest location
-	 */
-	SearchResult(final ResultCode resultCode, final Location location) {
-		this.resultCode = resultCode;
-		this.location = location;
-		this.protectionPlugin = null;
-		this.remainingItems = new ArrayList<>();
-	}
-
-
-	/**
-	 * Class constructor
-	 *
-	 * @param resultCode initial result code for result
-	 * @param protectionPlugin plugin that prevented chest placement
-	 */
-	SearchResult(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
-		this.resultCode = resultCode;
-		this.location = null;
-		this.protectionPlugin = protectionPlugin;
-		this.remainingItems = new ArrayList<>();
-	}
-
-
-	/**
 	 * Getter method for resultCode
 	 *
 	 * @return ResultCode - the result code currently set for this result object
