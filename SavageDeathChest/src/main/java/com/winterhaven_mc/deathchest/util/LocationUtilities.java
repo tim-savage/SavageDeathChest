@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 /**
  * A utility class that implements static methods for various location manipulations
  */
-@SuppressWarnings("unused")
 public final class LocationUtilities {
 
 	/**
@@ -88,38 +87,6 @@ public final class LocationUtilities {
 
 
 	/**
-	 * Get location to left of location based on yaw
-	 *
-	 * @param location initial location
-	 * @return location one block to left, preserving original yaw
-	 */
-	public static Location getLocationToLeft(final Location location) {
-
-		Location resultLocation = getBlockToLeft(location).getLocation();
-
-		// set new location yaw to match original
-		resultLocation.setYaw(location.getYaw());
-		return resultLocation;
-	}
-
-
-	/**
-	 * Get location to front of passed location based on yaw
-	 *
-	 * @param location initial location
-	 * @return location one block in front, preserving original yaw
-	 */
-	public static Location getLocationToFront(final Location location) {
-
-		Location resultLocation = getBlockToFront(location).getLocation();
-
-		// set new location yaw to match original
-		resultLocation.setYaw(location.getYaw());
-		return resultLocation;
-	}
-
-
-	/**
 	 * Get block to left of location based on yaw
 	 *
 	 * @param location initial location
@@ -140,51 +107,6 @@ public final class LocationUtilities {
 	public static Block getBlockToRight(final Location location) {
 		float yaw = location.getYaw() - 90;
 		return location.getBlock().getRelative(getCardinalDirection(yaw));
-	}
-
-
-	/**
-	 * Get block in front of location based on yaw
-	 *
-	 * @param location initial location
-	 * @return block in front of initial location
-	 */
-	private static Block getBlockToFront(final Location location) {
-		float yaw = location.getYaw() + 180;
-		return location.getBlock().getRelative(getCardinalDirection(yaw));
-	}
-
-
-	/**
-	 * Get block to rear of location based on yaw
-	 *
-	 * @param location initial location
-	 * @return block behind inital location
-	 */
-	public static Block getBlockToRear(final Location location) {
-		float yaw = location.getYaw();
-		return location.getBlock().getRelative(getCardinalDirection(yaw));
-	}
-
-
-	/**
-	 * Get BlockFace to left of passed BlockFace
-	 *
-	 * @param blockFace the original BlockFace
-	 * @return BlockFace to left of passed BlockFace
-	 */
-	public static BlockFace getBlockFaceToLeft(final BlockFace blockFace) {
-
-		if (blockFace.equals(BlockFace.NORTH)) {
-			return BlockFace.EAST;
-		}
-		else if (blockFace.equals(BlockFace.WEST)) {
-			return BlockFace.NORTH;
-		}
-		else if (blockFace.equals(BlockFace.SOUTH)) {
-			return BlockFace.WEST;
-		}
-		return BlockFace.SOUTH;
 	}
 
 }
