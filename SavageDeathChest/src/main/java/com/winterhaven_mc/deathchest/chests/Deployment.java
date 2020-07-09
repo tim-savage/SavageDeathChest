@@ -93,7 +93,7 @@ public final class Deployment {
 		}
 
 		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
-		Result result = deployChest(player, droppedItems);
+		SearchResult result = deployChest(player, droppedItems);
 
 		// clear dropped items
 		event.getDrops().clear();
@@ -181,9 +181,9 @@ public final class Deployment {
 	 *
 	 * @param player       the player who died
 	 * @param droppedItems the player's items dropped on death
-	 * @return Result - the result of the attempted DeathChest deployment
+	 * @return SearchResult - the result of the attempted DeathChest deployment
 	 */
-	private Result deployChest(final Player player, final Collection<ItemStack> droppedItems) {
+	private SearchResult deployChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// combine stacks of same items where possible
 		List<ItemStack> remainingItems = consolidateItemStacks(droppedItems);
@@ -207,9 +207,9 @@ public final class Deployment {
 	 *
 	 * @param player       the player who died
 	 * @param droppedItems the player's items dropped on death
-	 * @return Result - the result of the attempted DeathChest deployment
+	 * @return SearchResult - the result of the attempted DeathChest deployment
 	 */
-	private Result deploySingleChest(final Player player, final Collection<ItemStack> droppedItems) {
+	private SearchResult deploySingleChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// make copy of dropped items
 		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
@@ -227,12 +227,12 @@ public final class Deployment {
 			}
 			// else return NO_CHEST result
 			else {
-				return new Result(ResultCode.NO_CHEST, remainingItems);
+				return new SearchResult(ResultCode.NO_CHEST, remainingItems);
 			}
 		}
 
 		// search for valid chest location
-		Result result = findChestLocation(player, ChestSize.SINGLE);
+		SearchResult result = findChestLocation(player, ChestSize.SINGLE);
 
 		// if search successful, place chest
 		if (result.getResultCode().equals(ResultCode.SUCCESS)) {
@@ -267,15 +267,15 @@ public final class Deployment {
 	 *
 	 * @param player       the player who died
 	 * @param droppedItems the player's items dropped on death
-	 * @return Result - the result of the attempted DeathChest deployment
+	 * @return SearchResult - the result of the attempted DeathChest deployment
 	 */
-	private Result deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
+	private SearchResult deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
 
 		// make copy of dropped items
 		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
 
 		// search for valid chest location
-		Result result = findChestLocation(player, ChestSize.DOUBLE);
+		SearchResult result = findChestLocation(player, ChestSize.DOUBLE);
 
 		// if only single chest location found, deploy single chest
 		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
@@ -312,7 +312,7 @@ public final class Deployment {
 				result.setResultCode(ResultCode.NO_CHEST);
 				result.setRemainingItems(remainingItems);
 				return result;
-//				return new Result(ResultCode.NO_CHEST, remainingItems);
+//				return new SearchResult(ResultCode.NO_CHEST, remainingItems);
 			}
 		}
 
@@ -338,7 +338,7 @@ public final class Deployment {
 				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
 				result.setRemainingItems(deathChest.fill(remainingItems));
 				return result;
-//				return new Result(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
+//				return new SearchResult(ResultCode.PARTIAL_SUCCESS, result.getLocation(), deathChest.fill(remainingItems));
 			}
 		}
 
@@ -484,7 +484,7 @@ public final class Deployment {
 	 * @param chestSize enum member denoting size of chest required (SINGLE | DOUBLE)
 	 * @return SearchResult
 	 */
-	private Result findChestLocation(final Player player, final ChestSize chestSize) {
+	private SearchResult findChestLocation(final Player player, final ChestSize chestSize) {
 
 		// count number of tests performed, for debugging purposes
 		int testCount = 0;
@@ -509,7 +509,7 @@ public final class Deployment {
 		}
 
 		// declare default search result object, with locatino set to origin
-		Result result = new Result(ResultCode.NON_REPLACEABLE_BLOCK);
+		SearchResult result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
 		result.setLocation(origin);
 
 		if (plugin.debug) {
@@ -726,14 +726,14 @@ public final class Deployment {
 	 * @param player    the player for whom the chest is being placed
 	 * @param location  the location to test
 	 * @param chestSize the size of the chest to be placed (single, double)
-	 * @return Result - the result object for the tested location
+	 * @return SearchResult - the result object for the tested location
 	 */
-	private Result validateChestLocation(final Player player,
-										 final Location location,
-										 final ChestSize chestSize) {
+	private SearchResult validateChestLocation(final Player player,
+											   final Location location,
+											   final ChestSize chestSize) {
 
 		// test right chest location
-		Result result = validateChestLocation(player, location);
+		SearchResult result = validateChestLocation(player, location);
 
 		// if right chest is not successful, return result
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
@@ -757,34 +757,34 @@ public final class Deployment {
 	 *
 	 * @param player    the player for whom the chest is being placed
 	 * @param location  the location to test
-	 * @return Result - the result object for the tested location
+	 * @return SearchResult - the result object for the tested location
 	 */
-	private Result validateChestLocation(final Player player, final Location location) {
+	private SearchResult validateChestLocation(final Player player, final Location location) {
 
 		Block block = location.getBlock();
 
 		// if block at location is not replaceable block, return negative result
 		if (!plugin.chestManager.replaceableBlocks.contains(block.getType())) {
-			return new Result(ResultCode.NON_REPLACEABLE_BLOCK);
+			return new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
 		}
 
 		// if block at location is above grass path, return negative result
 		if (isAboveGrassPath(block)) {
-			return new Result(ResultCode.ABOVE_GRASS_PATH);
+			return new SearchResult(ResultCode.ABOVE_GRASS_PATH);
 		}
 
 		// if block at location is protected by plugin, return negative result
 		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 		if (protectionPlugin != null) {
-			return new Result(ResultCode.PROTECTION_PLUGIN, protectionPlugin);
+			return new SearchResult(ResultCode.PROTECTION_PLUGIN, protectionPlugin);
 		}
 
 		// if block at location is within spawn protection radius, return negative result
 		if (isSpawnProtected(location)) {
-			return new Result(ResultCode.SPAWN_RADIUS);
+			return new SearchResult(ResultCode.SPAWN_RADIUS);
 		}
 
-		return new Result(ResultCode.SUCCESS, location);
+		return new SearchResult(ResultCode.SUCCESS, location);
 	}
 
 
@@ -983,15 +983,15 @@ public final class Deployment {
 
 
 	@SuppressWarnings("unused")
-	private void logResult(Result result) {
+	private void logResult(SearchResult result) {
 
 		if (result == null) {
-			plugin.getLogger().info("Result is null!");
+			plugin.getLogger().info("SearchResult is null!");
 			return;
 		}
 
 		if (result.getResultCode() != null) {
-			plugin.getLogger().info("Result Code: " + result.getResultCode().toString());
+			plugin.getLogger().info("SearchResult Code: " + result.getResultCode().toString());
 		}
 		if (result.getLocation() != null) {
 			plugin.getLogger().info("Location: " + result.getLocation().toString());
