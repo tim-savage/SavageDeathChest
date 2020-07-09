@@ -66,24 +66,6 @@ final class Result {
 	 * Class constructor
 	 *
 	 * @param resultCode initial result code for result
-	 * @param location chest location
-	 * @param remainingItems player dropped items remaining
-	 */
-	@SuppressWarnings("unused")
-	Result(final ResultCode resultCode,
-		   final Location location,
-		   final Collection<ItemStack> remainingItems) {
-		this.resultCode = resultCode;
-		this.location = location;
-		this.protectionPlugin = null;
-		this.remainingItems = remainingItems;
-	}
-
-
-	/**
-	 * Class constructor
-	 *
-	 * @param resultCode initial result code for result
 	 * @param protectionPlugin plugin that prevented chest placement
 	 */
 	Result(final ResultCode resultCode, final ProtectionPlugin protectionPlugin) {
@@ -91,26 +73,6 @@ final class Result {
 		this.location = null;
 		this.protectionPlugin = protectionPlugin;
 		this.remainingItems = new ArrayList<>();
-	}
-
-
-	/**
-	 * Class constructor
-	 *
-	 * @param resultCode initial result code for result
-	 * @param location chest location
-	 * @param protectionPlugin plugin that prevented chest placement
-	 * @param remainingItems player dropped items remaining
-	 */
-	@SuppressWarnings("unused")
-	Result(final ResultCode resultCode,
-		   final Location location,
-		   final ProtectionPlugin protectionPlugin,
-		   final Collection<ItemStack> remainingItems) {
-		this.resultCode = resultCode;
-		this.location = location;
-		this.protectionPlugin = protectionPlugin;
-		this.remainingItems = remainingItems;
 	}
 
 
