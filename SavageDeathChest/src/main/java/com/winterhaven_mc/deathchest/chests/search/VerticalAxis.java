@@ -1,9 +1,9 @@
-package com.winterhaven_mc.deathchest.chests;
+package com.winterhaven_mc.deathchest.chests.search;
 
 public enum VerticalAxis {
 
-	Up(1),
-	Down(-1);
+	Upper(1),
+	Lower(-1);
 
 	int yFactor;
 

@@ -1,6 +1,5 @@
-package com.winterhaven_mc.deathchest.chests;
+package com.winterhaven_mc.deathchest.chests.search;
 
-import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +11,7 @@ import java.util.Collection;
  * A class that encapsulates fields to be returned
  * as the result of a search for a valid chest location
  */
-final class SearchResult {
+public final class SearchResult {
 
 	private ResultCode resultCode;
 	private Location location;
@@ -40,7 +39,7 @@ final class SearchResult {
 	 * @param remainingItems player dropped items remaining
 	 *
 	 */
-	SearchResult(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
+	public SearchResult(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
 		this.resultCode = resultCode;
 		this.location = null;
 		this.protectionPlugin = null;
@@ -81,7 +80,7 @@ final class SearchResult {
 	 *
 	 * @return ResultCode - the result code currently set for this result object
 	 */
-	final ResultCode getResultCode() {
+	public final ResultCode getResultCode() {
 		return resultCode;
 	}
 
@@ -90,7 +89,7 @@ final class SearchResult {
 	 * Setter method for resultCode
 	 * @param resultCode - the result code to set for this result object
 	 */
-	final void setResultCode(ResultCode resultCode) {
+	public final void setResultCode(ResultCode resultCode) {
 		this.resultCode = resultCode;
 	}
 
@@ -100,7 +99,7 @@ final class SearchResult {
 	 *
 	 * @return Location - the location currently set for this result object
 	 */
-	final Location getLocation() {
+	public final Location getLocation() {
 		return location;
 	}
 
@@ -119,7 +118,7 @@ final class SearchResult {
 	 *
 	 * @return ProtectionPlugin - the protection plugin enum value currently set for this result object
 	 */
-	final ProtectionPlugin getProtectionPlugin() {
+	public final ProtectionPlugin getProtectionPlugin() {
 		return protectionPlugin;
 	}
 
@@ -139,7 +138,7 @@ final class SearchResult {
 	 *
 	 * @return Collection of ItemStack - the remaining items currently set for this result object
 	 */
-	final Collection<ItemStack> getRemainingItems() {
+	public final Collection<ItemStack> getRemainingItems() {
 		return remainingItems;
 	}
 
@@ -148,7 +147,7 @@ final class SearchResult {
 	 * Setter method for remainingItems
 	 * @param remainingItems Collection of ItemStack - the remaining items to set for this result object
 	 */
-	final void setRemainingItems(Collection<ItemStack> remainingItems) {
+	public final void setRemainingItems(Collection<ItemStack> remainingItems) {
 		this.remainingItems = remainingItems;
 	}
 

@@ -1,8 +1,11 @@
 package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.chests.search.QuadrantSearch;
+import com.winterhaven_mc.deathchest.chests.search.ResultCode;
+import com.winterhaven_mc.deathchest.chests.search.Search;
+import com.winterhaven_mc.deathchest.chests.search.SearchResult;
 import com.winterhaven_mc.deathchest.messages.Macro;
-import com.winterhaven_mc.deathchest.util.ProtectionPlugin;
 
 import com.winterhaven_mc.deathchest.messages.Message;
 import org.bukkit.*;
@@ -236,7 +239,9 @@ public final class Deployment {
 		}
 
 		// search for valid chest location
-		SearchResult result = findChestLocation(player, ChestSize.SINGLE);
+		Search search = new QuadrantSearch(plugin, player, ChestSize.SINGLE);
+		search.execute();
+		SearchResult result = search.getResult();
 
 		// if search successful, place chest
 		if (result.getResultCode().equals(ResultCode.SUCCESS)) {
@@ -279,7 +284,9 @@ public final class Deployment {
 		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
 
 		// search for valid chest location
-		SearchResult result = findChestLocation(player, ChestSize.DOUBLE);
+		Search search = new QuadrantSearch(plugin, player, ChestSize.DOUBLE);
+		search.execute();
+		SearchResult result = search.getResult();
 
 		// if only single chest location found, deploy single chest
 		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
@@ -480,139 +487,6 @@ public final class Deployment {
 
 
 	/**
-	 * Search for a valid location to place a chest,
-	 * taking into account replaceable blocks, grass path blocks and
-	 * restrictions from other block protection plugins if configured
-	 *
-	 * @param player    Player that deathchest is being deployed for
-	 * @param chestSize enum member denoting size of chest required (SINGLE | DOUBLE)
-	 * @return SearchResult
-	 */
-	private SearchResult findChestLocation(final Player player, final ChestSize chestSize) {
-
-		// count number of tests performed, for debugging purposes
-		int testCount = 0;
-
-		// get distance to search from config
-		int searchDistance = plugin.getConfig().getInt("search-distance");
-
-		// get player death location
-		Location origin = player.getLocation();
-
-		// if place-above-void configured true and player died in the void, start search at y=1
-		if (origin.getY() < 1) {
-			if (plugin.getConfig().getBoolean("place-above-void")) {
-				origin.setY(1);
-			}
-			else {
-				SearchResult result = new SearchResult(ResultCode.VOID);
-				result.setLocation(player.getLocation());
-				return result;
-			}
-		}
-
-		// if player died above world max build height, start search 1 block below max build height
-		origin.setY(Math.min(origin.getY(), player.getWorld().getMaxHeight() - 1));
-
-		// declare default search result object, with location set to origin
-		SearchResult result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
-		result.setLocation(origin);
-
-		if (plugin.debug) {
-			plugin.getLogger().info("initial death location: " + origin.toString());
-		}
-
-		// iterate over all locations within search distance until a valid location is found
-		Location testLocation = origin.clone();
-
-		// search all locations in vertical axis upward, then downward
-		for (VerticalAxis verticalAxis : VerticalAxis.values()) {
-			for (int y = 0; y < searchDistance; y++) {
-
-				// if world max height reached, break loop
-				if (y * verticalAxis.yFactor + testLocation.getY() >= player.getWorld().getMaxHeight()) {
-					break;
-				}
-
-				// if world min height reached, break loop
-				if (y * verticalAxis.yFactor + testLocation.getY() <= 0) {
-					break;
-				}
-
-				// only test y == 0 in upper vertical axis
-				if (verticalAxis.ordinal() != 0 && y == 0) {
-					continue;
-				}
-
-				for (int x = 0; x < searchDistance; x++) {
-					for (int z = 0; z < searchDistance; z++) {
-
-						// search x,z coordinates in each quadrant
-						for (Quadrant quadrant : Quadrant.values()) {
-
-							// only test x == 0 or z == 0 in first quadrant
-							if (quadrant.ordinal() != 0 && (x == 0 || z == 0)) {
-								continue;
-							}
-
-							// set new test location
-							testLocation.add(x * quadrant.xFactor,
-											 y * verticalAxis.yFactor,
-											 z * quadrant.zFactor);
-
-							if (plugin.debug) {
-								plugin.getLogger().info("test location: " + testLocation.toString());
-							}
-
-							// get result for test location
-							result = validateChestLocation(player, testLocation, chestSize);
-							testCount = testCount + 1;
-
-							// if test location is valid, return search result object
-							if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-								if (plugin.debug) {
-									plugin.getLogger().info("Locations tested: " + testCount);
-								}
-								return result;
-							}
-
-							// rotate test location 90 degrees
-							testLocation.setYaw(testLocation.getYaw() - 90);
-
-							if (plugin.debug) {
-								plugin.getLogger().info("test location: " + testLocation.toString());
-							}
-
-							// get result for test location
-							result = validateChestLocation(player, testLocation, chestSize);
-							testCount = testCount + 1;
-
-							// if test location is valid, return search result object
-							if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-								if (plugin.debug) {
-									plugin.getLogger().info("Locations tested: " + testCount);
-								}
-								return result;
-							}
-
-							// reset test location
-							testLocation = origin.clone();
-						}
-					}
-				}
-			}
-		}
-
-		// no valid location could be found, so return result
-		if (plugin.debug) {
-			plugin.getLogger().info("Locations tested: " + testCount);
-		}
-
-		return result;
-	}
-
-
-	/**
 	 * Place a chest block and fill with items
 	 *
 	 * @param location       the location to place the chest block
@@ -644,74 +518,6 @@ public final class Deployment {
 
 		// set block metadata
 		chestBlock.setMetadata(deathChest);
-	}
-
-
-	/**
-	 * Validate chest location for chest size
-	 *
-	 * @param player    the player for whom the chest is being placed
-	 * @param location  the location to test
-	 * @param chestSize the size of the chest to be placed (single, double)
-	 * @return SearchResult - the result object for the tested location
-	 */
-	private SearchResult validateChestLocation(final Player player,
-											   final Location location,
-											   final ChestSize chestSize) {
-
-		// test right chest location
-		SearchResult result = validateChestLocation(player, location);
-
-		// if right chest is not successful, return result
-		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-			return result;
-		}
-
-		// if chest is to be a double chest, test left chest location
-		if (chestSize.equals(ChestSize.DOUBLE)) {
-
-			// test left chest block location (to player's right)
-			result = validateChestLocation(player, getLocationToRight(location));
-			result.setLocation(location);
-		}
-
-		return result;
-	}
-
-
-	/**
-	 * Validate chest location for chest type
-	 *
-	 * @param player    the player for whom the chest is being placed
-	 * @param location  the location to test
-	 * @return SearchResult - the result object for the tested location
-	 */
-	private SearchResult validateChestLocation(final Player player, final Location location) {
-
-		Block block = location.getBlock();
-
-		// if block at location is not replaceable block, return negative result
-		if (!plugin.chestManager.replaceableBlocks.contains(block.getType())) {
-			return new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
-		}
-
-		// if block at location is above grass path, return negative result
-		if (isAboveGrassPath(block)) {
-			return new SearchResult(ResultCode.ABOVE_GRASS_PATH);
-		}
-
-		// if block at location is protected by plugin, return negative result
-		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
-		if (protectionPlugin != null) {
-			return new SearchResult(ResultCode.PROTECTION_PLUGIN, protectionPlugin);
-		}
-
-		// if block at location is within spawn protection radius, return negative result
-		if (isSpawnProtected(location)) {
-			return new SearchResult(ResultCode.SPAWN_RADIUS);
-		}
-
-		return new SearchResult(ResultCode.SUCCESS, location);
 	}
 
 
@@ -853,59 +659,15 @@ public final class Deployment {
 		Block block = location.getBlock();
 
 		// if block at location is above grass path, return negative result
-		if (isAboveGrassPath(block)) {
+//		if (isAboveGrassPath(block)) {
+//			return false;
+//		}
+		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
 			return false;
 		}
 
 		// check if block at location is a ReplaceableBlock
 		return plugin.chestManager.replaceableBlocks.contains(block.getType());
-	}
-
-
-	/**
-	 * Check if block is above a grass path block
-	 *
-	 * @param block the block to check underneath
-	 * @return true if passed block is above a grass path block, false if not
-	 */
-	private boolean isAboveGrassPath(final Block block) {
-
-		// check for null parameter
-		if (block == null) {
-			return false;
-		}
-
-		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
-	}
-
-
-	/**
-	 * Check if location is within world spawn protection radius
-	 *
-	 * @param location the location to check
-	 * @return {@code true) if passed location is within world spawn protection radius, {@code false) if not
-	 */
-	private boolean isSpawnProtected(final Location location) {
-
-		// check for null parameter
-		if (location == null) {
-			return false;
-		}
-
-		// get world spawn location
-		World world = location.getWorld();
-
-		if (world == null) {
-			return false;
-		}
-
-		Location worldSpawn = plugin.worldManager.getSpawnLocation(location.getWorld());
-
-		// get spawn protection radius
-		int spawnRadius = plugin.getServer().getSpawnRadius();
-
-		// if location is within spawn radius of world spawn location, return true; else return false
-		return location.distanceSquared(worldSpawn) < (spawnRadius ^ 2);
 	}
 
 

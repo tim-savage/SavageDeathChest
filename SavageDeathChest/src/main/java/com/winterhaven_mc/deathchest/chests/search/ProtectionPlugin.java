@@ -1,4 +1,4 @@
-package com.winterhaven_mc.deathchest.util;
+package com.winterhaven_mc.deathchest.chests.search;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 

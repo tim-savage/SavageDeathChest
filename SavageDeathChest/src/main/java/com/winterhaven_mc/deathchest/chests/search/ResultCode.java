@@ -1,10 +1,10 @@
-package com.winterhaven_mc.deathchest.chests;
+package com.winterhaven_mc.deathchest.chests.search;
 
 
 /**
  * An enum whose values represent the possible results of a death chest location search
  */
-enum ResultCode {
+public enum ResultCode {
 
 	SUCCESS,
 	PARTIAL_SUCCESS,

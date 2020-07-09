@@ -62,7 +62,7 @@ public final class ReplaceableBlocks {
 	 * @param material the material the test for
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
-	final boolean contains(final Material material) {
+	public final boolean contains(final Material material) {
 
 		// check for null parameter
 		if (material == null) {
