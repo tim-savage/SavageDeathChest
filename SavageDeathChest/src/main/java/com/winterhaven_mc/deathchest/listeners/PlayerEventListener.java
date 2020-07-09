@@ -60,7 +60,7 @@ public final class PlayerEventListener implements Listener {
 	public final void onPlayerDeath(final PlayerDeathEvent event) {
 
 		// deploy DeathChest
-		new Deployment(event);
+		new Deployment(plugin, event.getEntity(), event.getDrops());
 	}
 
 

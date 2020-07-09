@@ -16,9 +16,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -37,7 +35,7 @@ import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;
 public final class Deployment {
 
 	// reference to main class
-	private final PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
+	private final PluginMain plugin;
 
 	// death chest object
 	private final DeathChest deathChest;
@@ -46,15 +44,13 @@ public final class Deployment {
 	/**
 	 * Class constructor for DeathChest deployment
 	 *
-	 * @param event player death event that triggers DeathChest deployment
+	 * @param plugin reference to plugin main class instance
+	 * @param player the player for whom to deploy a death chest
+	 * @param droppedItems list of items dropped by player on death
 	 */
-	public Deployment(final PlayerDeathEvent event) {
+	public Deployment(final PluginMain plugin, final Player player, final List<ItemStack> droppedItems) {
 
-		// get player from event
-		Player player = event.getEntity();
-
-		// get dropped items
-		List<ItemStack> droppedItems = event.getDrops();
+		this.plugin = plugin;
 
 		// create new deathChest object for player
 		this.deathChest = new DeathChest(player);
@@ -69,7 +65,7 @@ public final class Deployment {
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
 			Message.create(player, CHEST_DENIED_PERMISSION)
-					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
 		}
@@ -82,7 +78,7 @@ public final class Deployment {
 				&& !plugin.getConfig().getBoolean("creative-deploy")
 				&& !player.hasPermission("deathchest.creative-deploy")) {
 			Message.create(player, CREATIVE_MODE)
-					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
 		}
@@ -90,7 +86,7 @@ public final class Deployment {
 		// if player inventory is empty, output message and return
 		if (droppedItems.isEmpty()) {
 			Message.create(player, INVENTORY_EMPTY)
-					.setMacro(Macro.LOCATION, event.getEntity().getLocation())
+					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
 		}
@@ -99,10 +95,10 @@ public final class Deployment {
 		SearchResult result = deployChest(player, droppedItems);
 
 		// clear dropped items
-		event.getDrops().clear();
+		droppedItems.clear();
 
 		// drop any items that couldn't be placed in a death chest
-		event.getDrops().addAll(result.getRemainingItems());
+		droppedItems.addAll(result.getRemainingItems());
 
 		// if debugging, log result
 		if (plugin.debug) {
