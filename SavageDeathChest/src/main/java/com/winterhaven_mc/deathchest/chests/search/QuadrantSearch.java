@@ -47,7 +47,7 @@ public class QuadrantSearch extends AbstractSearch implements Search {
 
 		// if place-above-void configured true and player died in the void, start search at y=1
 		if (origin.getY() < 1) {
-			if (aboveVoid) {
+			if (placeAboveVoid) {
 				origin.setY(1);
 			}
 			else {

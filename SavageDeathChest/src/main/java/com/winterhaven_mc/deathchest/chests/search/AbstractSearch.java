@@ -17,7 +17,7 @@ public abstract class AbstractSearch implements Search {
 	protected final Player player;
 	protected final ChestSize chestSize;
 	protected final int searchDistance;
-	protected boolean aboveVoid;
+	protected boolean placeAboveVoid;
 	protected SearchResult result;
 
 
@@ -35,7 +35,7 @@ public abstract class AbstractSearch implements Search {
 		this.player = player;
 		this.chestSize = chestSize;
 		this.searchDistance = plugin.getConfig().getInt("search-distance");
-		this.aboveVoid = plugin.getConfig().getBoolean("place-above-void");
+		this.placeAboveVoid = plugin.getConfig().getBoolean("place-above-void");
 
 		// initialize default result
 		result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
