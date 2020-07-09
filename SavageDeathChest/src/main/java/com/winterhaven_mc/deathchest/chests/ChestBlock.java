@@ -163,6 +163,7 @@ public final class ChestBlock {
 	 *
 	 * @param player the player for whom to open the ChestBlock inventory
 	 */
+	@SuppressWarnings("unused")
 	public final void openInventory(final Player player) {
 
 		// check for null player object
