@@ -500,20 +500,19 @@ public final class Deployment {
 		Location origin = player.getLocation();
 
 		// if place-above-void configured true and player died in the void, start search at y=1
-		if (plugin.getConfig().getBoolean("place-above-void") && origin.getY() < 1) {
-			origin.setY(1);
-		}
-		else {
-			SearchResult result = new SearchResult(ResultCode.VOID);
-			result.setLocation(player.getLocation());
-			return result;
+		if (origin.getY() < 1) {
+			if (plugin.getConfig().getBoolean("place-above-void")) {
+				origin.setY(1);
+			}
+			else {
+				SearchResult result = new SearchResult(ResultCode.VOID);
+				result.setLocation(player.getLocation());
+				return result;
+			}
 		}
 
 		// if player died above world max build height, start search 1 block below max build height
-		// TODO: remove configuration setting and always perform this check
-		if (plugin.getConfig().getBoolean("place-below-max")) {
-			origin.setY(Math.min(origin.getY(), player.getWorld().getMaxHeight() - 1));
-		}
+		origin.setY(Math.min(origin.getY(), player.getWorld().getMaxHeight() - 1));
 
 		// declare default search result object, with location set to origin
 		SearchResult result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
