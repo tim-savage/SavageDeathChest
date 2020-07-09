@@ -21,6 +21,12 @@ public abstract class AbstractSearch implements Search {
 	protected SearchResult result;
 
 
+	/**
+	 * Class constructor
+	 * @param plugin reference to main class instance
+	 * @param player player for whom death chest is being placed
+	 * @param chestSize double or single chest
+	 */
 	protected AbstractSearch(final PluginMain plugin,
 							 final Player player,
 							 final ChestSize chestSize) {
@@ -34,6 +40,21 @@ public abstract class AbstractSearch implements Search {
 		// initialize default result
 		result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
 		result.setLocation(player.getLocation());
+	}
+
+
+	@Override
+	public abstract void execute();
+
+
+	/**
+	 * Get search result
+	 *
+	 * @return SearchResult object
+	 */
+	@Override
+	public SearchResult getResult() {
+		return result;
 	}
 
 
@@ -102,20 +123,6 @@ public abstract class AbstractSearch implements Search {
 		}
 
 		return new SearchResult(ResultCode.SUCCESS, location);
-	}
-
-
-	@Override
-	public abstract void execute();
-
-
-	/**
-	 * Get search result
-	 *
-	 * @return SearchResult object
-	 */
-	public SearchResult getResult() {
-		return result;
 	}
 
 
