@@ -173,6 +173,18 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
+		// get owner name from uuid
+		String ownerName = "-";
+		if (deathChest.getOwnerUUID() != null) {
+			ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+		}
+
+		// get killer name from uuid
+		String killerName = "-";
+		if (deathChest.getKillerUUID() != null) {
+			killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+		}
+
 		// if chest inventory is already being viewed: cancel event, send message and return
 		if (deathChest.getViewerCount() > 0) {
 
@@ -181,18 +193,6 @@ public final class PlayerEventListener implements Listener {
 
 			// only one chest viewer allowed, so get name viewer at index 0
 			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
-
-			// get owner name from uuid
-			String ownerName = "-";
-			if (deathChest.getOwnerUUID() != null) {
-				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
-			}
-
-			// get killer name from uuid
-			String killerName = "-";
-			if (deathChest.getKillerUUID() != null) {
-				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
-			}
 
 			// send player message
 			Message.create(player, CHEST_CURRENTLY_OPEN)
@@ -235,13 +235,17 @@ public final class PlayerEventListener implements Listener {
 				deathChest.autoLoot(player);
 				return;
 			}
-			else {
-				// send player not-owner message
-				Message.create(player, NOT_OWNER).send();
 
-				// play denied access sound
-				plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-			}
+			// send player not-owner message
+			Message.create(player, NOT_OWNER)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(OWNER, ownerName)
+					.setMacro(KILLER, killerName)
+					.send();
+
+			// play denied access sound
+			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+			return;
 		}
 
 		// if player did not right click block, do nothing and return
@@ -249,33 +253,35 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if chest-protection option is not enabled, do nothing and return
+		// if chest-protection option is not enabled, allow chest to open normally
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
+			return;
+		}
+
+		// if player is owner or has deathchest.loot.other permission, allow chest to open normally
+		if (deathChest.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
+			return;
+		}
+
+		// if killer looting is enabled and player is killer and has permission, allow chest to open normally
+		if (plugin.getConfig().getBoolean("killer-looting")
+				&& deathChest.isKiller(player)
+				&& player.hasPermission("deathchest.loot.killer")) {
 			return;
 		}
 
 		// cancel event
 		event.setCancelled(true);
 
-		// if player is owner or has deathchest.loot.other permission, open chest inventory and return
-		if (deathChest.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
-			chestBlock.openInventory(player);
-			return;
-		}
+		// send player not-owner message
+		Message.create(player, NOT_OWNER)
+				.setMacro(LOCATION, deathChest.getLocation())
+				.setMacro(OWNER, ownerName)
+				.setMacro(KILLER, killerName)
+				.send();
 
-		// if killer looting is enabled  and player is killer and has permission, open chest inventory and return
-		if (plugin.getConfig().getBoolean("killer-looting")
-				&& deathChest.isKiller(player)
-				&& player.hasPermission("deathchest.loot.killer")) {
-			chestBlock.openInventory(player);
-		}
-		else {
-			// send player not-owner message
-			Message.create(player, NOT_OWNER).send();
-
-			// play denied access sound
-			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-		}
+		// play denied access sound
+		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 	}
 
 }
