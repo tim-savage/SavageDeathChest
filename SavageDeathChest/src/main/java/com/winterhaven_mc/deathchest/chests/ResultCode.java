@@ -14,5 +14,6 @@ enum ResultCode {
 	ABOVE_GRASS_PATH,
 	ADJACENT_CHEST,
 	NO_CHEST,
+	VOID,
 
 }

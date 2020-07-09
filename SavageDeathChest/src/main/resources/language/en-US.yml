@@ -76,6 +76,12 @@ MESSAGES:
     string: '&cDeath chest deployment was prevented by world spawn protection.'
     # available subs: %PLAYER%, %LOCATION%
 
+  CHEST_DENIED_VOID:
+    enabled: true
+    string: '&cDeath chest cannot be deployed in the void.'
+    # available subs: %PLAYER%, %LOCATION%
+
+
   INVENTORY_EMPTY:
     enabled: true
     string: '&cYou had no inventory to place in a death chest.'
