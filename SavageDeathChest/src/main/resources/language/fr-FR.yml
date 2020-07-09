@@ -68,6 +68,10 @@ MESSAGES:
     enabled: true
     string: '&cLe déploiement de la salle de la mort a été empêché par la protection d''origine mondiale.'
 
+  CHEST_DENIED_WORLD_DISABLED:
+    enabled: true
+    string: '&cLes coffres à mort ne sont pas activés dans ce monde.'
+
   CHEST_DENIED_VOID:
     enabled: true
     string: '&cLe coffre à mort ne peut pas être déployé dans le vide.'

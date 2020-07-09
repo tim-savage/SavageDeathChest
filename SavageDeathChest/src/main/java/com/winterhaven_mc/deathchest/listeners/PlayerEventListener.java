@@ -72,6 +72,9 @@ public final class PlayerEventListener implements Listener {
 		// if player's current world is not enabled in config, do nothing
 		// and allow inventory items to drop on ground
 		if (!plugin.worldManager.isEnabled(player.getWorld())) {
+			Message.create(player, CHEST_DENIED_WORLD_DISABLED)
+					.setMacro(LOCATION, player.getLocation())
+					.send();
 			return;
 		}
 

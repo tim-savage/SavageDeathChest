@@ -67,6 +67,10 @@ MESSAGES:
     enabled: true
     string: '&cHet plaatsen van een dodenkist was niet mogelijk vanwege de world spawn protection.'
 
+  CHEST_DENIED_WORLD_DISABLED:
+    enabled: true
+    string: '&cDoodskisten zijn niet ingeschakeld in deze wereld.'
+
   CHEST_DENIED_VOID:
     enabled: true
     string: '&cDeath chest kan niet worden ingezet in de leegte.'

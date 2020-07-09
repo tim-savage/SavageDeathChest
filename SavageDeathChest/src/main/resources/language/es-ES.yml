@@ -67,6 +67,10 @@ MESSAGES:
     enabled: true
     string: '&cEl despliegue del cofre de la muerte fue prevenido por protección de origen mundial.'
 
+  CHEST_DENIED_WORLD_DISABLED:
+    enabled: true
+    string: '&cLos cofres de la muerte no están habilitados en este mundo.'
+
   CHEST_DENIED_VOID:
     enabled: true
     string: '&cEl cofre de la muerte no se puede desplegar en el vacío.'
