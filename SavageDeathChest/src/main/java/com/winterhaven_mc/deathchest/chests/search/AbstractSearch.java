@@ -103,26 +103,34 @@ public abstract class AbstractSearch implements Search {
 
 		// if block at location is not replaceable block, return negative result
 		if (!plugin.chestManager.replaceableBlocks.contains(block.getType())) {
-			return new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
+			result.setResultCode(ResultCode.NON_REPLACEABLE_BLOCK);
+			return result;
 		}
 
 		// if block at location is above grass path, return negative result
 		if (isAboveGrassPath(block)) {
-			return new SearchResult(ResultCode.ABOVE_GRASS_PATH);
+			result.setResultCode(ResultCode.ABOVE_GRASS_PATH);
+			return result;
 		}
 
 		// if block at location is protected by plugin, return negative result
 		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 		if (protectionPlugin != null) {
-			return new SearchResult(ResultCode.PROTECTION_PLUGIN, protectionPlugin);
+			result.setResultCode(ResultCode.PROTECTION_PLUGIN);
+			result.setProtectionPlugin(protectionPlugin);
+			return result;
 		}
 
 		// if block at location is within spawn protection radius, return negative result
 		if (isSpawnProtected(location)) {
-			return new SearchResult(ResultCode.SPAWN_RADIUS);
+			result.setResultCode(ResultCode.SPAWN_RADIUS);
+			return result;
 		}
 
-		return new SearchResult(ResultCode.SUCCESS, location);
+		// return successful result with location
+		result.setResultCode(ResultCode.SUCCESS);
+		result.setLocation(location);
+		return result;
 	}
 
 
