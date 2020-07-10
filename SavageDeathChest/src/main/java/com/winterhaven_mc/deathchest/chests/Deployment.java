@@ -49,6 +49,7 @@ public final class Deployment {
 	 */
 	public Deployment(final PluginMain plugin, final Player player, final List<ItemStack> droppedItems) {
 
+		// set reference to main class
 		this.plugin = plugin;
 
 		// create new deathChest object for player
