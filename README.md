@@ -15,15 +15,15 @@ It has many options, but configuration and use has been kept as simple as possib
 * Optionally require players to have chest(s) in inventory
 * Chest protection allows only owners access. Also makes chests explosion proof!
 * Optionally allow player's killer to access their chest, for pvp looting.
-* Prevent concurrent access to chests when killer looting is enabled. (v1.4)
+* Prevent concurrent access to chests when killer looting is enabled.
 * Optional quick-loot feature allows one click (sneak-punch) chest looting
 * Configurable expiration time for death chests, at which point they will break and drop their contents
 * Custom messages and language localization
 * Per world enabled in configuration
 * Uses sqlite for persistent storage
-* Prevents creative mode players from opening death chests (v1.3)
-* Optionally prevent players from placing items in death chests (v1.4)
-* Optional sound effects! (v1.4)
+* Prevents creative mode players from opening death chests
+* Optionally prevent players from placing items in death chests
+* Optional sound effects!
 * A perfect compliment to SavageDeathCompass and SavageGraveyards
 
 ### Commands:
