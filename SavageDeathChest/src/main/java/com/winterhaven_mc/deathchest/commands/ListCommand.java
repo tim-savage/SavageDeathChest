@@ -50,6 +50,7 @@ public class ListCommand implements Subcommand {
 
 		if (args.size() > maxArgs) {
 			Message.create(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send();
+			HelpCommand.displayUsage(sender, "list");
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
