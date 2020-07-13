@@ -129,6 +129,11 @@ MESSAGES:
     string: '&cDeath chest is currently being accessed by another player.'
     # available subs: %PLAYER%, %LOCATION%, %OWNER%, %KILLER%, %VIEWER%
 
+  COMMAND_FAIL_INVALID_COMMAND:
+    enabled: true
+    string: '&cThat is not a valid command!'
+    # available subs: %PLAYER%
+
   COMMAND_FAIL_ARGS_COUNT_OVER:
     enabled: true
     string: '&cToo many arguments!'
@@ -163,6 +168,27 @@ MESSAGES:
     enabled: true
     string: '&7DeathChest configuration reloaded.'
     # available subs: %PLAYER%
+
+
+  COMMAND_HELP_HELP:
+    enabled: true
+    string: '&eDisplays help for DeathChest commands.'
+
+  COMMAND_HELP_LIST:
+    enabled: true
+    string: '&eDisplays a list of all DeathChests.'
+
+  COMMAND_HELP_RELOAD:
+    enabled: true
+    string: '&eReloads the plugin configuration.'
+
+  COMMAND_HELP_STATUS:
+    enabled: true
+    string: '&eDisplays plugin configuration settings.'
+
+  COMMAND_HELP_INVALID:
+    enabled: true
+    string: '&eThat is not a valid command.'
 
 
   LIST_HEADER:

@@ -138,6 +138,27 @@ MESSAGES:
     string: '&7Configuración del DeathChest recargada.'
 
 
+  COMMAND_HELP_HELP:
+    enabled: true
+    string: '&eDisplays help for DeathChest commands.'
+
+  COMMAND_HELP_LIST:
+    enabled: true
+    string: '&eDisplays a list of all DeathChests.'
+
+  COMMAND_HELP_RELOAD:
+    enabled: true
+    string: '&eReloads the plugin configuration.'
+
+  COMMAND_HELP_STATUS:
+    enabled: true
+    string: '&eDisplays plugin configuration settings.'
+
+  COMMAND_HELP_INVALID:
+    enabled: true
+    string: '&eThat is not a valid command.'
+
+
   LIST_HEADER:
     enabled: true
     string: '&3Page &b%PAGE_NUMBER%&3 of &b%PAGE_TOTAL%'
