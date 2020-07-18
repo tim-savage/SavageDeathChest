@@ -23,8 +23,20 @@ public class ListCommand extends AbstractSubcommand {
 	ListCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
 		this.setName("list");
-		this.setUsage("/deathchest list [username] [page]");
+		this.setUsage("/deathchest list [page]");
 		this.setDescription(COMMAND_HELP_LIST);
+	}
+
+
+	@Override
+	public void displayUsage(CommandSender sender) {
+
+		if (sender.hasPermission("deathchest.list.other")) {
+			sender.sendMessage("/deathchest list [username] [page]");
+		}
+		else {
+			sender.sendMessage(getUsage());
+		}
 	}
 
 
@@ -48,7 +60,6 @@ public class ListCommand extends AbstractSubcommand {
 		}
 
 		return returnList;
-
 	}
 
 
