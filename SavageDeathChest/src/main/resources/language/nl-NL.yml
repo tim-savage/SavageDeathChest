@@ -158,6 +158,10 @@ MESSAGES:
     enabled: true
     string: '&eThat is not a valid command.'
 
+  COMMAND_HELP_USAGE:
+    enabled: true
+    string: '&eCommand usage:'
+
 
   LIST_HEADER:
     enabled: true
