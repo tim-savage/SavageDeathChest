@@ -7,6 +7,14 @@ COMMAND_FAIL:
   volume: 1
   pitch: 1
 
+COMMAND_INVALID:
+  enabled: true
+  player-only: true
+  sound: ENTITY_WANDERING_TRADER_AMBIENT
+  volume: 1
+  pitch: 1
+
+
 CHEST_DENIED_ACCESS:
   enabled: true
   player-only: true
