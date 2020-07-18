@@ -13,23 +13,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static com.winterhaven_mc.deathchest.messages.MessageId.COMMAND_FAIL_STATUS_PERMISSION;
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 
 
-public class StatusCommand implements Subcommand {
+public class StatusCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
-	private final CommandSender sender;
 
 
-	StatusCommand(final PluginMain plugin, final CommandSender sender) {
+	StatusCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
-		this.sender = Objects.requireNonNull(sender);
+		setName("status");
+		setUsage("/deathchest status");
+		setDescription(COMMAND_HELP_STATUS);
 	}
 
 
 	@Override
-	public boolean execute() {
+	public boolean onCommand(final CommandSender sender, final List<String> args) {
 		if (!sender.hasPermission("deathchest.status")) {
 			Message.create(sender, COMMAND_FAIL_STATUS_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);

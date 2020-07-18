@@ -1,9 +1,8 @@
 package com.winterhaven_mc.deathchest.commands;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.messages.Message;
-import com.winterhaven_mc.deathchest.sounds.SoundId;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +11,7 @@ import org.bukkit.command.TabCompleter;
 import java.util.*;
 
 import static com.winterhaven_mc.deathchest.messages.MessageId.COMMAND_FAIL_INVALID_COMMAND;
+import static com.winterhaven_mc.deathchest.sounds.SoundId.COMMAND_INVALID;
 
 
 /**
@@ -20,16 +20,17 @@ import static com.winterhaven_mc.deathchest.messages.MessageId.COMMAND_FAIL_INVA
 public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	private final PluginMain plugin;
+	private final SubcommandMap subcommandMap = new SubcommandMap();
 
-	// constant List of subcommands
-	private final static List<String> subcommands =
-			Collections.unmodifiableList(new ArrayList<>(
-					Arrays.asList("help", "list", "reload", "status")));
 
 
 	public CommandManager(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
 		Objects.requireNonNull(plugin.getCommand("deathchest")).setExecutor(this);
+
+		for (SubcommandType subcommandType : SubcommandType.values()) {
+			subcommandType.register(plugin, subcommandMap);
+		}
 	}
 
 
@@ -43,113 +44,91 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @return List of String - the possible matching values for tab completion
 	 */
 	@Override
-	public final List<String> onTabComplete(final CommandSender sender,
-											final Command command,
-											final String alias,
-											final String[] args) {
+	public List<String> onTabComplete(final CommandSender sender, final Command command,
+									  final String alias, final String[] args) {
 
+		// if more than one argument, use tab completer of subcommand
+		if (args.length > 1) {
 
-		// initialize return list
-		final List<String> returnList = new ArrayList<>();
+			// get subcommand from map
+			Subcommand subcommand = subcommandMap.getCommand(args[0]);
 
-		// if first argument, return list of valid matching subcommands
-		if (args.length == 1) {
-
-			for (String subcommand : subcommands) {
-				if (sender.hasPermission("deathchest." + subcommand)
-						&& subcommand.startsWith(args[0].toLowerCase())) {
-					returnList.add(subcommand);
-				}
+			// if no subcommand returned from map, return empty list
+			if (subcommand == null) {
+				return Collections.emptyList();
 			}
-		}
-		else if (args.length == 2) {
-			if (args[0].equalsIgnoreCase("list")
-					&& sender.hasPermission("deathchest.list.other")) {
 
-				// get map of chest ownerUUID,name from all current chests
-				Map<UUID, String> chestOwners = new HashMap<>();
-				for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
-					chestOwners.put(deathChest.getOwnerUUID(),
-							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName());
-				}
-				returnList.addAll(chestOwners.values());
-			}
-			else if (args[0].equalsIgnoreCase("help")
-					&& sender.hasPermission("deathchest.help")) {
-
-				for (String subcommand : subcommands) {
-					if (sender.hasPermission("deathchest." + subcommand)
-							&& subcommand.startsWith(args[1].toLowerCase())) {
-						returnList.add(subcommand);
-					}
-				}
-			}
+			// return subcommand tab completer output
+			return subcommand.onTabComplete(sender, command, alias, args);
 		}
 
-		return returnList;
+		// return list of subcommands for which sender has permission
+		return matchingCommands(sender, args[0]);
 	}
 
 
 	/**
 	 * Command handler for DeathChest
 	 *
-	 * @param sender the command sender
-	 * @param cmd    the command typed
-	 * @param label  the command label
-	 * @param args   additional command arguments
+	 * @param sender   the command sender
+	 * @param command  the command typed
+	 * @param label    the command label
+	 * @param args     Array of String - command arguments
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	@Override
 	public final boolean onCommand(final CommandSender sender,
-								   final Command cmd,
+								   final Command command,
 								   final String label,
 								   final String[] args) {
 
-		// convert arguments array to list
+		// convert args array to list
 		List<String> argsList = new ArrayList<>(Arrays.asList(args));
 
-		String subcommandString;
+		String subcommandName;
 
 		// get subcommand, remove from front of list
-		if (args.length > 0) {
-			subcommandString = argsList.remove(0);
+		if (argsList.size() > 0) {
+			subcommandName = argsList.remove(0);
 		}
 
-		// if no arguments, display usage for all commands and return
+		// if no arguments, set command to help
 		else {
-			HelpCommand.displayUsage(sender, "all");
-			return true;
+			subcommandName = "help";
 		}
 
-		Subcommand subcommand;
+		// get subcommand from map by name
+		Subcommand subcommand = subcommandMap.getCommand(subcommandName);
 
-		switch(subcommandString.toLowerCase()) {
-
-			case "status":
-				subcommand = new StatusCommand(plugin, sender);
-				break;
-
-			case "reload":
-				subcommand = new ReloadCommand(plugin, sender);
-				break;
-
-			case "list":
-				subcommand = new ListCommand(plugin, sender, argsList);
-				break;
-
-			case "help":
-				subcommand = new HelpCommand(plugin, sender, argsList);
-				break;
-
-			default:
-				Message.create(sender, COMMAND_FAIL_INVALID_COMMAND).send();
-				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
-				HelpCommand.displayUsage(sender, "all");
-				return true;
+		// if subcommand is null, get help command from map
+		if (subcommand == null) {
+			subcommand = subcommandMap.getCommand("help");
+			Message.create(sender, COMMAND_FAIL_INVALID_COMMAND).send();
+			plugin.soundConfig.playSound(sender, COMMAND_INVALID);
 		}
 
 		// execute subcommand
-		return subcommand.execute();
+		return subcommand.onCommand(sender, argsList);
+	}
+
+
+	/**
+	 * Get matching list of subcommands for which sender has permission
+	 * @param sender the command sender
+	 * @param matchString the string prefix to match against command names
+	 * @return List of String - command names that match prefix and sender has permission
+	 */
+	private List<String> matchingCommands(CommandSender sender, String matchString) {
+
+		List<String> returnList = new ArrayList<>();
+
+		for (String subcommand : subcommandMap.getKeys()) {
+			if (sender.hasPermission("deathchest." + subcommand)
+					&& subcommand.startsWith(matchString.toLowerCase())) {
+				returnList.add(subcommand);
+			}
+		}
+		return returnList;
 	}
 
 }

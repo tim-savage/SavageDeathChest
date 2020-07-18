@@ -7,25 +7,26 @@ import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.util.LanguageManager;
 import org.bukkit.command.CommandSender;
 
+import java.util.List;
 import java.util.Objects;
 
-import static com.winterhaven_mc.deathchest.messages.MessageId.COMMAND_FAIL_RELOAD_PERMISSION;
-import static com.winterhaven_mc.deathchest.messages.MessageId.COMMAND_SUCCESS_RELOAD;
+import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 
 
-public class ReloadCommand implements Subcommand {
+public class ReloadCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
-	private final CommandSender sender;
 
 
-	ReloadCommand(final PluginMain plugin, final CommandSender sender) {
+	ReloadCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
-		this.sender = Objects.requireNonNull(sender);
+		setName("reload");
+		setUsage("/deathchest reload");
+		setDescription(COMMAND_HELP_RELOAD);
 	}
 
 
-	public boolean execute() {
+	public boolean onCommand(final CommandSender sender, final List<String> args) {
 		// check for null parameter
 		Objects.requireNonNull(sender);
 

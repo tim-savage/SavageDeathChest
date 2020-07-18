@@ -2,37 +2,57 @@ package com.winterhaven_mc.deathchest.commands;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.Message;
-import com.winterhaven_mc.deathchest.messages.MessageId;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static com.winterhaven_mc.deathchest.messages.MessageId.*;
+import static com.winterhaven_mc.deathchest.sounds.SoundId.COMMAND_INVALID;
 
 
-public class HelpCommand implements Subcommand {
+public class HelpCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
-	private final CommandSender sender;
-	private final List<String> args;
-
-	private final static ChatColor usageColor = ChatColor.GOLD;
+	private final SubcommandMap subcommandMap;
 
 
-	HelpCommand(final PluginMain plugin, final CommandSender sender, List<String> args) {
+	HelpCommand(final PluginMain plugin, final SubcommandMap subcommandMap) {
 		this.plugin = Objects.requireNonNull(plugin);
-		this.sender = Objects.requireNonNull(sender);
-		this.args = Objects.requireNonNull(args);
+		this.subcommandMap = Objects.requireNonNull(subcommandMap);
+		this.setName("help");
+		this.setUsage("/deathchest help [command]");
+		this.setDescription(COMMAND_HELP_HELP);
 	}
 
 
 	@Override
-	public boolean execute() {
+	public List<String> onTabComplete(final CommandSender sender, final Command command,
+									  final String alias, final String[] args) {
 
-		// if command sender does not have permission to list death chests, output error message and return true
+		List<String> returnList = new ArrayList<>();
+
+		if (args.length == 2) {
+			for (String subcommand : subcommandMap.getKeys()) {
+				if (sender.hasPermission("deathchest." + subcommand)
+						&& subcommand.startsWith(args[1].toLowerCase())
+						&& !subcommand.equalsIgnoreCase("help")) {
+					returnList.add(subcommand);
+				}
+			}
+		}
+
+		return returnList;
+	}
+
+
+	@Override
+	public boolean onCommand(CommandSender sender, List<String> args) {
+
+		// if command sender does not have permission to display help, output error message and return true
 		if (!sender.hasPermission("deathchest.help")) {
 			Message.create(sender, COMMAND_FAIL_HELP_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
@@ -41,87 +61,54 @@ public class HelpCommand implements Subcommand {
 
 		// if no arguments, display usage for all commands
 		if (args.size() == 0) {
-			displayUsage(sender,"all");
+			displayUsageAll(sender);
 			return true;
 		}
 
-		// set command name
-		String commandName = args.get(0);
-		MessageId helpMessageId;
-
-		switch(commandName.toLowerCase()) {
-
-			case "help":
-				helpMessageId = COMMAND_HELP_HELP;
-				break;
-
-			case "list":
-				helpMessageId = COMMAND_HELP_LIST;
-				break;
-
-			case "reload":
-				helpMessageId = COMMAND_HELP_RELOAD;
-				break;
-
-			case "status":
-				helpMessageId = COMMAND_HELP_STATUS;
-				break;
-
-			default:
-				helpMessageId = COMMAND_HELP_INVALID;
-				commandName = "all";
-		}
-
-		Message.create(sender, helpMessageId).send();
-		displayUsage(sender, commandName);
-
+		// get subcommand name
+		String subcommandName = args.get(0);
+		displayHelp(sender, subcommandName);
 		return true;
 	}
 
 
 	/**
-	 * Display command usage
-	 *
-	 * @param sender       the command sender
-	 * @param passedString the command for which to display usage
+	 * Display help message and usage for a command
+	 * @param sender the command sender
+	 * @param commandName the name of the command for which to show help and usage
 	 */
-	static void displayUsage(final CommandSender sender, final String passedString) {
+	void displayHelp(final CommandSender sender, final String commandName) {
 
-		// check for null parameters
-		Objects.requireNonNull(sender);
-		String commandName = Objects.requireNonNull(passedString);
+		// get subcommand from map by name
+		Subcommand subcommand = subcommandMap.getCommand(commandName);
 
-		if (commandName.isEmpty()) {
-			commandName = "all";
+		// if subcommand found in map, display help message and usage
+		if (subcommand != null) {
+			Message.create(sender, subcommand.getDescription()).send();
+			subcommand.displayUsage(sender);
 		}
 
-		if ((commandName.equalsIgnoreCase("help")
-				|| commandName.equalsIgnoreCase("all"))
-				&& sender.hasPermission("deathchest.help")) {
-			sender.sendMessage(usageColor + "/deathchest help [command]");
+		// else display invalid command help message and usage for all commands
+		else {
+			Message.create(sender, COMMAND_HELP_INVALID).send();
+			plugin.soundConfig.playSound(sender, COMMAND_INVALID);
+			displayUsageAll(sender);
 		}
+	}
 
-		if ((commandName.equalsIgnoreCase("list")
-				|| commandName.equalsIgnoreCase("all"))
-				&& sender.hasPermission("deathchest.list")) {
-			if (sender.hasPermission("deathchest.list.other")) {
-				sender.sendMessage(usageColor + "/deathchest list [username] [page]");
+
+	/**
+	 * Display usage message for all commands
+	 * @param sender the command sender
+	 */
+	void displayUsageAll(CommandSender sender) {
+
+		Message.create(sender, COMMAND_HELP_USAGE).send();
+
+		for (String subcommandName : subcommandMap.getKeys()) {
+			if (subcommandMap.getCommand(subcommandName) != null) {
+				subcommandMap.getCommand(subcommandName).displayUsage(sender);
 			}
-			else {
-				sender.sendMessage(usageColor + "/deathchest list [page]");
-			}
-		}
-
-		if ((commandName.equalsIgnoreCase("reload")
-				|| commandName.equalsIgnoreCase("all"))
-				&& sender.hasPermission("deathchest.reload")) {
-			sender.sendMessage(usageColor + "/deathchest reload");
-		}
-
-		if ((commandName.equalsIgnoreCase("status")
-				|| commandName.equalsIgnoreCase("all"))
-				&& sender.hasPermission("deathchest.status")) {
-			sender.sendMessage(usageColor + "/deathchest status");
 		}
 	}
 

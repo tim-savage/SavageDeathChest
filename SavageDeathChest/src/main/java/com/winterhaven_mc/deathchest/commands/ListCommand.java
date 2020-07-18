@@ -6,6 +6,7 @@ import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,22 +15,45 @@ import java.util.*;
 import static com.winterhaven_mc.deathchest.messages.MessageId.*;
 
 
-public class ListCommand implements Subcommand {
+public class ListCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
-	private final CommandSender sender;
-	private final List<String> args;
 
 
-	ListCommand(final PluginMain plugin, final CommandSender sender, final List<String> args) {
+	ListCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
-		this.sender = Objects.requireNonNull(sender);
-		this.args = Objects.requireNonNull(args);
+		this.setName("list");
+		this.setUsage("/deathchest list [username] [page]");
+		this.setDescription(COMMAND_HELP_LIST);
 	}
 
 
 	@Override
-	public boolean execute() {
+	public List<String> onTabComplete(final CommandSender sender, final Command command,
+									  final String alias, final String[] args) {
+
+		// initialize return list
+		final List<String> returnList = new ArrayList<>();
+
+		if (args.length == 2) {
+			if (sender.hasPermission("deathchest.list.other")) {
+				// get map of chest ownerUUID,name from all current chests
+				Map<UUID, String> chestOwners = new HashMap<>();
+				for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
+					chestOwners.put(deathChest.getOwnerUUID(),
+							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName());
+				}
+				returnList.addAll(chestOwners.values());
+			}
+		}
+
+		return returnList;
+
+	}
+
+
+	@Override
+	public boolean onCommand(final CommandSender sender, final List<String> args) {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
@@ -50,7 +74,7 @@ public class ListCommand implements Subcommand {
 
 		if (args.size() > maxArgs) {
 			Message.create(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send();
-			HelpCommand.displayUsage(sender, "list");
+			displayUsage(sender);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
