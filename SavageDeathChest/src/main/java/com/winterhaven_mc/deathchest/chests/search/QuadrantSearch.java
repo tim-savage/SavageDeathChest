@@ -60,7 +60,7 @@ public class QuadrantSearch extends AbstractSearch implements Search {
 		// if player died above world max build height, start search 1 block below max build height
 		origin.setY(Math.min(origin.getY(), player.getWorld().getMaxHeight() - 1));
 
-		// iterate over all locations within search distance until a valid location is found
+		// set test location to copy of origin
 		Location testLocation = origin.clone();
 
 		// search all locations in vertical axis upward, then downward
@@ -82,6 +82,7 @@ public class QuadrantSearch extends AbstractSearch implements Search {
 					continue;
 				}
 
+				// iterate over all locations within search distance until a valid location is found
 				for (int x = 0; x < searchDistance; x++) {
 					for (int z = 0; z < searchDistance; z++) {
 
