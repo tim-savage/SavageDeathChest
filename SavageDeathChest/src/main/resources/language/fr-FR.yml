@@ -141,27 +141,27 @@ MESSAGES:
 
   COMMAND_HELP_HELP:
     enabled: true
-    string: '&eDisplays help for DeathChest commands.'
+    string: '&eAffiche l''aide pour les commandes DeathChest.'
 
   COMMAND_HELP_LIST:
     enabled: true
-    string: '&eDisplays a list of all DeathChests.'
+    string: '&eAffiche une liste de tous les coffres de la mort.'
 
   COMMAND_HELP_RELOAD:
     enabled: true
-    string: '&eReloads the plugin configuration.'
+    string: '&eRecharge la configuration.'
 
   COMMAND_HELP_STATUS:
     enabled: true
-    string: '&eDisplays plugin configuration settings.'
+    string: '&eAffiche les paramètres de configuration.'
 
   COMMAND_HELP_INVALID:
     enabled: true
-    string: '&eThat is not a valid command.'
+    string: '&eCe n''est pas une commande valide.'
 
   COMMAND_HELP_USAGE:
     enabled: true
-    string: '&eCommand usage:'
+    string: '&eUtilisation de la commande:'
 
 
   LIST_HEADER:
