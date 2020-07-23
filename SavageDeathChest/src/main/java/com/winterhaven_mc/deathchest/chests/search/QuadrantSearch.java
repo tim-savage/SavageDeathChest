@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 
-public class QuadrantSearch extends AbstractSearch implements Search {
+public class QuadrantSearch extends AbstractSearch {
 
 
 	private enum Quadrant {
@@ -78,7 +78,7 @@ public class QuadrantSearch extends AbstractSearch implements Search {
 				}
 
 				// only test y == 0 in upper vertical axis
-				if (!verticalAxis.equals(VerticalAxis.Upper) && y == 0) {
+				if (!verticalAxis.equals(VerticalAxis.UPPER) && y == 0) {
 					continue;
 				}
 
