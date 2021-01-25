@@ -23,7 +23,6 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	private final SubcommandMap subcommandMap = new SubcommandMap();
 
 
-
 	public CommandManager(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
 		Objects.requireNonNull(plugin.getCommand("deathchest")).setExecutor(this);
