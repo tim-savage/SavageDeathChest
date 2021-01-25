@@ -15,12 +15,12 @@ public class SubcommandMap {
 	 */
 	void register(final Subcommand subcommand) {
 
-		String name = subcommand.getName();
+		String name = subcommand.getName().toLowerCase();
 
-		subcommandMap.put(name.toLowerCase(), subcommand);
+		subcommandMap.put(name, subcommand);
 
 		for (String alias : subcommand.getAliases()) {
-			aliasMap.put(alias.toLowerCase(), name.toLowerCase());
+			aliasMap.put(alias.toLowerCase(), name);
 		}
 	}
 
