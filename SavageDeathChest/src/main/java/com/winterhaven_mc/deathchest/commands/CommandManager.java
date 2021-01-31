@@ -23,7 +23,6 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	private final SubcommandMap subcommandMap = new SubcommandMap();
 
 
-
 	public CommandManager(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
 		Objects.requireNonNull(plugin.getCommand("deathchest")).setExecutor(this);
@@ -122,7 +121,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		List<String> returnList = new ArrayList<>();
 
-		for (String subcommand : subcommandMap.getKeys()) {
+		for (String subcommand : subcommandMap.getNames()) {
 			if (sender.hasPermission("deathchest." + subcommand)
 					&& subcommand.startsWith(matchString.toLowerCase())) {
 				returnList.add(subcommand);
