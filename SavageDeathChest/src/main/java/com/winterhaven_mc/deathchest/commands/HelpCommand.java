@@ -36,7 +36,7 @@ public class HelpCommand extends AbstractSubcommand {
 		List<String> returnList = new ArrayList<>();
 
 		if (args.length == 2) {
-			for (String subcommand : subcommandMap.getKeys()) {
+			for (String subcommand : subcommandMap.getNames()) {
 				if (sender.hasPermission("deathchest." + subcommand)
 						&& subcommand.startsWith(args[1].toLowerCase())
 						&& !subcommand.equalsIgnoreCase("help")) {
@@ -105,7 +105,7 @@ public class HelpCommand extends AbstractSubcommand {
 
 		Message.create(sender, COMMAND_HELP_USAGE).send();
 
-		for (String subcommandName : subcommandMap.getKeys()) {
+		for (String subcommandName : subcommandMap.getNames()) {
 			if (subcommandMap.getCommand(subcommandName) != null) {
 				subcommandMap.getCommand(subcommandName).displayUsage(sender);
 			}
