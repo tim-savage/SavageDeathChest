@@ -132,6 +132,11 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
+		// if chest protection is enabled and has expired, do nothing and return
+		if (deathChest.protectionExpired()) {
+			return;
+		}
+
 		// cancel event
 		event.setCancelled(true);
 
@@ -142,13 +147,13 @@ public final class BlockEventListener implements Listener {
 			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
 
 			String ownerName = "-";
-			if (deathChest.getOwnerUUID() != null) {
-				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+			if (deathChest.hasValidOwnerUid()) {
+				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUid()).getName();
 			}
 
 			String killerName = "-";
-			if (deathChest.getKillerUUID() != null) {
-				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+			if (deathChest.hasValidKillerUid()) {
+				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUid()).getName();
 			}
 
 			// send player message
@@ -181,16 +186,14 @@ public final class BlockEventListener implements Listener {
 
 		// get owner name
 		String ownerName = "-";
-		UUID ownerUid = deathChest.getOwnerUUID();
-		if (ownerUid != null) {
-			ownerName = plugin.getServer().getOfflinePlayer(ownerUid).getName();
+		if (deathChest.hasValidOwnerUid()) {
+			ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUid()).getName();
 		}
 
 		// get killer name
 		String killerName = "-";
-		UUID killerUid = deathChest.getKillerUUID();
-		if (killerUid != null) {
-			killerName = plugin.getServer().getOfflinePlayer(killerUid).getName();
+		if (deathChest.hasValidKillerUid()) {
+			killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUid()).getName();
 		}
 
 		// send player not-owner message
@@ -223,7 +226,11 @@ public final class BlockEventListener implements Listener {
 		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
 			if (plugin.chestManager.isChestBlock(block)) {
-				event.blockList().remove(block);
+				// remove death chest block from blocks exploded list if protection has not expired
+				DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+				if (deathChest != null && !deathChest.protectionExpired()) {
+					event.blockList().remove(block);
+				}
 			}
 		}
 	}
@@ -247,7 +254,11 @@ public final class BlockEventListener implements Listener {
 		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
 		for (Block block : blocks) {
 			if (plugin.chestManager.isChestBlock(block)) {
-				event.blockList().remove(block);
+				// remove death chest block from blocks exploded list if protection has not expired
+				DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+				if (deathChest != null && !deathChest.protectionExpired()) {
+					event.blockList().remove(block);
+				}
 			}
 		}
 	}
