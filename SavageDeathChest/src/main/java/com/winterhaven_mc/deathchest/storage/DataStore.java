@@ -33,19 +33,21 @@ public abstract class DataStore {
 
 
 	/**
-	 * Retrieve a list of all chest records from the datastore
+	 * Retrieve a collection of all chest records from the datastore
 	 *
 	 * @return List of DeathChest
 	 */
-	public abstract List<DeathChest> selectAllChestRecords();
+	public abstract Collection<DeathChest> selectAllChestRecords();
 
 
 	/**
 	 * Insert a chest record in the datastore
 	 *
-	 * @param deathChest the DeathChest object to insert into the datastore
+	 * @param deathChests a collection of DeathChest objects to insert into the datastore
 	 */
-	public abstract void insertChestRecord(final DeathChest deathChest);
+//	public abstract void insertChestRecord(final DeathChest deathChest);
+
+	public abstract int insertChestRecords(final Collection<DeathChest> deathChests);
 
 
 	/**
@@ -57,19 +59,21 @@ public abstract class DataStore {
 
 
 	/**
-	 * Retrieve a list of all block records from the datastore
+	 * Retrieve a collection of all block records from the datastore
 	 *
 	 * @return List of ChestBlock
 	 */
-	public abstract List<ChestBlock> selectAllBlockRecords();
+	public abstract Collection<ChestBlock> selectAllBlockRecords();
 
 
 	/**
-	 * Insert a block record in the datastore
+	 * Insert block records in the datastore
 	 *
-	 * @param blockRecord the BlockChest object to insert in the datastore
+	 * @param blockRecords a collection of ChestBlock objects to insert in the datastore
 	 */
-	abstract void insertBlockRecord(final ChestBlock blockRecord);
+//	abstract void insertBlockRecord(final ChestBlock blockRecord);
+
+	abstract int insertBlockRecords(final Collection<ChestBlock> blockRecords);
 
 
 	/**
@@ -138,14 +142,14 @@ public abstract class DataStore {
 
 
 	/**
-	 * Get the datastore name
+	 * Override toString method to return the datastore type name
 	 *
 	 * @return the name of this datastore instance
 	 */
-	public String getName() {
-		return this.getType().toString();
+	@Override
+	public String toString() {
+		return this.type.toString();
 	}
-
 
 	/**
 	 * Get the datastore filename or equivalent
@@ -193,7 +197,7 @@ public abstract class DataStore {
 			newDataStore.initialize();
 		}
 		catch (Exception e) {
-			plugin.getLogger().severe("Could not initialize " + newDataStore.getName() + " datastore!");
+			plugin.getLogger().severe("Could not initialize " + newDataStore + " datastore!");
 			if (plugin.debug) {
 				e.printStackTrace();
 			}
@@ -249,8 +253,8 @@ public abstract class DataStore {
 		// if old datastore file exists, attempt to read all records
 		if (oldDataStore.exists()) {
 
-			plugin.getLogger().info("Converting existing " + oldDataStore.getName() + " datastore to "
-					+ newDataStore.getName() + " datastore...");
+			plugin.getLogger().info("Converting existing " + oldDataStore + " datastore to "
+					+ newDataStore + " datastore...");
 
 			// initialize old datastore if necessary
 			if (!oldDataStore.isInitialized()) {
@@ -259,39 +263,19 @@ public abstract class DataStore {
 				}
 				catch (Exception e) {
 					plugin.getLogger().warning("Could not initialize "
-							+ oldDataStore.getName() + " datastore for conversion.");
+							+ oldDataStore + " datastore for conversion.");
 					plugin.getLogger().warning(e.getLocalizedMessage());
 					return;
 				}
 			}
 
-			Collection<DeathChest> allChestRecords = oldDataStore.selectAllChestRecords();
+			int chestRecordCount = newDataStore.insertChestRecords(oldDataStore.selectAllChestRecords());
+			plugin.getLogger().info(chestRecordCount + " chest records converted to "
+					+ newDataStore + " datastore.");
 
-			Iterator<DeathChest> chestIterator = allChestRecords.iterator();
-
-			int recordCount = 0;
-
-			while (chestIterator.hasNext()) {
-				newDataStore.insertChestRecord(chestIterator.next());
-				recordCount++;
-			}
-
-			plugin.getLogger().info(recordCount + " records converted to "
-					+ newDataStore.getName() + " datastore.");
-
-			Collection<ChestBlock> allBlockRecords = oldDataStore.selectAllBlockRecords();
-
-			Iterator<ChestBlock> blockIterator = allBlockRecords.iterator();
-
-			recordCount = 0;
-
-			while (blockIterator.hasNext()) {
-				newDataStore.insertBlockRecord(blockIterator.next());
-				recordCount++;
-			}
-
-			plugin.getLogger().info(recordCount + " records converted to "
-					+ newDataStore.getName() + " datastore.");
+			int recordCount = newDataStore.insertBlockRecords(oldDataStore.selectAllBlockRecords());
+			plugin.getLogger().info(recordCount + " block records converted to "
+					+ newDataStore + " datastore.");
 
 			newDataStore.sync();
 
