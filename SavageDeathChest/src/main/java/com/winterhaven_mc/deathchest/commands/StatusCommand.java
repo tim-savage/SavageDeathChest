@@ -49,14 +49,19 @@ public class StatusCommand extends AbstractSubcommand {
 				+ ChatColor.RESET + plugin.getConfig().getString("language"));
 
 		sender.sendMessage(ChatColor.GREEN + "Storage Type: "
-				+ ChatColor.RESET + plugin.dataStore.getName());
+				+ ChatColor.RESET + plugin.dataStore);
 
 		int expireTime = plugin.getConfig().getInt("expire-time");
 		if (expireTime == 0) {
 			expireTime = -1;
 		}
+
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
 				+ ChatColor.RESET + LanguageManager.getInstance().getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
+
+		sender.sendMessage(ChatColor.GREEN + "Chest Protection Time: "
+				+ ChatColor.RESET + LanguageManager.getInstance()
+				.getTimeString(TimeUnit.MINUTES.toMillis(plugin.getConfig().getInt("chest-protection-time"))));
 
 		sender.sendMessage(ChatColor.GREEN + "Require Chest: "
 				+ ChatColor.RESET + plugin.getConfig().getString("require-chest"));
@@ -85,7 +90,7 @@ public class StatusCommand extends AbstractSubcommand {
 				else {
 					pluginSettings.add("comply on access");
 				}
-				statusString = statusString + ChatColor.RESET + pluginSettings.toString();
+				statusString = statusString + ChatColor.RESET + pluginSettings;
 				sender.sendMessage(statusString);
 			}
 		}
