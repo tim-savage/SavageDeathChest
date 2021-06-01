@@ -140,7 +140,9 @@ public final class Deployment {
 		plugin.chestManager.addDeathChest(deathChest);
 
 		// put DeathChest in datastore
-		plugin.dataStore.insertChestRecord(deathChest);
+		Set<DeathChest> deathChests = new HashSet<>();
+		deathChests.add(deathChest);
+		plugin.dataStore.insertChestRecords(deathChests);
 	}
 
 
@@ -468,7 +470,7 @@ public final class Deployment {
 		block.setBlockData(blockData);
 
 		// create new ChestBlock object
-		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUUID(), block.getLocation());
+		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUid(), block.getLocation());
 
 		// add this ChestBlock to block map
 		plugin.chestManager.addChestBlock(chestBlockType, chestBlock);
@@ -577,7 +579,7 @@ public final class Deployment {
 			sign.update();
 
 			// create ChestBlock for this sign block
-			ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUUID(), signBlock.getLocation());
+			ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUid(), signBlock.getLocation());
 
 			// add this ChestBlock to block map
 			plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
@@ -620,7 +622,7 @@ public final class Deployment {
 			return false;
 		}
 
-		// check if block at location is a ReplaceableBlock
+		// check if block at location is air or a ReplaceableBlock
 		return plugin.chestManager.replaceableBlocks.contains(block.getType());
 	}
 
