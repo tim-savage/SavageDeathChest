@@ -142,7 +142,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// get DeathChest from ChestBlock
-		DeathChest deathChest = plugin.chestManager.getDeathChest(chestBlock.getChestUUID());
+		DeathChest deathChest = plugin.chestManager.getDeathChest(chestBlock.getChestUid());
 
 		// if DeathChest returned null, do nothing and return
 		if (deathChest == null) {
@@ -175,14 +175,14 @@ public final class PlayerEventListener implements Listener {
 
 		// get owner name from uuid
 		String ownerName = "-";
-		if (deathChest.getOwnerUUID() != null) {
-			ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+		if (deathChest.hasValidOwnerUid()) {
+			ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUid()).getName();
 		}
 
 		// get killer name from uuid
 		String killerName = "-";
-		if (deathChest.getKillerUUID() != null) {
-			killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+		if (deathChest.hasValidKillerUid()) {
+			killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUid()).getName();
 		}
 
 		// if chest inventory is already being viewed: cancel event, send message and return
@@ -216,8 +216,8 @@ public final class PlayerEventListener implements Listener {
 			// cancel event
 			event.setCancelled(true);
 
-			// if chest protection is not enabled, loot chest and return
-			if (!plugin.getConfig().getBoolean("chest-protection")) {
+			// if chest protection is not enabled or has expired, loot chest and return
+			if (!plugin.getConfig().getBoolean("chest-protection") || deathChest.protectionExpired()) {
 				deathChest.autoLoot(player);
 				return;
 			}
@@ -253,8 +253,8 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if chest-protection option is not enabled, allow chest to open normally
-		if (!plugin.getConfig().getBoolean("chest-protection")) {
+		// if chest-protection option is not enabled or protection has expired, allow chest to open normally
+		if (!plugin.getConfig().getBoolean("chest-protection") || deathChest.protectionExpired()) {
 			return;
 		}
 
