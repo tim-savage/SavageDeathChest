@@ -27,6 +27,12 @@ sound-effects: true
 # Protect chests from other players
 chest-protection: true
 
+# Time in minutes chests will be protected from other players
+chest-protection-time: 50
+
+# Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
+expire-time: 60
+
 # Allow player's killer to access death chest
 killer-looting: false
 
@@ -49,9 +55,6 @@ search-distance: 10
 
 # Place chests above the void when players die below level 0
 place-above-void: true
-
-# Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
-expire-time: 60
 
 # Allow quick-looting of chests with sneak-punch
 quick-loot: true
