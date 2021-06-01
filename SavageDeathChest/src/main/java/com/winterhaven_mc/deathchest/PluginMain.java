@@ -43,11 +43,11 @@ public final class PluginMain extends JavaPlugin {
 		// instantiate sound configuration
 		soundConfig = new YamlSoundConfiguration(this);
 
-		// instantiate datastore
-		dataStore = DataStore.create();
-
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
+
+		// instantiate datastore
+		dataStore = DataStore.create();
 
 		// load all chests from datastore
 		chestManager.loadDeathChests();
