@@ -45,12 +45,12 @@ final class BlockIndex {
 		this.locationMap.put(chestBlock.getLocation(), chestBlock);
 
 		// if chestUUID key does not exist in map, add entry with chestUUID key and empty map as value
-		if (!uuidMap.containsKey(chestBlock.getChestUUID())) {
-			uuidMap.put(chestBlock.getChestUUID(), new EnumMap<>(ChestBlockType.class));
+		if (!uuidMap.containsKey(chestBlock.getChestUid())) {
+			uuidMap.put(chestBlock.getChestUid(), new EnumMap<>(ChestBlockType.class));
 		}
 
 		// add new entry to map with chestUUID as key
-		uuidMap.get(chestBlock.getChestUUID()).put(chestBlockType, chestBlock);
+		uuidMap.get(chestBlock.getChestUid()).put(chestBlockType, chestBlock);
 	}
 
 
@@ -118,25 +118,37 @@ final class BlockIndex {
 		// get chest location
 		Location location = chestBlock.getLocation();
 
+		if (location == null) {
+			return;
+		}
+
 		// remove chest block from location map
 		this.locationMap.remove(location);
 
-		// if passed chest block UUID is not null, remove chest block from uuid map
-		if (chestBlock.getChestUUID() != null) {
+		// get chest UUID
+		UUID chestUid = chestBlock.getChestUid();
 
-			// get chest UUID
-			UUID chestUUID = chestBlock.getChestUUID();
+		// if passed chest block UUID is not null, remove chest block from uuid map
+		if (chestUid != null) {
 
 			// iterate over inner map
-			for (ChestBlockType chestBlockType : this.uuidMap.get(chestUUID).keySet()) {
+			for (ChestBlockType chestBlockType : this.uuidMap.get(chestUid).keySet()) {
+
+				// get chest block location
+				Location chestBlockLocation = this.uuidMap.get(chestUid).get(chestBlockType).getLocation();
+
+				// check for null location
+				if (chestBlockLocation == null) {
+					return;
+				}
 
 				// if passed chest block location equals mapped chest block location, remove block from inner map
-				if (this.uuidMap.get(chestUUID).get(chestBlockType).getLocation().equals(location)) {
-					this.uuidMap.get(chestUUID).remove(chestBlockType);
+				if (chestBlockLocation.equals(location)) {
+					this.uuidMap.get(chestUid).remove(chestBlockType);
 
 					// if inner map is now empty, remove from outer map
-					if (this.uuidMap.get(chestUUID).isEmpty()) {
-						this.uuidMap.remove(chestUUID);
+					if (this.uuidMap.get(chestUid).isEmpty()) {
+						this.uuidMap.remove(chestUid);
 					}
 				}
 			}
