@@ -2,6 +2,7 @@ package com.winterhaven_mc.deathchest.chests;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 
+import com.winterhaven_mc.deathchest.storage.DataStore;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -69,6 +70,10 @@ public final class ChestManager {
 	 */
 	public final void loadDeathChests() {
 
+		if (plugin.debug) {
+			plugin.getLogger().info("Loading Death Chests...");
+		}
+
 		// populate chestIndex with all death chest records retrieved from datastore
 		for (DeathChest deathChest : plugin.dataStore.selectAllChestRecords()) {
 			this.addDeathChest(deathChest);
@@ -77,11 +82,19 @@ public final class ChestManager {
 		// populate chest block map with all valid chest blocks retrieved from datastore
 		for (ChestBlock chestBlock : plugin.dataStore.selectAllBlockRecords()) {
 
+			// if chest block location is null, continue to next chest block
+			if (chestBlock.getLocation() == null) {
+				if (plugin.debug) {
+					plugin.getLogger().info("chest block " + chestBlock.getChestUid() + " has null location.");
+				}
+				continue;
+			}
+
 			// get chest block type from in game block
 			ChestBlockType chestBlockType = ChestBlockType.getType(chestBlock.getLocation().getBlock());
 
 			// if chest block type is null or parent chest not in chest map, delete block record
-			if (chestBlockType == null || !chestIndex.containsKey(chestBlock.getChestUUID())) {
+			if (chestBlockType == null || !chestIndex.containsKey(chestBlock.getChestUid())) {
 				plugin.dataStore.deleteBlockRecord(chestBlock);
 			}
 			else {
@@ -97,7 +110,7 @@ public final class ChestManager {
 		for (DeathChest deathChest : chestIndex.getAllChests()) {
 
 			// if DeathChest has no children, remove from index and datastore
-			if (this.getBlockSet(deathChest.getChestUUID()).isEmpty()) {
+			if (this.getBlockSet(deathChest.getChestUid()).isEmpty()) {
 				chestIndex.removeDeathChest(deathChest);
 				plugin.dataStore.deleteChestRecord(deathChest);
 			}
@@ -108,6 +121,9 @@ public final class ChestManager {
 			else {
 				// set chest metadata
 				deathChest.setMetadata();
+				if (plugin.debug) {
+					plugin.getLogger().info("[loadDeathChests] Setting metadata for chest " + deathChest.getChestUid());
+				}
 			}
 		}
 	}
@@ -148,7 +164,7 @@ public final class ChestManager {
 			return null;
 		}
 
-		return getDeathChest(chestBlock.getChestUUID());
+		return getDeathChest(chestBlock.getChestUid());
 	}
 
 
