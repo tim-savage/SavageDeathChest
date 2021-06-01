@@ -45,11 +45,11 @@ final class ChestIndex {
 	final void addChest(final DeathChest deathChest) {
 
 		// check for null key
-		if (deathChest == null || deathChest.getChestUUID() == null) {
+		if (deathChest == null || deathChest.getChestUid() == null) {
 			return;
 		}
 
-		this.deathChestMap.put(deathChest.getChestUUID(), deathChest);
+		this.deathChestMap.put(deathChest.getChestUid(), deathChest);
 	}
 
 
@@ -61,11 +61,11 @@ final class ChestIndex {
 	final void removeDeathChest(final DeathChest deathChest) {
 
 		// check for null key
-		if (deathChest == null || deathChest.getChestUUID() == null) {
+		if (deathChest == null || deathChest.getChestUid() == null) {
 			return;
 		}
 
-		this.deathChestMap.remove(deathChest.getChestUUID());
+		this.deathChestMap.remove(deathChest.getChestUid());
 	}
 
 
