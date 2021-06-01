@@ -52,8 +52,8 @@ public class ListCommand extends AbstractSubcommand {
 				// get map of chest ownerUUID,name from all current chests
 				Map<UUID, String> chestOwners = new HashMap<>();
 				for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
-					chestOwners.put(deathChest.getOwnerUUID(),
-							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName());
+					chestOwners.put(deathChest.getOwnerUid(),
+							plugin.getServer().getOfflinePlayer(deathChest.getOwnerUid()).getName());
 				}
 				returnList.addAll(chestOwners.values());
 			}
@@ -156,12 +156,12 @@ public class ListCommand extends AbstractSubcommand {
 
 			// if passed player is valid player and matches chest owner, add chest to list
 			else if (targetPlayer != null
-					&& deathChest.getOwnerUUID().equals(targetPlayer.getUniqueId())
+					&& deathChest.getOwnerUid().equals(targetPlayer.getUniqueId())
 					&& sender.hasPermission("deathchest.list.other")) {
 				displayRecords.add(deathChest);
 			}
 			// if message recipient is valid player and matches chest owner, add chest to list
-			else if (player != null && player.getUniqueId().equals(deathChest.getOwnerUUID())) {
+			else if (player != null && player.getUniqueId().equals(deathChest.getOwnerUid())) {
 				displayRecords.add(deathChest);
 			}
 
@@ -201,13 +201,13 @@ public class ListCommand extends AbstractSubcommand {
 			listCount++;
 
 			String ownerName = "-";
-			if (deathChest.getOwnerUUID() != null) {
-				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUUID()).getName();
+			if (deathChest.hasValidOwnerUid()) {
+				ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUid()).getName();
 			}
 
 			String killerName = "-";
-			if (deathChest.getKillerUUID() != null) {
-				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUUID()).getName();
+			if (deathChest.hasValidKillerUid()) {
+				killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUid()).getName();
 			}
 
 			// get remaining time
