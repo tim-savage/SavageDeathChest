@@ -34,7 +34,7 @@ final class BlockIndex {
 	 * @param chestBlockType the ChestBlockType of ChestBlock to put in map
 	 * @param chestBlock the ChestBlock to put in map
 	 */
-	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
+	final void put(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 
 		// if passed key or value is null, do nothing and return
 		if (chestBlockType == null || chestBlock == null) {
@@ -108,7 +108,7 @@ final class BlockIndex {
 	 *
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
-	final void removeChestBlock(final ChestBlock chestBlock) {
+	final void remove(final ChestBlock chestBlock) {
 
 		// check for null key
 		if (chestBlock == null) {

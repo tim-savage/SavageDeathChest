@@ -21,7 +21,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static com.winterhaven_mc.deathchest.messages.Macro.*;
 import static com.winterhaven_mc.deathchest.util.LocationUtilities.*;

@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * An enum whose values represent the types of data store available.<br>
  * Note: Only SQLite data store is implemented at this time.
  */
-enum DataStoreType {
+public enum DataStoreType {
 
 	SQLITE("SQLite") {
 		@Override

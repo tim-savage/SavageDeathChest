@@ -142,7 +142,7 @@ public final class Deployment {
 		// put DeathChest in datastore
 		Set<DeathChest> deathChests = new HashSet<>();
 		deathChests.add(deathChest);
-		plugin.dataStore.insertChestRecords(deathChests);
+		plugin.chestManager.insertChestRecords(deathChests);
 	}
 
 

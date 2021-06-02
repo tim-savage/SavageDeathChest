@@ -3,7 +3,6 @@ package com.winterhaven_mc.deathchest.commands;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.util.LanguageManager;
 import org.bukkit.command.CommandSender;
 
@@ -58,7 +57,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		plugin.soundConfig.reload();
 
 		// reload datastore if changed
-		DataStore.reload();
+		plugin.chestManager.reload();
 
 		// send success message
 		Message.create(sender, COMMAND_SUCCESS_RELOAD).send();

@@ -136,7 +136,7 @@ public abstract class DataStore {
 	 *
 	 * @return the datastore type of this datastore instance
 	 */
-	private DataStoreType getType() {
+	public DataStoreType getType() {
 		return this.type;
 	}
 
@@ -187,7 +187,7 @@ public abstract class DataStore {
 	 * @param oldDataStore  existing datastore reference
 	 * @return the new datastore
 	 */
-	private static DataStore create(final DataStoreType dataStoreType, final DataStore oldDataStore) {
+	public static DataStore create(final DataStoreType dataStoreType, final DataStore oldDataStore) {
 
 		// get new data store of specified type
 		DataStore newDataStore = dataStoreType.create();
@@ -216,25 +216,25 @@ public abstract class DataStore {
 	}
 
 
-	/**
-	 * Check if a new datastore type has been configured, and
-	 * convert old datastore to new type if necessary
-	 */
-	public static void reload() {
-
-		// get current datastore type
-		DataStoreType currentType = plugin.dataStore.getType();
-
-		// get configured datastore type
-		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
-
-		// if current datastore type does not match configured datastore type, create new datastore
-		if (!currentType.equals(newType)) {
-
-			// create new datastore
-			plugin.dataStore = create(newType, plugin.dataStore);
-		}
-	}
+//	/**
+//	 * Check if a new datastore type has been configured, and
+//	 * convert old datastore to new type if necessary
+//	 */
+//	public static void reload() {
+//
+//		// get current datastore type
+//		DataStoreType currentType = plugin.chestManager.dataStore.getType();
+//
+//		// get configured datastore type
+//		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
+//
+//		// if current datastore type does not match configured datastore type, create new datastore
+//		if (!currentType.equals(newType)) {
+//
+//			// create new datastore
+//			plugin.dataStore = create(newType, plugin.dataStore);
+//		}
+//	}
 
 
 	/**

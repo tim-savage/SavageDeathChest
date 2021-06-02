@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.chests;
 import com.winterhaven_mc.deathchest.PluginMain;
 
 import com.winterhaven_mc.deathchest.storage.DataStore;
+import com.winterhaven_mc.deathchest.storage.DataStoreType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,6 +31,9 @@ public final class ChestManager {
 
 	// map of chest blocks
 	private final BlockIndex blockIndex;
+
+	// instantiate datastore
+	private DataStore dataStore = DataStore.create();
 
 	// set of replaceable blocks
 	public final ReplaceableBlocks replaceableBlocks;
@@ -75,12 +79,12 @@ public final class ChestManager {
 		}
 
 		// populate chestIndex with all death chest records retrieved from datastore
-		for (DeathChest deathChest : plugin.dataStore.selectAllChestRecords()) {
+		for (DeathChest deathChest : dataStore.selectAllChestRecords()) {
 			this.addDeathChest(deathChest);
 		}
 
 		// populate chest block map with all valid chest blocks retrieved from datastore
-		for (ChestBlock chestBlock : plugin.dataStore.selectAllBlockRecords()) {
+		for (ChestBlock chestBlock : dataStore.selectAllBlockRecords()) {
 
 			// if chest block location is null, continue to next chest block
 			if (chestBlock.getLocation() == null) {
@@ -95,11 +99,11 @@ public final class ChestManager {
 
 			// if chest block type is null or parent chest not in chest map, delete block record
 			if (chestBlockType == null || !chestIndex.containsKey(chestBlock.getChestUid())) {
-				plugin.dataStore.deleteBlockRecord(chestBlock);
+				dataStore.deleteBlockRecord(chestBlock);
 			}
 			else {
 				// add chestBlock to block index
-				this.blockIndex.addChestBlock(chestBlockType, chestBlock);
+				this.blockIndex.put(chestBlockType, chestBlock);
 			}
 		}
 
@@ -107,12 +111,12 @@ public final class ChestManager {
 		long currentTime = System.currentTimeMillis();
 
 		// expire chests with no blocks or past expiration
-		for (DeathChest deathChest : chestIndex.getAllChests()) {
+		for (DeathChest deathChest : chestIndex.values()) {
 
 			// if DeathChest has no children, remove from index and datastore
 			if (this.getBlockSet(deathChest.getChestUid()).isEmpty()) {
-				chestIndex.removeDeathChest(deathChest);
-				plugin.dataStore.deleteChestRecord(deathChest);
+				chestIndex.remove(deathChest);
+				dataStore.deleteChestRecord(deathChest);
 			}
 			// if DeathChest is past expiration, expire chest
 			else if (deathChest.getExpirationTime() < currentTime) {
@@ -135,7 +139,7 @@ public final class ChestManager {
 	 * @param deathChest the DeathChest object to put in map
 	 */
 	final void addDeathChest(final DeathChest deathChest) {
-		this.chestIndex.addChest(deathChest);
+		this.chestIndex.put(deathChest);
 	}
 
 
@@ -146,7 +150,7 @@ public final class ChestManager {
 	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
 	public final DeathChest getDeathChest(final UUID chestUUID) {
-		return this.chestIndex.getDeathChest(chestUUID);
+		return this.chestIndex.get(chestUUID);
 	}
 
 
@@ -174,7 +178,7 @@ public final class ChestManager {
 	 * @param deathChest the DeathChest object to remove from map
 	 */
 	final void removeDeathChest(final DeathChest deathChest) {
-		this.chestIndex.removeDeathChest(deathChest);
+		this.chestIndex.remove(deathChest);
 	}
 
 
@@ -184,7 +188,7 @@ public final class ChestManager {
 	 * @param chestBlock the ChestBlock to put in map
 	 */
 	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
-		this.blockIndex.addChestBlock(chestBlockType, chestBlock);
+		this.blockIndex.put(chestBlockType, chestBlock);
 	}
 
 
@@ -227,7 +231,7 @@ public final class ChestManager {
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
 	final void removeChestBlock(final ChestBlock chestBlock) {
-		this.blockIndex.removeChestBlock(chestBlock);
+		this.blockIndex.remove(chestBlock);
 	}
 
 
@@ -354,7 +358,53 @@ public final class ChestManager {
 	 * @return Collection of DeathChest - all death chests in the chest index
 	 */
 	public final Collection<DeathChest> getAllChests() {
-		return this.chestIndex.getAllChests();
+		return this.chestIndex.values();
+	}
+
+
+	public final void insertChestRecords(Collection<DeathChest> deathChests) {
+		dataStore.insertChestRecords(deathChests);
+	}
+
+
+	public final void deleteBlockRecord(ChestBlock chestBlock) {
+		dataStore.deleteBlockRecord(chestBlock);
+	}
+
+
+	public final void deleteChestRecord(DeathChest deathChest) {
+		dataStore.deleteChestRecord(deathChest);
+	}
+
+
+	public final void closeDataStore() {
+		dataStore.close();
+	}
+
+
+	public final String getDataStoreType() {
+		return dataStore.getType().toString();
+	}
+
+
+	/**
+	 * Check if a new datastore type has been configured, and
+	 * convert old datastore to new type if necessary
+	 */
+	public void reload() {
+
+		// get current datastore type
+		DataStoreType currentType = dataStore.getType();
+
+		// get configured datastore type
+		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
+
+		// if current datastore type does not match configured datastore type, create new datastore
+		if (!currentType.equals(newType)) {
+
+			// create new datastore
+			dataStore = DataStore.create(newType, dataStore);
+		}
 	}
 
 }

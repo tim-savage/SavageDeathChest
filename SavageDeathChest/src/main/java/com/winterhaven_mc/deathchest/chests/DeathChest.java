@@ -374,7 +374,7 @@ public final class DeathChest {
 		}
 
 		// delete DeathChest record from datastore
-		plugin.dataStore.deleteChestRecord(this);
+		plugin.chestManager.deleteChestRecord(this);
 
 		// cancel expire block task
 		if (this.getExpireTaskId() > 0) {

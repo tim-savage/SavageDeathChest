@@ -49,7 +49,7 @@ public class StatusCommand extends AbstractSubcommand {
 				+ ChatColor.RESET + plugin.getConfig().getString("language"));
 
 		sender.sendMessage(ChatColor.GREEN + "Storage Type: "
-				+ ChatColor.RESET + plugin.dataStore);
+				+ ChatColor.RESET + plugin.chestManager.getDataStoreType());
 
 		int expireTime = plugin.getConfig().getInt("expire-time");
 		if (expireTime == 0) {

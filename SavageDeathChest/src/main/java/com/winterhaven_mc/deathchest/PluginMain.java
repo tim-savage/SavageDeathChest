@@ -22,7 +22,7 @@ public final class PluginMain extends JavaPlugin {
 
 	public WorldManager worldManager;
 	public SoundConfiguration soundConfig;
-	public DataStore dataStore;
+//	public DataStore dataStore;
 	public ChestManager chestManager;
 
 	public boolean debug = getConfig().getBoolean("debug");
@@ -47,7 +47,7 @@ public final class PluginMain extends JavaPlugin {
 		chestManager = new ChestManager(this);
 
 		// instantiate datastore
-		dataStore = DataStore.create();
+//		dataStore = DataStore.create();
 
 		// load all chests from datastore
 		chestManager.loadDeathChests();
@@ -69,7 +69,7 @@ public final class PluginMain extends JavaPlugin {
 	public void onDisable() {
 
 		// close datastore
-		dataStore.close();
+		chestManager.closeDataStore();
 	}
 
 }

@@ -389,7 +389,7 @@ public final class ChestBlock {
 		this.removeMetadata();
 
 		// remove ChestBlock record from datastore
-		plugin.dataStore.deleteBlockRecord(this);
+		plugin.chestManager.deleteBlockRecord(this);
 
 		// remove ChestBlock from block map
 		plugin.chestManager.removeChestBlock(this);
