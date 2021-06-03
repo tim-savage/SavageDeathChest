@@ -137,7 +137,7 @@ public final class Deployment {
 		}
 
 		// put DeathChest in DeathChest map
-		plugin.chestManager.addDeathChest(deathChest);
+		plugin.chestManager.putChest(deathChest);
 
 		// put DeathChest in datastore
 		Set<DeathChest> deathChests = new HashSet<>();
@@ -473,7 +473,7 @@ public final class Deployment {
 		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUid(), block.getLocation());
 
 		// add this ChestBlock to block map
-		plugin.chestManager.addChestBlock(chestBlockType, chestBlock);
+		plugin.chestManager.putBlock(chestBlockType, chestBlock);
 
 		// set block metadata
 		chestBlock.setMetadata(deathChest);
@@ -582,7 +582,7 @@ public final class Deployment {
 			ChestBlock signChestBlock = new ChestBlock(deathChest.getChestUid(), signBlock.getLocation());
 
 			// add this ChestBlock to block map
-			plugin.chestManager.addChestBlock(ChestBlockType.SIGN, signChestBlock);
+			plugin.chestManager.putBlock(ChestBlockType.SIGN, signChestBlock);
 
 			// set sign block metadata
 			signChestBlock.setMetadata(deathChest);
