@@ -134,7 +134,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// get ChestBlock at clicked block location
-		ChestBlock chestBlock = plugin.chestManager.getChestBlock(block.getLocation());
+		ChestBlock chestBlock = plugin.chestManager.getBlock(block.getLocation());
 
 		// if chest block returned null, do nothing and return
 		if (chestBlock == null) {
@@ -142,7 +142,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// get DeathChest from ChestBlock
-		DeathChest deathChest = plugin.chestManager.getDeathChest(chestBlock.getChestUid());
+		DeathChest deathChest = plugin.chestManager.getChest(chestBlock.getChestUid());
 
 		// if DeathChest returned null, do nothing and return
 		if (deathChest == null) {
