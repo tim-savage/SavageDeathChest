@@ -216,6 +216,31 @@ public abstract class DataStore {
 	}
 
 
+	/**
+	 * Check if a new datastore type has been configured, and
+	 * convert old datastore to new type if necessary
+	 */
+	public DataStore reload() {
+
+		// get current datastore type
+		DataStoreType currentType = this.getType();
+
+		// get configured datastore type
+		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
+
+		DataStore returnDataStore = this;
+
+		// if current datastore type does not match configured datastore type, create new datastore
+		if (!currentType.equals(newType)) {
+
+			// create new datastore
+			returnDataStore = DataStore.create(newType, this);
+		}
+
+		return returnDataStore;
+	}
+
+
 //	/**
 //	 * Check if a new datastore type has been configured, and
 //	 * convert old datastore to new type if necessary
