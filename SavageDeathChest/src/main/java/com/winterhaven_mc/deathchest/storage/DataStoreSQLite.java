@@ -405,7 +405,7 @@ final class DataStoreSQLite extends DataStore {
 			}
 
 			// insert chest blocks into datastore
-			insertBlockRecords(plugin.chestManager.getBlockSet(deathChest.getChestUid()));
+			insertBlockRecords(plugin.chestManager.getBlocks(deathChest.getChestUid()));
 		}
 
 		// output debugging information

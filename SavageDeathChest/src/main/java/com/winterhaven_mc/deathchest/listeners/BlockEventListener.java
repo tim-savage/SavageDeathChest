@@ -96,7 +96,7 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// get instance of DeathChest from event block
-		final DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+		final DeathChest deathChest = plugin.chestManager.getChest(block);
 
 		// if returned DeathChest is null, do nothing and return
 		if (deathChest == null) {
@@ -226,7 +226,7 @@ public final class BlockEventListener implements Listener {
 		for (Block block : blocks) {
 			if (plugin.chestManager.isChestBlock(block)) {
 				// remove death chest block from blocks exploded list if protection has not expired
-				DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+				DeathChest deathChest = plugin.chestManager.getChest(block);
 				if (deathChest != null && !deathChest.protectionExpired()) {
 					event.blockList().remove(block);
 				}
@@ -254,7 +254,7 @@ public final class BlockEventListener implements Listener {
 		for (Block block : blocks) {
 			if (plugin.chestManager.isChestBlock(block)) {
 				// remove death chest block from blocks exploded list if protection has not expired
-				DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+				DeathChest deathChest = plugin.chestManager.getChest(block);
 				if (deathChest != null && !deathChest.protectionExpired()) {
 					event.blockList().remove(block);
 				}
