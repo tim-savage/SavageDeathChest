@@ -392,7 +392,7 @@ public final class ChestBlock {
 		plugin.chestManager.deleteBlockRecord(this);
 
 		// remove ChestBlock from block map
-		plugin.chestManager.removeChestBlock(this);
+		plugin.chestManager.removeBlock(this);
 
 		// set block material to air; this will drop chest contents, but not the block itself
 		// this must be performed last, because above methods do checks for valid in-game chest material block
