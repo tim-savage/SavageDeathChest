@@ -234,7 +234,7 @@ public final class DeathChest {
 	 */
 	public final Location getLocation() {
 
-		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUId);
+		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getBlockMap(this.chestUId);
 
 		if (chestBlockMap.containsKey(ChestBlockType.RIGHT_CHEST)) {
 			return chestBlockMap.get(ChestBlockType.RIGHT_CHEST).getLocation();
@@ -256,7 +256,7 @@ public final class DeathChest {
 	final void setMetadata() {
 
 		// set metadata on blocks in set
-		for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(this.chestUId)) {
+		for (ChestBlock chestBlock : plugin.chestManager.getBlocks(this.chestUId)) {
 			chestBlock.setMetadata(this);
 			if (plugin.debug) {
 				plugin.getLogger().info("Metadata set on chest block " + this.chestUId);
@@ -309,7 +309,7 @@ public final class DeathChest {
 		Collection<ItemStack> remainingItems = new ArrayList<>();
 
 		// transfer contents of any chest blocks to player, putting any items that did not fit in remainingItems
-		for (ChestBlock chestBlock : plugin.chestManager.getBlockSet(this.chestUId)) {
+		for (ChestBlock chestBlock : plugin.chestManager.getBlocks(this.chestUId)) {
 			remainingItems.addAll(chestBlock.transferContents(player));
 		}
 
@@ -338,7 +338,8 @@ public final class DeathChest {
 
 
 	/**
-	 * Expire this death chest
+	 * Expire this death chest, destroying in game chest and dropping contents,
+	 * and sending message to chest owner if online.
 	 */
 	public final void expire() {
 
@@ -366,7 +367,7 @@ public final class DeathChest {
 		plugin.soundConfig.playSound(this.getLocation(), SoundId.CHEST_BREAK);
 
 		// get block map for this chest
-		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getChestBlockMap(this.chestUId);
+		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getBlockMap(this.chestUId);
 
 		// destroy DeathChest blocks (sign gets destroyed first due to enum order)
 		for (ChestBlock chestBlock : chestBlockMap.values()) {
@@ -382,7 +383,7 @@ public final class DeathChest {
 		}
 
 		// remove DeathChest from ChestManager DeathChest map
-		plugin.chestManager.removeDeathChest(this);
+		plugin.chestManager.removeChest(this);
 	}
 
 
@@ -395,7 +396,7 @@ public final class DeathChest {
 	public final Inventory getInventory() {
 
 		// get chest block map
-		Map<ChestBlockType, ChestBlock> chestBlocks = plugin.chestManager.getChestBlockMap(this.chestUId);
+		Map<ChestBlockType, ChestBlock> chestBlocks = plugin.chestManager.getBlockMap(this.chestUId);
 
 		// get right chest inventory
 		Inventory inventory = chestBlocks.get(ChestBlockType.RIGHT_CHEST).getInventory();
