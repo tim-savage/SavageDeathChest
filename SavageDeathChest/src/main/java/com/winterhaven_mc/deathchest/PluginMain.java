@@ -4,7 +4,6 @@ import com.winterhaven_mc.deathchest.chests.ChestManager;
 import com.winterhaven_mc.deathchest.listeners.BlockEventListener;
 import com.winterhaven_mc.deathchest.listeners.InventoryEventListener;
 import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
-import com.winterhaven_mc.deathchest.storage.DataStore;
 import com.winterhaven_mc.deathchest.commands.CommandManager;
 import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.util.LanguageManager;
@@ -50,7 +49,7 @@ public final class PluginMain extends JavaPlugin {
 //		dataStore = DataStore.create();
 
 		// load all chests from datastore
-		chestManager.loadDeathChests();
+		chestManager.loadChests();
 
 		// instantiate command manager
 		new CommandManager(this);
