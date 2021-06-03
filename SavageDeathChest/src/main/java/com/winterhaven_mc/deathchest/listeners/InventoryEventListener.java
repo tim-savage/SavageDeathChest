@@ -125,7 +125,7 @@ public final class InventoryEventListener implements Listener {
 		// get inventory block from location
 		final Block block = inventory.getLocation().getBlock();
 
-		final DeathChest deathChest = plugin.chestManager.getDeathChest(block);
+		final DeathChest deathChest = plugin.chestManager.getChest(block);
 
 		// if inventory is not a DeathChest inventory, return
 		if (deathChest == null) {
