@@ -3,7 +3,6 @@ package com.winterhaven_mc.deathchest.chests;
 import com.winterhaven_mc.deathchest.PluginMain;
 
 import com.winterhaven_mc.deathchest.storage.DataStore;
-import com.winterhaven_mc.deathchest.storage.DataStoreType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -72,7 +71,7 @@ public final class ChestManager {
 	 * Expire death chest blocks whose time has passed.
 	 * schedule tasks to expire remaining loaded chests.
 	 */
-	public final void loadDeathChests() {
+	public final void loadChests() {
 
 		if (plugin.debug) {
 			plugin.getLogger().info("Loading Death Chests...");
@@ -80,7 +79,7 @@ public final class ChestManager {
 
 		// populate chestIndex with all death chest records retrieved from datastore
 		for (DeathChest deathChest : dataStore.selectAllChestRecords()) {
-			this.addDeathChest(deathChest);
+			this.putChest(deathChest);
 		}
 
 		// populate chest block map with all valid chest blocks retrieved from datastore
@@ -114,7 +113,7 @@ public final class ChestManager {
 		for (DeathChest deathChest : chestIndex.values()) {
 
 			// if DeathChest has no children, remove from index and datastore
-			if (this.getBlockSet(deathChest.getChestUid()).isEmpty()) {
+			if (this.getBlocks(deathChest.getChestUid()).isEmpty()) {
 				chestIndex.remove(deathChest);
 				dataStore.deleteChestRecord(deathChest);
 			}
@@ -138,7 +137,7 @@ public final class ChestManager {
 	 *
 	 * @param deathChest the DeathChest object to put in map
 	 */
-	final void addDeathChest(final DeathChest deathChest) {
+	final void putChest(final DeathChest deathChest) {
 		this.chestIndex.put(deathChest);
 	}
 
@@ -149,7 +148,7 @@ public final class ChestManager {
 	 * @param chestUUID UUID of DeathChest object to retrieve
 	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
-	public final DeathChest getDeathChest(final UUID chestUUID) {
+	public final DeathChest getChest(final UUID chestUUID) {
 		return this.chestIndex.get(chestUUID);
 	}
 
@@ -160,7 +159,7 @@ public final class ChestManager {
 	 * @param block the block to retrieve DeathChest object
 	 * @return DeathChest object, or null if no DeathChest exists in map that contains passed block location
 	 */
-	public final DeathChest getDeathChest(final Block block) {
+	public final DeathChest getChest(final Block block) {
 
 		ChestBlock chestBlock = this.blockIndex.getChestBlock(block.getLocation());
 
@@ -168,7 +167,7 @@ public final class ChestManager {
 			return null;
 		}
 
-		return getDeathChest(chestBlock.getChestUid());
+		return getChest(chestBlock.getChestUid());
 	}
 
 
@@ -177,7 +176,7 @@ public final class ChestManager {
 	 *
 	 * @param deathChest the DeathChest object to remove from map
 	 */
-	final void removeDeathChest(final DeathChest deathChest) {
+	final void removeChest(final DeathChest deathChest) {
 		this.chestIndex.remove(deathChest);
 	}
 
@@ -187,7 +186,7 @@ public final class ChestManager {
 	 *
 	 * @param chestBlock the ChestBlock to put in map
 	 */
-	final void addChestBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
+	final void putBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 		this.blockIndex.put(chestBlockType, chestBlock);
 	}
 
@@ -198,7 +197,7 @@ public final class ChestManager {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
-	public final ChestBlock getChestBlock(final Location location) {
+	public final ChestBlock getBlock(final Location location) {
 		return this.blockIndex.getChestBlock(location);
 	}
 
@@ -206,22 +205,22 @@ public final class ChestManager {
 	/**
 	 * Get chestBlock set from block index by chest uuid
 	 *
-	 * @param chestUUID the UUID of the chest of which to retrieve a set of chest blocks
+	 * @param chestUid the UUID of the chest of which to retrieve a set of chest blocks
 	 * @return Set of Blocks in uuidBlockMap, or empty set if no blocks exist for chest UUID
 	 */
-	public final Set<ChestBlock> getBlockSet(final UUID chestUUID) {
-		return this.blockIndex.getChestBlockSet(chestUUID);
+	public final Collection<ChestBlock> getBlocks(final UUID chestUid) {
+		return this.blockIndex.getChestBlockSet(chestUid);
 	}
 
 
 	/**
 	 * Get chestBlock map from block index by chest uuid
 	 *
-	 * @param chestUUID the UUID of the chest of which to retrieve a map of chest blocks
+	 * @param chestUid the UUID of the chest of which to retrieve a map of chest blocks
 	 * @return Map of Blocks in uuidBlockMap, or empty map if no blocks exist for chest UUID
 	 */
-	final Map<ChestBlockType, ChestBlock> getChestBlockMap(final UUID chestUUID) {
-		return this.blockIndex.getChestBlockMap(chestUUID);
+	final Map<ChestBlockType, ChestBlock> getBlockMap(final UUID chestUid) {
+		return this.blockIndex.getChestBlockMap(chestUid);
 	}
 
 
@@ -230,7 +229,7 @@ public final class ChestManager {
 	 *
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
-	final void removeChestBlock(final ChestBlock chestBlock) {
+	final void removeBlock(final ChestBlock chestBlock) {
 		this.blockIndex.remove(chestBlock);
 	}
 
@@ -387,24 +386,29 @@ public final class ChestManager {
 	}
 
 
-	/**
-	 * Check if a new datastore type has been configured, and
-	 * convert old datastore to new type if necessary
-	 */
 	public void reload() {
-
-		// get current datastore type
-		DataStoreType currentType = dataStore.getType();
-
-		// get configured datastore type
-		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
-
-		// if current datastore type does not match configured datastore type, create new datastore
-		if (!currentType.equals(newType)) {
-
-			// create new datastore
-			dataStore = DataStore.create(newType, dataStore);
-		}
+		replaceableBlocks.reload();
+		dataStore = dataStore.reload();
 	}
+
+//	/**
+//	 * Check if a new datastore type has been configured, and
+//	 * convert old datastore to new type if necessary
+//	 */
+//	public void reload() {
+//
+//		// get current datastore type
+//		DataStoreType currentType = dataStore.getType();
+//
+//		// get configured datastore type
+//		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
+//
+//		// if current datastore type does not match configured datastore type, create new datastore
+//		if (!currentType.equals(newType)) {
+//
+//			// create new datastore
+//			dataStore = DataStore.create(newType, dataStore);
+//		}
+//	}
 
 }
