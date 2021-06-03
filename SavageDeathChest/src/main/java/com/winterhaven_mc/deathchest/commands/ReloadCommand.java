@@ -41,9 +41,6 @@ public class ReloadCommand extends AbstractSubcommand {
 		// reload config file
 		plugin.reloadConfig();
 
-		// reload replaceable blocks
-		plugin.chestManager.replaceableBlocks.reload();
-
 		// update debug field
 		plugin.debug = plugin.getConfig().getBoolean("debug");
 
@@ -56,7 +53,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		// reload sounds
 		plugin.soundConfig.reload();
 
-		// reload datastore if changed
+		// reload ChestManager
 		plugin.chestManager.reload();
 
 		// send success message
