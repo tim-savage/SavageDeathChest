@@ -8,6 +8,7 @@ import com.winterhaven_mc.deathchest.sounds.SoundId;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -25,6 +26,7 @@ public class ListCommand extends AbstractSubcommand {
 		this.setName("list");
 		this.setUsage("/deathchest list [page]");
 		this.setDescription(COMMAND_HELP_LIST);
+		this.setMaxArgs(2);
 	}
 
 
@@ -62,7 +64,6 @@ public class ListCommand extends AbstractSubcommand {
 		return returnList;
 	}
 
-
 	@Override
 	public boolean onCommand(final CommandSender sender, final List<String> args) {
 
@@ -73,72 +74,35 @@ public class ListCommand extends AbstractSubcommand {
 			return true;
 		}
 
-		Player player = null;
-
-		// cast sender to player
-		if (sender instanceof Player) {
-			player = (Player) sender;
-		}
-
-		// argument limits
-		int maxArgs = 3;
-
-		if (args.size() > maxArgs) {
+		// check if max args exceeded
+		if (args.size() > this.getMaxArgs()) {
 			Message.create(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send();
 			displayUsage(sender);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
 
-		OfflinePlayer targetPlayer = null;
-
-		// get list of offline players
-		OfflinePlayer[] offlinePlayers = plugin.getServer().getOfflinePlayers();
-
-		String passedPlayerName = "";
-
-		int page = 1;
-
-		if (args.size() == 2) {
-
-			passedPlayerName = args.get(1);
-
-			// if second argument not a number, try to match player name
-			try {
-				page = Integer.parseInt(args.get(1));
-			}
-			catch (NumberFormatException e) {
-				// if sender does not have list other permission, send message and return
-				if (!sender.hasPermission("deathchest.list.other")) {
-					Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
-					plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
-					return true;
-				}
-				for (OfflinePlayer offlinePlayer : offlinePlayers) {
-					if (args.get(1).equalsIgnoreCase(offlinePlayer.getName())) {
-						targetPlayer = offlinePlayer;
-					}
-				}
-				if (targetPlayer == null && !passedPlayerName.equals("*")) {
-					Message.create(sender, LIST_PLAYER_NOT_FOUND).send();
-					plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
-					return true;
-				}
-			}
-		}
-
-		if (args.size() == 3) {
-			try {
-				page = Integer.parseInt(args.get(2));
-			}
-			catch (NumberFormatException e) {
-				// third argument not a number, ignore
-			}
-		}
-
-		page = Math.max(1, page);
-
+		// get list page size from configuration
 		int itemsPerPage = plugin.getConfig().getInt("list-page-size");
+
+		// get page number from args; defaults to 1 if not found
+		int page = getPageFromArgs(args);
+
+		// get player name string from args, or null if not found
+		String passedPlayerName = getNameFromArgs(args);
+
+		// match passed player name to offline player
+		OfflinePlayer targetPlayer = matchOfflinePlayer(passedPlayerName);
+
+		// check if sender is console
+		boolean senderIsConsole = (sender instanceof ConsoleCommandSender);
+
+		Player player = null;
+
+		// if sender is player, cast sender to player
+		if (sender instanceof Player) {
+			player = (Player) sender;
+		}
 
 		// get all records from chest manager
 		final Collection<DeathChest> chestList = plugin.chestManager.getAllChests();
@@ -146,25 +110,27 @@ public class ListCommand extends AbstractSubcommand {
 		// create empty list of records
 		List<DeathChest> displayRecords = new ArrayList<>();
 
-		// add chests to displayRecords list
+		// iterate over all chest records
 		for (DeathChest deathChest : chestList) {
 
 			// if passed player name is wildcard, add chest to list
-			if ((passedPlayerName.equals("*")) && sender.hasPermission("deathchest.list.other")) {
+			if ((passedPlayerName.equals("*"))
+					&& (sender.hasPermission("deathchest.list.other") || senderIsConsole)) {
 				displayRecords.add(deathChest);
 			}
 
-			// if passed player is valid player and matches chest owner, add chest to list
+			// if sender has list.other permission, and passed player is valid player and matches chest owner, add chest to list
 			else if (targetPlayer != null
 					&& deathChest.getOwnerUid().equals(targetPlayer.getUniqueId())
-					&& sender.hasPermission("deathchest.list.other")) {
-				displayRecords.add(deathChest);
-			}
-			// if message recipient is valid player and matches chest owner, add chest to list
-			else if (player != null && player.getUniqueId().equals(deathChest.getOwnerUid())) {
+					&& sender.hasPermission("deathchest.list.other") || senderIsConsole) {
 				displayRecords.add(deathChest);
 			}
 
+			// if message recipient is valid player and matches chest owner, add chest to list
+			else if (player != null
+					&& player.getUniqueId().equals(deathChest.getOwnerUid())) {
+				displayRecords.add(deathChest);
+			}
 		}
 
 		// if display list is empty, output list empty message and return
@@ -186,14 +152,13 @@ public class ListCommand extends AbstractSubcommand {
 
 		List<DeathChest> displayRange = displayRecords.subList(startIndex, endIndex);
 
-
 		int listCount = startIndex;
 
+		// if sender is console or wildcard used, set displayFull true; else false
+		boolean displayFull = senderIsConsole || passedPlayerName.equals("*");
+
 		// display list header
-		Message.create(sender, LIST_HEADER)
-				.setMacro(Macro.PAGE_NUMBER, page)
-				.setMacro(Macro.PAGE_TOTAL, pageCount)
-				.send();
+		displayListHeader(sender, page, pageCount);
 
 		for (DeathChest deathChest : displayRange) {
 
@@ -214,7 +179,7 @@ public class ListCommand extends AbstractSubcommand {
 			Long remainingTime = deathChest.getExpirationTime() - System.currentTimeMillis();
 
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
-			if (passedPlayerName.equals("*")) {
+			if (displayFull) {
 				Message.create(sender, LIST_ITEM_ALL)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
@@ -235,11 +200,100 @@ public class ListCommand extends AbstractSubcommand {
 		}
 
 		// display list footer
+		displayListFooter(sender, page, pageCount);
+
+		return true;
+	}
+
+
+	private OfflinePlayer matchOfflinePlayer(String name) {
+
+		OfflinePlayer matchedPlayer = null;
+
+		for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
+
+			if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(name)) {
+				matchedPlayer = offlinePlayer;
+				break;
+			}
+		}
+		return matchedPlayer;
+	}
+
+
+	private Collection<DeathChest> getChestsForPlayer(Player player) {
+		Set<DeathChest> returnSet = new HashSet<>();
+
+		for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
+			if (deathChest.getOwnerUid().equals(player.getUniqueId())) {
+				returnSet.add(deathChest);
+			}
+		}
+		return returnSet;
+	}
+
+
+	private void displayListHeader(CommandSender sender, int page, int pageCount) {
+		// display list header
+		Message.create(sender, LIST_HEADER)
+				.setMacro(Macro.PAGE_NUMBER, page)
+				.setMacro(Macro.PAGE_TOTAL, pageCount)
+				.send();
+	}
+
+
+	private void displayListFooter(CommandSender sender, int page, int pageCount) {
+		// display list footer
 		Message.create(sender, LIST_FOOTER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
 				.send();
+	}
 
+	private String getNameFromArgs(final List<String> args) {
+
+		if (args.size() > 0) {
+			if (!isNumeric(args.get(0))) {
+				return args.get(0);
+			}
+		}
+		return "";
+	}
+
+	private int getPageFromArgs(final List<String> args) {
+
+		int returnInt = 1;
+
+		if (args.size() == 1) {
+			try {
+				returnInt = Integer.parseInt(args.get(0));
+			} catch (NumberFormatException nfe) {
+				// not a number
+			}
+		}
+		else if (args.size() == 2) {
+			try {
+				returnInt = Integer.parseInt(args.get(1));
+			} catch (NumberFormatException nfe) {
+				// not a number
+			}
+		}
+		return Math.max(1, returnInt);
+	}
+
+
+	private boolean isNumeric(final String strNum) {
+
+		// if string is null, return false
+		if (strNum == null) {
+			return false;
+		}
+
+		try {
+			Integer.parseInt(strNum);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
 		return true;
 	}
 
