@@ -102,7 +102,7 @@ public abstract class AbstractSearch implements Search {
 		Block block = location.getBlock();
 
 		// if block at location is not replaceable block, return negative result
-		if (!plugin.chestManager.replaceableBlocks.contains(block.getType())) {
+		if (!plugin.chestManager.isReplaceableBlock(block)) {
 			result.setResultCode(ResultCode.NON_REPLACEABLE_BLOCK);
 			return result;
 		}
