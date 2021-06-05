@@ -20,6 +20,11 @@ disabled-worlds:
   - disabled_world1
   - disabled_world2
 
+# delay chest deployment (in ticks)
+chest-deployment-delay: 2
+
+# log player's inventory on death
+log-inventory-on-death: false
 
 # Use sound effects
 sound-effects: true
