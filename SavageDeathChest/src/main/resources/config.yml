@@ -29,14 +29,15 @@ log-inventory-on-death: false
 # Use sound effects
 sound-effects: true
 
+# Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
+expire-time: 60
+
 # Protect chests from other players
 chest-protection: true
 
-# Time in minutes chests will be protected from other players
-chest-protection-time: 50
-
-# Time in minutes before death chests expire. Set to 0 (zero) to disable chest expiration.
-expire-time: 60
+# Time in minutes chests will be protected from other players, if enabled.
+# Set to 0 (zero) to match chest expire time and disable messages.
+chest-protection-time: 0
 
 # Allow player's killer to access death chest
 killer-looting: false
