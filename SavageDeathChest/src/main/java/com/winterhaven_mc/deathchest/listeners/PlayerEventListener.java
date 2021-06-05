@@ -19,7 +19,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.winterhaven_mc.deathchest.messages.Macro.*;
@@ -66,11 +68,8 @@ public final class PlayerEventListener implements Listener {
 		// get event player
 		Player player = event.getEntity();
 
-		// get event dropped items
-		List<ItemStack> droppedItems = event.getDrops();
-
-		// if player's current world is not enabled in config, do nothing
-		// and allow inventory items to drop on ground
+		// if player's current world is not enabled in config,
+		// do nothing and allow inventory items to drop on ground
 		if (!plugin.worldManager.isEnabled(player.getWorld())) {
 			Message.create(player, CHEST_DENIED_WORLD_DISABLED)
 					.setMacro(LOCATION, player.getLocation())
@@ -101,15 +100,34 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// if player inventory is empty, output message and return
-		if (droppedItems.isEmpty()) {
+		if (event.getDrops().isEmpty()) {
 			Message.create(player, INVENTORY_EMPTY)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
 		}
 
-		// deploy DeathChest
-		new Deployment(plugin, player, droppedItems);
+		// if configured true, output player death drops to log
+		if (plugin.getConfig().getBoolean("log-inventory-on-death")) {
+			plugin.getLogger().info(player.getDisplayName() + " death drops:");
+			plugin.getLogger().info(event.getDrops().toString());
+		}
+
+		// copy event drops to new list
+		List<ItemStack> droppedItems = new ArrayList<>(event.getDrops());
+
+		// remove all items from event drops
+		event.getDrops().clear();
+
+		// deploy DeathChest after configured delay
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				new Deployment(plugin, player, droppedItems);
+
+			}
+		}.runTaskLater(plugin, plugin.getConfig().getInt("chest-deployment-delay"));
 	}
 
 
@@ -236,6 +254,19 @@ public final class PlayerEventListener implements Listener {
 				return;
 			}
 
+			// if chest protection is enabled and has not expired, send message and return
+			if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
+				long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
+				Message.create(player, CHEST_ACCESSED_PROTECTION_TIME)
+						.setMacro(Macro.OWNER, deathChest.getOwnerName())
+						.setMacro(Macro.DURATION, remainingProtectionTime)
+						.setMacro(LOCATION, deathChest.getLocation())
+						.send();
+				// play denied access sound
+				plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+				return;
+			}
+
 			// send player not-owner message
 			Message.create(player, NOT_OWNER)
 					.setMacro(LOCATION, deathChest.getLocation())
@@ -279,6 +310,16 @@ public final class PlayerEventListener implements Listener {
 				.setMacro(OWNER, ownerName)
 				.setMacro(KILLER, killerName)
 				.send();
+
+		// if chest protection is enabled and has not expired, send message and return
+		if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
+			long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
+			Message.create(player, CHEST_ACCESSED_PROTECTION_TIME)
+					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(Macro.DURATION, remainingProtectionTime)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.send();
+		}
 
 		// play denied access sound
 		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
