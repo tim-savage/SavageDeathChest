@@ -21,7 +21,6 @@ public final class PluginMain extends JavaPlugin {
 
 	public WorldManager worldManager;
 	public SoundConfiguration soundConfig;
-//	public DataStore dataStore;
 	public ChestManager chestManager;
 
 	public boolean debug = getConfig().getBoolean("debug");
