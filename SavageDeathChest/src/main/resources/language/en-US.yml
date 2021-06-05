@@ -51,6 +51,16 @@ MESSAGES:
     string: '&cOnly a single chest could be placed at your death location. Some items were dropped.'
     # available subs: %PLAYER%, %DURATION%, %LOCATION%
 
+  CHEST_DEPLOYED_PROTECTION_TIME:
+    enabled: true
+    string: '&cDeath chest is protected from looting for %DURATION%.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
+  CHEST_ACCESSED_PROTECTION_TIME:
+    enabled: true
+    string: '&cDeath chest belonging to %OWNER% is protected from looting for %DURATION%.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
   CHEST_DENIED_PLUGIN:
     enabled: true
     string: '&cDeath chest deployment was prevented by %PLUGIN%.'

@@ -47,6 +47,16 @@ MESSAGES:
     enabled: true
     string: '&cOmdat er niet genoeg ruimte was voor een dubbele kist, kon een deel van je bezittingen niet veiliggesteld worden.'
 
+  CHEST_DEPLOYED_PROTECTION_TIME:
+    enabled: true
+    string: '&cDe doodskist wordt gedurende %DURATION% beschermd tegen plunderingen.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
+  CHEST_ACCESSED_PROTECTION_TIME:
+    enabled: true
+    string: '&cDoodkist van %OWNER% wordt gedurende %DURATION% beschermd tegen plunderingen.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
   CHEST_DENIED_PLUGIN:
     enabled: true
     string: '&cHet plaatsen van een dodenkist was niet mogelijk vanwege een conflict met %PLUGIN%.'

@@ -47,6 +47,16 @@ MESSAGES:
     enabled: true
     string: '&cSólo se podía colocar un solo cofre del punto muerte.'
 
+  CHEST_DEPLOYED_PROTECTION_TIME:
+    enabled: true
+    string: '&cEl cofre de la muerte está protegido del saqueo durante %DURATION%.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
+  CHEST_ACCESSED_PROTECTION_TIME:
+    enabled: true
+    string: '&cEl cofre de la muerte que pertenece a %OWNER% está protegido contra el saqueo durante %DURATION%.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
   CHEST_DENIED_PLUGIN:
     enabled: true
     string: '&cEl despliegue del cofre de la muerte fue prevenido por %PLUGIN%.'

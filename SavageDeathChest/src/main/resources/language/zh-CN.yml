@@ -51,6 +51,16 @@ MESSAGES:
     string: '&c在你的死亡地点只能放置单个箱子. 一些物品已掉落.'
     # available subs: %PLAYER%, %DURATION%, %LOCATION%
 
+  CHEST_DEPLOYED_PROTECTION_TIME:
+    enabled: true
+    string: '&c死亡宝箱在 %DURATION% 内不会被掠夺.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
+  CHEST_ACCESSED_PROTECTION_TIME:
+    enabled: true
+    string: '&c属于 %OWNER% 的死亡宝箱在 %DURATION% 内不会被抢劫.'
+    # available subs: %OWNER%, %DURATION%, %LOCATION%
+
   CHEST_DENIED_PLUGIN:
     enabled: true
     string: '&c死亡箱的部署被 %PLUGIN% 阻止了.'
