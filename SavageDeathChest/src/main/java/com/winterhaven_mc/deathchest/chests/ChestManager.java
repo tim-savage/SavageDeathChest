@@ -161,7 +161,7 @@ public final class ChestManager {
 	 */
 	public final DeathChest getChest(final Block block) {
 
-		ChestBlock chestBlock = this.blockIndex.getChestBlock(block.getLocation());
+		ChestBlock chestBlock = this.blockIndex.get(block.getLocation());
 
 		if (chestBlock == null) {
 			return null;
@@ -198,7 +198,7 @@ public final class ChestManager {
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
 	public final ChestBlock getBlock(final Location location) {
-		return this.blockIndex.getChestBlock(location);
+		return this.blockIndex.get(location);
 	}
 
 
@@ -209,7 +209,7 @@ public final class ChestManager {
 	 * @return Set of Blocks in uuidBlockMap, or empty set if no blocks exist for chest UUID
 	 */
 	public final Collection<ChestBlock> getBlocks(final UUID chestUid) {
-		return this.blockIndex.getChestBlockSet(chestUid);
+		return this.blockIndex.getBlocks(chestUid);
 	}
 
 
@@ -220,7 +220,7 @@ public final class ChestManager {
 	 * @return Map of Blocks in uuidBlockMap, or empty map if no blocks exist for chest UUID
 	 */
 	final Map<ChestBlockType, ChestBlock> getBlockMap(final UUID chestUid) {
-		return this.blockIndex.getChestBlockMap(chestUid);
+		return this.blockIndex.getBlockMap(chestUid);
 	}
 
 

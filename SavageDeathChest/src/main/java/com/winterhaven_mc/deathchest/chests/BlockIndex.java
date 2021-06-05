@@ -60,7 +60,7 @@ final class BlockIndex {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
-	final ChestBlock getChestBlock(final Location location) {
+	final ChestBlock get(final Location location) {
 		return this.locationMap.get(location);
 	}
 
@@ -68,17 +68,17 @@ final class BlockIndex {
 	/**
 	 * Getter method for DeathChest chestBlocks
 	 *
-	 * @param chestUUID the UUID of the chest of which to retrieve a set of chest blocks
+	 * @param chestUid the UUID of the chest of which to retrieve a set of chest blocks
 	 * @return Set of Blocks in uuidMap, or empty set if no blocks exist for chest UUID
 	 */
-	final Set<ChestBlock> getChestBlockSet(final UUID chestUUID) {
+	final Collection<ChestBlock> getBlocks(final UUID chestUid) {
 
 		// create empty Set for return
 		Set<ChestBlock> returnSet = new HashSet<>();
 
-		// if chestUUID key exists in map, add map values to returnSet
-		if (chestUUID != null && uuidMap.containsKey(chestUUID)) {
-			returnSet.addAll((uuidMap.get(chestUUID)).values());
+		// if chestUid key exists in map, add map values to returnSet
+		if (chestUid != null && uuidMap.containsKey(chestUid)) {
+			returnSet.addAll((uuidMap.get(chestUid)).values());
 		}
 		return returnSet;
 	}
@@ -87,17 +87,17 @@ final class BlockIndex {
 	/**
 	 * Getter method for DeathChest chestBlocks
 	 *
-	 * @param chestUUID the UUID of the chest of which to retrieve a map of chest blocks
+	 * @param chestUid the UUID of the chest of which to retrieve a map of chest blocks
 	 * @return Map of Blocks in uuidMap, or empty map if no blocks exist for chest UUID
 	 */
-	final Map<ChestBlockType, ChestBlock> getChestBlockMap(final UUID chestUUID) {
+	final Map<ChestBlockType, ChestBlock> getBlockMap(final UUID chestUid) {
 
 		// create empty map for return
 		Map<ChestBlockType, ChestBlock> returnMap = new EnumMap<>(ChestBlockType.class);
 
 		// if chestUUID exists in map, add values to returnMap
-		if (chestUUID != null && this.uuidMap.containsKey(chestUUID)) {
-			returnMap.putAll(this.uuidMap.get(chestUUID));
+		if (chestUid != null && this.uuidMap.containsKey(chestUid)) {
+			returnMap.putAll(this.uuidMap.get(chestUid));
 		}
 		return returnMap;
 	}
