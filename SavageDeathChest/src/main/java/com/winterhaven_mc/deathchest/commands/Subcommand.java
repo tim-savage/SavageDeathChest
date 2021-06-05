@@ -34,4 +34,12 @@ public interface Subcommand {
 
 	void setDescription(MessageId messageId);
 
+	int getMinArgs();
+
+	void setMinArgs(int minArgs);
+
+	int getMaxArgs();
+
+	void setMaxArgs(int maxArgs);
+
 }

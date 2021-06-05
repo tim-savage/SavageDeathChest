@@ -15,6 +15,8 @@ public abstract class AbstractSubcommand implements Subcommand {
 	private List<String> aliases = new ArrayList<>();
 	private String usageString;
 	private MessageId description;
+	private int minArgs;
+	private int maxArgs;
 
 	@Override
 	public String getName() {
@@ -66,6 +68,25 @@ public abstract class AbstractSubcommand implements Subcommand {
 		this.description = description;
 	}
 
+	@Override
+	public int getMinArgs() {
+		return this.minArgs;
+	}
+
+	@Override
+	public void setMinArgs(final int minArgs) {
+		this.minArgs = minArgs;
+	}
+
+	@Override
+	public int getMaxArgs() {
+		return this.maxArgs;
+	}
+
+	@Override
+	public void setMaxArgs(final int maxArgs) {
+		this.maxArgs = maxArgs;
+	}
 
 	@Override
 	public List<String> onTabComplete(final CommandSender sender, final Command command,
