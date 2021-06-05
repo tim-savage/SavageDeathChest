@@ -102,7 +102,7 @@ public class StatusCommand extends AbstractSubcommand {
 				plugin.worldManager.getEnabledWorldNames().toString());
 
 		sender.sendMessage(ChatColor.GREEN + "Replaceable Blocks: " + ChatColor.RESET +
-				plugin.chestManager.replaceableBlocks.toString());
+				plugin.chestManager.getReplaceableBlocks());
 
 		return true;
 	}
