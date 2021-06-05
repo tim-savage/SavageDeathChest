@@ -1,6 +1,7 @@
 package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
+import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
@@ -131,9 +132,18 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// if chest protection is enabled and has expired, do nothing and return
+		// if chest protection has expired, do nothing and return
 		if (deathChest.protectionExpired()) {
 			return;
+		}
+		// else send message with chest expiration time remaining
+		else {
+			long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
+			Message.create(player, CHEST_ACCESSED_PROTECTION_TIME)
+					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(Macro.LOCATION, deathChest.getLocation())
+					.setMacro(Macro.DURATION, remainingProtectionTime)
+					.send();
 		}
 
 		// cancel event
