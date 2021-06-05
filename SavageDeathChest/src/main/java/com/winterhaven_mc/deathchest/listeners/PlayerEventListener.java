@@ -107,9 +107,9 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if configured true, output player death drops to log
+		// if configured true, output player inventory to log
 		if (plugin.getConfig().getBoolean("log-inventory-on-death")) {
-			plugin.getLogger().info(player.getDisplayName() + " death drops:");
+			plugin.getLogger().info(player.getDisplayName() + " death inventory:");
 			plugin.getLogger().info(event.getDrops().toString());
 		}
 
