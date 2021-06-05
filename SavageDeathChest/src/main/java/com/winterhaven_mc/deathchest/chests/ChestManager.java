@@ -391,6 +391,7 @@ public final class ChestManager {
 		dataStore = dataStore.reload();
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isReplaceableBlock(Material material) {
 		return replaceableBlocks.contains(material);
 	}
@@ -402,26 +403,5 @@ public final class ChestManager {
 	public ReplaceableBlocks getReplaceableBlocks() {
 		return replaceableBlocks;
 	}
-
-
-//	/**
-//	 * Check if a new datastore type has been configured, and
-//	 * convert old datastore to new type if necessary
-//	 */
-//	public void reload() {
-//
-//		// get current datastore type
-//		DataStoreType currentType = dataStore.getType();
-//
-//		// get configured datastore type
-//		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
-//
-//		// if current datastore type does not match configured datastore type, create new datastore
-//		if (!currentType.equals(newType)) {
-//
-//			// create new datastore
-//			dataStore = DataStore.create(newType, dataStore);
-//		}
-//	}
 
 }
