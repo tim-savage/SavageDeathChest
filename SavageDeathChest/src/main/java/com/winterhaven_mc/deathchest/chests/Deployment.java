@@ -136,6 +136,15 @@ public final class Deployment {
 			return;
 		}
 
+		// if chest protection is enabled and chest-protection-time is set (non-zero), send message
+		if (plugin.getConfig().getBoolean("chest-protection") && deathChest.getProtectionExpirationTime() > 0) {
+			Message.create(player, CHEST_DEPLOYED_PROTECTION_TIME)
+					.setMacro(Macro.OWNER, player.getName())
+					.setMacro(Macro.LOCATION, deathChest.getLocation())
+					.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("chest-protection-time")))
+					.send();
+		}
+
 		// put DeathChest in DeathChest map
 		plugin.chestManager.putChest(deathChest);
 
@@ -622,12 +631,11 @@ public final class Deployment {
 			return false;
 		}
 
-		// check if block at location is air or a ReplaceableBlock
-		return plugin.chestManager.replaceableBlocks.contains(block.getType());
+		// check if block at location is a ReplaceableBlock
+		return plugin.chestManager.isReplaceableBlock(block);
 	}
 
 
-	@SuppressWarnings("unused")
 	private void logResult(SearchResult result) {
 
 		if (result == null) {
