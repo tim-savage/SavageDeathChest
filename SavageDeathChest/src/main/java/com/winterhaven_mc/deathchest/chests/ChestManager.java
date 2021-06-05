@@ -18,7 +18,7 @@ import java.util.*;
 
 
 /**
- * A class that tracks the state of death chests and chest blocks
+ * A class that tracks the state of death chests and their component blocks
  */
 public final class ChestManager {
 
@@ -35,10 +35,10 @@ public final class ChestManager {
 	private DataStore dataStore = DataStore.create();
 
 	// set of replaceable blocks
-	public final ReplaceableBlocks replaceableBlocks;
+	private final ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
-	final static Set<Material> deathChestMaterials =
+	final static Collection<Material> deathChestMaterials =
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 					Material.CHEST,
 					Material.OAK_WALL_SIGN,
@@ -117,8 +117,8 @@ public final class ChestManager {
 				chestIndex.remove(deathChest);
 				dataStore.deleteChestRecord(deathChest);
 			}
-			// if DeathChest is past expiration, expire chest
-			else if (deathChest.getExpirationTime() < currentTime) {
+			// if DeathChest is past expiration (not infinite, denoted by zero or less expiration time), expire chest
+			else if (deathChest.getExpirationTime() > 0 && deathChest.getExpirationTime() < currentTime) {
 				deathChest.expire();
 			}
 			else {
@@ -390,6 +390,19 @@ public final class ChestManager {
 		replaceableBlocks.reload();
 		dataStore = dataStore.reload();
 	}
+
+	public boolean isReplaceableBlock(Material material) {
+		return replaceableBlocks.contains(material);
+	}
+
+	public boolean isReplaceableBlock(Block block) {
+		return replaceableBlocks.contains(block.getType());
+	}
+
+	public ReplaceableBlocks getReplaceableBlocks() {
+		return replaceableBlocks;
+	}
+
 
 //	/**
 //	 * Check if a new datastore type has been configured, and
