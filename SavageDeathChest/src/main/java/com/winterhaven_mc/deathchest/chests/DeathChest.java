@@ -166,6 +166,19 @@ public final class DeathChest {
 
 
 	/**
+	 * Get owner name for DeathChest by looking up offline player by uuid
+	 * @return String - chest owner name
+	 */
+	public final String getOwnerName() {
+		String returnName = "unknown";
+		if (this.ownerUid != null && plugin.getServer().getOfflinePlayer(this.getOwnerUid()).getName() != null) {
+			returnName = plugin.getServer().getOfflinePlayer(this.getOwnerUid()).getName();
+		}
+		return returnName;
+	}
+
+
+	/**
 	 * Getter method for DeathChest killerUUID
 	 *
 	 * @return UUID
