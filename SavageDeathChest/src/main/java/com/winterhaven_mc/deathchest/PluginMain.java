@@ -45,9 +45,6 @@ public final class PluginMain extends JavaPlugin {
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
 
-		// instantiate datastore
-//		dataStore = DataStore.create();
-
 		// load all chests from datastore
 		chestManager.loadChests();
 
