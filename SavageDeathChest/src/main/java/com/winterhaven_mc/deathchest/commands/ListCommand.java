@@ -146,7 +146,7 @@ public class ListCommand extends AbstractSubcommand {
 		// get list page size from configuration
 		int itemsPerPage = plugin.getConfig().getInt("list-page-size-player");
 		if (sender instanceof ConsoleCommandSender) {
-			itemsPerPage = plugin.getConfig().getInt("console-list-page-size-console");
+			itemsPerPage = plugin.getConfig().getInt("list-page-size-console");
 		}
 
 		// get page number from args; defaults to 1 if not found
