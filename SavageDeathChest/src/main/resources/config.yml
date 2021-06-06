@@ -66,7 +66,8 @@ place-above-void: true
 quick-loot: true
 
 # number of DeathChests shown per page in list command
-list-page-size: 5
+list-page-size-player: 5
+list-page-size-console: 20
 
 # Place sign on death chests
 chest-signs: true

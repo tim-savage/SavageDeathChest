@@ -5,7 +5,6 @@ import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.messages.Macro;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -82,54 +81,62 @@ public class ListCommand extends AbstractSubcommand {
 			return true;
 		}
 
-		// get list page size from configuration
-		int itemsPerPage = plugin.getConfig().getInt("list-page-size");
-
-		// get page number from args; defaults to 1 if not found
-		int page = getPageFromArgs(args);
-
 		// get player name string from args, or null if not found
 		String passedPlayerName = getNameFromArgs(args);
 
-		// match passed player name to offline player
-		OfflinePlayer targetPlayer = matchOfflinePlayer(passedPlayerName);
-
-		// check if sender is console
-		boolean senderIsConsole = (sender instanceof ConsoleCommandSender);
-
+		// if sender is player, cast sender to player; else player is null
 		Player player = null;
-
-		// if sender is player, cast sender to player
 		if (sender instanceof Player) {
 			player = (Player) sender;
 		}
 
-		// get all records from chest manager
-		final Collection<DeathChest> chestList = plugin.chestManager.getAllChests();
-
 		// create empty list of records
 		List<DeathChest> displayRecords = new ArrayList<>();
 
-		// iterate over all chest records
-		for (DeathChest deathChest : chestList) {
+		// should listing include player name
+		boolean displayNames = true;
 
-			// if passed player name is wildcard, add chest to list
-			if ((passedPlayerName.equals("*"))
-					&& (sender.hasPermission("deathchest.list.other") || senderIsConsole)) {
-				displayRecords.add(deathChest);
+		// if no target player entered
+		if (passedPlayerName.isEmpty()) {
+			// if sender is player, add player's chests to display list
+			if (sender instanceof Player) {
+				displayRecords = getChestsForPlayer(player);
+				displayNames = false;
 			}
-
-			// if sender has list.other permission, and passed player is valid player and matches chest owner, add chest to list
-			else if (targetPlayer != null
-					&& deathChest.getOwnerUid().equals(targetPlayer.getUniqueId())
-					&& sender.hasPermission("deathchest.list.other") || senderIsConsole) {
-				displayRecords.add(deathChest);
+			// else add all chests to display list
+			else {
+				displayRecords = new ArrayList<>(plugin.chestManager.getAllChests());
 			}
+		}
 
-			// if message recipient is valid player and matches chest owner, add chest to list
-			else if (player != null
-					&& player.getUniqueId().equals(deathChest.getOwnerUid())) {
-				displayRecords.add(deathChest);
+		// else if wildcard character entered, add all chest records to display list
+		else if (passedPlayerName.equals("*")) {
+			if (sender.hasPermission("deathchest.list.other")) {
+				displayRecords = new ArrayList<>(plugin.chestManager.getAllChests());
+			}
+			else {
+				// send list.other permission denied message and return true
+				Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
+				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+				return true;
+			}
+		}
+
+		// else match chest records to entered target player name prefix
+		else {
+			if (sender.hasPermission("deathchest.list.other")) {
+				// iterate over all chest records
+				for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
+					if (deathChest.getOwnerName().toLowerCase().startsWith(passedPlayerName.toLowerCase())) {
+						displayRecords.add(deathChest);
+					}
+				}
+			}
+			else {
+				// send list.other permission denied message and return true
+				Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
+				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+				return true;
 			}
 		}
 
@@ -142,6 +149,15 @@ public class ListCommand extends AbstractSubcommand {
 		// sort displayRecords
 		displayRecords.sort(Comparator.comparingLong(DeathChest::getExpirationTime));
 
+		// get list page size from configuration
+		int itemsPerPage = plugin.getConfig().getInt("list-page-size-player");
+		if (sender instanceof ConsoleCommandSender) {
+			itemsPerPage = plugin.getConfig().getInt("console-list-page-size-console");
+		}
+
+		// get page number from args; defaults to 1 if not found
+		int page = getPageFromArgs(args);
+
 		// get page count
 		int pageCount = ((displayRecords.size() - 1) / itemsPerPage) + 1;
 		if (page > pageCount) {
@@ -153,9 +169,6 @@ public class ListCommand extends AbstractSubcommand {
 		List<DeathChest> displayRange = displayRecords.subList(startIndex, endIndex);
 
 		int listCount = startIndex;
-
-		// if sender is console or wildcard used, set displayFull true; else false
-		boolean displayFull = senderIsConsole || passedPlayerName.equals("*");
 
 		// display list header
 		displayListHeader(sender, page, pageCount);
@@ -179,7 +192,7 @@ public class ListCommand extends AbstractSubcommand {
 			Long remainingTime = deathChest.getExpirationTime() - System.currentTimeMillis();
 
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
-			if (displayFull) {
+			if (displayNames) {
 				Message.create(sender, LIST_ITEM_ALL)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
@@ -206,30 +219,15 @@ public class ListCommand extends AbstractSubcommand {
 	}
 
 
-	private OfflinePlayer matchOfflinePlayer(String name) {
-
-		OfflinePlayer matchedPlayer = null;
-
-		for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
-
-			if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(name)) {
-				matchedPlayer = offlinePlayer;
-				break;
-			}
-		}
-		return matchedPlayer;
-	}
-
-
-	private Collection<DeathChest> getChestsForPlayer(Player player) {
-		Set<DeathChest> returnSet = new HashSet<>();
+	private List<DeathChest> getChestsForPlayer(Player player) {
+		List<DeathChest> returnList = new ArrayList<>();
 
 		for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
 			if (deathChest.getOwnerUid().equals(player.getUniqueId())) {
-				returnSet.add(deathChest);
+				returnList.add(deathChest);
 			}
 		}
-		return returnSet;
+		return returnList;
 	}
 
 
