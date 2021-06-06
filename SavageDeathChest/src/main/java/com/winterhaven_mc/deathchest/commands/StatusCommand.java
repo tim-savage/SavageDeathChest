@@ -59,9 +59,14 @@ public class StatusCommand extends AbstractSubcommand {
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
 				+ ChatColor.RESET + LanguageManager.getInstance().getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
 
+		int chestProtectionTime = plugin.getConfig().getInt("chest-protection-time");
+		if (chestProtectionTime == 0) {
+			chestProtectionTime = -1;
+		}
+
 		sender.sendMessage(ChatColor.GREEN + "Chest Protection Time: "
 				+ ChatColor.RESET + LanguageManager.getInstance()
-				.getTimeString(TimeUnit.MINUTES.toMillis(plugin.getConfig().getInt("chest-protection-time"))));
+					.getTimeString(TimeUnit.MINUTES.toMillis(chestProtectionTime)));
 
 		sender.sendMessage(ChatColor.GREEN + "Require Chest: "
 				+ ChatColor.RESET + plugin.getConfig().getString("require-chest"));
