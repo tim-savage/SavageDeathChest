@@ -72,6 +72,11 @@ public final class Deployment {
 		// get configured expire-time
 		long expireTime = plugin.getConfig().getLong("expire-time");
 
+		// if configured expire-time is zero, set to negative to display infinite time in messages
+		if (expireTime == 0) {
+			expireTime = -1;
+		}
+
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
@@ -136,12 +141,20 @@ public final class Deployment {
 			return;
 		}
 
+		// get configured chest protection time
+		long chestProtectionTime = plugin.getConfig().getLong("chest-protection-time");
+
+		// protection time is zero, set to negative to display infinite time in message
+		if (chestProtectionTime == 0) {
+			chestProtectionTime = -1;
+		}
+
 		// if chest protection is enabled and chest-protection-time is set (non-zero), send message
-		if (plugin.getConfig().getBoolean("chest-protection") && deathChest.getProtectionExpirationTime() > 0) {
+		if (plugin.getConfig().getBoolean("chest-protection") && chestProtectionTime > 0) {
 			Message.create(player, CHEST_DEPLOYED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, player.getName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
-					.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("chest-protection-time")))
+					.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(chestProtectionTime))
 					.send();
 		}
 
