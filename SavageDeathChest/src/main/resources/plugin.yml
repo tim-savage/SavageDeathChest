@@ -8,66 +8,65 @@ softdepend: [Factions,GriefPrevention,Multiverse-Core,PreciousStones,ProClaim,Ro
 commands:
    deathchest:
       aliases: sdc
-      description: This is the DeathChest command.
-      permission-message: You don't have required permission <permission>.
-      usage:
-        /<command> [command]
+      description: "This is the DeathChest command."
+      permission-message: "You don't have required permission <permission>."
+      usage: "/<command> [command]"
 
 permissions:
   deathchest.chest:
-    description: Allow the creation of a death chest.
+    description: "Allow the creation of a death chest."
     default: true
 
   deathchest.loot:
-    description: Allow player to quick-loot death chests by sneak-punching.
+    description: "Allow player to quick-loot death chests by sneak-punching."
     default: true
 
   deathchest.loot.killer:
-    description: Allow player to loot death chests of players they have killed.
+    description: "Allow player to loot death chests of players they have killed."
     default: true
 
   deathchest.loot.other:
-    description: Allow player to quick-loot other player's chests.
+    description: "Allow player to quick-loot other player's chests."
     default: op
 
   deathchest.freechest:
-    description: Override require chest in inventory configuration.
+    description: "Override require chest in inventory configuration."
     default: op
     
   deathchest.creative-access:
-    description: Override restriction on opening death chests in creative mode.
+    description: "Override restriction on opening death chests in creative mode."
     default: op
     
   deathchest.allow-place:
-    description: Override restriction on placing items in death chests.
+    description: "Override restriction on placing items in death chests."
     default: op
 
   deathchest.doublechest:
-    description: Allow placement of double chests if necessary.
+    description: "Allow placement of double chests if necessary."
     default: true
 
   deathchest.help:
-    description: Allow viewing plugin help.
+    description: "Allow viewing plugin help."
     default: true
 
   deathchest.list:
-    description: Allow viewing list of deathchests.
+    description: "Allow viewing list of deathchests."
     default: op
 
   deathchest.list.other:
-    description: Allow viewing a list of other player's deathchests.
+    description: "Allow viewing a list of other player's deathchests."
     default: op
 
   deathchest.reload:
-    description: Allow reloading the config file.
+    description: "Allow reloading the config file."
     default: op
 
   deathchest.status:
-    description: Allow viewing deathchest status.
+    description: "Allow viewing deathchest status."
     default: op
 
   deathchest.player:
-    description: Default permissions.
+    description: "Default permissions."
     default: true
     children:
       deathchest.chest: true
@@ -75,7 +74,7 @@ permissions:
       deathchest.doublechest: true
 
   deathchest.admin:
-    description: Give access to DeathChest admin commands.
+    description: "Give access to DeathChest admin commands."
     default: op
     children:
       deathchest.freechest: true
