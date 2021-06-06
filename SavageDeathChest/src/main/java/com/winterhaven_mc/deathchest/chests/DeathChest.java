@@ -119,9 +119,9 @@ public final class DeathChest {
 		this.placementTime = System.currentTimeMillis();
 
 		// set expirationTime timestamp
-		// if configured expiration is zero (or negative), set expiration to zero to signify no expiration
-		if (plugin.getConfig().getLong("expire-time") <= 0) {
-			this.expirationTime = 0;
+		// if configured expiration is zero, set expiration to negative to signify no expiration
+		if (plugin.getConfig().getLong("expire-time") == 0) {
+			this.expirationTime = -1;
 		}
 		else {
 			// set expiration field based on config setting (converting from minutes to milliseconds)
@@ -133,9 +133,9 @@ public final class DeathChest {
 		this.expireTaskId = createExpireTask();
 
 		// set protectionExpirationTime timestamp
-		// if configured protection expiration is zero (or negative), set protection expiration to zero to signify no expiration
-		if (plugin.getConfig().getLong("chest-protection-time") <= 0) {
-			this.protectionExpirationTime = 0;
+		// if configured protection expiration is zero, set protection expiration to negative to signify no expiration
+		if (plugin.getConfig().getLong("chest-protection-time") == 0) {
+			this.protectionExpirationTime = -1;
 		}
 		else {
 			// set protection expiration field based on config setting (converting from minutes to milliseconds)
