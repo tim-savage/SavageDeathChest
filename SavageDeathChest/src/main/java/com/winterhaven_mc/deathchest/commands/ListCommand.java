@@ -109,29 +109,31 @@ public class ListCommand extends AbstractSubcommand {
 			}
 		}
 
-		// else if player has deathchest.list.other permission...
-		else if (sender.hasPermission("deathchest.list.other")) {
+		else {
+			// if player has deathchest.list.other permission...
+			if (sender.hasPermission("deathchest.list.other")) {
 
-			// if wildcard character entered, add all chest records to display list
-			if (passedPlayerName.equals("*")) {
-				displayRecords = new ArrayList<>(plugin.chestManager.getAllChests());
-			}
+				// if wildcard character entered, add all chest records to display list
+				if (passedPlayerName.equals("*")) {
+					displayRecords = new ArrayList<>(plugin.chestManager.getAllChests());
+				}
 
-			// else match chest records to entered target player name prefix
-			else {
-				for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
-					if (deathChest.getOwnerName().toLowerCase().startsWith(passedPlayerName.toLowerCase())) {
-						displayRecords.add(deathChest);
+				// else match chest records to entered target player name prefix
+				else {
+					for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
+						if (deathChest.getOwnerName().toLowerCase().startsWith(passedPlayerName.toLowerCase())) {
+							displayRecords.add(deathChest);
+						}
 					}
 				}
 			}
-		}
 
-		// else send permission denied message and return true
-		else {
-			Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
-			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
-			return true;
+			// else send permission denied message and return true
+			else {
+				Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
+				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
+				return true;
+			}
 		}
 
 		// if display list is empty, output list empty message and return
