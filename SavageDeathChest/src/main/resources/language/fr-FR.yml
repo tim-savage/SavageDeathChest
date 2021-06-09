@@ -55,6 +55,7 @@ MESSAGES:
 
   CHEST_ACCESSED_PROTECTION_TIME:
     enabled: true
+    repeat-delay: 1
     string: '&cLe coffre de la mort appartenant à %OWNER% est protégé du pillage pendant %DURATION%.'
     # available subs: %OWNER%, %DURATION%, %LOCATION%
 

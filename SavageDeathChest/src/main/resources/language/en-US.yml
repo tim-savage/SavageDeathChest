@@ -58,6 +58,7 @@ MESSAGES:
 
   CHEST_ACCESSED_PROTECTION_TIME:
     enabled: true
+    repeat-delay: 1
     string: '&cDeath chest belonging to %OWNER% is protected from looting for %DURATION%.'
     # available subs: %OWNER%, %DURATION%, %LOCATION%
 
