@@ -1,16 +1,15 @@
 package com.winterhaven_mc.deathchest;
 
 import com.winterhaven_mc.deathchest.chests.ChestManager;
+import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
+import com.winterhaven_mc.deathchest.commands.CommandManager;
 import com.winterhaven_mc.deathchest.listeners.BlockEventListener;
 import com.winterhaven_mc.deathchest.listeners.InventoryEventListener;
 import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
-import com.winterhaven_mc.deathchest.commands.CommandManager;
-import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.util.LanguageManager;
 import com.winterhaven_mc.util.SoundConfiguration;
 import com.winterhaven_mc.util.WorldManager;
 import com.winterhaven_mc.util.YamlSoundConfiguration;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -19,11 +18,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class PluginMain extends JavaPlugin {
 
+	public boolean debug = getConfig().getBoolean("debug");
+
 	public WorldManager worldManager;
 	public SoundConfiguration soundConfig;
 	public ChestManager chestManager;
-
-	public boolean debug = getConfig().getBoolean("debug");
+	private CommandManager commandManager;
 
 
 	@Override
@@ -48,7 +48,7 @@ public final class PluginMain extends JavaPlugin {
 		chestManager.loadChests();
 
 		// instantiate command manager
-		new CommandManager(this);
+		commandManager = new CommandManager(this);
 
 		// initialize event listeners
 		new PlayerEventListener(this);
