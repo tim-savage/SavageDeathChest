@@ -35,12 +35,24 @@
 		</repository>
 	</repositories>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>5.7.2</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<!-- WorldManagerLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>world-manager-lib</artifactId>
-			<version>1.16.0</version>
+			<version>1.16.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- MessengerLib -->
@@ -54,7 +66,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>sound-config-lib</artifactId>
-			<version>1.0.5</version>
+			<version>1.16.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Spigot API -->
@@ -112,6 +124,21 @@
 			<version>1.15.2.5</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- Unit Testing Dependencies -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Mock Bukkit Framework -->
+		<dependency>
+			<groupId>com.github.seeseemelk</groupId>
+			<artifactId>MockBukkit-v1.16</artifactId>
+			<version>1.0.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -122,6 +149,14 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+
+		<!-- Test Resources -->
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
 
 		<plugins>
 			<!-- Compilation plugin -->
@@ -201,6 +236,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- Plugin for Unit Tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.2</version>
+
+				<configuration>
+					<junitArtifactName>org.junit.jupiter:junit-jupiter</junitArtifactName>
+					<trimStackTrace>false</trimStackTrace>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
