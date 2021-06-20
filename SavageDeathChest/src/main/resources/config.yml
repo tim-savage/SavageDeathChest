@@ -7,15 +7,14 @@ language: en-US
 # enabled worlds list
 # if this list is empty, all worlds will be added to the enabled worlds list
 # otherwise, only listed worlds will be added to the enabled worlds list
-
-enabled-worlds:
+# Note: explicitly declare empty list for testing
+enabled-worlds: []
 #  - enabled_world1
 #  - enabled_world2
 
 
 # disabled worlds list
 # these worlds will be removed from the enabled worlds list created by the previous setting
-
 disabled-worlds:
   - disabled_world1
   - disabled_world2
