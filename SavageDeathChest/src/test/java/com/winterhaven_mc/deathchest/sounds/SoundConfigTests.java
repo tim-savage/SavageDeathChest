@@ -85,7 +85,7 @@ public class SoundConfigTests {
 
         @ParameterizedTest
         @MethodSource("GetConfigFileKeys")
-        @DisplayName("config file key has matching key in enum sound names")
+        @DisplayName("config file key has matching key in enum sound names.")
         void SoundConfigEnumContainsAllFileSounds(String key) {
             Assertions.assertTrue(enumSoundNames.contains(key),
                     "sound config file key '" + key + "' not found in Enum.");
@@ -97,8 +97,8 @@ public class SoundConfigTests {
         void SoundConfigFileHasValidBukkitSound(String key) {
             String bukkitSoundName = plugin.soundConfig.getBukkitSoundName(key);
             Assertions.assertTrue(plugin.soundConfig.isValidBukkitSoundName(bukkitSoundName),
-                    "File key '" + key + "' has invalid bukkit sound name: " + bukkitSoundName);
-            System.out.println("File key '" + key + "' has valid bukkit sound name: " + bukkitSoundName);
+                    "File key '" + key + "' has invalid bukkit sound name: '" + bukkitSoundName + "'.");
+            System.out.println("File key '" + key + "' has valid bukkit sound name: '" + bukkitSoundName + "'.");
         }
 
         @Nested
