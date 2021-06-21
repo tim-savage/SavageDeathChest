@@ -2,12 +2,9 @@ package com.winterhaven_mc.deathchest;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.WorldMock;
-import org.bukkit.configuration.Configuration;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,16 +14,12 @@ import java.util.Set;
 public class PluginMainTests {
 
     private ServerMock server;
-    private WorldMock worldMock;
     private PluginMain plugin;
 
     @BeforeAll
     public void setUp() {
         // Start the mock server
         server = MockBukkit.mock();
-
-        // create mock world
-        worldMock = server.addSimpleWorld("world");
 
         // start the mock plugin
         plugin = MockBukkit.load(PluginMain.class);
@@ -38,6 +31,7 @@ public class PluginMainTests {
         // Stop the mock server
         MockBukkit.unmock();
     }
+
 
     @Nested
     @DisplayName("Test mock objects.")
@@ -56,12 +50,48 @@ public class PluginMainTests {
         }
     }
 
+
+    @Nested
+    @DisplayName("Test plugin main objects.")
+    class PluginMainObjects {
+
+        @Test
+        @DisplayName("config not null.")
+        void ConfigNotNull() {
+            Assertions.assertNotNull(plugin.getConfig());
+        }
+
+        @Test
+        @DisplayName("world manager not null.")
+        void WorldManagerNotNull() {
+            Assertions.assertNotNull(plugin.worldManager);
+        }
+
+        @Test
+        @DisplayName("sound config not null.")
+        void SoundConfigNotNull() {
+            Assertions.assertNotNull(plugin.soundConfig);
+        }
+
+        @Test
+        @DisplayName("command manager not null.")
+        void CommandManagerNotNull() {
+            Assertions.assertNotNull(plugin.commandManager);
+        }
+
+        @Test
+        @DisplayName("data folder is not null.")
+        void DataFolderNotNull() {
+            Assertions.assertNotNull(plugin.getDataFolder());
+        }
+    }
+
+
     @Nested
     @DisplayName("Test plugin config.")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class Config {
 
-        Configuration config = plugin.getConfig();
         Set<String> enumConfigKeyStrings = new HashSet<>();
 
         public Config() {
@@ -71,115 +101,24 @@ public class PluginMainTests {
         }
 
         @Test
-        @DisplayName("config not null.")
-        void ConfigNotNull() {
-            Assertions.assertNotNull(config);
-        }
-
-        @Test
-        @DisplayName("test configured language.")
-        void GetLanguage() {
-            Assertions.assertEquals("en-US", config.getString("language"));
-        }
-
-        @Test
         @DisplayName("test enum string set not null")
         void EnumStringsNotNull() {
             Assertions.assertNotNull(enumConfigKeyStrings);
         }
 
         @Test
-        @DisplayName("test enum string set not null")
+        @DisplayName("test enum string set not empty")
         void EnumStringsNotEmpty() {
             Assertions.assertFalse(enumConfigKeyStrings.isEmpty());
         }
-
-        @Test
-        @DisplayName("test enum string set not null")
-        void EnumStringsGreaterThanZero() {
-            Assertions.assertTrue(enumConfigKeyStrings.size() > 0);
-        }
-
-        @Test
-        void test1() {
-            Assertions.assertNotNull(plugin.getConfig().getKeys(false));
-            for (String key : plugin.getConfig().getKeys(false)) {
-                System.out.println("config key: " + key);
-            }
-        }
-
-//        @SuppressWarnings("unused")
-//        Set<String> ConfigFileKeys() {
-//            return plugin.getConfig().getKeys(false);
-//        }
-//
-//        @ParameterizedTest
-//        @DisplayName("file config key is contained in enum.")
-//        @MethodSource("ConfigFileKeys")
-//        void ConfigFileKeyNotNull(String key) {
-//            Assertions.assertNotNull(key);
-//            System.out.println("config key:" + key + " value: " + config.getString(key));
-//        }
-
 
         @ParameterizedTest
         @EnumSource(ConfigSetting.class)
         @DisplayName("ConfigSetting enum matches config file key/value pairs.")
         void ConfigFileKeysContainsEnumKey(ConfigSetting configSetting) {
             Assertions.assertEquals(configSetting.getValue(), plugin.getConfig().getString(configSetting.getKey()));
-//            System.out.println("Enum name: " + configSetting.name());
         }
 
-    }
-
-
-    @Nested
-    @DisplayName("Test Command Manager")
-    class Commands {
-
-        @Test
-        @DisplayName("Test Help Command.")
-        void HelpCommand() {
-            server.dispatchCommand(server.addPlayer(), "/sdc help");
-        }
-
-        @Test
-        @DisplayName("Test List Command.")
-        void ListCommand() {
-            server.dispatchCommand(server.addPlayer(), "/sdc list");
-        }
-
-        @Test
-        @DisplayName("Test Reload Command.")
-        void ReloadCommand() {
-            server.dispatchCommand(server.addPlayer(), "/sdc reload");
-        }
-
-        @Test
-        @DisplayName("Test Status Command.")
-        void StatusCommand() {
-            server.dispatchCommand(server.addPlayer(), "/sdc status");
-        }
-
-
-    }
-
-    @Test
-    @DisplayName("Test worldManager is not null.")
-    void MockPluginWorldManagerNotNull() {
-        Assertions.assertNotNull(plugin.worldManager);
-    }
-
-    @Test
-    @DisplayName("Test data folder is not null.")
-    void MockPluginDataFolderNotNull() {
-        Assertions.assertNotNull(plugin.getDataFolder());
-    }
-
-    @Test
-    @DisplayName("Test soundConfig is not null.")
-    void SoundConfigNotNull() {
-        Assertions.assertNotNull(plugin.soundConfig);
     }
 
 }

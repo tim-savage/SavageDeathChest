@@ -23,7 +23,7 @@ public final class PluginMain extends JavaPlugin {
 	public WorldManager worldManager;
 	public SoundConfiguration soundConfig;
 	public ChestManager chestManager;
-	private CommandManager commandManager;
+	public CommandManager commandManager;
 
 
 	@Override
