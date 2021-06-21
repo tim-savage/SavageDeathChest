@@ -6,7 +6,7 @@ import com.winterhaven_mc.deathchest.commands.CommandManager;
 import com.winterhaven_mc.deathchest.listeners.BlockEventListener;
 import com.winterhaven_mc.deathchest.listeners.InventoryEventListener;
 import com.winterhaven_mc.deathchest.listeners.PlayerEventListener;
-import com.winterhaven_mc.util.LanguageManager;
+import com.winterhaven_mc.util.LanguageHandler;
 import com.winterhaven_mc.util.SoundConfiguration;
 import com.winterhaven_mc.util.WorldManager;
 import com.winterhaven_mc.util.YamlSoundConfiguration;
@@ -20,10 +20,11 @@ public final class PluginMain extends JavaPlugin {
 
 	public boolean debug = getConfig().getBoolean("debug");
 
+	public LanguageHandler languageHandler;
 	public WorldManager worldManager;
 	public SoundConfiguration soundConfig;
 	public ChestManager chestManager;
-	private CommandManager commandManager;
+	public CommandManager commandManager;
 
 
 	@Override
@@ -33,7 +34,7 @@ public final class PluginMain extends JavaPlugin {
 		saveDefaultConfig();
 
 		// initialize language manager
-		LanguageManager.init();
+		languageHandler = new LanguageHandler(this);
 
 		// instantiate world manager
 		worldManager = new WorldManager(this);

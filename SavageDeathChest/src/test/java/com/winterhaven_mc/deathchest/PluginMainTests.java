@@ -3,14 +3,7 @@ package com.winterhaven_mc.deathchest;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.WorldMock;
-import org.bukkit.configuration.Configuration;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -56,82 +49,6 @@ public class PluginMainTests {
         }
     }
 
-    @Nested
-    @DisplayName("Test plugin config.")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class Config {
-
-        Configuration config = plugin.getConfig();
-        Set<String> enumConfigKeyStrings = new HashSet<>();
-
-        public Config() {
-            for (ConfigSetting configSetting : ConfigSetting.values()) {
-                this.enumConfigKeyStrings.add(configSetting.getKey());
-            }
-        }
-
-        @Test
-        @DisplayName("config not null.")
-        void ConfigNotNull() {
-            Assertions.assertNotNull(config);
-        }
-
-        @Test
-        @DisplayName("test configured language.")
-        void GetLanguage() {
-            Assertions.assertEquals("en-US", config.getString("language"));
-        }
-
-        @Test
-        @DisplayName("test enum string set not null")
-        void EnumStringsNotNull() {
-            Assertions.assertNotNull(enumConfigKeyStrings);
-        }
-
-        @Test
-        @DisplayName("test enum string set not null")
-        void EnumStringsNotEmpty() {
-            Assertions.assertFalse(enumConfigKeyStrings.isEmpty());
-        }
-
-        @Test
-        @DisplayName("test enum string set not null")
-        void EnumStringsGreaterThanZero() {
-            Assertions.assertTrue(enumConfigKeyStrings.size() > 0);
-        }
-
-        @Test
-        void test1() {
-            Assertions.assertNotNull(plugin.getConfig().getKeys(false));
-            for (String key : plugin.getConfig().getKeys(false)) {
-                System.out.println("config key: " + key);
-            }
-        }
-
-//        @SuppressWarnings("unused")
-//        Set<String> ConfigFileKeys() {
-//            return plugin.getConfig().getKeys(false);
-//        }
-//
-//        @ParameterizedTest
-//        @DisplayName("file config key is contained in enum.")
-//        @MethodSource("ConfigFileKeys")
-//        void ConfigFileKeyNotNull(String key) {
-//            Assertions.assertNotNull(key);
-//            System.out.println("config key:" + key + " value: " + config.getString(key));
-//        }
-
-
-        @ParameterizedTest
-        @EnumSource(ConfigSetting.class)
-        @DisplayName("ConfigSetting enum matches config file key/value pairs.")
-        void ConfigFileKeysContainsEnumKey(ConfigSetting configSetting) {
-            Assertions.assertEquals(configSetting.getValue(), plugin.getConfig().getString(configSetting.getKey()));
-//            System.out.println("Enum name: " + configSetting.name());
-        }
-
-    }
-
 
     @Nested
     @DisplayName("Test Command Manager")
@@ -164,22 +81,62 @@ public class PluginMainTests {
 
     }
 
-    @Test
-    @DisplayName("Test worldManager is not null.")
-    void MockPluginWorldManagerNotNull() {
-        Assertions.assertNotNull(plugin.worldManager);
+    @Nested
+    class PluginMainObjects {
+
+        @Test
+        @DisplayName("plugin config is not null.")
+        void ConfigNotNull() {
+            Assertions.assertNotNull(plugin.getConfig(), "plugin config is null.");
+        }
+
+        @Test
+        @DisplayName("language handler is not null.")
+        void LanguageHandlerNotNull() {
+            Assertions.assertNotNull(plugin.languageHandler, "language handler is null.");
+        }
+
+        @Test
+        @DisplayName("world manager is not null.")
+        void WorldManagerNotNull() {
+            Assertions.assertNotNull(plugin.worldManager, "world manager is null.");
+        }
+
+        @Test
+        @DisplayName("sound config is not null.")
+        void SoundConfigNotNull() {
+            Assertions.assertNotNull(plugin.soundConfig, "sound config is null.");
+        }
+
+        @Test
+        @DisplayName("command manager is not null.")
+        void CommandManagerNotNul() {
+            Assertions.assertNotNull(plugin.commandManager, "command manager is null.");
+        }
+
+        @Test
+        @DisplayName("player event listener is not null.")
+        void PlayerEventListenerNotNull() {
+            Assertions.assertNotNull(plugin.playerEventListener,"player event listener is null.");
+        }
+
+        @Test
+        @DisplayName("block event listener is not null.")
+        void BlockEventListenerNotNull() {
+            Assertions.assertNotNull(plugin.blockEventListener,"block event listener is null.");
+        }
+
+        @Test
+        @DisplayName("inventory event listener is not null.")
+        void InventoryEventListenerNotNull() {
+            Assertions.assertNotNull(plugin.inventoryEventListener,"inventory event listener is null.");
+        }
     }
 
+
     @Test
-    @DisplayName("Test data folder is not null.")
+    @DisplayName("data folder is not null.")
     void MockPluginDataFolderNotNull() {
         Assertions.assertNotNull(plugin.getDataFolder());
     }
-
-    @Test
-    @DisplayName("Test soundConfig is not null.")
-    void SoundConfigNotNull() {
-        Assertions.assertNotNull(plugin.soundConfig);
-    }
-
 }
