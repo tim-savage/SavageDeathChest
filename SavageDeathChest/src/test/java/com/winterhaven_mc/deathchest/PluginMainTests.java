@@ -40,13 +40,15 @@ public class PluginMainTests {
         @Test
         @DisplayName("Test mock server is not null.")
         void MockServerNotNull() {
-            Assertions.assertNotNull(server);
+            Assertions.assertNotNull(server,
+                    "mock server is null.");
         }
 
         @Test
         @DisplayName("Test mock plugin is not null.")
         void MockPluginNotNull() {
-            Assertions.assertNotNull(plugin);
+            Assertions.assertNotNull(plugin,
+                    "mock plugin is null.");
         }
     }
 
@@ -58,31 +60,36 @@ public class PluginMainTests {
         @Test
         @DisplayName("config not null.")
         void ConfigNotNull() {
-            Assertions.assertNotNull(plugin.getConfig());
+            Assertions.assertNotNull(plugin.getConfig(),
+                    "plugin configuration is null.");
         }
 
         @Test
         @DisplayName("world manager not null.")
         void WorldManagerNotNull() {
-            Assertions.assertNotNull(plugin.worldManager);
+            Assertions.assertNotNull(plugin.worldManager,
+                    "world manager is null.");
         }
 
         @Test
         @DisplayName("sound config not null.")
         void SoundConfigNotNull() {
-            Assertions.assertNotNull(plugin.soundConfig);
+            Assertions.assertNotNull(plugin.soundConfig,
+                    "sound configuration is null.");
         }
 
         @Test
         @DisplayName("command manager not null.")
         void CommandManagerNotNull() {
-            Assertions.assertNotNull(plugin.commandManager);
+            Assertions.assertNotNull(plugin.commandManager,
+                    "command manager is null.");
         }
 
         @Test
         @DisplayName("data folder is not null.")
         void DataFolderNotNull() {
-            Assertions.assertNotNull(plugin.getDataFolder());
+            Assertions.assertNotNull(plugin.getDataFolder(),
+                    "data folder is null.");
         }
     }
 
@@ -94,6 +101,10 @@ public class PluginMainTests {
 
         Set<String> enumConfigKeyStrings = new HashSet<>();
 
+        /**
+         * Constructor for test class
+         * populates enumConfigKeyStrings set
+         */
         public Config() {
             for (ConfigSetting configSetting : ConfigSetting.values()) {
                 this.enumConfigKeyStrings.add(configSetting.getKey());
@@ -103,20 +114,23 @@ public class PluginMainTests {
         @Test
         @DisplayName("test enum string set not null")
         void EnumStringsNotNull() {
-            Assertions.assertNotNull(enumConfigKeyStrings);
+            Assertions.assertNotNull(enumConfigKeyStrings,
+                    "Enum key set is null.");
         }
 
         @Test
-        @DisplayName("test enum string set not empty")
+        @DisplayName("test enum string set not empty.")
         void EnumStringsNotEmpty() {
-            Assertions.assertFalse(enumConfigKeyStrings.isEmpty());
+            Assertions.assertFalse(enumConfigKeyStrings.isEmpty(),
+                    "Enum key set is empty.");
         }
 
         @ParameterizedTest
         @EnumSource(ConfigSetting.class)
         @DisplayName("ConfigSetting enum matches config file key/value pairs.")
         void ConfigFileKeysContainsEnumKey(ConfigSetting configSetting) {
-            Assertions.assertEquals(configSetting.getValue(), plugin.getConfig().getString(configSetting.getKey()));
+            Assertions.assertEquals(configSetting.getValue(), plugin.getConfig().getString(configSetting.getKey()),
+                    "Enum key " + configSetting.getKey() + " not found in config file.");
         }
 
     }
