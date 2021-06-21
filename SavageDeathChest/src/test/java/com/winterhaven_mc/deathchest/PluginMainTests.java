@@ -54,6 +54,14 @@ public class PluginMainTests {
         void PluginEnabled() {
             Assertions.assertTrue(plugin.isEnabled(),"plugin is not enabled.");
         }
+
+        @Test
+        @DisplayName("data folder is not null.")
+        void DataFolderNotNull() {
+            Assertions.assertNotNull(plugin.getDataFolder(),
+                    "data folder is null.");
+        }
+
     }
 
 
@@ -89,12 +97,6 @@ public class PluginMainTests {
                     "command manager is null.");
         }
 
-        @Test
-        @DisplayName("data folder is not null.")
-        void DataFolderNotNull() {
-            Assertions.assertNotNull(plugin.getDataFolder(),
-                    "data folder is null.");
-        }
     }
 
 
