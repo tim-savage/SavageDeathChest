@@ -47,9 +47,39 @@ public class SoundConfigTests {
         MockBukkit.unmock();
     }
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+    @Nested
+    @DisplayName("test mocking setup.")
+    class MockingSetup {
+        @Test
+        @DisplayName("server is not null.")
+        void ServerNotNull() {
+            Assertions.assertNotNull(server, "server is null.");
+        }
+
+        @Test
+        @DisplayName("world is not null.")
+        void WorldNotNull() {
+            Assertions.assertNotNull(world, "world is null.");
+        }
+
+        @Test
+        @DisplayName("player is not null.")
+        void PlayerNotNull() {
+            Assertions.assertNotNull(player, "player is null.");
+        }
+
+        @Test
+        @DisplayName("plugin is not null.")
+        void PluginNotNull() {
+            Assertions.assertNotNull(plugin, "plugin is null.");
+        }
+    }
+
+
     @Nested
     @DisplayName("Test Sounds config.")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class Sounds {
 
         // collection of enum sound name strings
@@ -63,33 +93,6 @@ public class SoundConfigTests {
             }
         }
 
-        @Nested
-        @DisplayName("test mocking setup.")
-        class MockingSetup {
-            @Test
-            @DisplayName("server is not null.")
-            void ServerNotNull() {
-                Assertions.assertNotNull(server, "server is null.");
-            }
-
-            @Test
-            @DisplayName("world is not null.")
-            void WorldNotNull() {
-                Assertions.assertNotNull(world, "world is null.");
-            }
-
-            @Test
-            @DisplayName("player is not null.")
-            void PlayerNotNull() {
-                Assertions.assertNotNull(player, "player is null.");
-            }
-
-            @Test
-            @DisplayName("plugin is not null.")
-            void PluginNotNull() {
-                Assertions.assertNotNull(plugin, "plugin is null.");
-            }
-        }
 
 
         @SuppressWarnings("unused")
