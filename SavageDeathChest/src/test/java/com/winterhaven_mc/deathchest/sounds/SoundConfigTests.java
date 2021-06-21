@@ -63,12 +63,34 @@ public class SoundConfigTests {
             }
         }
 
-        @Test
-        @DisplayName("Sounds config is not null.")
-        void SoundConfigNotNull() {
-            Assertions.assertNotNull(plugin.soundConfig,
-                    "sound config is null.");
+        @Nested
+        @DisplayName("test mocking setup.")
+        class MockingSetup {
+            @Test
+            @DisplayName("server is not null.")
+            void ServerNotNull() {
+                Assertions.assertNotNull(server, "server is null.");
+            }
+
+            @Test
+            @DisplayName("world is not null.")
+            void WorldNotNull() {
+                Assertions.assertNotNull(world, "world is null.");
+            }
+
+            @Test
+            @DisplayName("player is not null.")
+            void PlayerNotNull() {
+                Assertions.assertNotNull(player, "player is null.");
+            }
+
+            @Test
+            @DisplayName("plugin is not null.")
+            void PluginNotNull() {
+                Assertions.assertNotNull(plugin, "plugin is null.");
+            }
         }
+
 
         @SuppressWarnings("unused")
         Collection<String> GetConfigFileKeys() {
@@ -98,7 +120,6 @@ public class SoundConfigTests {
             String bukkitSoundName = plugin.soundConfig.getBukkitSoundName(key);
             Assertions.assertTrue(plugin.soundConfig.isValidBukkitSoundName(bukkitSoundName),
                     "File key '" + key + "' has invalid bukkit sound name: '" + bukkitSoundName + "'.");
-            System.out.println("File key '" + key + "' has valid bukkit sound name: '" + bukkitSoundName + "'.");
         }
 
         @Nested
