@@ -4,7 +4,6 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
-import com.winterhaven_mc.util.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -32,7 +31,7 @@ public class StatusCommand extends AbstractSubcommand {
 	@Override
 	public boolean onCommand(final CommandSender sender, final List<String> args) {
 		if (!sender.hasPermission("deathchest.status")) {
-			Message.create(sender, COMMAND_FAIL_STATUS_PERMISSION).send();
+			Message.create(sender, COMMAND_FAIL_STATUS_PERMISSION).send(plugin.languageHandler);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -57,7 +56,7 @@ public class StatusCommand extends AbstractSubcommand {
 		}
 
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
-				+ ChatColor.RESET + LanguageManager.getInstance().getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
+				+ ChatColor.RESET + plugin.languageHandler.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
 
 		int chestProtectionTime = plugin.getConfig().getInt("chest-protection-time");
 		if (chestProtectionTime == 0) {
@@ -65,7 +64,7 @@ public class StatusCommand extends AbstractSubcommand {
 		}
 
 		sender.sendMessage(ChatColor.GREEN + "Chest Protection Time: "
-				+ ChatColor.RESET + LanguageManager.getInstance()
+				+ ChatColor.RESET + plugin.languageHandler
 					.getTimeString(TimeUnit.MINUTES.toMillis(chestProtectionTime)));
 
 		sender.sendMessage(ChatColor.GREEN + "Require Chest: "

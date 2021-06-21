@@ -73,7 +73,7 @@ public final class PlayerEventListener implements Listener {
 		if (!plugin.worldManager.isEnabled(player.getWorld())) {
 			Message.create(player, CHEST_DENIED_WORLD_DISABLED)
 					.setMacro(LOCATION, player.getLocation())
-					.send();
+					.send(plugin.languageHandler);
 			return;
 		}
 
@@ -82,7 +82,7 @@ public final class PlayerEventListener implements Listener {
 		if (!player.hasPermission("deathchest.chest")) {
 			Message.create(player, CHEST_DENIED_PERMISSION)
 					.setMacro(Macro.LOCATION, player.getLocation())
-					.send();
+					.send(plugin.languageHandler);
 			return;
 		}
 
@@ -95,7 +95,7 @@ public final class PlayerEventListener implements Listener {
 				&& !player.hasPermission("deathchest.creative-deploy")) {
 			Message.create(player, CREATIVE_MODE)
 					.setMacro(Macro.LOCATION, player.getLocation())
-					.send();
+					.send(plugin.languageHandler);
 			return;
 		}
 
@@ -103,7 +103,7 @@ public final class PlayerEventListener implements Listener {
 		if (event.getDrops().isEmpty()) {
 			Message.create(player, INVENTORY_EMPTY)
 					.setMacro(Macro.LOCATION, player.getLocation())
-					.send();
+					.send(plugin.languageHandler);
 			return;
 		}
 
@@ -187,7 +187,7 @@ public final class PlayerEventListener implements Listener {
 			event.setCancelled(true);
 			Message.create(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation()
-					).send();
+					).send(plugin.languageHandler);
 			return;
 		}
 
@@ -218,7 +218,7 @@ public final class PlayerEventListener implements Listener {
 					.setMacro(OWNER, ownerName)
 					.setMacro(KILLER, killerName)
 					.setMacro(VIEWER, viewerName)
-					.send();
+					.send(plugin.languageHandler);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -261,7 +261,7 @@ public final class PlayerEventListener implements Listener {
 						.setMacro(Macro.OWNER, deathChest.getOwnerName())
 						.setMacro(Macro.DURATION, remainingProtectionTime)
 						.setMacro(LOCATION, deathChest.getLocation())
-						.send();
+						.send(plugin.languageHandler);
 				// play denied access sound
 				plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 				return;
@@ -272,7 +272,7 @@ public final class PlayerEventListener implements Listener {
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, ownerName)
 					.setMacro(KILLER, killerName)
-					.send();
+					.send(plugin.languageHandler);
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -309,7 +309,7 @@ public final class PlayerEventListener implements Listener {
 				.setMacro(LOCATION, deathChest.getLocation())
 				.setMacro(OWNER, ownerName)
 				.setMacro(KILLER, killerName)
-				.send();
+				.send(plugin.languageHandler);
 
 		// if chest protection is enabled and has not expired, send message and return
 		if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
@@ -318,7 +318,7 @@ public final class PlayerEventListener implements Listener {
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(Macro.DURATION, remainingProtectionTime)
 					.setMacro(LOCATION, deathChest.getLocation())
-					.send();
+					.send(plugin.languageHandler);
 		}
 
 		// play denied access sound

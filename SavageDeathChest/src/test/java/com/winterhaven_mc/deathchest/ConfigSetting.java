@@ -22,6 +22,7 @@ public enum ConfigSetting {
     LIST_PAGE_SIZE_PLAYER("5"),
     LIST_PAGE_SIZE_CONSOLE("10"),
     CHEST_SIGNS("true"),
+
     ;
 
 

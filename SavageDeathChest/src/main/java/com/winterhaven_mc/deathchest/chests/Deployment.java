@@ -83,52 +83,52 @@ public final class Deployment {
 				Message.create(player, CHEST_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case PARTIAL_SUCCESS:
 				Message.create(player, DOUBLECHEST_PARTIAL_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case PROTECTION_PLUGIN:
 				Message.create(player, CHEST_DENIED_PLUGIN)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case ABOVE_GRASS_PATH:
 			case NON_REPLACEABLE_BLOCK:
 				Message.create(player, CHEST_DENIED_BLOCK)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case ADJACENT_CHEST:
 				Message.create(player, CHEST_DENIED_ADJACENT)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case NO_CHEST:
 				Message.create(player, NO_CHEST_IN_INVENTORY)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case SPAWN_RADIUS:
 				Message.create(player, CHEST_DENIED_SPAWN_RADIUS)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
+						.send(plugin.languageHandler);
 				break;
 
 			case VOID:
 				Message.create(player, CHEST_DENIED_VOID)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
+						.send(plugin.languageHandler);
 				break;
 		}
 
@@ -155,7 +155,7 @@ public final class Deployment {
 					.setMacro(Macro.OWNER, player.getName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
 					.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(chestProtectionTime))
-					.send();
+					.send(plugin.languageHandler);
 		}
 
 		// put DeathChest in DeathChest map
