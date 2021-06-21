@@ -37,24 +37,28 @@ public class CommandManagerTests {
     @Test
     @DisplayName("Test Help Command.")
     void HelpCommand() {
-        server.dispatchCommand(server.addPlayer(), "/deathchest help");
+        Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest help"),
+                "help command returned true.");
     }
 
     @Test
     @DisplayName("Test List Command.")
     void ListCommand() {
-        server.dispatchCommand(server.addPlayer(), "/deathchest list");
+        Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest list"),
+                "list command returned true.");
     }
 
     @Test
     @DisplayName("Test Reload Command.")
     void ReloadCommand() {
-        server.dispatchCommand(server.addPlayer(), "/deathchest reload");
+        Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest reload"),
+                "reload command returned true.");
     }
 
     @Test
     @DisplayName("Test Status Command.")
     void StatusCommand() {
-        server.dispatchCommand(server.addPlayer(), "/deathchest status");
+        Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest status"),
+                "status command returned true.");
     }
 }
