@@ -125,7 +125,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Unit Testing Dependencies -->
+		<!-- Unit Testing Framework -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
