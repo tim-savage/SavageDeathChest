@@ -23,6 +23,7 @@ public enum ConfigSetting {
     LIST_PAGE_SIZE_CONSOLE("10"),
     CHEST_SIGNS("true"),
 
+    REPLACEABLE_BLOCKS("[AIR, CAVE_AIR, GRASS, TALL_GRASS, SNOW, VINE, LILY_PAD, WATER, LAVA]"),
     ;
 
 
