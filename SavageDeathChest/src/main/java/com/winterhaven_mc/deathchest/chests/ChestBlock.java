@@ -77,6 +77,13 @@ public final class ChestBlock {
 	 * Class constructor
 	 *
 	 * @param chestUUID the UUID of the chest that this ChestBlock is member
+	 * @param worldName the string name of the world for this chest location
+	 * @param worldUid the Uid of the world for this chest location
+	 * @param x int the x block location for this chest location
+	 * @param y int the y block location for this chest location
+	 * @param z int the z block location for this chest location
+	 * @param yaw float the yaw for this chest location location
+	 * @param pitch flaot the pitch for this chest location
 	 */
 	public ChestBlock(final UUID chestUUID,
 	                  final String worldName,
