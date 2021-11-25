@@ -640,7 +640,7 @@ public final class Deployment {
 		Block block = location.getBlock();
 
 		// if block at location is above grass path, return negative result
-		if (block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH)) {
+		if (block.getRelative(0, -1, 0).getType().equals(Material.DIRT_PATH)) {
 			return false;
 		}
 
