@@ -147,7 +147,7 @@ public abstract class AbstractSearch implements Search {
 			return false;
 		}
 
-		return block.getRelative(0, -1, 0).getType().equals(Material.GRASS_PATH);
+		return block.getRelative(0, -1, 0).getType().equals(Material.DIRT_PATH);
 	}
 
 
