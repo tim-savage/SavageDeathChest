@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven-mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.17.0</version>
+	<version>1.18.0</version>
 	<name>SavageDeathChest</name>
 	<url>https://github.com/tim-savage/SavageDeathChest</url>
 
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.17.1-R0.1-SNAPSHOT</version>
+			<version>1.18-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -134,12 +134,14 @@
 		</dependency>
 
 		<!-- Mock Bukkit Framework -->
+		<!--
 		<dependency>
 			<groupId>com.github.seeseemelk</groupId>
-			<artifactId>MockBukkit-v1.16</artifactId>
-			<version>1.5.2</version>
+			<artifactId>MockBukkit-v1.17</artifactId>
+			<version>1.10.3</version>
 			<scope>test</scope>
 		</dependency>
+		-->
 	</dependencies>
 
 	<build>
@@ -240,6 +242,7 @@
 			</plugin>
 
 			<!-- Plugin for Unit Tests -->
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -250,6 +253,7 @@
 					<trimStackTrace>false</trimStackTrace>
 				</configuration>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 </project>
