@@ -45,10 +45,17 @@ public class QuadrantSearch extends AbstractSearch {
 		// get player death location
 		Location origin = player.getLocation();
 
-		// if place-above-void configured true and player died in the void, start search at y=1
-		if (origin.getY() < 1) {
+		// get min y for origin
+		int minY = -64;
+		if (origin.getWorld() != null) {
+			minY = origin.getWorld().getMinHeight();
+			plugin.getLogger().info("world min height is " + minY);
+		}
+
+		// if player died below world min height and place-above-void configured true, start search at world min height
+		if (origin.getY() < minY) {
 			if (placeAboveVoid) {
-				origin.setY(1);
+				origin.setY(minY);
 			}
 			else {
 				result.setResultCode(ResultCode.VOID);
@@ -73,7 +80,7 @@ public class QuadrantSearch extends AbstractSearch {
 				}
 
 				// if world min height reached, break loop
-				if (y * verticalAxis.yFactor + testLocation.getY() <= 0) {
+				if (y * verticalAxis.yFactor + testLocation.getY() <= minY) {
 					break;
 				}
 
