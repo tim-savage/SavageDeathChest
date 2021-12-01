@@ -134,14 +134,12 @@
 		</dependency>
 
 		<!-- Mock Bukkit Framework -->
-		<!--
 		<dependency>
 			<groupId>com.github.seeseemelk</groupId>
 			<artifactId>MockBukkit-v1.17</artifactId>
 			<version>1.10.3</version>
 			<scope>test</scope>
 		</dependency>
-		-->
 	</dependencies>
 
 	<build>
