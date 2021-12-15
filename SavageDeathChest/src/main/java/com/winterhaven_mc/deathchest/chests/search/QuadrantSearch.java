@@ -15,8 +15,8 @@ public class QuadrantSearch extends AbstractSearch {
 		III(-1,-1),
 		IV(1,-1);
 
-		int xFactor;
-		int zFactor;
+		final int xFactor;
+		final int zFactor;
 
 
 		Quadrant(final int xFactor, final int zFactor) {
@@ -44,6 +44,9 @@ public class QuadrantSearch extends AbstractSearch {
 
 		// get player death location
 		Location origin = player.getLocation();
+
+		// round y to account for fractional height blocks
+		origin.setY(Math.round(origin.getY()));
 
 		// get min y for origin
 		int minY = -64;
@@ -84,8 +87,8 @@ public class QuadrantSearch extends AbstractSearch {
 					break;
 				}
 
-				// only test y == 0 in upper vertical axis
-				if (!verticalAxis.equals(VerticalAxis.UPPER) && y == 0) {
+				// skip test in upper vertical axis when y == 0
+				if (verticalAxis.equals(VerticalAxis.LOWER) && y == 0) {
 					continue;
 				}
 
