@@ -37,7 +37,7 @@ public final class ReplaceableBlocks {
 	/**
 	 * Load list of replaceable blocks from config file
 	 */
-	public final void reload() {
+	public void reload() {
 
 		// clear replaceable blocks
 		materialSet.clear();
@@ -62,7 +62,7 @@ public final class ReplaceableBlocks {
 	 * @param material the material the test for
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
-	public final boolean contains(final Material material) {
+	public boolean contains(final Material material) {
 
 		// check for null parameter
 		if (material == null) {
@@ -79,7 +79,7 @@ public final class ReplaceableBlocks {
 	 * @return Formatted string list of materials in replaceableBlocks set
 	 */
 	@Override
-	public final String toString() {
+	public String toString() {
 		return this.materialSet.toString();
 	}
 }
