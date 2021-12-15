@@ -5,7 +5,7 @@ public enum VerticalAxis {
 	UPPER(1),
 	LOWER(-1);
 
-	int yFactor;
+	final int yFactor;
 
 	VerticalAxis(int yFactor) {
 		this.yFactor = yFactor;
