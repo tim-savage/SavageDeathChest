@@ -35,18 +35,6 @@
 		</repository>
 	</repositories>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.junit</groupId>
-				<artifactId>junit-bom</artifactId>
-				<version>5.7.2</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 		<!-- WorldManagerLib -->
 		<dependency>
@@ -97,7 +85,7 @@
 		<dependency>
 			<groupId>com.github.TechFortress</groupId>
 			<artifactId>GriefPrevention</artifactId>
-			<version>16.13.0</version>
+			<version>16.17.1</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -136,8 +124,8 @@
 		<!-- Mock Bukkit Framework -->
 		<dependency>
 			<groupId>com.github.seeseemelk</groupId>
-			<artifactId>MockBukkit-v1.17</artifactId>
-			<version>1.10.4</version>
+			<artifactId>MockBukkit-v1.16</artifactId>
+			<version>1.0.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
