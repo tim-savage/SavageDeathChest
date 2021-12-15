@@ -2,8 +2,8 @@ package com.winterhaven_mc.deathchest.chests.search;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.chests.ChestSize;
+import com.winterhaven_mc.deathchest.chests.Deployment;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -108,7 +108,7 @@ public abstract class AbstractSearch implements Search {
 		}
 
 		// if block at location is above grass path, return negative result
-		if (isAboveGrassPath(block)) {
+		if (Deployment.isAbovePath(block)) {
 			result.setResultCode(ResultCode.ABOVE_GRASS_PATH);
 			return result;
 		}
@@ -131,23 +131,6 @@ public abstract class AbstractSearch implements Search {
 		result.setResultCode(ResultCode.SUCCESS);
 		result.setLocation(location);
 		return result;
-	}
-
-
-	/**
-	 * Check if block is above a grass path block
-	 *
-	 * @param block the block to check underneath
-	 * @return true if passed block is above a grass path block, false if not
-	 */
-	private boolean isAboveGrassPath(final Block block) {
-
-		// check for null parameter
-		if (block == null) {
-			return false;
-		}
-
-		return block.getRelative(0, -1, 0).getType().equals(Material.DIRT_PATH);
 	}
 
 
