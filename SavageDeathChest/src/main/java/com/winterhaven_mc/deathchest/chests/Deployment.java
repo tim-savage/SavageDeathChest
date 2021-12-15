@@ -39,6 +39,13 @@ public final class Deployment {
 	// death chest object
 	private final DeathChest deathChest;
 
+	// set of path block type names as strings
+	private static final Set<String> pathBlockTypeNames = Set.of(
+			"GRASS_PATH",
+			"LEGACY_GRASS_PATH",
+			"DIRT_PATH"
+	);
+
 
 	/**
 	 * Class constructor for DeathChest deployment
@@ -639,13 +646,22 @@ public final class Deployment {
 		// get block at location
 		Block block = location.getBlock();
 
-		// if block at location is above grass path, return negative result
-		if (block.getRelative(0, -1, 0).getType().equals(Material.DIRT_PATH)) {
+		if (isAbovePath(block)) {
 			return false;
 		}
 
 		// check if block at location is a ReplaceableBlock
 		return plugin.chestManager.isReplaceableBlock(block);
+	}
+
+
+	public static boolean isAbovePath(final Block block) {
+
+		// get string for block material type at location below block
+		String materialType = block.getRelative(0, -1, 0).getType().toString();
+
+		// if block at location is above grass path, return negative result
+		return pathBlockTypeNames.contains(materialType);
 	}
 
 
