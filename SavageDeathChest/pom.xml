@@ -149,7 +149,9 @@
 	</dependencies>
 
 	<build>
+		<!-- jar filename -->
 		<finalName>${name}-${version}</finalName>
+
 		<!-- Resources -->
 		<resources>
 			<resource>
