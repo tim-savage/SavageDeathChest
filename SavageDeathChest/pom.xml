@@ -149,6 +149,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${name}-${version}</finalName>
 		<!-- Resources -->
 		<resources>
 			<resource>
