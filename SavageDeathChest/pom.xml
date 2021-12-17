@@ -4,7 +4,12 @@
 	<artifactId>SavageDeathChest</artifactId>
 	<version>1.18.1</version>
 	<name>SavageDeathChest</name>
+
 	<url>https://github.com/tim-savage/SavageDeathChest</url>
+
+	<description>
+		A minecraft plugin that preserves player inventories on death in a chest.
+	</description>
 
 	<properties>
 		<project.author>Tim Savage</project.author>
