@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven-mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.18.1</version>
+	<version>1.18.2</version>
 	<name>SavageDeathChest</name>
 
 	<url>https://github.com/tim-savage/SavageDeathChest</url>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>messenger-lib</artifactId>
-			<version>1.16.1</version>
+			<version>1.16.2</version>
 		</dependency>
 
 		<!-- SoundConfigLib -->
@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.16.5-R0.1-SNAPSHOT</version>
+			<version>1.18.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -142,8 +142,8 @@
 		<!-- Mock Bukkit Framework -->
 		<dependency>
 			<groupId>com.github.seeseemelk</groupId>
-			<artifactId>MockBukkit-v1.17</artifactId>
-			<version>1.13.0</version>
+			<artifactId>MockBukkit-v1.18</artifactId>
+			<version>1.14.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
