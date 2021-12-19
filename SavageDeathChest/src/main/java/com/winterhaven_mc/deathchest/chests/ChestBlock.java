@@ -121,7 +121,7 @@ public final class ChestBlock {
 	 *
 	 * @return Location - the in game location of this chest block
 	 */
-	public final Location getLocation() {
+	public Location getLocation() {
 
 		World world = plugin.getServer().getWorld(this.worldUid);
 
@@ -144,23 +144,23 @@ public final class ChestBlock {
 	 *
 	 * @return String - the name of the world for the location of this chest block
 	 */
-	public final String getWorldName() {
+	public String getWorldName() {
 		return this.worldName;
 	}
 
-	public final UUID getWorldUid() {
+	public UUID getWorldUid() {
 		return this.worldUid;
 	}
 
-	public final int getX() {
+	public int getX() {
 		return this.x;
 	}
 
-	public final int getY() {
+	public int getY() {
 		return this.y;
 	}
 
-	public final int getZ() {
+	public int getZ() {
 		return this.z;
 	}
 
@@ -169,7 +169,7 @@ public final class ChestBlock {
 	 *
 	 * @return UUID - the UUID of the chest that this chest block is a member
 	 */
-	public final UUID getChestUid() {
+	public UUID getChestUid() {
 		return chestUUID;
 	}
 
@@ -224,7 +224,7 @@ public final class ChestBlock {
 	 * if ChestBlock is a sign, return inventory of attached ChestBlock;
 	 * returns null if this ChestBlock (or attached block) is not a chest
 	 */
-	final Inventory getInventory() {
+	Inventory getInventory() {
 
 		// if this ChestBlock location is null, return null
 		if (this.getLocation() == null) {
@@ -263,7 +263,7 @@ public final class ChestBlock {
 	 *
 	 * @param player the player whose inventory chest items will be placed
 	 */
-	final Collection<ItemStack> transferContents(final Player player) {
+	Collection<ItemStack> transferContents(final Player player) {
 
 		// create empty list to contain items that did not fit in chest
 		List<ItemStack> remainingItems = new ArrayList<>();
@@ -319,7 +319,7 @@ public final class ChestBlock {
 	 *
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
-	final void setMetadata(final DeathChest deathChest) {
+	void setMetadata(final DeathChest deathChest) {
 
 		// check for null object
 		if (deathChest == null || deathChest.getChestUid() == null) {
@@ -377,7 +377,7 @@ public final class ChestBlock {
 	 * Destroy chest block, dropping any contents on ground.
 	 * Removes block metadata and deletes corresponding block record from block index and datastore.
 	 */
-	final void destroy() {
+	void destroy() {
 
 		// if ChestBlock location is null, do nothing and return
 		if (this.getLocation() == null) {

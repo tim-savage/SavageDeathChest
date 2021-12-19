@@ -52,7 +52,7 @@ final class DataStoreSQLite extends DataStore {
 	 * create table if one doesn't already exist
 	 */
 	@Override
-	final void initialize() throws SQLException, ClassNotFoundException {
+	void initialize() throws SQLException, ClassNotFoundException {
 
 		// if data store is already initialized, do nothing and return
 		if (this.isInitialized()) {
@@ -169,7 +169,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	public final Collection<ChestBlock> selectAllBlockRecords() {
+	public Collection<ChestBlock> selectAllBlockRecords() {
 
 		final Set<ChestBlock> results = new HashSet<>();
 
@@ -248,7 +248,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	public final Collection<DeathChest> selectAllChestRecords() {
+	public Collection<DeathChest> selectAllChestRecords() {
 
 		final Collection<DeathChest> results = new HashSet<>();
 
@@ -351,7 +351,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	public synchronized final int insertChestRecords(final Collection<DeathChest> deathChests) {
+	public synchronized int insertChestRecords(final Collection<DeathChest> deathChests) {
 
 		new BukkitRunnable() {
 			@Override
@@ -364,7 +364,7 @@ final class DataStoreSQLite extends DataStore {
 	}
 
 
-	public synchronized final int insertChestRecordsSync(final Collection<DeathChest> deathChests) {
+	public synchronized int insertChestRecordsSync(final Collection<DeathChest> deathChests) {
 
 		int count = 0;
 
@@ -420,7 +420,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	synchronized final int insertBlockRecords(final Collection<ChestBlock> blockRecords) {
+	synchronized int insertBlockRecords(final Collection<ChestBlock> blockRecords) {
 
 		new BukkitRunnable() {
 			@Override
@@ -433,7 +433,7 @@ final class DataStoreSQLite extends DataStore {
 	}
 
 
-	final int insertBlockRecordsSync(final Collection<ChestBlock> blockRecords) {
+	int insertBlockRecordsSync(final Collection<ChestBlock> blockRecords) {
 
 		int count = 0;
 
@@ -484,7 +484,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	synchronized public final void deleteChestRecord(final DeathChest deathChest) {
+	synchronized public void deleteChestRecord(final DeathChest deathChest) {
 
 		// if passed deathChest is null, do nothing and return
 		if (deathChest == null) {
@@ -525,7 +525,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	synchronized public final void deleteBlockRecord(final ChestBlock chestBlock) {
+	synchronized public void deleteBlockRecord(final ChestBlock chestBlock) {
 
 		// if passed chestBlock is null, do nothing and return
 		if (chestBlock == null) {
@@ -608,7 +608,7 @@ final class DataStoreSQLite extends DataStore {
 	 * Close database connection
 	 */
 	@Override
-	public final void close() {
+	public void close() {
 
 		if (isInitialized()) {
 			try {
@@ -629,13 +629,13 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	final void sync() {
+	void sync() {
 		// no action necessary for this storage type
 	}
 
 
 	@Override
-	final boolean delete() {
+	boolean delete() {
 
 		boolean result = false;
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
@@ -647,7 +647,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	final boolean exists() {
+	boolean exists() {
 		// get path name to old data store file
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		return dataStoreFile.exists();

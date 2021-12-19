@@ -50,7 +50,7 @@ public final class InventoryEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler(priority = EventPriority.HIGH)
-	public final void onInventoryOpen(final InventoryOpenEvent event) {
+	public void onInventoryOpen(final InventoryOpenEvent event) {
 
 		// if event is not cancelled, do nothing and return
 		if (!event.isCancelled()) {
@@ -107,7 +107,7 @@ public final class InventoryEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onInventoryClose(final InventoryCloseEvent event) {
+	public void onInventoryClose(final InventoryCloseEvent event) {
 
 		// get event inventory
 		final Inventory inventory = event.getInventory();
@@ -145,7 +145,7 @@ public final class InventoryEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onInventoryMoveItem(final InventoryMoveItemEvent event) {
+	public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
 
 		// if event is already cancelled, do nothing and return
 		if (event.isCancelled()) {
@@ -179,7 +179,7 @@ public final class InventoryEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onInventoryClick(final InventoryClickEvent event) {
+	public void onInventoryClick(final InventoryClickEvent event) {
 
 		// if event is already cancelled, do nothing and return
 		if (event.isCancelled()) {
@@ -235,7 +235,7 @@ public final class InventoryEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onInventoryDrag(final InventoryDragEvent event) {
+	public void onInventoryDrag(final InventoryDragEvent event) {
 
 		// if event is already cancelled, do nothing and return
 		if (event.isCancelled()) {

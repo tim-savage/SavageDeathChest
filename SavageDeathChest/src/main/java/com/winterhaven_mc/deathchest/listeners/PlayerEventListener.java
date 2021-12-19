@@ -63,7 +63,7 @@ public final class PlayerEventListener implements Listener {
 	 * @param event PlayerDeathEvent
 	 */
 	@EventHandler(priority = EventPriority.HIGH)
-	public final void onPlayerDeath(final PlayerDeathEvent event) {
+	public void onPlayerDeath(final PlayerDeathEvent event) {
 
 		// get event player
 		Player player = event.getEntity();
@@ -138,7 +138,7 @@ public final class PlayerEventListener implements Listener {
 	 * @param event PlayerInteractEvent
 	 */
 	@EventHandler(priority = EventPriority.LOW)
-	public final void onPlayerInteract(final PlayerInteractEvent event) {
+	public void onPlayerInteract(final PlayerInteractEvent event) {
 
 		// get player
 		final Player player = event.getPlayer();

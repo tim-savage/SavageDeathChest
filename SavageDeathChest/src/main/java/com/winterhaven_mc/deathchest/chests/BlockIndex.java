@@ -34,7 +34,7 @@ final class BlockIndex {
 	 * @param chestBlockType the ChestBlockType of ChestBlock to put in map
 	 * @param chestBlock the ChestBlock to put in map
 	 */
-	final void put(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
+	void put(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 
 		// if passed key or value is null, do nothing and return
 		if (chestBlockType == null || chestBlock == null) {
@@ -60,7 +60,7 @@ final class BlockIndex {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
-	final ChestBlock get(final Location location) {
+	ChestBlock get(final Location location) {
 		return this.locationMap.get(location);
 	}
 
@@ -71,7 +71,7 @@ final class BlockIndex {
 	 * @param chestUid the UUID of the chest of which to retrieve a set of chest blocks
 	 * @return Set of Blocks in uuidMap, or empty set if no blocks exist for chest UUID
 	 */
-	final Collection<ChestBlock> getBlocks(final UUID chestUid) {
+	Collection<ChestBlock> getBlocks(final UUID chestUid) {
 
 		// create empty Set for return
 		Set<ChestBlock> returnSet = new HashSet<>();
@@ -90,7 +90,7 @@ final class BlockIndex {
 	 * @param chestUid the UUID of the chest of which to retrieve a map of chest blocks
 	 * @return Map of Blocks in uuidMap, or empty map if no blocks exist for chest UUID
 	 */
-	final Map<ChestBlockType, ChestBlock> getBlockMap(final UUID chestUid) {
+	Map<ChestBlockType, ChestBlock> getBlockMap(final UUID chestUid) {
 
 		// create empty map for return
 		Map<ChestBlockType, ChestBlock> returnMap = new EnumMap<>(ChestBlockType.class);
@@ -108,7 +108,7 @@ final class BlockIndex {
 	 *
 	 * @param chestBlock the ChestBlock object to remove from map
 	 */
-	final void remove(final ChestBlock chestBlock) {
+	void remove(final ChestBlock chestBlock) {
 
 		// check for null key
 		if (chestBlock == null) {
@@ -162,7 +162,7 @@ final class BlockIndex {
 	 * @param location the key to check
 	 * @return {@code true} if location key exists in map, {@code false} if it does not
 	 */
-	final boolean containsKey(final Location location) {
+	boolean containsKey(final Location location) {
 
 		// check for null location
 		if (location == null) {

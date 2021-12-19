@@ -60,7 +60,7 @@ public final class BlockEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onBlockPlace(final BlockPlaceEvent event) {
+	public void onBlockPlace(final BlockPlaceEvent event) {
 
 		final Block block = event.getBlock();
 		final Location location = block.getLocation();
@@ -86,7 +86,7 @@ public final class BlockEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler(priority = EventPriority.LOW)
-	public final void onBlockBreak(final BlockBreakEvent event) {
+	public void onBlockBreak(final BlockBreakEvent event) {
 
 		final Block block = event.getBlock();
 		final Player player = event.getPlayer();
@@ -224,7 +224,7 @@ public final class BlockEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onEntityExplode(final EntityExplodeEvent event) {
+	public void onEntityExplode(final EntityExplodeEvent event) {
 
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
@@ -252,7 +252,7 @@ public final class BlockEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void onBlockExplode(final BlockExplodeEvent event) {
+	public void onBlockExplode(final BlockExplodeEvent event) {
 
 		// if chest-protection is not enabled in config, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-protection")) {
@@ -280,7 +280,7 @@ public final class BlockEventListener implements Listener {
 	 * @param event the event being handled by this method
 	 */
 	@EventHandler
-	public final void signDetachCheck(final BlockPhysicsEvent event) {
+	public void signDetachCheck(final BlockPhysicsEvent event) {
 
 		// if event block is a DeathChest component, cancel event
 		if (plugin.chestManager.isChestBlockSign(event.getBlock())) {

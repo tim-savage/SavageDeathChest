@@ -20,8 +20,10 @@ public interface Subcommand {
 
 	List<String> getAliases();
 
+	@SuppressWarnings("unused")
 	void setAliases(List<String> aliases);
 
+	@SuppressWarnings("unused")
 	void addAlias(String alias);
 
 	String getUsage();
@@ -34,8 +36,10 @@ public interface Subcommand {
 
 	void setDescription(MessageId messageId);
 
+	@SuppressWarnings("unused")
 	int getMinArgs();
 
+	@SuppressWarnings("unused")
 	void setMinArgs(int minArgs);
 
 	int getMaxArgs();

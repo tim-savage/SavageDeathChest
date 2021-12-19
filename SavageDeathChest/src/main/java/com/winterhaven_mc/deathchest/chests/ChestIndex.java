@@ -26,7 +26,7 @@ final class ChestIndex {
 	 * @param chestUUID UUID of DeathChest object to retrieve
 	 * @return DeathChest object, or null if no DeathChest exists in map with passed chestUUID
 	 */
-	final DeathChest get(final UUID chestUUID) {
+	DeathChest get(final UUID chestUUID) {
 
 		// check for null key
 		if (chestUUID == null) {
@@ -42,7 +42,7 @@ final class ChestIndex {
 	 *
 	 * @param deathChest the DeathChest object to put in map
 	 */
-	final void put(final DeathChest deathChest) {
+	void put(final DeathChest deathChest) {
 
 		// check for null key
 		if (deathChest == null || deathChest.getChestUid() == null) {
@@ -58,7 +58,7 @@ final class ChestIndex {
 	 *
 	 * @param deathChest the DeathChest object to remove from map
 	 */
-	final void remove(final DeathChest deathChest) {
+	void remove(final DeathChest deathChest) {
 
 		// check for null key
 		if (deathChest == null || deathChest.getChestUid() == null) {
@@ -75,7 +75,7 @@ final class ChestIndex {
 	 * @param chestUUID the chest UUID to check
 	 * @return {@code true} if key exists in map, {@code false} if it does not
 	 */
-	final boolean containsKey(final UUID chestUUID) {
+	boolean containsKey(final UUID chestUUID) {
 
 		// check for null chestUUID
 		if (chestUUID == null) {
@@ -91,7 +91,7 @@ final class ChestIndex {
 	 *
 	 * @return Collection of DeathChests in map
 	 */
-	final Collection<DeathChest> values() {
+	Collection<DeathChest> values() {
 		return deathChestMap.values();
 	}
 

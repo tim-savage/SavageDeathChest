@@ -150,7 +150,7 @@ public final class DeathChest {
 	 *
 	 * @return UUID
 	 */
-	public final UUID getChestUid() {
+	public UUID getChestUid() {
 		return chestUId;
 	}
 
@@ -160,7 +160,7 @@ public final class DeathChest {
 	 *
 	 * @return UUID
 	 */
-	public final UUID getOwnerUid() {
+	public UUID getOwnerUid() {
 		return ownerUid;
 	}
 
@@ -169,7 +169,7 @@ public final class DeathChest {
 	 * Get owner name for DeathChest by looking up offline player by uuid
 	 * @return String - chest owner name
 	 */
-	public final String getOwnerName() {
+	public String getOwnerName() {
 		String returnName = "unknown";
 		if (this.ownerUid != null && plugin.getServer().getOfflinePlayer(this.getOwnerUid()).getName() != null) {
 			returnName = plugin.getServer().getOfflinePlayer(this.getOwnerUid()).getName();
@@ -183,7 +183,7 @@ public final class DeathChest {
 	 *
 	 * @return UUID
 	 */
-	public final UUID getKillerUid() {
+	public UUID getKillerUid() {
 		return killerUid;
 	}
 
@@ -194,7 +194,7 @@ public final class DeathChest {
 	 * @return integer - itemCount
 	 */
 	@SuppressWarnings("unused")
-	public final int getItemCount() {
+	public int getItemCount() {
 		return itemCount;
 	}
 
@@ -204,7 +204,7 @@ public final class DeathChest {
 	 *
 	 * @return long placementTime timestamp
 	 */
-	public final long getPlacementTime() {
+	public long getPlacementTime() {
 		return this.placementTime;
 	}
 
@@ -214,7 +214,7 @@ public final class DeathChest {
 	 *
 	 * @return long expirationTime timestamp
 	 */
-	public final long getExpirationTime() {
+	public long getExpirationTime() {
 		return this.expirationTime;
 	}
 
@@ -224,7 +224,7 @@ public final class DeathChest {
 	 *
 	 * @return long expirationTime timestamp
 	 */
-	public final long getProtectionExpirationTime() {
+	public long getProtectionExpirationTime() {
 		return this.protectionExpirationTime;
 	}
 
@@ -245,7 +245,7 @@ public final class DeathChest {
 	 *
 	 * @return Location - the chest location or null if no location found
 	 */
-	public final Location getLocation() {
+	public Location getLocation() {
 
 		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getBlockMap(this.chestUId);
 
@@ -266,7 +266,7 @@ public final class DeathChest {
 	/**
 	 * Set chest metadata on all component blocks
 	 */
-	final void setMetadata() {
+	void setMetadata() {
 
 		// set metadata on blocks in set
 		for (ChestBlock chestBlock : plugin.chestManager.getBlocks(this.chestUId)) {
@@ -284,7 +284,7 @@ public final class DeathChest {
 	 * @param player The player to test for DeathChest ownership
 	 * @return {@code true} if the player is the DeathChest owner, false if not
 	 */
-	public final boolean isOwner(final Player player) {
+	public boolean isOwner(final Player player) {
 
 		// if ownerUUID is null, return false
 		if (this.getOwnerUid() == null) {
@@ -300,7 +300,7 @@ public final class DeathChest {
 	 * @param player The player to test for DeathChest killer
 	 * @return {@code true} if the player is the killer of the DeathChest owner, false if not
 	 */
-	public final boolean isKiller(final Player player) {
+	public boolean isKiller(final Player player) {
 		return this.hasValidKillerUid() && this.getKillerUid().equals(player.getUniqueId());
 	}
 
@@ -311,7 +311,7 @@ public final class DeathChest {
 	 *
 	 * @param player the player whose inventory the chest contents will be transferred
 	 */
-	public final void autoLoot(final Player player) {
+	public void autoLoot(final Player player) {
 
 		// if passed player is null, do nothing and return
 		if (player == null) {
@@ -354,7 +354,7 @@ public final class DeathChest {
 	 * Expire this death chest, destroying in game chest and dropping contents,
 	 * and sending message to chest owner if online.
 	 */
-	public final void expire() {
+	public void expire() {
 
 		// get player from ownerUUID
 		final Player player = plugin.getServer().getPlayer(this.ownerUid);
@@ -374,7 +374,7 @@ public final class DeathChest {
 	/**
 	 * Destroy this death chest, dropping chest contents
 	 */
-	public final void destroy() {
+	public void destroy() {
 
 		// play chest break sound at chest location
 		plugin.soundConfig.playSound(this.getLocation(), SoundId.CHEST_BREAK);
@@ -406,7 +406,7 @@ public final class DeathChest {
 	 * @return Inventory - the inventory associated with this death chest;
 	 * returns null if both right and left chest block inventories are invalid
 	 */
-	public final Inventory getInventory() {
+	public Inventory getInventory() {
 
 		// get chest block map
 		Map<ChestBlockType, ChestBlock> chestBlocks = plugin.chestManager.getBlockMap(this.chestUId);
@@ -429,7 +429,7 @@ public final class DeathChest {
 	 *
 	 * @return The number of inventory viewers
 	 */
-	public final int getViewerCount() {
+	public int getViewerCount() {
 
 		// get chest inventory
 		Inventory inventory = this.getInventory();
@@ -490,7 +490,7 @@ public final class DeathChest {
 	 * @param itemStacks Collection of ItemStacks to place in chest
 	 * @return Collection of ItemStacks that did not fit in chest
 	 */
-	final Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
+	Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
 
 		// create empty list for return
 		Collection<ItemStack> remainingItems = new ArrayList<>();
@@ -512,19 +512,19 @@ public final class DeathChest {
 	 * Check if protection is enabled and ha expired
 	 * @return boolean - true if protection has expired, false if not
 	 */
-	public final boolean protectionExpired() {
+	public boolean protectionExpired() {
 		return this.getProtectionExpirationTime() > 0 &&
 				this.getProtectionExpirationTime() < System.currentTimeMillis();
 	}
 
 
-	public final boolean hasValidOwnerUid() {
+	public boolean hasValidOwnerUid() {
 		return this.ownerUid != null &&
 				(this.ownerUid.getMostSignificantBits() != 0 && this.ownerUid.getLeastSignificantBits() != 0);
 	}
 
 
-	public final boolean hasValidKillerUid() {
+	public boolean hasValidKillerUid() {
 		return this.killerUid != null &&
 				(this.killerUid.getMostSignificantBits() != 0 && this.killerUid.getLeastSignificantBits() != 0);
 	}

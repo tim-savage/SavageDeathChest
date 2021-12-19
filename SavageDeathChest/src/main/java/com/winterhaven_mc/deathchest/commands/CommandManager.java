@@ -76,10 +76,10 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @return boolean - always returns {@code true}, to suppress bukkit builtin help message
 	 */
 	@Override
-	public final boolean onCommand(final CommandSender sender,
-								   final Command command,
-								   final String label,
-								   final String[] args) {
+	public boolean onCommand(final CommandSender sender,
+	                         final Command command,
+	                         final String label,
+	                         final String[] args) {
 
 		// convert args array to list
 		List<String> argsList = new ArrayList<>(Arrays.asList(args));
