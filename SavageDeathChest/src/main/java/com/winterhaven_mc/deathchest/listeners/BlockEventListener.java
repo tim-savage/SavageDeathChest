@@ -2,7 +2,6 @@ package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.Macro;
-import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
@@ -120,7 +119,7 @@ public final class BlockEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
-			Message.create(player, NO_CREATIVE_ACCESS)
+			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation())
 					.send(plugin.languageHandler);
 			event.setCancelled(true);
@@ -139,7 +138,7 @@ public final class BlockEventListener implements Listener {
 		// else send message with chest expiration time remaining
 		else {
 			long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
-			Message.create(player, CHEST_ACCESSED_PROTECTION_TIME)
+			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
 					.setMacro(Macro.DURATION, remainingProtectionTime)
@@ -166,7 +165,7 @@ public final class BlockEventListener implements Listener {
 			}
 
 			// send player message
-			Message.create(player, CHEST_CURRENTLY_OPEN)
+			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, ownerName)
 					.setMacro(KILLER, killerName)
@@ -206,7 +205,7 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// send player not-owner message
-		Message.create(player, NOT_OWNER)
+		plugin.messageBuilder.build(player, NOT_OWNER)
 				.setMacro(LOCATION, deathChest.getLocation())
 				.setMacro(OWNER, ownerName)
 				.setMacro(KILLER, killerName)

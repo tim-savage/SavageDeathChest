@@ -1,7 +1,6 @@
 package com.winterhaven_mc.deathchest.commands;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.messages.Message;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -102,7 +101,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 		// if subcommand is null, get help command from map
 		if (subcommand == null) {
 			subcommand = subcommandMap.getCommand("help");
-			Message.create(sender, COMMAND_FAIL_INVALID_COMMAND).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_INVALID_COMMAND).send(plugin.languageHandler);
 			plugin.soundConfig.playSound(sender, COMMAND_INVALID);
 		}
 

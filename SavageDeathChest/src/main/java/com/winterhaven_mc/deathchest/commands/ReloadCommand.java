@@ -1,7 +1,6 @@
 package com.winterhaven_mc.deathchest.commands;
 
 import com.winterhaven_mc.deathchest.PluginMain;
-import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 import org.bukkit.command.CommandSender;
 
@@ -29,7 +28,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		Objects.requireNonNull(sender);
 
 		if (!sender.hasPermission("deathchest.reload")) {
-			Message.create(sender, COMMAND_FAIL_RELOAD_PERMISSION).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_RELOAD_PERMISSION).send(plugin.languageHandler);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -56,7 +55,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		plugin.chestManager.reload();
 
 		// send success message
-		Message.create(sender, COMMAND_SUCCESS_RELOAD).send(plugin.languageHandler);
+		plugin.messageBuilder.build(sender, COMMAND_SUCCESS_RELOAD).send(plugin.languageHandler);
 
 		// return true to prevent bukkit command help display
 		return true;

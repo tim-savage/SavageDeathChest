@@ -3,7 +3,6 @@ package com.winterhaven_mc.deathchest.commands;
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
 import com.winterhaven_mc.deathchest.messages.Macro;
-import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.sounds.SoundId;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -68,14 +67,14 @@ public class ListCommand extends AbstractSubcommand {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
-			Message.create(sender, COMMAND_FAIL_LIST_PERMISSION).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_PERMISSION).send(plugin.languageHandler);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
 
 		// check if max args exceeded
 		if (args.size() > this.getMaxArgs()) {
-			Message.create(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send(plugin.languageHandler);
 			displayUsage(sender);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
@@ -130,7 +129,7 @@ public class ListCommand extends AbstractSubcommand {
 
 			// else send permission denied message and return true
 			else {
-				Message.create(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send(plugin.languageHandler);
+				plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send(plugin.languageHandler);
 				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 				return true;
 			}
@@ -138,7 +137,7 @@ public class ListCommand extends AbstractSubcommand {
 
 		// if display list is empty, output list empty message and return
 		if (displayRecords.isEmpty()) {
-			Message.create(sender, LIST_EMPTY).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, LIST_EMPTY).send(plugin.languageHandler);
 			return true;
 		}
 
@@ -189,7 +188,7 @@ public class ListCommand extends AbstractSubcommand {
 
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (displayNames) {
-				Message.create(sender, LIST_ITEM_ALL)
+				plugin.messageBuilder.build(sender, LIST_ITEM_ALL)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
 						.setMacro(Macro.OWNER, ownerName)
@@ -198,7 +197,7 @@ public class ListCommand extends AbstractSubcommand {
 						.send(plugin.languageHandler);
 			}
 			else {
-				Message.create(sender, LIST_ITEM)
+				plugin.messageBuilder.build(sender, LIST_ITEM)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
 						.setMacro(Macro.OWNER, ownerName)
@@ -229,7 +228,7 @@ public class ListCommand extends AbstractSubcommand {
 
 	private void displayListHeader(CommandSender sender, int page, int pageCount) {
 		// display list header
-		Message.create(sender, LIST_HEADER)
+		plugin.messageBuilder.build(sender, LIST_HEADER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
 				.send(plugin.languageHandler);
@@ -238,7 +237,7 @@ public class ListCommand extends AbstractSubcommand {
 
 	private void displayListFooter(CommandSender sender, int page, int pageCount) {
 		// display list footer
-		Message.create(sender, LIST_FOOTER)
+		plugin.messageBuilder.build(sender, LIST_FOOTER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
 				.send(plugin.languageHandler);

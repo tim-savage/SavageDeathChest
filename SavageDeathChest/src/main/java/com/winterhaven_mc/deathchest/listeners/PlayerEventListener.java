@@ -2,7 +2,6 @@ package com.winterhaven_mc.deathchest.listeners;
 
 import com.winterhaven_mc.deathchest.PluginMain;
 import com.winterhaven_mc.deathchest.messages.Macro;
-import com.winterhaven_mc.deathchest.messages.Message;
 import com.winterhaven_mc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhaven_mc.deathchest.chests.ChestBlock;
 import com.winterhaven_mc.deathchest.chests.DeathChest;
@@ -71,7 +70,7 @@ public final class PlayerEventListener implements Listener {
 		// if player's current world is not enabled in config,
 		// do nothing and allow inventory items to drop on ground
 		if (!plugin.worldManager.isEnabled(player.getWorld())) {
-			Message.create(player, CHEST_DENIED_WORLD_DISABLED)
+			plugin.messageBuilder.build(player, CHEST_DENIED_WORLD_DISABLED)
 					.setMacro(LOCATION, player.getLocation())
 					.send(plugin.languageHandler);
 			return;
@@ -80,7 +79,7 @@ public final class PlayerEventListener implements Listener {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			Message.create(player, CHEST_DENIED_PERMISSION)
+			plugin.messageBuilder.build(player, CHEST_DENIED_PERMISSION)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send(plugin.languageHandler);
 			return;
@@ -93,7 +92,7 @@ public final class PlayerEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-deploy")
 				&& !player.hasPermission("deathchest.creative-deploy")) {
-			Message.create(player, CREATIVE_MODE)
+			plugin.messageBuilder.build(player, CREATIVE_MODE)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send(plugin.languageHandler);
 			return;
@@ -101,7 +100,7 @@ public final class PlayerEventListener implements Listener {
 
 		// if player inventory is empty, output message and return
 		if (event.getDrops().isEmpty()) {
-			Message.create(player, INVENTORY_EMPTY)
+			plugin.messageBuilder.build(player, INVENTORY_EMPTY)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send(plugin.languageHandler);
 			return;
@@ -185,7 +184,7 @@ public final class PlayerEventListener implements Listener {
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
 			event.setCancelled(true);
-			Message.create(player, NO_CREATIVE_ACCESS)
+			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation()
 					).send(plugin.languageHandler);
 			return;
@@ -213,7 +212,7 @@ public final class PlayerEventListener implements Listener {
 			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
 
 			// send player message
-			Message.create(player, CHEST_CURRENTLY_OPEN)
+			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, ownerName)
 					.setMacro(KILLER, killerName)
@@ -257,7 +256,7 @@ public final class PlayerEventListener implements Listener {
 			// if chest protection is enabled and has not expired, send message and return
 			if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
 				long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
-				Message.create(player, CHEST_ACCESSED_PROTECTION_TIME)
+				plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 						.setMacro(Macro.OWNER, deathChest.getOwnerName())
 						.setMacro(Macro.DURATION, remainingProtectionTime)
 						.setMacro(LOCATION, deathChest.getLocation())
@@ -268,7 +267,7 @@ public final class PlayerEventListener implements Listener {
 			}
 
 			// send player not-owner message
-			Message.create(player, NOT_OWNER)
+			plugin.messageBuilder.build(player, NOT_OWNER)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, ownerName)
 					.setMacro(KILLER, killerName)
@@ -305,7 +304,7 @@ public final class PlayerEventListener implements Listener {
 		event.setCancelled(true);
 
 		// send player not-owner message
-		Message.create(player, NOT_OWNER)
+		plugin.messageBuilder.build(player, NOT_OWNER)
 				.setMacro(LOCATION, deathChest.getLocation())
 				.setMacro(OWNER, ownerName)
 				.setMacro(KILLER, killerName)
@@ -314,7 +313,7 @@ public final class PlayerEventListener implements Listener {
 		// if chest protection is enabled and has not expired, send message and return
 		if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
 			long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
-			Message.create(player, CHEST_ACCESSED_PROTECTION_TIME)
+			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(Macro.DURATION, remainingProtectionTime)
 					.setMacro(LOCATION, deathChest.getLocation())
