@@ -156,7 +156,7 @@ public interface DataStore {
 
 		// if old data store was passed, convert to new data store
 		if (oldDataStore != null) {
-			DataStoreType.convert(oldDataStore, newDataStore);
+			DataStoreType.convert(plugin, oldDataStore, newDataStore);
 		}
 		else {
 			DataStoreType.convertAll(plugin, newDataStore);
