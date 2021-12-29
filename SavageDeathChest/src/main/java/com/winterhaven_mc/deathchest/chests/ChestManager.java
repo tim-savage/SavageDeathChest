@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.chests;
 import com.winterhaven_mc.deathchest.PluginMain;
 
 import com.winterhaven_mc.deathchest.storage.DataStore;
+import com.winterhaven_mc.deathchest.storage.DataStoreType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,7 +33,7 @@ public final class ChestManager {
 	private final BlockIndex blockIndex;
 
 	// instantiate datastore
-	private DataStore dataStore = DataStore.create();
+	private DataStore dataStore;
 
 	// set of replaceable blocks
 	private final ReplaceableBlocks replaceableBlocks;
@@ -58,6 +59,9 @@ public final class ChestManager {
 		// initialize replaceableBlocks
 		replaceableBlocks = new ReplaceableBlocks(plugin);
 
+		// initialize datastore
+		dataStore = DataStore.create(plugin);
+
 		// initialize chestIndex
 		chestIndex = new ChestIndex();
 
@@ -73,7 +77,7 @@ public final class ChestManager {
 	 */
 	public void loadChests() {
 
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info("Loading Death Chests...");
 		}
 
@@ -87,7 +91,7 @@ public final class ChestManager {
 
 			// if chest block location is null, continue to next chest block
 			if (chestBlock.getLocation() == null) {
-				if (plugin.debug) {
+				if (plugin.getConfig().getBoolean("debug")) {
 					plugin.getLogger().info("chest block " + chestBlock.getChestUid() + " has null location.");
 				}
 				continue;
@@ -124,7 +128,7 @@ public final class ChestManager {
 			else {
 				// set chest metadata
 				deathChest.setMetadata();
-				if (plugin.debug) {
+				if (plugin.getConfig().getBoolean("debug")) {
 					plugin.getLogger().info("[loadDeathChests] Setting metadata for chest " + deathChest.getChestUid());
 				}
 			}
@@ -339,7 +343,7 @@ public final class ChestManager {
 			}
 		}
 		catch (Exception e) {
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				plugin.getLogger().warning("isDeathChest(inventory) threw an exception "
 						+ "while trying to get inventory holder block.");
 				plugin.getLogger().warning(e.getMessage());
@@ -388,7 +392,19 @@ public final class ChestManager {
 
 	public void reload() {
 		replaceableBlocks.reload();
-		dataStore = dataStore.reload();
+
+		// get current datastore type
+		DataStoreType currentType = dataStore.getType();
+
+		// get configured datastore type
+		DataStoreType newType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
+
+		// if current datastore type does not match configured datastore type, create new datastore
+		if (!currentType.equals(newType)) {
+
+			// create new datastore
+			dataStore = DataStore.create(plugin, newType, dataStore);
+		}
 	}
 
 	@SuppressWarnings("unused")

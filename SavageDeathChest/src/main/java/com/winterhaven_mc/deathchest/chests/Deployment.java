@@ -71,7 +71,7 @@ public final class Deployment {
 		droppedItems.addAll(result.getRemainingItems());
 
 		// if debugging, log result
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			logResult(result);
 		}
 
@@ -621,7 +621,7 @@ public final class Deployment {
 		catch (Exception e) {
 			plugin.getLogger().severe("An error occurred while trying to place the death chest sign.");
 			plugin.getLogger().severe(e.getLocalizedMessage());
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
 			return false;

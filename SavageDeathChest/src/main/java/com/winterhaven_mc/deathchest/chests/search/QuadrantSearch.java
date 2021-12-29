@@ -52,7 +52,9 @@ public class QuadrantSearch extends AbstractSearch {
 		int minY = -64;
 		if (origin.getWorld() != null) {
 			minY = origin.getWorld().getMinHeight();
-			plugin.getLogger().info("world min height is " + minY);
+			if (plugin.getConfig().getBoolean("debug")) {
+				plugin.getLogger().info("world min height is " + minY);
+			}
 		}
 
 		// if player died below world min height and place-above-void configured true, start search at world min height

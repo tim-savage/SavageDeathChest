@@ -270,7 +270,7 @@ public final class DeathChest {
 		// set metadata on blocks in set
 		for (ChestBlock chestBlock : plugin.chestManager.getBlocks(this.chestUId)) {
 			chestBlock.setMetadata(this);
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				plugin.getLogger().info("Metadata set on chest block " + this.chestUId);
 			}
 		}

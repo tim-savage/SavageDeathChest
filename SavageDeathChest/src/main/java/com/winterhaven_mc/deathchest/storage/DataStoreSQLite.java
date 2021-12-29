@@ -18,7 +18,7 @@ import static com.winterhaven_mc.deathchest.storage.Queries.getQuery;
  * SQLite implementation of Datastore
  * for persistent storage of death chests and chest block objects
  */
-final class DataStoreSQLite extends DataStore {
+final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -52,7 +52,7 @@ final class DataStoreSQLite extends DataStore {
 	 * create table if one doesn't already exist
 	 */
 	@Override
-	void initialize() throws SQLException, ClassNotFoundException {
+	public void initialize() throws SQLException, ClassNotFoundException {
 
 		// if data store is already initialized, do nothing and return
 		if (this.isInitialized()) {
@@ -105,7 +105,7 @@ final class DataStoreSQLite extends DataStore {
 		catch (SQLException e) {
 			plugin.getLogger().warning("Could not get schema version for the " + this + " datastore!");
 			plugin.getLogger().warning(e.getLocalizedMessage());
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
 		}
@@ -117,7 +117,7 @@ final class DataStoreSQLite extends DataStore {
 
 		this.schemaVersion = getStoredSchemaVersion();
 
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info("Current schema version: " + schemaVersion);
 		}
 
@@ -198,7 +198,7 @@ final class DataStoreSQLite extends DataStore {
 						plugin.getLogger().warning("An error occurred while trying to set chestUid in the " +
 								this + " datastore.");
 						plugin.getLogger().warning(e.getLocalizedMessage());
-						if (plugin.debug) {
+						if (plugin.getConfig().getBoolean("debug")) {
 							plugin.getLogger().warning("[" + this + " getAllBlockRecords] chestUid string: "
 									+ rs.getString("ChestUUID"));
 						}
@@ -234,12 +234,12 @@ final class DataStoreSQLite extends DataStore {
 			plugin.getLogger().warning("An error occurred while trying to "
 					+ "select all block records from the " + this + " datastore.");
 			plugin.getLogger().warning(e.getLocalizedMessage());
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
 		}
 
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info(results.size() + " block records selected from the " + this + " datastore.");
 		}
 
@@ -273,7 +273,7 @@ final class DataStoreSQLite extends DataStore {
 						plugin.getLogger().warning("An error occurred while trying to set chestUid in the " +
 								this + " datastore.");
 						plugin.getLogger().warning(e.getLocalizedMessage());
-						if (plugin.debug) {
+						if (plugin.getConfig().getBoolean("debug")) {
 							plugin.getLogger().warning("[" + this + " selectAllChestRecords] chestUid string: "
 									+ rs.getString("ChestUUID"));
 						}
@@ -288,7 +288,7 @@ final class DataStoreSQLite extends DataStore {
 						plugin.getLogger().warning("An error occurred while trying to set ownerUid in the" +
 								this + " datastore.");
 						plugin.getLogger().warning(e.getLocalizedMessage());
-						if (plugin.debug) {
+						if (plugin.getConfig().getBoolean("debug")) {
 							plugin.getLogger().warning("[" + this + " selectAllChestRecords] ownerUid string: "
 									+ rs.getString("OwnerUUID"));
 						}
@@ -338,12 +338,12 @@ final class DataStoreSQLite extends DataStore {
 			plugin.getLogger().warning("An error occurred while trying to " +
 					"select all chest records from the " + this + " datastore.");
 			plugin.getLogger().warning(e.getMessage());
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
 		}
 
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info(results.size() + " chest records selected from the " + this + " datastore.");
 		}
 		return results;
@@ -400,7 +400,7 @@ final class DataStoreSQLite extends DataStore {
 				plugin.getLogger().warning("An error occurred while inserting a DeathChest into the " +
 						"SQLite datastore.");
 				plugin.getLogger().warning(e.getMessage());
-				if (plugin.debug) {
+				if (plugin.getConfig().getBoolean("debug")) {
 					e.printStackTrace();
 				}
 			}
@@ -410,7 +410,7 @@ final class DataStoreSQLite extends DataStore {
 		}
 
 		// output debugging information
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info(count + " chest records inserted into the " +
 					"SQLite datastore.");
 		}
@@ -420,7 +420,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	synchronized int insertBlockRecords(final Collection<ChestBlock> blockRecords) {
+	synchronized public int insertBlockRecords(final Collection<ChestBlock> blockRecords) {
 
 		new BukkitRunnable() {
 			@Override
@@ -467,14 +467,14 @@ final class DataStoreSQLite extends DataStore {
 				plugin.getLogger().warning("An error occurred while "
 						+ "inserting a death chest block into the SQLite datastore.");
 				plugin.getLogger().warning(e.getMessage());
-				if (plugin.debug) {
+				if (plugin.getConfig().getBoolean("debug")) {
 					e.printStackTrace();
 				}
 			}
 		}
 
 		// output debugging information
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info(count + " block records inserted into the " +
 					"SQLite datastore.");
 		}
@@ -506,7 +506,7 @@ final class DataStoreSQLite extends DataStore {
 					int rowsAffected = preparedStatement.executeUpdate();
 
 					// output debugging information
-					if (plugin.debug) {
+					if (plugin.getConfig().getBoolean("debug")) {
 						plugin.getLogger().info(rowsAffected + " chest records deleted from the SQLite datastore.");
 					}
 				}
@@ -514,7 +514,7 @@ final class DataStoreSQLite extends DataStore {
 					plugin.getLogger().warning("An error occurred while attempting to "
 							+ "delete a chest record from the SQLite datastore.");
 					plugin.getLogger().warning(e.getMessage());
-					if (plugin.debug) {
+					if (plugin.getConfig().getBoolean("debug")) {
 						e.printStackTrace();
 					}
 				}
@@ -550,7 +550,7 @@ final class DataStoreSQLite extends DataStore {
 					int rowsAffected = preparedStatement.executeUpdate();
 
 					// output debugging information
-					if (plugin.debug) {
+					if (plugin.getConfig().getBoolean("debug")) {
 						plugin.getLogger().info(rowsAffected + " block records deleted from the SQLite datastore.");
 					}
 				}
@@ -558,7 +558,7 @@ final class DataStoreSQLite extends DataStore {
 					plugin.getLogger().warning("An error occurred while attempting to "
 							+ "delete a record from the SQLite datastore.");
 					plugin.getLogger().warning(e.getMessage());
-					if (plugin.debug) {
+					if (plugin.getConfig().getBoolean("debug")) {
 						e.printStackTrace();
 					}
 				}
@@ -589,7 +589,7 @@ final class DataStoreSQLite extends DataStore {
 			int rowsAffected = preparedStatement.executeUpdate();
 
 			// output debugging information
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				plugin.getLogger().info(rowsAffected + " rows deleted.");
 			}
 		}
@@ -597,7 +597,7 @@ final class DataStoreSQLite extends DataStore {
 			plugin.getLogger().warning("An error occurred while attempting to delete orphaned chests from the " +
 					this + " datastore.");
 			plugin.getLogger().warning(e.getMessage());
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
 		}
@@ -619,7 +619,7 @@ final class DataStoreSQLite extends DataStore {
 				plugin.getLogger().warning("An error occurred while closing the " +
 						this + " datastore connection.");
 				plugin.getLogger().warning(e.getMessage());
-				if (plugin.debug) {
+				if (plugin.getConfig().getBoolean("debug")) {
 					e.printStackTrace();
 				}
 			}
@@ -629,13 +629,13 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	void sync() {
+	public void sync() {
 		// no action necessary for this storage type
 	}
 
 
 	@Override
-	boolean delete() {
+	public boolean delete() {
 
 		boolean result = false;
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
@@ -647,7 +647,7 @@ final class DataStoreSQLite extends DataStore {
 
 
 	@Override
-	boolean exists() {
+	public boolean exists() {
 		// get path name to old data store file
 		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
 		return dataStoreFile.exists();

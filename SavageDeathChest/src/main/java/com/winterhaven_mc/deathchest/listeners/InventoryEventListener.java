@@ -90,7 +90,7 @@ public final class InventoryEventListener implements Listener {
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				plugin.getLogger().info(blockingPlugin.getPluginName() + " is preventing access to this chest.");
 			}
 			return;

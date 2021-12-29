@@ -169,7 +169,7 @@ public final class PlayerEventListener implements Listener {
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		final ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
-			if (plugin.debug) {
+			if (plugin.getConfig().getBoolean("debug")) {
 				plugin.getLogger().info("Death chest playerInteractEvent was blocked by "
 						+ blockingPlugin.getPluginName());
 			}

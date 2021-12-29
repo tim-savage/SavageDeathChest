@@ -39,7 +39,7 @@ public class StatusCommand extends AbstractSubcommand {
 		sender.sendMessage(ChatColor.DARK_AQUA + "DeathChest " + ChatColor.AQUA + "Version: "
 				+ ChatColor.RESET + versionString);
 
-		if (plugin.debug) {
+		if (plugin.getConfig().getBoolean("debug")) {
 			sender.sendMessage(ChatColor.DARK_RED + "DEBUG: true");
 		}
 
