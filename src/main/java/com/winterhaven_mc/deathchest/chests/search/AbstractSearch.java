@@ -138,7 +138,7 @@ public abstract class AbstractSearch implements Search {
 	 * Check if location is within world spawn protection radius
 	 *
 	 * @param location the location to check
-	 * @return {@code true) if passed location is within world spawn protection radius, {@code false) if not
+	 * @return {@code true} if passed location is within world spawn protection radius, {@code false} if not
 	 */
 	private boolean isSpawnProtected(final Location location) {
 
