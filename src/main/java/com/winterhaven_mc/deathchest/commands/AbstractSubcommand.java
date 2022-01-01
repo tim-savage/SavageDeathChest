@@ -4,6 +4,7 @@ import com.winterhaven_mc.deathchest.messages.MessageId;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,12 +35,12 @@ public abstract class AbstractSubcommand implements Subcommand {
 	}
 
 	@Override
-	public void setAliases(List<String> aliases) {
+	public void setAliases(final List<String> aliases) {
 		this.aliases = aliases;
 	}
 
 	@Override
-	public void addAlias(String alias) {
+	public void addAlias(final String alias) {
 		this.aliases.add(alias);
 	}
 
@@ -49,12 +50,12 @@ public abstract class AbstractSubcommand implements Subcommand {
 	}
 
 	@Override
-	public void displayUsage(CommandSender sender) {
+	public void displayUsage(final CommandSender sender) {
 		sender.sendMessage(usageString);
 	}
 
 	@Override
-	public void setUsage(String usageString) {
+	public void setUsage(final String usageString) {
 		this.usageString = usageString;
 	}
 
@@ -89,8 +90,10 @@ public abstract class AbstractSubcommand implements Subcommand {
 	}
 
 	@Override
-	public List<String> onTabComplete(final CommandSender sender, final Command command,
-									  final String alias, final String[] args) {
+	public List<String> onTabComplete(final @Nonnull CommandSender sender,
+	                                  final @Nonnull Command command,
+	                                  final @Nonnull String alias,
+	                                  final String[] args) {
 
 		return Collections.emptyList();
 	}

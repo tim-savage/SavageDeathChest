@@ -5,6 +5,7 @@ import com.winterhaven_mc.deathchest.sounds.SoundId;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +30,10 @@ public class HelpCommand extends AbstractSubcommand {
 
 
 	@Override
-	public List<String> onTabComplete(final CommandSender sender, final Command command,
-									  final String alias, final String[] args) {
+	public List<String> onTabComplete(final @Nonnull CommandSender sender,
+	                                  final @Nonnull Command command,
+	                                  final @Nonnull String alias,
+	                                  final String[] args) {
 
 		List<String> returnList = new ArrayList<>();
 
@@ -49,7 +52,7 @@ public class HelpCommand extends AbstractSubcommand {
 
 
 	@Override
-	public boolean onCommand(CommandSender sender, List<String> args) {
+	public boolean onCommand(final CommandSender sender, final List<String> args) {
 
 		// if command sender does not have permission to display help, output error message and return true
 		if (!sender.hasPermission("deathchest.help")) {
@@ -100,7 +103,7 @@ public class HelpCommand extends AbstractSubcommand {
 	 * Display usage message for all commands
 	 * @param sender the command sender
 	 */
-	void displayUsageAll(CommandSender sender) {
+	void displayUsageAll(final CommandSender sender) {
 
 		plugin.messageBuilder.build(sender, COMMAND_HELP_USAGE).send();
 

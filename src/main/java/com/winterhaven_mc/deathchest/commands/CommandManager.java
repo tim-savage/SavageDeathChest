@@ -43,8 +43,10 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @return List of String - the possible matching values for tab completion
 	 */
 	@Override
-	public List<String> onTabComplete(final @Nonnull CommandSender sender, @Nonnull final Command command,
-	                                  final @Nonnull String alias, final String[] args) {
+	public List<String> onTabComplete(final @Nonnull CommandSender sender,
+	                                  final @Nonnull Command command,
+	                                  final @Nonnull String alias,
+	                                  final String[] args) {
 
 		// if more than one argument, use tab completer of subcommand
 		if (args.length > 1) {
@@ -117,7 +119,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 * @param matchString the string prefix to match against command names
 	 * @return List of String - command names that match prefix and sender has permission
 	 */
-	private List<String> matchingCommands(CommandSender sender, String matchString) {
+	private List<String> matchingCommands(final CommandSender sender, final String matchString) {
 
 		List<String> returnList = new ArrayList<>();
 

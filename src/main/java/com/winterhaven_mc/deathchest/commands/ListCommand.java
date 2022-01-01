@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 import static com.winterhaven_mc.deathchest.messages.MessageId.*;
@@ -29,7 +30,7 @@ public class ListCommand extends AbstractSubcommand {
 
 
 	@Override
-	public void displayUsage(CommandSender sender) {
+	public void displayUsage(final CommandSender sender) {
 
 		if (sender.hasPermission("deathchest.list.other")) {
 			sender.sendMessage("/deathchest list [username] [page]");
@@ -41,8 +42,10 @@ public class ListCommand extends AbstractSubcommand {
 
 
 	@Override
-	public List<String> onTabComplete(final CommandSender sender, final Command command,
-									  final String alias, final String[] args) {
+	public List<String> onTabComplete(final @Nonnull CommandSender sender,
+	                                  final @Nonnull Command command,
+	                                  final @Nonnull String alias,
+	                                  final String[] args) {
 
 		// initialize return list
 		final List<String> returnList = new ArrayList<>();
@@ -214,7 +217,7 @@ public class ListCommand extends AbstractSubcommand {
 	}
 
 
-	private List<DeathChest> getChestsForPlayer(Player player) {
+	private List<DeathChest> getChestsForPlayer(final Player player) {
 		List<DeathChest> returnList = new ArrayList<>();
 
 		for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
@@ -226,7 +229,7 @@ public class ListCommand extends AbstractSubcommand {
 	}
 
 
-	private void displayListHeader(CommandSender sender, int page, int pageCount) {
+	private void displayListHeader(final CommandSender sender, final int page, final int pageCount) {
 		// display list header
 		plugin.messageBuilder.build(sender, LIST_HEADER)
 				.setMacro(Macro.PAGE_NUMBER, page)
@@ -235,7 +238,7 @@ public class ListCommand extends AbstractSubcommand {
 	}
 
 
-	private void displayListFooter(CommandSender sender, int page, int pageCount) {
+	private void displayListFooter(final CommandSender sender, int page, int pageCount) {
 		// display list footer
 		plugin.messageBuilder.build(sender, LIST_FOOTER)
 				.setMacro(Macro.PAGE_NUMBER, page)
