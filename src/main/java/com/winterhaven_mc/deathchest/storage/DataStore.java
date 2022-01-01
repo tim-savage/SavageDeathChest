@@ -89,14 +89,6 @@ public interface DataStore {
 
 
 	/**
-	 * Check for existence of datastore file or equivalent
-	 *
-	 * @return {@code true} if the datastore file (or equivilent) exists, {@code false} if it does not
-	 */
-	boolean exists();
-
-
-	/**
 	 * Check if the datastore is initialized
 	 *
 	 * @return {@code true} if the datastore is initialize, {@code false} if it is not
@@ -113,35 +105,19 @@ public interface DataStore {
 
 
 	/**
-	 * Create new data store of given type.<br>
-	 * No parameter version used when no current datastore exists
-	 * and datastore type should be read from configuration
-	 *
-	 * @return new datastore of configured type
-	 */
-	static DataStore create(PluginMain plugin) {
-
-		// get data store type from config
-		DataStoreType dataStoreType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
-		if (dataStoreType == null) {
-			dataStoreType = DataStoreType.getDefaultType();
-		}
-		return create(plugin, dataStoreType, null);
-	}
-
-
-	/**
 	 * Create new data store of given type and convert old data store.<br>
 	 * Two parameter version used when a datastore instance already exists
 	 *
-	 * @param dataStoreType new datastore type
-	 * @param oldDataStore  existing datastore reference
+	 * @param plugin reference to plugin main class
 	 * @return the new datastore
 	 */
-	static DataStore create(final PluginMain plugin, final DataStoreType dataStoreType, final DataStore oldDataStore) {
+	static DataStore connect(final PluginMain plugin) {
+
+		// get data store type from config
+		DataStoreType dataStoreType = DataStoreType.match(plugin.getConfig().getString("storage-type"));
 
 		// get new data store of specified type
-		DataStore newDataStore = dataStoreType.create(plugin);
+		DataStore newDataStore = dataStoreType.connect(plugin);
 
 		// initialize new data store
 		try {
@@ -154,13 +130,8 @@ public interface DataStore {
 			}
 		}
 
-		// if old data store was passed, convert to new data store
-		if (oldDataStore != null) {
-			DataStoreType.convert(plugin, oldDataStore, newDataStore);
-		}
-		else {
-			DataStoreType.convertAll(plugin, newDataStore);
-		}
+		// convert any existing data stores to new type
+		DataStoreType.convertAll(plugin, newDataStore);
 
 		// return initialized data store
 		return newDataStore;

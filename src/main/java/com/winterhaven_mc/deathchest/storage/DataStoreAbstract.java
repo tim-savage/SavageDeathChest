@@ -53,13 +53,4 @@ public abstract class DataStoreAbstract {
 		return this.type.toString();
 	}
 
-	/**
-	 * Get the datastore filename or equivalent
-	 *
-	 * @return the filename (or equivalent) of this datastore instance
-	 */
-	public String getFilename() {
-		return this.filename;
-	}
-
 }

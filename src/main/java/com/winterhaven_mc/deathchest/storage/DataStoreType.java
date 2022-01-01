@@ -3,6 +3,7 @@ package com.winterhaven_mc.deathchest.storage;
 import com.winterhaven_mc.deathchest.PluginMain;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,27 +14,28 @@ import java.util.Arrays;
  */
 public enum DataStoreType {
 
-	SQLITE("SQLite") {
+	SQLITE("SQLite", "deathchests.db") {
+
 		@Override
-		public DataStore create(PluginMain plugin) {
+		public DataStore connect(final PluginMain plugin) {
 
 			// create new SQLite datastore object
 			return new DataStoreSQLite(plugin);
 		}
-	};
 
-//	private final static PluginMain plugin = JavaPlugin.getPlugin(PluginMain.class);
+		@Override
+		boolean storageObjectExists(final JavaPlugin plugin) {
+			// get path name to data store file
+			File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getStorageName());
+			return dataStoreFile.exists();
+		}
+	};
 
 	private final String displayName;
 
+	private final String storageName;
+
 	private final static DataStoreType defaultType = DataStoreType.SQLITE;
-
-
-	/**
-	 * Get new instance of DataStore of configured type
-	 * @return new instance of DataStore
-	 */
-	public abstract DataStore create(PluginMain plugin);
 
 
 	/**
@@ -41,9 +43,36 @@ public enum DataStoreType {
 	 *
 	 * @param displayName the formatted display name of a datastore type
 	 */
-	DataStoreType(final String displayName) {
+	DataStoreType(final String displayName, final String storageName) {
 		this.displayName = displayName;
+		this.storageName = storageName;
 	}
+
+
+	/**
+	 * Get new instance of DataStore of configured type
+	 * @return new instance of DataStore
+	 */
+	public abstract DataStore connect(final PluginMain plugin);
+
+
+	/**
+	 * Getter for storage object name.
+	 *
+	 * @return the name of the backing store object for a data store type
+	 */
+	String getStorageName() {
+		return storageName;
+	}
+
+
+	/**
+	 * Test if datastore backing object (file, database) exists
+	 *
+	 * @param plugin reference to plugin main class
+	 * @return true if backing object exists, false if not
+	 */
+	abstract boolean storageObjectExists(final JavaPlugin plugin);
 
 
 	/**
@@ -75,15 +104,6 @@ public enum DataStoreType {
 
 
 	/**
-	 * Get the default DataStoreType
-	 * @return DataStoreType - the default DataStoreType
-	 */
-	public static DataStoreType getDefaultType() {
-		return defaultType;
-	}
-
-
-	/**
 	 * convert old data store to new data store
 	 *
 	 * @param oldDataStore the existing datastore to be converted from
@@ -97,7 +117,7 @@ public enum DataStoreType {
 		}
 
 		// if old datastore file exists, attempt to read all records
-		if (oldDataStore.exists()) {
+		if (oldDataStore.getType().storageObjectExists(plugin)) {
 
 			plugin.getLogger().info("Converting existing " + oldDataStore + " datastore to "
 					+ newDataStore + " datastore...");
@@ -115,17 +135,27 @@ public enum DataStoreType {
 				}
 			}
 
+			// get count of chest records inserted in new datastore from old datastore
 			int chestRecordCount = newDataStore.insertChestRecords(oldDataStore.selectAllChestRecords());
+
+			// log chest record count message
 			plugin.getLogger().info(chestRecordCount + " chest records converted to "
 					+ newDataStore + " datastore.");
 
+			// get count of block records inserted in new datastore from old datastore
 			int recordCount = newDataStore.insertBlockRecords(oldDataStore.selectAllBlockRecords());
+
+			// log block record count message
 			plugin.getLogger().info(recordCount + " block records converted to "
 					+ newDataStore + " datastore.");
 
+			// flush new datastore to disk if applicable
 			newDataStore.sync();
 
+			// close old datastore
 			oldDataStore.close();
+
+			// delete old datastore
 			oldDataStore.delete();
 		}
 	}
@@ -146,7 +176,9 @@ public enum DataStoreType {
 
 		// convert each datastore in list to new datastore
 		for (DataStoreType type : dataStores) {
-			convert(plugin, type.create(plugin), newDataStore);
+			if (type.storageObjectExists(plugin)) {
+				convert(plugin, type.connect(plugin), newDataStore);
+			}
 		}
 	}
 

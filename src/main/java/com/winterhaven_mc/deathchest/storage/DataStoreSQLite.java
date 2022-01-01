@@ -26,6 +26,9 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 	// database connection object
 	private Connection connection;
 
+	// file path for datastore file
+	private final String dataFilePath;
+
 	// schema version
 	private int schemaVersion;
 
@@ -43,8 +46,8 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 		// set datastore type
 		this.type = DataStoreType.SQLITE;
 
-		// set filename
-		this.filename = "deathchests.db";
+		// set datastore file path
+		this.dataFilePath = plugin.getDataFolder() + File.separator + type.getStorageName();
 	}
 
 	/**
@@ -66,9 +69,8 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 		Class.forName(jdbcDriverName);
 
 		// create database url
-		String deathChestsDb = plugin.getDataFolder() + File.separator + filename;
 		String jdbc = "jdbc:sqlite";
-		String dbUrl = jdbc + ":" + deathChestsDb;
+		String dbUrl = jdbc + ":" + dataFilePath;
 
 		// create a database connection
 		connection = DriverManager.getConnection(dbUrl);
@@ -165,6 +167,48 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 
 		// execute death block table creation statement
 		statement.executeUpdate(getQuery("CreateDeathBlockTable"));
+	}
+
+
+	/**
+	 * Close database connection
+	 */
+	@Override
+	public void close() {
+
+		if (isInitialized()) {
+			try {
+				connection.close();
+				plugin.getLogger().info(this + " datastore connection closed.");
+			}
+			catch (SQLException e) {
+				plugin.getLogger().warning("An error occurred while closing the " +
+						this + " datastore connection.");
+				plugin.getLogger().warning(e.getMessage());
+				if (plugin.getConfig().getBoolean("debug")) {
+					e.printStackTrace();
+				}
+			}
+			setInitialized(false);
+		}
+	}
+
+
+	@Override
+	public void sync() {
+		// no action necessary for this storage type
+	}
+
+
+	@Override
+	public boolean delete() {
+
+		boolean result = false;
+		File dataStoreFile = new File(dataFilePath);
+		if (dataStoreFile.exists()) {
+			result = dataStoreFile.delete();
+		}
+		return result;
 	}
 
 
@@ -601,56 +645,6 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 				e.printStackTrace();
 			}
 		}
-	}
-
-
-	/**
-	 * Close database connection
-	 */
-	@Override
-	public void close() {
-
-		if (isInitialized()) {
-			try {
-				connection.close();
-				plugin.getLogger().info(this + " datastore connection closed.");
-			}
-			catch (SQLException e) {
-				plugin.getLogger().warning("An error occurred while closing the " +
-						this + " datastore connection.");
-				plugin.getLogger().warning(e.getMessage());
-				if (plugin.getConfig().getBoolean("debug")) {
-					e.printStackTrace();
-				}
-			}
-			setInitialized(false);
-		}
-	}
-
-
-	@Override
-	public void sync() {
-		// no action necessary for this storage type
-	}
-
-
-	@Override
-	public boolean delete() {
-
-		boolean result = false;
-		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
-		if (dataStoreFile.exists()) {
-			result = dataStoreFile.delete();
-		}
-		return result;
-	}
-
-
-	@Override
-	public boolean exists() {
-		// get path name to old data store file
-		File dataStoreFile = new File(plugin.getDataFolder() + File.separator + this.getFilename());
-		return dataStoreFile.exists();
 	}
 
 }

@@ -60,7 +60,7 @@ public final class ChestManager {
 		replaceableBlocks = new ReplaceableBlocks(plugin);
 
 		// initialize datastore
-		dataStore = DataStore.create(plugin);
+		dataStore = DataStore.connect(plugin);
 
 		// initialize chestIndex
 		chestIndex = new ChestIndex();
@@ -403,7 +403,7 @@ public final class ChestManager {
 		if (!currentType.equals(newType)) {
 
 			// create new datastore
-			dataStore = DataStore.create(plugin, newType, dataStore);
+			dataStore = DataStore.connect(plugin);
 		}
 	}
 
