@@ -42,8 +42,7 @@ public final class Deployment {
 	private static final Set<String> pathBlockTypeNames = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 			"GRASS_PATH",
 			"LEGACY_GRASS_PATH",
-			"DIRT_PATH"
-	)));
+			"DIRT_PATH"	)));
 
 
 	/**
@@ -61,14 +60,8 @@ public final class Deployment {
 		// create new deathChest object for player
 		this.deathChest = new DeathChest(player);
 
-		// deploy chest, putting items that don't fit in chest into droppedItems list of ItemStack
+		// deploy chest
 		SearchResult result = deployChest(player, droppedItems);
-
-		// clear dropped items
-		droppedItems.clear();
-
-		// drop any items that couldn't be placed in a death chest
-		droppedItems.addAll(result.getRemainingItems());
 
 		// if debugging, log result
 		if (plugin.getConfig().getBoolean("debug")) {
@@ -84,61 +77,14 @@ public final class Deployment {
 		}
 
 		// send message based on result
-		switch (result.getResultCode()) {
-			case SUCCESS:
-				plugin.messageBuilder.build(player, CHEST_SUCCESS)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
-						.send();
-				break;
+		sendResultMessage(player, result, expireTime);
 
-			case PARTIAL_SUCCESS:
-				plugin.messageBuilder.build(player, DOUBLECHEST_PARTIAL_SUCCESS)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
-						.send();
-				break;
-
-			case PROTECTION_PLUGIN:
-				plugin.messageBuilder.build(player, CHEST_DENIED_PLUGIN)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
-						.send();
-				break;
-
-			case ABOVE_GRASS_PATH:
-			case NON_REPLACEABLE_BLOCK:
-				plugin.messageBuilder.build(player, CHEST_DENIED_BLOCK)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case ADJACENT_CHEST:
-				plugin.messageBuilder.build(player, CHEST_DENIED_ADJACENT)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case NO_CHEST:
-				plugin.messageBuilder.build(player, NO_CHEST_IN_INVENTORY)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case SPAWN_RADIUS:
-				plugin.messageBuilder.build(player, CHEST_DENIED_SPAWN_RADIUS)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case VOID:
-				plugin.messageBuilder.build(player, CHEST_DENIED_VOID)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
+		// drop any remaining items that were not placed in a chest
+		for (ItemStack item : result.getRemainingItems()) {
+			player.getWorld().dropItemNaturally(player.getLocation(), item);
 		}
 
-		// if result is negative, cancel expire task and return
+		// if result is negative cancel expire task and return
 		if (!result.getResultCode().equals(ResultCode.SUCCESS)
 				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
 
@@ -661,6 +607,65 @@ public final class Deployment {
 
 		// if block at location is above grass path, return negative result
 		return pathBlockTypeNames.contains(materialType);
+	}
+
+
+	private void sendResultMessage(final Player player, final SearchResult result, final long expireTime) {
+
+		// send message based on result
+		switch (result.getResultCode()) {
+			case SUCCESS:
+				plugin.messageBuilder.build(player, CHEST_SUCCESS)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.send();
+				break;
+
+			case PARTIAL_SUCCESS:
+				plugin.messageBuilder.build(player, DOUBLECHEST_PARTIAL_SUCCESS)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.send();
+				break;
+
+			case PROTECTION_PLUGIN:
+				plugin.messageBuilder.build(player, CHEST_DENIED_PLUGIN)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
+						.send();
+				break;
+
+			case ABOVE_GRASS_PATH:
+			case NON_REPLACEABLE_BLOCK:
+				plugin.messageBuilder.build(player, CHEST_DENIED_BLOCK)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
+				break;
+
+			case ADJACENT_CHEST:
+				plugin.messageBuilder.build(player, CHEST_DENIED_ADJACENT)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
+				break;
+
+			case NO_CHEST:
+				plugin.messageBuilder.build(player, NO_CHEST_IN_INVENTORY)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
+				break;
+
+			case SPAWN_RADIUS:
+				plugin.messageBuilder.build(player, CHEST_DENIED_SPAWN_RADIUS)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
+				break;
+
+			case VOID:
+				plugin.messageBuilder.build(player, CHEST_DENIED_VOID)
+						.setMacro(Macro.LOCATION, result.getLocation())
+						.send();
+				break;
+		}
 	}
 
 
