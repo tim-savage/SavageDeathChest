@@ -6,11 +6,10 @@ import com.winterhaven_mc.deathchest.PluginMain;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LanguageHandlerTests {
@@ -36,38 +35,38 @@ public class LanguageHandlerTests {
     }
 
     @Nested
-    @DisplayName("test language handler")
-    class LanguageHandler {
+    @DisplayName("test message builder")
+    class MessageBuilderTests {
 
         @Test
-        @DisplayName("language handler is not null")
+        @DisplayName("message builder is not null")
         void LanguageHandlerNotNull() {
-            Assertions.assertNotNull(plugin.languageHandler);
+            Assertions.assertNotNull(plugin.messageBuilder);
         }
 
         @Test
         @DisplayName("item name is not null")
         void ItemNameNotNull() {
-            Assertions.assertNotNull(plugin.languageHandler.getItemName());
+            Assertions.assertNotNull(plugin.messageBuilder.getItemName());
         }
 
         @Test
         @DisplayName("item lore is not null")
         void ItemLoreNotNull() {
-            Assertions.assertNotNull(plugin.languageHandler.getItemLore());
+            Assertions.assertNotNull(plugin.messageBuilder.getItemLore());
         }
     }
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("Test messages:")
-    class Messages {
+    class MessageTests {
 
         // collection of enum sound name strings
         Collection<String> enumMessageNames = new HashSet<>();
 
         // class constructor
-        Messages() {
+        MessageTests() {
             // add all MessageId enum values to collection
             for (MessageId MessageId : MessageId.values()) {
                 enumMessageNames.add(MessageId.name());
@@ -79,14 +78,14 @@ public class LanguageHandlerTests {
         @DisplayName("enum member MessageId is contained in getConfig() keys.")
         void FileKeysContainsEnumValue(MessageId messageId) {
             Assertions.assertNotNull(messageId, "messageId is null");
-            Assertions.assertNotNull(plugin.languageHandler.getMessage(messageId),
+            Assertions.assertNotNull(plugin.messageBuilder.getMessage(messageId),
                     "language handler returned null message for " + messageId.name());
         }
 
 
 //        @SuppressWarnings("unused")
 //        Set<String> ConfigFileKeys() {
-//            return plugin.languageHandler.getMessageKeys();
+//            return plugin.messageBuilder.getMessageKeys();
 //        }
 
 //        @ParameterizedTest

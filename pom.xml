@@ -64,7 +64,7 @@
 		<!-- MessengerLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>message-builder</artifactId>
+			<artifactId>message-builder-lib</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
@@ -226,9 +226,20 @@
 						</goals>
 						<configuration>
 							<minimizeJar>true</minimizeJar>
+							<filters>
+								<filter>
+									<artifact>com.winterhaven-mc:*-lib</artifact>
+									<excludes>
+										<exclude>META-INF/MANIFEST.MF</exclude>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 							<artifactSet>
 								<includes>
-									<include>com.winterhaven-mc:message-builder</include>
+									<include>com.winterhaven-mc:message-builder-lib</include>
 									<include>com.winterhaven-mc:world-manager-lib</include>
 									<include>com.winterhaven-mc:sound-config-lib</include>
 								</includes>

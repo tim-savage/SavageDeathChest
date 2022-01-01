@@ -28,7 +28,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		Objects.requireNonNull(sender);
 
 		if (!sender.hasPermission("deathchest.reload")) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_RELOAD_PERMISSION).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_RELOAD_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -43,7 +43,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		plugin.worldManager.reload();
 
 		// reload messages
-		plugin.languageHandler.reload();
+		plugin.messageBuilder.reload();
 
 		// reload sounds
 		plugin.soundConfig.reload();
@@ -52,7 +52,7 @@ public class ReloadCommand extends AbstractSubcommand {
 		plugin.chestManager.reload();
 
 		// send success message
-		plugin.messageBuilder.build(sender, COMMAND_SUCCESS_RELOAD).send(plugin.languageHandler);
+		plugin.messageBuilder.build(sender, COMMAND_SUCCESS_RELOAD).send();
 
 		// return true to prevent bukkit command help display
 		return true;

@@ -89,52 +89,52 @@ public final class Deployment {
 				plugin.messageBuilder.build(player, CHEST_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case PARTIAL_SUCCESS:
 				plugin.messageBuilder.build(player, DOUBLECHEST_PARTIAL_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case PROTECTION_PLUGIN:
 				plugin.messageBuilder.build(player, CHEST_DENIED_PLUGIN)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case ABOVE_GRASS_PATH:
 			case NON_REPLACEABLE_BLOCK:
 				plugin.messageBuilder.build(player, CHEST_DENIED_BLOCK)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case ADJACENT_CHEST:
 				plugin.messageBuilder.build(player, CHEST_DENIED_ADJACENT)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case NO_CHEST:
 				plugin.messageBuilder.build(player, NO_CHEST_IN_INVENTORY)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case SPAWN_RADIUS:
 				plugin.messageBuilder.build(player, CHEST_DENIED_SPAWN_RADIUS)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send(plugin.languageHandler);
+						.send();
 				break;
 
 			case VOID:
 				plugin.messageBuilder.build(player, CHEST_DENIED_VOID)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.send(plugin.languageHandler);
+						.send();
 				break;
 		}
 
@@ -161,7 +161,7 @@ public final class Deployment {
 					.setMacro(Macro.OWNER, player.getName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
 					.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(chestProtectionTime))
-					.send(plugin.languageHandler);
+					.send();
 		}
 
 		// put DeathChest in DeathChest map

@@ -334,7 +334,7 @@ public final class DeathChest {
 		// send player message
 		plugin.messageBuilder.build(player, INVENTORY_FULL)
 				.setMacro(Macro.LOCATION, player.getLocation())
-				.send(plugin.languageHandler);
+				.send();
 
 		// try to put remaining items back in chest
 		remainingItems = this.fill(remainingItems);
@@ -365,7 +365,7 @@ public final class DeathChest {
 		if (player != null) {
 			plugin.messageBuilder.build(player, CHEST_EXPIRED)
 					.setMacro(Macro.LOCATION, this.getLocation())
-					.send(plugin.languageHandler);
+					.send();
 		}
 	}
 

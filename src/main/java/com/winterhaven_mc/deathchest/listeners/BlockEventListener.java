@@ -121,7 +121,7 @@ public final class BlockEventListener implements Listener {
 				&& !player.hasPermission("deathchest.creative-access")) {
 			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation())
-					.send(plugin.languageHandler);
+					.send();
 			event.setCancelled(true);
 			return;
 		}
@@ -142,7 +142,7 @@ public final class BlockEventListener implements Listener {
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
 					.setMacro(Macro.DURATION, remainingProtectionTime)
-					.send(plugin.languageHandler);
+					.send();
 		}
 
 		// cancel event
@@ -170,7 +170,7 @@ public final class BlockEventListener implements Listener {
 					.setMacro(OWNER, ownerName)
 					.setMacro(KILLER, killerName)
 					.setMacro(VIEWER, viewerName)
-					.send(plugin.languageHandler);
+					.send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -209,7 +209,7 @@ public final class BlockEventListener implements Listener {
 				.setMacro(LOCATION, deathChest.getLocation())
 				.setMacro(OWNER, ownerName)
 				.setMacro(KILLER, killerName)
-				.send(plugin.languageHandler);
+				.send();
 
 		// play denied access sound
 		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);

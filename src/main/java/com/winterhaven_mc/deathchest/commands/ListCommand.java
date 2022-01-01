@@ -67,14 +67,14 @@ public class ListCommand extends AbstractSubcommand {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_PERMISSION).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
 
 		// check if max args exceeded
 		if (args.size() > this.getMaxArgs()) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send();
 			displayUsage(sender);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
@@ -129,7 +129,7 @@ public class ListCommand extends AbstractSubcommand {
 
 			// else send permission denied message and return true
 			else {
-				plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send(plugin.languageHandler);
+				plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
 				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 				return true;
 			}
@@ -137,7 +137,7 @@ public class ListCommand extends AbstractSubcommand {
 
 		// if display list is empty, output list empty message and return
 		if (displayRecords.isEmpty()) {
-			plugin.messageBuilder.build(sender, LIST_EMPTY).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, LIST_EMPTY).send();
 			return true;
 		}
 
@@ -194,7 +194,7 @@ public class ListCommand extends AbstractSubcommand {
 						.setMacro(Macro.OWNER, ownerName)
 						.setMacro(Macro.KILLER, killerName)
 						.setMacro(Macro.DURATION, remainingTime)
-						.send(plugin.languageHandler);
+						.send();
 			}
 			else {
 				plugin.messageBuilder.build(sender, LIST_ITEM)
@@ -203,7 +203,7 @@ public class ListCommand extends AbstractSubcommand {
 						.setMacro(Macro.OWNER, ownerName)
 						.setMacro(Macro.KILLER, killerName)
 						.setMacro(Macro.DURATION, remainingTime)
-						.send(plugin.languageHandler);
+						.send();
 			}
 		}
 
@@ -231,7 +231,7 @@ public class ListCommand extends AbstractSubcommand {
 		plugin.messageBuilder.build(sender, LIST_HEADER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
-				.send(plugin.languageHandler);
+				.send();
 	}
 
 
@@ -240,7 +240,7 @@ public class ListCommand extends AbstractSubcommand {
 		plugin.messageBuilder.build(sender, LIST_FOOTER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
-				.send(plugin.languageHandler);
+				.send();
 	}
 
 	private String getNameFromArgs(final List<String> args) {

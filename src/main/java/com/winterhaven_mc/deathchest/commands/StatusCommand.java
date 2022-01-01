@@ -30,7 +30,7 @@ public class StatusCommand extends AbstractSubcommand {
 	@Override
 	public boolean onCommand(final CommandSender sender, final List<String> args) {
 		if (!sender.hasPermission("deathchest.status")) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_STATUS_PERMISSION).send(plugin.languageHandler);
+			plugin.messageBuilder.build(sender, COMMAND_FAIL_STATUS_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
@@ -55,7 +55,7 @@ public class StatusCommand extends AbstractSubcommand {
 		}
 
 		sender.sendMessage(ChatColor.GREEN + "Chest Expiration: "
-				+ ChatColor.RESET + plugin.languageHandler.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
+				+ ChatColor.RESET + plugin.messageBuilder.getTimeString(TimeUnit.MINUTES.toMillis(expireTime)));
 
 		int chestProtectionTime = plugin.getConfig().getInt("chest-protection-time");
 		if (chestProtectionTime == 0) {
@@ -63,7 +63,7 @@ public class StatusCommand extends AbstractSubcommand {
 		}
 
 		sender.sendMessage(ChatColor.GREEN + "Chest Protection Time: "
-				+ ChatColor.RESET + plugin.languageHandler
+				+ ChatColor.RESET + plugin.messageBuilder
 					.getTimeString(TimeUnit.MINUTES.toMillis(chestProtectionTime)));
 
 		sender.sendMessage(ChatColor.GREEN + "Require Chest: "
