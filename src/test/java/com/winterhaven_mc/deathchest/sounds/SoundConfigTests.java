@@ -49,44 +49,15 @@ public class SoundConfigTests {
 
 
 	@Nested
-	@DisplayName("test mocking setup.")
-	class MockingSetup {
-		@Test
-		@DisplayName("server is not null.")
-		void ServerNotNull() {
-			Assertions.assertNotNull(server, "server is null.");
-		}
-
-		@Test
-		@DisplayName("world is not null.")
-		void WorldNotNull() {
-			Assertions.assertNotNull(world, "world is null.");
-		}
-
-		@Test
-		@DisplayName("player is not null.")
-		void PlayerNotNull() {
-			Assertions.assertNotNull(player, "player is null.");
-		}
-
-		@Test
-		@DisplayName("plugin is not null.")
-		void PluginNotNull() {
-			Assertions.assertNotNull(plugin, "plugin is null.");
-		}
-	}
-
-
-	@Nested
 	@DisplayName("Test Sounds config.")
 	@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-	class Sounds {
+	class SoundTests {
 
 		// collection of enum sound name strings
 		Collection<String> enumSoundNames = new HashSet<>();
 
 		// class constructor
-		Sounds() {
+		SoundTests() {
 			// add all SoundId enum values to collection
 			for (SoundId SoundId : SoundId.values()) {
 				enumSoundNames.add(SoundId.name());
@@ -127,11 +98,11 @@ public class SoundConfigTests {
 
 		@Nested
 		@DisplayName("Play all sounds.")
-		class PlaySounds {
+		class PlaySoundTests {
 
 			@Nested
 			@DisplayName("Play all sounds in SoundId for player")
-			class PlayerSounds {
+			class PlayerSoundTests {
 
 				private final EnumMap<SoundId, Boolean> soundsPlayed = new EnumMap<>(SoundId.class);
 
@@ -148,7 +119,7 @@ public class SoundConfigTests {
 
 			@Nested
 			@DisplayName("Play all sounds in SoundId at world location")
-			class WorldSounds {
+			class WorldSoundTests {
 
 				private final EnumMap<SoundId, Boolean> soundsPlayed = new EnumMap<>(SoundId.class);
 
