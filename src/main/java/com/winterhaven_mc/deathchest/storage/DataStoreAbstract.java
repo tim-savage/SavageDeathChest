@@ -10,8 +10,6 @@ public abstract class DataStoreAbstract {
 
 	DataStoreType type;
 
-	String filename;
-
 
 	/**
 	 * Check if the datastore is initialized
