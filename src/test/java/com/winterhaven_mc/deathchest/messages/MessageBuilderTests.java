@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class LanguageHandlerTests {
+public class MessageBuilderTests {
 
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private ServerMock server;
@@ -36,7 +36,7 @@ public class LanguageHandlerTests {
 
     @Nested
     @DisplayName("test message builder")
-    class MessageBuilderTests {
+    class MessageBuilderBasicTests {
 
         @Test
         @DisplayName("message builder is not null")
