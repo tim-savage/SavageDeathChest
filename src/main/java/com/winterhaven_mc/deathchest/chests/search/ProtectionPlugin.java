@@ -15,6 +15,8 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -107,41 +109,41 @@ public enum ProtectionPlugin {
 		}
 	},
 
-//	PRECIOUSSTONES("PreciousStones") {
-//
-//		@Override
-//		public final boolean hasPlacePermission(final Player player, final Location location) {
-//
-//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-//			try {
-//				if (! PreciousStones.API().canPlace(player,location)) {
-//					return false;
-//				}
-//			}
-//			catch (Exception e) {
-//				logPlaceError();
-//			}
-//
-//			return true;
-//		}
-//
-//		@Override
-//		public final boolean hasChestPermission(final Player player, final Location location) {
-//
-//			// use try..catch block to gracefully handle exceptions thrown by protection plugin
-//			try {
-//				if (PreciousStones.API().flagAppliesToPlayer(player,FieldFlag.PROTECT_INVENTORIES,location)) {
-//					return false;
-//				}
-//			}
-//			catch (Exception e) {
-//				logAccessError();
-//			}
-//
-//			return true;
-//		}
-//
-//	},
+	PRECIOUSSTONES("PreciousStones") {
+
+		@Override
+		public final boolean hasPlacePermission(final Player player, final Location location) {
+
+			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+			try {
+				if (! PreciousStones.API().canPlace(player,location)) {
+					return false;
+				}
+			}
+			catch (Exception e) {
+				logPlaceError();
+			}
+
+			return true;
+		}
+
+		@Override
+		public final boolean hasChestPermission(final Player player, final Location location) {
+
+			// use try..catch block to gracefully handle exceptions thrown by protection plugin
+			try {
+				if (PreciousStones.API().flagAppliesToPlayer(player, FieldFlag.PROTECT_INVENTORIES,location)) {
+					return false;
+				}
+			}
+			catch (Exception e) {
+				logAccessError();
+			}
+
+			return true;
+		}
+
+	},
 
 	ROADBLOCK("RoadBlock") {
 		@Override
