@@ -35,7 +35,7 @@ public class PluginMainTests {
 
     @Nested
     @DisplayName("Test mock objects.")
-    class Mocking {
+    class MockingSetupTests {
 
         @Test
         @DisplayName("server is not null.")
@@ -67,7 +67,7 @@ public class PluginMainTests {
 
     @Nested
     @DisplayName("Test plugin main objects.")
-    class PluginMainObjects {
+    class PluginMainObjectTests {
 
         @Test
         @DisplayName("config not null.")
@@ -103,7 +103,7 @@ public class PluginMainTests {
     @Nested
     @DisplayName("Test plugin config.")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class Config {
+    class ConfigTests {
 
         Set<String> enumConfigKeyStrings = new HashSet<>();
 
@@ -111,7 +111,7 @@ public class PluginMainTests {
          * Constructor for test class
          * populates enumConfigKeyStrings set
          */
-        public Config() {
+        public ConfigTests() {
             for (ConfigSetting configSetting : ConfigSetting.values()) {
                 this.enumConfigKeyStrings.add(configSetting.getKey());
             }
