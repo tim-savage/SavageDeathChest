@@ -54,13 +54,6 @@
 	</repositories>
 
 	<dependencies>
-		<!-- WorldManagerLib -->
-		<dependency>
-			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>world-manager-lib</artifactId>
-			<version>1.16.1</version>
-		</dependency>
-
 		<!-- MessengerLib -->
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
@@ -72,7 +65,14 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>sound-config-lib</artifactId>
-			<version>1.16.1</version>
+			<version>1.16.3</version>
+		</dependency>
+
+		<!-- WorldManagerLib -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>world-manager-lib</artifactId>
+			<version>1.16.3</version>
 		</dependency>
 
 		<!-- Spigot API -->
@@ -192,7 +192,7 @@
 							<rules>
 								<bannedDependencies>
 									<excludes>
-										<exclude>org.apache.logging.log4j:log4j-core:(,2.16.0)</exclude>
+										<exclude>org.apache.logging.log4j:log4j-core:(,2.17.0)</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -245,10 +245,6 @@
 								</includes>
 							</artifactSet>
 							<relocations>
-								<relocation>
-									<pattern>com.winterhaven_mc.util</pattern>
-									<shadedPattern>com.winterhaven_mc.deathchest.shaded</shadedPattern>
-								</relocation>
 								<relocation>
 									<pattern>com.winterhavenmc.util</pattern>
 									<shadedPattern>com.winterhaven_mc.deathchest.shaded</shadedPattern>
