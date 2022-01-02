@@ -278,7 +278,7 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if player did not right click block, do nothing and return
+		// if player did not right-click block, do nothing and return
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			return;
 		}
