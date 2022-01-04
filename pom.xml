@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>message-builder-lib</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.3</version>
 		</dependency>
 
 		<!-- SoundConfigLib -->
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>RoadBlock</artifactId>
-			<version>1.16.1</version>
+			<version>1.18.2</version>
 			<scope>provided</scope>
 		</dependency>
 
