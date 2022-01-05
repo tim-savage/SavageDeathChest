@@ -1,5 +1,5 @@
 name: ${project.name}
-main: com.winterhaven_mc.deathchest.PluginMain
+main: com.winterhavenmc.deathchest.PluginMain
 author: ${project.author}
 version: ${project.version}
 api-version: 1.16

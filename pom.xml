@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>com.winterhaven-mc</groupId>
 			<artifactId>RoadBlock</artifactId>
-			<version>1.18.2</version>
+			<version>1.18.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -247,7 +247,7 @@
 							<relocations>
 								<relocation>
 									<pattern>com.winterhavenmc.util</pattern>
-									<shadedPattern>com.winterhaven_mc.deathchest.shaded</shadedPattern>
+									<shadedPattern>com.winterhavenmc.deathchest.shaded</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>
