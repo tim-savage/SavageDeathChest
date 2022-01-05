@@ -238,7 +238,7 @@ public class ListCommand extends AbstractSubcommand {
 	}
 
 
-	private void displayListFooter(final CommandSender sender, int page, int pageCount) {
+	private void displayListFooter(final CommandSender sender, final int page, final int pageCount) {
 		// display list footer
 		plugin.messageBuilder.build(sender, LIST_FOOTER)
 				.setMacro(Macro.PAGE_NUMBER, page)

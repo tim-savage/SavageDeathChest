@@ -17,7 +17,7 @@ public enum ChestSize {
 	 *
 	 * @param size the chest inventory size
 	 */
-	ChestSize(int size) {
+	ChestSize(final int size) {
 		this.size = size;
 	}
 

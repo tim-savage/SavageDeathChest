@@ -61,7 +61,7 @@ public final class SearchResult {
 	 * Setter method for resultCode
 	 * @param resultCode - the result code to set for this result object
 	 */
-	public void setResultCode(ResultCode resultCode) {
+	public void setResultCode(final ResultCode resultCode) {
 		this.resultCode = resultCode;
 	}
 
@@ -80,7 +80,7 @@ public final class SearchResult {
 	 * Setter method for location
 	 * @param location - the locatin to set for this result object
 	 */
-	void setLocation(Location location) {
+	void setLocation(final Location location) {
 		this.location = location;
 	}
 
@@ -100,7 +100,7 @@ public final class SearchResult {
 	 * @param protectionPlugin - the protection plugin enum value to set for this result object
 	 */
 	@SuppressWarnings("unused")
-	void setProtectionPlugin(ProtectionPlugin protectionPlugin) {
+	void setProtectionPlugin(final ProtectionPlugin protectionPlugin) {
 		this.protectionPlugin = protectionPlugin;
 	}
 
@@ -119,7 +119,7 @@ public final class SearchResult {
 	 * Setter method for remainingItems
 	 * @param remainingItems Collection of ItemStack - the remaining items to set for this result object
 	 */
-	public void setRemainingItems(Collection<ItemStack> remainingItems) {
+	public void setRemainingItems(final Collection<ItemStack> remainingItems) {
 		this.remainingItems = remainingItems;
 	}
 

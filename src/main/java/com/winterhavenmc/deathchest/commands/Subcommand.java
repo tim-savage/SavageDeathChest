@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface Subcommand {
 
-	boolean onCommand(CommandSender sender, List<String> argsList);
+	boolean onCommand(final CommandSender sender, final List<String> argsList);
 
 	List<String> onTabComplete(final CommandSender sender,
 	                           final Command command,
@@ -23,29 +23,29 @@ public interface Subcommand {
 	List<String> getAliases();
 
 	@SuppressWarnings("unused")
-	void setAliases(List<String> aliases);
+	void setAliases(final List<String> aliases);
 
 	@SuppressWarnings("unused")
-	void addAlias(String alias);
+	void addAlias(final String alias);
 
 	String getUsage();
 
-	void setUsage(String usageString);
+	void setUsage(final String usageString);
 
-	void displayUsage(CommandSender sender);
+	void displayUsage(final CommandSender sender);
 
 	MessageId getDescription();
 
-	void setDescription(MessageId messageId);
+	void setDescription(final MessageId messageId);
 
 	@SuppressWarnings("unused")
 	int getMinArgs();
 
 	@SuppressWarnings("unused")
-	void setMinArgs(int minArgs);
+	void setMinArgs(final int minArgs);
 
 	int getMaxArgs();
 
-	void setMaxArgs(int maxArgs);
+	void setMaxArgs(final int maxArgs);
 
 }

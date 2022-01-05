@@ -669,7 +669,7 @@ public final class Deployment {
 	}
 
 
-	private void logResult(SearchResult result) {
+	private void logResult(final SearchResult result) {
 
 		if (result == null) {
 			plugin.getLogger().info("SearchResult is null!");

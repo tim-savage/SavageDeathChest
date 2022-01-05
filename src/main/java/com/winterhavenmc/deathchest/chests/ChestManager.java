@@ -365,17 +365,17 @@ public final class ChestManager {
 	}
 
 
-	public void insertChestRecords(Collection<DeathChest> deathChests) {
+	public void insertChestRecords(final Collection<DeathChest> deathChests) {
 		dataStore.insertChestRecords(deathChests);
 	}
 
 
-	public void deleteBlockRecord(ChestBlock chestBlock) {
+	public void deleteBlockRecord(final ChestBlock chestBlock) {
 		dataStore.deleteBlockRecord(chestBlock);
 	}
 
 
-	public void deleteChestRecord(DeathChest deathChest) {
+	public void deleteChestRecord(final DeathChest deathChest) {
 		dataStore.deleteChestRecord(deathChest);
 	}
 
@@ -408,11 +408,11 @@ public final class ChestManager {
 	}
 
 	@SuppressWarnings("unused")
-	public boolean isReplaceableBlock(Material material) {
+	public boolean isReplaceableBlock(final Material material) {
 		return replaceableBlocks.contains(material);
 	}
 
-	public boolean isReplaceableBlock(Block block) {
+	public boolean isReplaceableBlock(final Block block) {
 		return replaceableBlocks.contains(block.getType());
 	}
 
