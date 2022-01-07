@@ -38,11 +38,11 @@ public final class PluginMain extends JavaPlugin {
 		// initialize message builder
 		messageBuilder = new MessageBuilder<>(this);
 
-		// instantiate world manager
-		worldManager = new WorldManager(this);
-
 		// instantiate sound configuration
 		soundConfig = new YamlSoundConfiguration(this);
+
+		// instantiate world manager
+		worldManager = new WorldManager(this);
 
 		// instantiate chest manager
 		chestManager = new ChestManager(this);
