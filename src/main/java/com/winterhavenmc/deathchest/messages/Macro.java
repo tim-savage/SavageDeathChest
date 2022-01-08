@@ -2,7 +2,8 @@ package com.winterhavenmc.deathchest.messages;
 
 public enum Macro {
 
-	DURATION,
+	EXPIRATION_DURATION_MINUTES,
+	PROTECTION_DURATION_MINUTES,
 	LOCATION,
 	PLUGIN,
 	ITEM_NUMBER,
