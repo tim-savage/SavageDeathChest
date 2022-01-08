@@ -106,7 +106,7 @@ public final class Deployment {
 			plugin.messageBuilder.build(player, CHEST_DEPLOYED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, player.getName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
-					.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(chestProtectionTime))
+					.setMacro(Macro.PROTECTION_DURATION_MINUTES, TimeUnit.MINUTES.toMillis(chestProtectionTime))
 					.send();
 		}
 
@@ -617,14 +617,14 @@ public final class Deployment {
 			case SUCCESS:
 				plugin.messageBuilder.build(player, CHEST_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, TimeUnit.MINUTES.toMillis(expireTime))
 						.send();
 				break;
 
 			case PARTIAL_SUCCESS:
 				plugin.messageBuilder.build(player, DOUBLECHEST_PARTIAL_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.DURATION, TimeUnit.MINUTES.toMillis(expireTime))
+						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, TimeUnit.MINUTES.toMillis(expireTime))
 						.send();
 				break;
 
