@@ -238,7 +238,7 @@ public final class DeathChest {
 	 *
 	 * @return long expirationTime timestamp
 	 */
-	public long getProtectionExpirationTime() {
+	public long getProtectionTime() {
 		return this.protectionExpirationTime;
 	}
 
@@ -544,8 +544,8 @@ public final class DeathChest {
 	 * @return boolean - true if protection has expired, false if not
 	 */
 	public boolean protectionExpired() {
-		return this.getProtectionExpirationTime() > 0 &&
-				this.getProtectionExpirationTime() < System.currentTimeMillis();
+		return this.getProtectionTime() > 0 &&
+				this.getProtectionTime() < System.currentTimeMillis();
 	}
 
 

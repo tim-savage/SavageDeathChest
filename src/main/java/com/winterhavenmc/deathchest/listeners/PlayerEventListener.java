@@ -337,9 +337,10 @@ public final class PlayerEventListener implements Listener {
 
 			// if chest protection is enabled and has not expired, send message and return
 			if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
-				long protectionTimeRemainingMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
+				long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
 				plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 						.setMacro(Macro.OWNER, deathChest.getOwnerName())
+						.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
 						.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
 						.setMacro(LOCATION, deathChest.getLocation())
 						.send();
@@ -385,9 +386,10 @@ public final class PlayerEventListener implements Listener {
 
 		// if chest protection is enabled and has not expired, send message and return
 		if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
-			long protectionTimeRemainingMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
+			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
 			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
 					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.send();

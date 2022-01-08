@@ -431,7 +431,7 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 				preparedStatement.setInt(7, deathChest.getItemCount());
 				preparedStatement.setLong(8, deathChest.getPlacementTime());
 				preparedStatement.setLong(9, deathChest.getExpirationTime());
-				preparedStatement.setLong(10, deathChest.getProtectionExpirationTime());
+				preparedStatement.setLong(10, deathChest.getProtectionTime());
 
 				// execute prepared statement
 				int rowsAffected = preparedStatement.executeUpdate();
