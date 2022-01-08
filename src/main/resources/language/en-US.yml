@@ -220,8 +220,8 @@ MESSAGES:
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
-    &aExpiration time:&b %EXPIRATION_DURATION% &aKiller:&b %KILLER% \n
+    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% &aKiller:&b %KILLER%\n
+    &aExpiration time:&b %EXPIRATION_DURATION% \n
     &aProtection time:&b %PROTECTION_DURATION%"
 
   LIST_ITEM_ALL:

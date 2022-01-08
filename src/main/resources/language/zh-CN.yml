@@ -23,8 +23,13 @@ TIME_STRINGS:
 # Custom Messages
 #################
 # Variable substitutions:
+# Variable substitutions:
+# %EXPIRATION_DURATION%           expiration duration with seconds
+# %EXPIRATION_DURATION_MINUTES%   expiration duration without seconds
+# %PROTECTION_DURATION%           protection duration with seconds
+# %PROTECTION_DURATION_MINUTES%   protection duration without seconds
+
 # %PLAYER%        Player name of message recipient
-# %DURATION%      A time duration string
 # %OWNER%         Chest owner name (only available in messages that reference a valid chest object)
 # %KILLER%        Chest killer name (only available in messages that reference a valid chest object)
 # %VIEWER%        Chest viewer name
@@ -43,24 +48,24 @@ TIME_STRINGS:
 MESSAGES:
   CHEST_SUCCESS:
     enabled: true
-    string: '&c成功地放置了死亡箱. 你有 %DURATION% 来取回你的物品.'
-    # available subs: %PLAYER%, %DURATION%, %LOCATION%
+    string: '&c成功地放置了死亡箱. 你有 %EXPIRATION_DURATION% 来取回你的物品.'
+    # available subs: %PLAYER%, %EXPIRATION_DURATION%, %EXPIRATION_DURATION_MINUTES%, %LOCATION%
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&c在你的死亡地点只能放置单个箱子. 一些物品已掉落.'
-    # available subs: %PLAYER%, %DURATION%, %LOCATION%
+    # available subs: %PLAYER%, %EXPIRATION_DURATION%, %EXPIRATION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DEPLOYED_PROTECTION_TIME:
     enabled: true
-    string: '&c死亡宝箱在 %DURATION% 内不会被掠夺.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&c死亡宝箱在 %PROTECTION_DURATION_MINUTES% 内不会被掠夺.'
+    # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_ACCESSED_PROTECTION_TIME:
     enabled: true
     repeat-delay: 1
-    string: '&c属于 %OWNER% 的死亡宝箱在 %DURATION% 内不会被抢劫.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&c属于 %OWNER% 的死亡宝箱在 %PROTECTION_DURATION_MINUTES% 内不会被抢劫.'
+    # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DENIED_PLUGIN:
     enabled: true
@@ -216,14 +221,16 @@ MESSAGES:
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &a地址:&b %LOCATION% \n
-    &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
+    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% &aKiller:&b %KILLER%\n
+    &aExpiration time:&b %EXPIRATION_DURATION% \n
+    &aProtection time:&b %PROTECTION_DURATION%"
 
   LIST_ITEM_ALL:
     enabled: true
-    string: "%ITEM_NUMBER%) &a主人:&b %OWNER% &a杀手:&b %KILLER% \n
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
     &aLocation:&b %LOCATION% \n
-    &aRemaining time:&b %DURATION%"
+    &aExpiration time:&b %EXPIRATION_DURATION% \n
+    &aProtection time:&b %PROTECTION_DURATION%"
 
   LIST_EMPTY:
     enabled: true

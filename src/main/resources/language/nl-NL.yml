@@ -21,8 +21,13 @@ TIME_STRINGS:
 # Custom Messages
 #################
 # Variable substitutions:
+# Variable substitutions:
+# %EXPIRATION_DURATION%           expiration duration with seconds
+# %EXPIRATION_DURATION_MINUTES%   expiration duration without seconds
+# %PROTECTION_DURATION%           protection duration with seconds
+# %PROTECTION_DURATION_MINUTES%   protection duration without seconds
+
 # %PLAYER%        Player name of message recipient
-# %DURATION%      A time duration string
 # %OWNER%         Chest owner name (only available in messages that reference a valid chest object)
 # %KILLER%        Chest killer name (only available in messages that reference a valid chest object)
 # %VIEWER%        Chest viewer name
@@ -46,17 +51,18 @@ MESSAGES:
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cOmdat er niet genoeg ruimte was voor een dubbele kist, kon een deel van je bezittingen niet veiliggesteld worden.'
+    # available subs: %PLAYER%, %EXPIRATION_DURATION%, %EXPIRATION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DEPLOYED_PROTECTION_TIME:
     enabled: true
     string: '&cDe doodskist wordt gedurende %DURATION% beschermd tegen plunderingen.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_ACCESSED_PROTECTION_TIME:
     enabled: true
     repeat-delay: 1
-    string: '&cDoodkist van %OWNER% wordt gedurende %DURATION% beschermd tegen plunderingen.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&cDoodkist van %OWNER% wordt gedurende %PROTECTION_DURATION_MINUTES% beschermd tegen plunderingen.'
+    # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DENIED_PLUGIN:
     enabled: true
@@ -184,14 +190,16 @@ MESSAGES:
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
-    &aResterende tijd:&b %DURATION% &aVermoord door:&b %KILLER%"
+    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% &aKiller:&b %KILLER%\n
+    &aExpiration time:&b %EXPIRATION_DURATION% \n
+    &aProtection time:&b %PROTECTION_DURATION%"
 
   LIST_ITEM_ALL:
     enabled: true
-    string: "%ITEM_NUMBER%) &aEigenaar:&b %OWNER% &aVermoord door:&b %KILLER% \n
-    &aLocatie:&b %LOCATION% \n
-    &aResterende tijd:&b %DURATION%"
+    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
+    &aLocation:&b %LOCATION% \n
+    &aExpiration time:&b %EXPIRATION_DURATION% \n
+    &aProtection time:&b %PROTECTION_DURATION%"
 
   LIST_EMPTY:
     enabled: true

@@ -21,8 +21,13 @@ TIME_STRING:
 # Custom Messages
 #################
 # Variable substitutions:
+# Variable substitutions:
+# %EXPIRATION_DURATION%           expiration duration with seconds
+# %EXPIRATION_DURATION_MINUTES%   expiration duration without seconds
+# %PROTECTION_DURATION%           protection duration with seconds
+# %PROTECTION_DURATION_MINUTES%   protection duration without seconds
+
 # %PLAYER%        Player name of message recipient
-# %DURATION%      A time duration string
 # %OWNER%         Chest owner name (only available in messages that reference a valid chest object)
 # %KILLER%        Chest killer name (only available in messages that reference a valid chest object)
 # %VIEWER%        Chest viewer name
@@ -41,22 +46,23 @@ TIME_STRING:
 MESSAGES:
   CHEST_SUCCESS:
     enabled: true
-    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %DURATION% para recuperar tu artículos.'
+    string: '&cCofre de la muerte se ha desplegado con éxito. Usted tiene %EXPIRATION_DURATION% para recuperar tu artículos.'
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cSólo se podía colocar un solo cofre del punto muerte.'
+    # available subs: %PLAYER%, %EXPIRATION_DURATION%, %EXPIRATION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DEPLOYED_PROTECTION_TIME:
     enabled: true
-    string: '&cEl cofre de la muerte está protegido del saqueo durante %DURATION%.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&cEl cofre de la muerte está protegido del saqueo durante %PROTECTION_DURATION_MINUTES%.'
+    # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_ACCESSED_PROTECTION_TIME:
     enabled: true
     repeat-delay: 1
-    string: '&cEl cofre de la muerte que pertenece a %OWNER% está protegido contra el saqueo durante %DURATION%.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&cEl cofre de la muerte que pertenece a %OWNER% está protegido contra el saqueo durante %PROTECTION_DURATION_MINUTES%.'
+    # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DENIED_PLUGIN:
     enabled: true
@@ -185,13 +191,15 @@ MESSAGES:
   LIST_ITEM:
     enabled: true
     string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
-    &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
+    &Expiration time:&b %EXPIRATION_DURATION% &aKiller:&b %KILLER% \n
+    &Protection time:&b %PROTECTION_DURATION% &aKiller:&b %KILLER%"
 
   LIST_ITEM_ALL:
     enabled: true
     string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
     &aLocation:&b %LOCATION% \n
-    &aRemaining time:&b %DURATION%"
+    &Expiration time:&b %EXPIRATION_DURATION% \n
+    &Protection time:&b %PROTECTION_DURATION%"
 
   LIST_EMPTY:
     enabled: true
