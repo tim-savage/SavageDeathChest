@@ -135,13 +135,13 @@ public final class BlockEventListener implements Listener {
 		if (deathChest.protectionExpired()) {
 			return;
 		}
-		// else send message with chest expiration time remaining
+		// else send message with chest protection time remaining
 		else {
-			long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
+			long protectionTimeRemainingMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
 			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
-					.setMacro(Macro.DURATION, remainingProtectionTime)
+					.setMacro(EXPIRATION_DURATION_MINUTES, protectionTimeRemainingMillis)
 					.send();
 		}
 

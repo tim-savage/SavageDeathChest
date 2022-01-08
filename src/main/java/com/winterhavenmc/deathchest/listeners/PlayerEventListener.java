@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.winterhavenmc.deathchest.messages.Macro.*;
-import static com.winterhavenmc.deathchest.messages.Macro.VIEWER;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
@@ -255,10 +254,10 @@ public final class PlayerEventListener implements Listener {
 
 			// if chest protection is enabled and has not expired, send message and return
 			if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
-				long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
+				long protectionTimeRemainingMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
 				plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 						.setMacro(Macro.OWNER, deathChest.getOwnerName())
-						.setMacro(Macro.DURATION, remainingProtectionTime)
+						.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
 						.setMacro(LOCATION, deathChest.getLocation())
 						.send();
 				// play denied access sound
@@ -312,10 +311,10 @@ public final class PlayerEventListener implements Listener {
 
 		// if chest protection is enabled and has not expired, send message and return
 		if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
-			long remainingProtectionTime = System.currentTimeMillis() - deathChest.getProtectionExpirationTime();
+			long protectionTimeRemainingMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
 			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
-					.setMacro(Macro.DURATION, remainingProtectionTime)
+					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.send();
 		}
