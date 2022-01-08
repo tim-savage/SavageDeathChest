@@ -24,7 +24,10 @@ TIME_STRINGS:
 #################
 # Variable substitutions:
 # %PLAYER%        Player name of message recipient
-# %DURATION%      A time duration string
+# %EXPIRATION_DURATION%
+# %EXPIRATION_DURATION_MINUTES%
+# %PROTECTION_DURATION%
+# %PROTECTION_DURATION_MINUTES%
 # %OWNER%         Chest owner name (only available in messages that reference a valid chest object)
 # %KILLER%        Chest killer name (only available in messages that reference a valid chest object)
 # %VIEWER%        Chest viewer name
@@ -43,24 +46,24 @@ TIME_STRINGS:
 MESSAGES:
   CHEST_SUCCESS:
     enabled: true
-    string: '&cSuccessfully placed death chest. You have %DURATION% to retrieve your items.'
-    # available subs: %PLAYER%, %DURATION%, %LOCATION%
+    string: '&cSuccessfully placed death chest. You have %EXPIRATION_DURATION_MINUTES% to retrieve your items.'
+    # available subs: %PLAYER%, %EXPIRATION_DURATION_MINUTES%, %LOCATION%
 
   DOUBLECHEST_PARTIAL_SUCCESS:
     enabled: true
     string: '&cOnly a single chest could be placed at your death location. Some items were dropped.'
-    # available subs: %PLAYER%, %DURATION%, %LOCATION%
+    # available subs: %PLAYER%, %EXPIRATION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DEPLOYED_PROTECTION_TIME:
     enabled: true
-    string: '&cDeath chest is protected from looting for %DURATION%.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&cDeath chest is protected from looting for %PROTECTION_DURATION_MINUTES%.'
+    # available subs: %OWNER%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_ACCESSED_PROTECTION_TIME:
     enabled: true
     repeat-delay: 1
-    string: '&cDeath chest belonging to %OWNER% is protected from looting for %DURATION%.'
-    # available subs: %OWNER%, %DURATION%, %LOCATION%
+    string: '&cDeath chest belonging to %OWNER% is protected from looting for %PROTECTION_DURATION_MINUTES%.'
+    # available subs: %OWNER%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
   CHEST_DENIED_PLUGIN:
     enabled: true
@@ -217,13 +220,15 @@ MESSAGES:
   LIST_ITEM:
     enabled: true
     string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% \n
-    &aRemaining time:&b %DURATION% &aKiller:&b %KILLER%"
+    &aRemaining time:&b %EXPIRATION_DURATION_MINUTES% &aKiller:&b %KILLER% \n
+    &aProtection time:&b %PROTECTION_DURATION_MINUTES%"
 
   LIST_ITEM_ALL:
     enabled: true
     string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
     &aLocation:&b %LOCATION% \n
-    &aRemaining time:&b %DURATION%"
+    &aRemaining time:&b %EXPIRATION_DURATION_MINUTES% \n
+    &aProtection time:&b %PROTECTION_DURATION_MINUTES%"
 
   LIST_EMPTY:
     enabled: true
