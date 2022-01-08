@@ -119,7 +119,7 @@ public final class DeathChest {
 
 		// set expirationTime timestamp
 		// if configured expiration is zero, set expiration to negative to signify no expiration
-		if (plugin.getConfig().getLong("expire-time") == 0) {
+		if (plugin.getConfig().getLong("expire-time") <= 0) {
 			this.expirationTime = -1;
 		}
 		else {
@@ -133,8 +133,8 @@ public final class DeathChest {
 
 		// set protectionExpirationTime timestamp
 		// if configured protection expiration is zero, set protection expiration to negative to signify no expiration
-		if (plugin.getConfig().getLong("chest-protection-time") == 0) {
-			this.protectionExpirationTime = -1;
+		if (plugin.getConfig().getLong("chest-protection-time") <= 0) {
+			this.protectionExpirationTime = expirationTime;
 		}
 		else {
 			// set protection expiration field based on config setting (converting from minutes to milliseconds)
@@ -165,25 +165,40 @@ public final class DeathChest {
 
 
 	/**
-	 * Get owner name for DeathChest by looking up offline player by uuid
-	 * @return String - chest owner name
-	 */
-	public String getOwnerName() {
-		String returnName = "unknown";
-		if (this.ownerUid != null && plugin.getServer().getOfflinePlayer(this.getOwnerUid()).getName() != null) {
-			returnName = plugin.getServer().getOfflinePlayer(this.getOwnerUid()).getName();
-		}
-		return returnName;
-	}
-
-
-	/**
 	 * Getter method for DeathChest killerUUID
 	 *
 	 * @return UUID
 	 */
 	public UUID getKillerUid() {
 		return killerUid;
+	}
+
+
+	/**
+	 * Get owner name for DeathChest by looking up offline player by uuid
+	 *
+	 * @return String - chest owner name
+	 */
+	public String getOwnerName() {
+		String returnName = "???";
+		if (ownerUid != null && plugin.getServer().getOfflinePlayer(ownerUid).getName() != null) {
+			returnName = plugin.getServer().getOfflinePlayer(ownerUid).getName();
+		}
+		return returnName;
+	}
+
+
+	/**
+	 * Get owner name for DeathChest by looking up offline player by uuid
+	 *
+	 * @return String - chest owner name
+	 */
+	public String getKillerName() {
+		String returnName = "???";
+		if (killerUid != null && plugin.getServer().getOfflinePlayer(killerUid).getName() != null) {
+			returnName = plugin.getServer().getOfflinePlayer(killerUid).getName();
+		}
+		return returnName;
 	}
 
 
@@ -369,11 +384,28 @@ public final class DeathChest {
 		}
 	}
 
+	public void dropContents() {
+
+		if (this.getLocation() !=null && this.getLocation().getWorld() != null) {
+
+			ItemStack[] contents = this.getInventory().getStorageContents();
+
+			this.getInventory().clear();
+
+			for (ItemStack stack : contents) {
+				if (stack !=null) {
+					this.getLocation().getWorld().dropItemNaturally(this.getLocation(), stack);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Destroy this death chest, dropping chest contents
 	 */
 	public void destroy() {
+
+		dropContents();
 
 		// play chest break sound at chest location
 		plugin.soundConfig.playSound(this.getLocation(), SoundId.CHEST_BREAK);
@@ -381,7 +413,7 @@ public final class DeathChest {
 		// get block map for this chest
 		Map<ChestBlockType, ChestBlock> chestBlockMap = plugin.chestManager.getBlockMap(this.chestUId);
 
-		// destroy DeathChest blocks (sign gets destroyed first due to enum order)
+		// destroy DeathChest blocks (sign gets destroyed first due to enum order, preventing detach before being destroyed)
 		for (ChestBlock chestBlock : chestBlockMap.values()) {
 			chestBlock.destroy();
 		}
@@ -508,7 +540,7 @@ public final class DeathChest {
 
 
 	/**
-	 * Check if protection is enabled and ha expired
+	 * Check if protection is enabled and has expired
 	 * @return boolean - true if protection has expired, false if not
 	 */
 	public boolean protectionExpired() {

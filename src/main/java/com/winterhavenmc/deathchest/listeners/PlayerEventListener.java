@@ -168,10 +168,15 @@ public final class PlayerEventListener implements Listener {
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		final ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (blockingPlugin != null) {
+			// do not cancel event; protection plugin will handle it
+
+			// log debug message
 			if (plugin.getConfig().getBoolean("debug")) {
 				plugin.getLogger().info("Death chest playerInteractEvent was blocked by "
 						+ blockingPlugin.getPluginName());
 			}
+
+			// skip remaining checks
 			return;
 		}
 
@@ -182,23 +187,25 @@ public final class PlayerEventListener implements Listener {
 		if (player.getGameMode().equals(GameMode.CREATIVE)
 				&& !plugin.getConfig().getBoolean("creative-access")
 				&& !player.hasPermission("deathchest.creative-access")) {
+
+			// cancel event
 			event.setCancelled(true);
+
+			// send message
 			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation()
 					).send();
+
+			// play denied access sound
+			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+
+			// log debug message
+			if (plugin.getConfig().getBoolean("debug")) {
+				plugin.getLogger().info(event.getEventName() + " cancelled by creative access check.");
+			}
+
+			// skip remaining checks
 			return;
-		}
-
-		// get owner name from uuid
-		String ownerName = "-";
-		if (deathChest.hasValidOwnerUid()) {
-			ownerName = plugin.getServer().getOfflinePlayer(deathChest.getOwnerUid()).getName();
-		}
-
-		// get killer name from uuid
-		String killerName = "-";
-		if (deathChest.hasValidKillerUid()) {
-			killerName = plugin.getServer().getOfflinePlayer(deathChest.getKillerUid()).getName();
 		}
 
 		// if chest inventory is already being viewed: cancel event, send message and return
@@ -213,13 +220,20 @@ public final class PlayerEventListener implements Listener {
 			// send player message
 			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
 					.setMacro(LOCATION, deathChest.getLocation())
-					.setMacro(OWNER, ownerName)
-					.setMacro(KILLER, killerName)
+					.setMacro(OWNER, deathChest.getOwnerName())
+					.setMacro(KILLER, deathChest.getKillerName())
 					.setMacro(VIEWER, viewerName)
 					.send();
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+
+			// log debug message
+			if (plugin.getConfig().getBoolean("debug")) {
+				plugin.getLogger().info(event.getEventName() + " cancelled by chest already open check.");
+			}
+
+			// skip remaining checks
 			return;
 		}
 
@@ -229,18 +243,75 @@ public final class PlayerEventListener implements Listener {
 				&& plugin.getConfig().getBoolean("quick-loot")
 				&& player.hasPermission("deathchest.loot")) {
 
-			// cancel event
-			event.setCancelled(true);
+			// if chest protection is not enabled, loot chest and return
+			if (!plugin.getConfig().getBoolean("chest-protection")) {
 
-			// if chest protection is not enabled or has expired, loot chest and return
-			if (!plugin.getConfig().getBoolean("chest-protection") || deathChest.protectionExpired()) {
+				// cancel event
+				event.setCancelled(true);
+				
+				// auto-loot chest
 				deathChest.autoLoot(player);
+				
+				// log debug message
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(event.getEventName() + " auto-looted because chest protection not enabled.");
+				}
+
+				// skip remaining checks
 				return;
 			}
 
-			// if player is owner or has deathchest.loot.other permission, loot chest and return
-			if (deathChest.isOwner(player) || player.hasPermission("deathchest.loot.other")) {
+			// if chest protection has expired, loot chest and return
+			if (deathChest.protectionExpired()) {
+
+				// cancel event
+				event.setCancelled(true);
+
+				// auto-loot chest
 				deathChest.autoLoot(player);
+
+				// log debug message
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(event.getEventName() + " auto-looted because chest protection expired.");
+				}
+				
+				// skip remaining checks
+				return;
+			}
+
+			// if player is owner, loot chest and return
+			if (deathChest.isOwner(player)) {
+
+				// cancel event
+				event.setCancelled(true);
+
+				// auto-loot chest
+				deathChest.autoLoot(player);
+
+				// log debug message
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(event.getEventName() + " auto-looted because player is owner.");
+				}
+
+				// skip remaining checks
+				return;
+			}
+
+			// if player has deathchest.loot.other permission, loot chest and return
+			if (player.hasPermission("deathchest.loot.other")) {
+
+				// cancel event
+				event.setCancelled(true);
+
+				// auto-loot chest
+				deathChest.autoLoot(player);
+
+				// log debug message
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(event.getEventName() + " auto-looted because player has loot.other permission.");
+				}
+
+				// skip remaining checks
 				return;
 			}
 
@@ -248,7 +319,19 @@ public final class PlayerEventListener implements Listener {
 			if (plugin.getConfig().getBoolean("killer-looting")
 					&& deathChest.isKiller(player)
 					&& player.hasPermission("deathchest.loot.killer")) {
+
+				// cancel event
+				event.setCancelled(true);
+
+				// auto-loot chest
 				deathChest.autoLoot(player);
+
+				// log debug message
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(event.getEventName() + " auto-looted because killer looting enabled and player is killer and has loot.killer permission.");
+				}
+
+				// skip remaining checks
 				return;
 			}
 
@@ -260,17 +343,15 @@ public final class PlayerEventListener implements Listener {
 						.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
 						.setMacro(LOCATION, deathChest.getLocation())
 						.send();
-				// play denied access sound
-				plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-				return;
 			}
-
-			// send player not-owner message
-			plugin.messageBuilder.build(player, NOT_OWNER)
-					.setMacro(LOCATION, deathChest.getLocation())
-					.setMacro(OWNER, ownerName)
-					.setMacro(KILLER, killerName)
-					.send();
+			else {
+				// send player not-owner message
+				plugin.messageBuilder.build(player, NOT_OWNER)
+						.setMacro(LOCATION, deathChest.getLocation())
+						.setMacro(OWNER, deathChest.getOwnerName())
+						.setMacro(KILLER, deathChest.getKillerName())
+						.send();
+			}
 
 			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
@@ -302,13 +383,6 @@ public final class PlayerEventListener implements Listener {
 		// cancel event
 		event.setCancelled(true);
 
-		// send player not-owner message
-		plugin.messageBuilder.build(player, NOT_OWNER)
-				.setMacro(LOCATION, deathChest.getLocation())
-				.setMacro(OWNER, ownerName)
-				.setMacro(KILLER, killerName)
-				.send();
-
 		// if chest protection is enabled and has not expired, send message and return
 		if (plugin.getConfig().getBoolean("chest-protection") && !deathChest.protectionExpired()) {
 			long protectionTimeRemainingMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
@@ -316,6 +390,14 @@ public final class PlayerEventListener implements Listener {
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
 					.setMacro(LOCATION, deathChest.getLocation())
+					.send();
+		}
+		// else send player not-owner message
+		else {
+			plugin.messageBuilder.build(player, NOT_OWNER)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(OWNER, deathChest.getOwnerName())
+					.setMacro(KILLER, deathChest.getKillerName())
 					.send();
 		}
 
