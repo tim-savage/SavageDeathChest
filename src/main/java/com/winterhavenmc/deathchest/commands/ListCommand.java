@@ -187,7 +187,8 @@ public class ListCommand extends AbstractSubcommand {
 			}
 
 			// get remaining time
-			Long remainingTime = deathChest.getExpirationTime() - System.currentTimeMillis();
+			Long ExpirationTimeMillis = deathChest.getExpirationTime() - System.currentTimeMillis();
+			Long ProtectionTimeMillis = deathChest.getProtectionExpirationTime() - System.currentTimeMillis();
 
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (displayNames) {
@@ -196,7 +197,8 @@ public class ListCommand extends AbstractSubcommand {
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
 						.setMacro(Macro.OWNER, ownerName)
 						.setMacro(Macro.KILLER, killerName)
-						.setMacro(Macro.DURATION, remainingTime)
+						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, ExpirationTimeMillis)
+						.setMacro(Macro.PROTECTION_DURATION_MINUTES, ProtectionTimeMillis)
 						.send();
 			}
 			else {
@@ -205,7 +207,8 @@ public class ListCommand extends AbstractSubcommand {
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
 						.setMacro(Macro.OWNER, ownerName)
 						.setMacro(Macro.KILLER, killerName)
-						.setMacro(Macro.DURATION, remainingTime)
+						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, ExpirationTimeMillis)
+						.setMacro(Macro.PROTECTION_DURATION_MINUTES, ProtectionTimeMillis)
 						.send();
 			}
 		}
