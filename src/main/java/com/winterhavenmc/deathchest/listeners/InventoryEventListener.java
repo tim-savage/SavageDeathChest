@@ -25,6 +25,9 @@ public final class InventoryEventListener implements Listener {
 	// reference to main class
 	private final PluginMain plugin;
 
+	// reference to helper class
+	private final Helper helper;
+
 
 	/**
 	 * class constructor
@@ -35,6 +38,9 @@ public final class InventoryEventListener implements Listener {
 
 		// set reference to main class
 		this.plugin = plugin;
+
+		// create instance of helper class
+		this.helper = new Helper(plugin);
 
 		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -89,10 +95,10 @@ public final class InventoryEventListener implements Listener {
 
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
-		if (blockingPlugin != null) {
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(blockingPlugin.getPluginName() + " is preventing access to this chest.");
-			}
+		if (helper.pluginBlockedAccess(blockingPlugin)) {
+			// do not cancel event - allow protection plugin to handle it
+			assert blockingPlugin != null; // conditional checks for null
+			helper.logDebugMessage(blockingPlugin.getPluginName() + " prevented access to a chest.");
 			return;
 		}
 

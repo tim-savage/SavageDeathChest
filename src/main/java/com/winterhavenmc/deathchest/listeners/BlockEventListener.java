@@ -7,7 +7,6 @@ import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 
 import com.winterhavenmc.deathchest.util.LocationUtilities;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -35,6 +34,9 @@ public final class BlockEventListener implements Listener {
 
 	// reference to main class
 	private final PluginMain plugin;
+	
+	// reference to helper class
+	private final Helper helper;
 
 
 	/**
@@ -46,6 +48,9 @@ public final class BlockEventListener implements Listener {
 
 		// set reference to main class
 		this.plugin = plugin;
+
+		// create instance of helper class
+		this.helper = new Helper(plugin);
 
 		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -103,19 +108,12 @@ public final class BlockEventListener implements Listener {
 			return;
 		}
 
-		// BEGIN CHEST ACCESS CHECKS
-
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
-		if (blockingPlugin != null) {
-			// do not cancel event - protection plugin will take care of it
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(blockingPlugin.getPluginName() + " prevented access to a chest.");
-			}
-
-			// skip remaining checks
+		if (helper.pluginBlockedAccess(blockingPlugin)) {
+			// do not cancel event - allow protection plugin to handle it
+			assert blockingPlugin != null; // conditional checks for null
+			helper.logDebugMessage(blockingPlugin.getPluginName() + " prevented access to a chest.");
 			return;
 		}
 
@@ -123,155 +121,73 @@ public final class BlockEventListener implements Listener {
 		// and creative-access is configured false
 		// and player does not have override permission:
 		// cancel event, send message and return
-		if (player.getGameMode().equals(GameMode.CREATIVE)
-				&& !plugin.getConfig().getBoolean("creative-access")
-				&& !player.hasPermission("deathchest.creative-access")) {
-
-			// cancel event
+		if (helper.creativeModeAccessDisabled(player)) {
 			event.setCancelled(true);
-
-			// send message
 			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation())
 					.send();
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " cancelled by creative access check.");
-			}
-
-			// skip remaining checks
+			helper.logDebugMessage(event.getEventName() + " cancelled by creative access check.");
 			return;
 		}
 
-		// if chest is already open, disallow breakage:
-		// cancel event, send message and return
-		if (deathChest.getViewerCount() > 0) {
-
-			// only one chest viewer allowed, so get name viewer at index 0
+		// if chest is already open: cancel event, send message and return
+		if (helper.chestCurrentlyOpen(deathChest)) {
 			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
-
-			// cancel event
 			event.setCancelled(true);
-
-			// send player message
 			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, deathChest.getOwnerName())
 					.setMacro(KILLER, deathChest.getKillerName())
 					.setMacro(VIEWER, viewerName)
 					.send();
-
-			// play denied access sound
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " cancelled by chest already open check.");
-			}
-
-			// skip remaining checks
+			helper.logDebugMessage(event.getEventName() + " cancelled by chest already open check.");
 			return;
 		}
 
 		// if player is owner: cancel event, break chest and return
 		if (deathChest.isOwner(player)) {
-
-			// cancel event
-			event.setCancelled(true);
-
-			// break chest, drop contents (but not deathchest blocks)
-			deathChest.destroy();
-
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " cancelled and chest destroyed (drop items) because player is chest owner.");
-			}
-
-			// skip remaining checks
+			helper.cancelEventAndDestroyChest(event, deathChest);
+			helper.logDebugMessage(event.getEventName() + " cancelled and chest destroyed (drop items) " +
+					"because player is chest owner.");
 			return;
 		}
 
-		// if chest-protection option is not enabled, cancel event, break chest and return
-		if (!plugin.getConfig().getBoolean("chest-protection")) {
-
-			// cancel event
-			event.setCancelled(true);
-
-			// drop chest contents
-			deathChest.destroy();
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " remaining tests skipped because chest protection disabled.");
-			}
-			// skip remaining checks
+		// if chest-protection not enabled: cancel event, break chest and return
+		if (helper.chestProtectionDisabled()) {
+			helper.cancelEventAndDestroyChest(event, deathChest);
+			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because chest protection disabled.");
 			return;
 		}
 
-		// REMAINING TESTS ARE ONLY PERFORMED IF CHEST PROTECTION ENABLED
-
-		// if chest protection has expired, cancel event, break chest and return
-		if (deathChest.protectionExpired()) {
-
-			// cancel event
-			event.setCancelled(true);
-
-			// drop chest contents
-			deathChest.destroy();
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " remaining tests skipped because chest protection expired.");
-			}
-
-			// skip remaining checks
+		// if chest protection enabled and has expired, cancel event, break chest and return
+		if (helper.chestProtectionExpired(deathChest)) {
+			helper.cancelEventAndDestroyChest(event, deathChest);
+			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because chest protection expired.");
 			return;
 		}
 
-		// if player has deathchest.loot.other permission: cancel event, break chest and return
-		if (player.hasPermission("deathchest.loot.other")) {
-
-			// cancel event
-			event.setCancelled(true);
-
-			// break chest, drop contents (but not deathchest blocks)
-			deathChest.destroy();
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " remaining tests skipped because player has loot.other permission.");
-			}
-
-			// skip remaining checks
+		// if chest protection enabled and player has deathchest.loot.other permission: cancel event, break chest and return
+		if (helper.playerHasLootOtherPermission(player)) {
+			helper.cancelEventAndDestroyChest(event, deathChest);
+			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because player has loot.other permission.");
 			return;
 		}
 
 		// if killer looting is enabled and player is killer and has permission: cancel event, break chest and return
-		if (plugin.getConfig().getBoolean("killer-looting")
-				&& deathChest.isKiller(player)
-				&& player.hasPermission("deathchest.loot.killer")) {
-
-			// cancel event
-			event.setCancelled(true);
-
-			// break chest, drop contents (but not deathchest blocks)
-			deathChest.destroy();
-
-			// log debug message
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info(event.getEventName() + " remaining tests skipped because killer looting enabled and player is killer and pas loot.killer permission.");
-			}
-
-			// skip remaining checks
+		if (helper.playerIsKillerLooting(player, deathChest)) {
+			helper.cancelEventAndDestroyChest(event, deathChest);
+			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because killer looting enabled and " +
+					"player is killer and has loot.killer permission.");
 			return;
 		}
 
 		// cancel event
 		event.setCancelled(true);
 
-		// if chest protection enabled and not expired, send protection time remaining message
-		long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
-		if (plugin.getConfig().getBoolean("chest-protection") && protectionTimeRemainingMillis > 0) {
+		if (helper.chestProtectionNotExpired(deathChest)) {
+			// if chest protection enabled and not expired, send protection time remaining message
+			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
 			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
