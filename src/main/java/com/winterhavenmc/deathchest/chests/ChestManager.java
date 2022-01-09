@@ -330,24 +330,17 @@ public final class ChestManager {
 		// try to get inventory holder block
 		Block block;
 
-		try {
-			if (inventory.getHolder() instanceof DoubleChest) {
-				DoubleChest doubleChest;
-				doubleChest = (DoubleChest) inventory.getHolder();
-				block = doubleChest.getLocation().getBlock();
-			}
-			else {
-				Chest chest;
-				chest = (Chest) inventory.getHolder();
-				block = chest.getBlock();
-			}
+		if (inventory.getHolder() instanceof Chest) {
+			Chest chest;
+			chest = (Chest) inventory.getHolder();
+			block = chest.getBlock();
 		}
-		catch (Exception e) {
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().warning("isDeathChest(inventory) threw an exception "
-						+ "while trying to get inventory holder block.");
-				plugin.getLogger().warning(e.getMessage());
-			}
+		else if (inventory.getHolder() instanceof DoubleChest) {
+			DoubleChest doubleChest;
+			doubleChest = (DoubleChest) inventory.getHolder();
+			block = doubleChest.getLocation().getBlock();
+		}
+		else {
 			return false;
 		}
 
