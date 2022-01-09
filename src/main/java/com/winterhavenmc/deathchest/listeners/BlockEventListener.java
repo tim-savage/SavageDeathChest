@@ -6,7 +6,7 @@ import com.winterhavenmc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 
-import com.winterhavenmc.deathchest.util.LocationUtilities;
+import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

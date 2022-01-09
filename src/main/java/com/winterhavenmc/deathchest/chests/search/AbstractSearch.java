@@ -3,7 +3,7 @@ package com.winterhavenmc.deathchest.chests.search;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.ChestSize;
 import com.winterhavenmc.deathchest.chests.Deployment;
-import com.winterhavenmc.deathchest.util.LocationUtilities;
+import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

@@ -1,4 +1,4 @@
-package com.winterhavenmc.deathchest.util;
+package com.winterhavenmc.deathchest.chests;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
-import static com.winterhavenmc.deathchest.util.LocationUtilities.*;
+import static com.winterhavenmc.deathchest.chests.LocationUtilities.*;
 
 
 /**
