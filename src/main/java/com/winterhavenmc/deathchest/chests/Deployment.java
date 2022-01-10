@@ -167,8 +167,10 @@ public final class Deployment {
 			// check that player has chest in inventory
 			if (containsChest(remainingItems)) {
 
-				// remove one chest from remaining items
-				remainingItems = removeOneChest(remainingItems);
+				// if consume-required-chest configured true: remove one chest from remaining items
+				if (plugin.getConfig().getBoolean("consume-required-chest")) {
+					remainingItems = removeOneChest(remainingItems);
+				}
 			}
 			// else return NO_CHEST result
 			else {
@@ -261,8 +263,10 @@ public final class Deployment {
 			// check that player has chest in inventory
 			if (containsChest(remainingItems)) {
 
-				// remove one chest from remaining items
-				remainingItems = removeOneChest(remainingItems);
+				// if consume-required-chest configured true: remove one chest from remaining items
+				if (plugin.getConfig().getBoolean("consume-required-chest")) {
+					remainingItems = removeOneChest(remainingItems);
+				}
 			}
 			// else return NO_CHEST result
 			else {
@@ -287,7 +291,10 @@ public final class Deployment {
 
 			// check that player has chest in inventory
 			if (containsChest(remainingItems)) {
-				remainingItems = removeOneChest(remainingItems);
+				// if consume-required-chest configured true: remove one chest from remaining items
+				if (plugin.getConfig().getBoolean("consume-required-chest")) {
+					remainingItems = removeOneChest(remainingItems);
+				}
 			}
 			// else return new PARTIAL_SUCCESS result with location and remaining items after filling chest
 			else {

@@ -44,6 +44,9 @@ killer-looting: false
 # Require players to have a chest in their inventory
 require-chest: false
 
+# remove required chests from inventory on use
+consume-required-chest: true
+
 # prevent placing items in death chests
 prevent-item-placement: true
 
@@ -58,7 +61,7 @@ creative-access: false
 # For this reason, it is not recommended to set this value too high.
 search-distance: 10
 
-# Place chests above the void when players die below level 0
+# Place chests above the void when players die below world minimum height
 place-above-void: true
 
 # Allow quick-looting of chests with sneak-punch
