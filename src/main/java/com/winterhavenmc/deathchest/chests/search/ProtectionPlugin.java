@@ -17,6 +17,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -152,7 +153,7 @@ public enum ProtectionPlugin {
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
 
-				if (com.winterhaven_mc.roadblock.SimpleAPI.canPlace(location)) {
+				if (com.winterhavenmc.roadblock.SimpleAPI.canPlace(location)) {
 					return false;
 				}
 			}
@@ -171,7 +172,7 @@ public enum ProtectionPlugin {
 			// use try..catch block to gracefully handle exceptions thrown by protection plugin
 			try {
 
-				if (com.winterhaven_mc.roadblock.SimpleAPI.canPlace(location)) {
+				if (com.winterhavenmc.roadblock.SimpleAPI.canPlace(location)) {
 					return false;
 				}
 			}
