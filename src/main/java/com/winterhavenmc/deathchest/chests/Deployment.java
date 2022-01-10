@@ -413,7 +413,7 @@ public final class Deployment {
 
 			ItemStack itemStack = iterator.next();
 
-			if (itemStack.getType().equals(Material.CHEST)) {
+			if (itemStack.getType().equals(Material.CHEST) && !itemStack.hasItemMeta()) {
 				if (itemStack.getAmount() == 1) {
 					iterator.remove();
 				}
