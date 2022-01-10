@@ -88,7 +88,6 @@
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>2.2.1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- WorldEdit Bukkit -->
@@ -236,6 +235,15 @@
 							<minimizeJar>true</minimizeJar>
 							<filters>
 								<filter>
+									<artifact>org.bstats:bstats-*</artifact>
+									<excludes>
+										<exclude>META-INF/MANIFEST.MF</exclude>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+								<filter>
 									<artifact>com.winterhaven-mc:*-lib</artifact>
 									<excludes>
 										<exclude>META-INF/MANIFEST.MF</exclude>
@@ -250,7 +258,7 @@
 									<include>com.winterhaven-mc:message-builder-lib</include>
 									<include>com.winterhaven-mc:world-manager-lib</include>
 									<include>com.winterhaven-mc:sound-config-lib</include>
-									<include>org.bstats:bstats-bukkit</include>
+									<include>org.bstats</include>
 								</includes>
 							</artifactSet>
 							<relocations>
