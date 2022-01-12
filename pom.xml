@@ -90,6 +90,49 @@
 			<version>2.2.1</version>
 		</dependency>
 
+
+		<!-- Protection Plugins -->
+
+		<!-- GriefPrevention -->
+		<dependency>
+			<groupId>com.github.TechFortress</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<version>16.17.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Lands -->
+		<dependency>
+			<groupId>com.github.angeschossen</groupId>
+			<artifactId>LandsAPI</artifactId>
+			<version>5.15.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- PreciousStones -->
+		<dependency>
+			<groupId>net.sacredlabyrinth.Phaed</groupId>
+			<artifactId>PreciousStones</artifactId>
+			<version>1.16.1.9</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- RoadBlock -->
+		<dependency>
+			<groupId>com.winterhaven-mc</groupId>
+			<artifactId>RoadBlock</artifactId>
+			<version>1.18.3-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Towny -->
+		<dependency>
+			<groupId>com.github.TownyAdvanced</groupId>
+			<artifactId>Towny</artifactId>
+			<version>0.96.2.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- WorldEdit Bukkit -->
 		<dependency>
 			<groupId>com.sk89q.worldedit</groupId>
@@ -106,37 +149,8 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- GriefPrevention -->
-		<dependency>
-			<groupId>com.github.TechFortress</groupId>
-			<artifactId>GriefPrevention</artifactId>
-			<version>16.17.1</version>
-			<scope>provided</scope>
-		</dependency>
 
-		<!-- Towny -->
-		<dependency>
-			<groupId>com.github.TownyAdvanced</groupId>
-			<artifactId>Towny</artifactId>
-			<version>0.96.2.0</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- RoadBlock -->
-		<dependency>
-			<groupId>com.winterhaven-mc</groupId>
-			<artifactId>RoadBlock</artifactId>
-			<version>1.18.3-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- PreciousStones -->
-		<dependency>
-			<groupId>net.sacredlabyrinth.Phaed</groupId>
-			<artifactId>PreciousStones</artifactId>
-			<version>1.16.1.9</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- Unit Testing Dependencies -->
 
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>

@@ -12,6 +12,8 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
+import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.land.Area;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
@@ -24,6 +26,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 
 /**
@@ -109,6 +113,41 @@ public enum ProtectionPlugin {
 			return true;
 		}
 	},
+
+
+	LANDS("Lands") {
+
+		LandsIntegration landsIntegration;
+
+		@Override
+		public final boolean hasPlacePermission(final Player player, final Location location) {
+
+			try {
+				landsIntegration = new LandsIntegration(plugin);
+				final Area area = landsIntegration.getAreaByLoc(location);
+				return (Objects.requireNonNull(area).hasFlag(player, me.angeschossen.lands.api.flags.Flags.BLOCK_PLACE, false));
+			}
+			catch (Exception e) {
+				logPlaceError();
+				return true;
+			}
+		}
+
+		@Override
+		public final boolean hasChestPermission(final Player player, final Location location) {
+
+			try {
+				landsIntegration = new LandsIntegration(plugin);
+				final Area area = landsIntegration.getAreaByLoc(location);
+				return Objects.requireNonNull(area).hasFlag(player, me.angeschossen.lands.api.flags.Flags.INTERACT_CONTAINER, false);
+			}
+			catch (Exception e) {
+				logAccessError();
+				return true;
+			}
+		}
+	},
+
 
 	PRECIOUSSTONES("PreciousStones") {
 
