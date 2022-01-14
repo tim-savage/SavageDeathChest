@@ -14,6 +14,12 @@ COMMAND_INVALID:
   volume: 1
   pitch: 1
 
+COMMAND_RELOAD_SUCCESS:
+  enabled: true
+  player-only: true
+  sound: ENTITY_PUFFER_FISH_BLOW_UP
+  volume: 1
+  pitch: 1
 
 CHEST_DENIED_ACCESS:
   enabled: true

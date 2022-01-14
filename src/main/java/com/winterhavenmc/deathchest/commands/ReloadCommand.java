@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
+import static com.winterhavenmc.deathchest.sounds.SoundId.COMMAND_RELOAD_SUCCESS;
 
 
 public class ReloadCommand extends AbstractSubcommand {
@@ -53,6 +54,9 @@ public class ReloadCommand extends AbstractSubcommand {
 
 		// send success message
 		plugin.messageBuilder.build(sender, COMMAND_SUCCESS_RELOAD).send();
+
+		// play success sound
+		plugin.soundConfig.playSound(sender, COMMAND_RELOAD_SUCCESS);
 
 		// return true to prevent bukkit command help display
 		return true;

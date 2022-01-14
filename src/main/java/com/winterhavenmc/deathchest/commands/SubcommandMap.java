@@ -5,7 +5,7 @@ import java.util.*;
 
 public class SubcommandMap {
 
-	SortedMap<String, Subcommand> subcommandMap = new TreeMap<>();
+	Map<String, Subcommand> subcommandMap = new TreeMap<>();
 	Map<String, String> aliasMap = new HashMap<>();
 
 
