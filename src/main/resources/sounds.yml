@@ -17,7 +17,7 @@ COMMAND_INVALID:
 COMMAND_RELOAD_SUCCESS:
   enabled: true
   player-only: true
-  sound: ENTITY_PUFFER_FISH_BLOW_UP
+  sound: BLOCK_NOTE_BLOCK_CHIME
   volume: 1
   pitch: 1
 
