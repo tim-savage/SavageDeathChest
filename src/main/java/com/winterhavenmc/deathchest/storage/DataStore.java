@@ -8,7 +8,7 @@ import java.util.*;
 
 
 /**
- * An abstract class that declares methods for managing persistent storage of death chests and chest blocks.
+ * An interface that declares methods for managing persistent storage of death chests and chest blocks.
  */
 public interface DataStore {
 
