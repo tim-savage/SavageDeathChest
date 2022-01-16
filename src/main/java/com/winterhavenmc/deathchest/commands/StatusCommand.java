@@ -59,7 +59,7 @@ public class StatusCommand extends AbstractSubcommand {
 			chestProtectionTime = -1;
 		}
 
-		sender.sendMessage(ChatColor.GREEN + "Chest Protection Time: "
+		sender.sendMessage(ChatColor.GREEN + "Chest Protection: "
 				+ ChatColor.RESET + plugin.messageBuilder
 					.getTimeString(TimeUnit.MINUTES.toMillis(chestProtectionTime)));
 
