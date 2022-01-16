@@ -5,7 +5,7 @@ import java.util.*;
 
 public class SubcommandMap {
 
-	Map<String, Subcommand> subcommandMap = new TreeMap<>();
+	Map<String, Subcommand> subcommandMap = new LinkedHashMap<>();
 	Map<String, String> aliasMap = new HashMap<>();
 
 
@@ -46,7 +46,7 @@ public class SubcommandMap {
 	 * Get list of keys (subcommand names) from the subcommand map
 	 * @return List of String - keys of the subcommand map
 	 */
-	List<String> getNames() {
-		return new ArrayList<>(subcommandMap.keySet());
+	Collection<String> getNames() {
+		return new LinkedHashSet<>(subcommandMap.keySet());
 	}
 }
