@@ -121,6 +121,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 	/**
 	 * Get matching list of subcommands for which sender has permission
+	 *
 	 * @param sender the command sender
 	 * @param matchString the string prefix to match against command names
 	 * @return List of String - command names that match prefix and sender has permission
