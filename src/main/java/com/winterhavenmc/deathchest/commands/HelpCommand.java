@@ -16,12 +16,12 @@ import static com.winterhavenmc.deathchest.messages.MessageId.*;
 public class HelpCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
-	private final SubcommandMap subcommandMap;
+	private final SubcommandRegistry subcommandRegistry;
 
 
-	HelpCommand(final PluginMain plugin, final SubcommandMap subcommandMap) {
+	HelpCommand(final PluginMain plugin, final SubcommandRegistry subcommandRegistry) {
 		this.plugin = Objects.requireNonNull(plugin);
-		this.subcommandMap = Objects.requireNonNull(subcommandMap);
+		this.subcommandRegistry = Objects.requireNonNull(subcommandRegistry);
 		this.setName("help");
 		this.setUsage("/deathchest help [command]");
 		this.setDescription(COMMAND_HELP_HELP);
@@ -37,7 +37,7 @@ public class HelpCommand extends AbstractSubcommand {
 		List<String> returnList = new ArrayList<>();
 
 		if (args.length == 2) {
-			for (String subcommand : subcommandMap.getNames()) {
+			for (String subcommand : subcommandRegistry.getNames()) {
 				if (sender.hasPermission("deathchest." + subcommand)
 						&& subcommand.startsWith(args[1].toLowerCase())
 						&& !subcommand.equalsIgnoreCase("help")) {
@@ -81,7 +81,7 @@ public class HelpCommand extends AbstractSubcommand {
 	void displayHelp(final CommandSender sender, final String commandName) {
 
 		// get subcommand from map by name
-		Subcommand subcommand = subcommandMap.getCommand(commandName);
+		Subcommand subcommand = subcommandRegistry.getCommand(commandName);
 
 		// if subcommand found in map, display help message and usage
 		if (subcommand != null) {
@@ -106,9 +106,9 @@ public class HelpCommand extends AbstractSubcommand {
 
 		plugin.messageBuilder.build(sender, COMMAND_HELP_USAGE).send();
 
-		for (String subcommandName : subcommandMap.getNames()) {
-			if (subcommandMap.getCommand(subcommandName) != null) {
-				subcommandMap.getCommand(subcommandName).displayUsage(sender);
+		for (String subcommandName : subcommandRegistry.getNames()) {
+			if (subcommandRegistry.getCommand(subcommandName) != null) {
+				subcommandRegistry.getCommand(subcommandName).displayUsage(sender);
 			}
 		}
 	}
