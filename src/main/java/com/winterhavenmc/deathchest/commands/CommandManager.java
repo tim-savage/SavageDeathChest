@@ -34,8 +34,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 
 		// register subcommands
 		for (SubcommandType subcommandType : SubcommandType.values()) {
-			subcommandType.register(plugin, subcommandRegistry);
+			subcommandRegistry.register(subcommandType.create(plugin));
 		}
+
+		// register help command
+		subcommandRegistry.register(new HelpCommand(plugin, subcommandRegistry));
 	}
 
 

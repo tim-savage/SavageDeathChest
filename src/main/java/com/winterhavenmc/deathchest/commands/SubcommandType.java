@@ -5,34 +5,27 @@ import com.winterhavenmc.deathchest.PluginMain;
 
 public enum SubcommandType {
 
-	HELP() {
-		@Override
-		void register(final PluginMain plugin, final SubcommandRegistry subcommandRegistry) {
-			subcommandRegistry.register(new HelpCommand(plugin, subcommandRegistry));
-		}
-	},
-
 	LIST() {
 		@Override
-		void register(final PluginMain plugin, final SubcommandRegistry subcommandRegistry) {
-			subcommandRegistry.register(new ListCommand(plugin));
+		Subcommand create(final PluginMain plugin) {
+			return new ListCommand(plugin);
 		}
 	},
 
 	RELOAD() {
 		@Override
-		void register(final PluginMain plugin, final SubcommandRegistry subcommandRegistry) {
-			subcommandRegistry.register(new ReloadCommand(plugin));
+		Subcommand create(final PluginMain plugin) {
+			return new ReloadCommand(plugin);
 		}
 	},
 
 	STATUS() {
 		@Override
-		void register(final PluginMain plugin, final SubcommandRegistry subcommandRegistry) {
-			subcommandRegistry.register(new StatusCommand(plugin));
+		Subcommand create(final PluginMain plugin) {
+			return new StatusCommand(plugin);
 		}
 	};
 
-	abstract void register(final PluginMain plugin, final SubcommandRegistry subcommandRegistry);
+	abstract Subcommand create(final PluginMain plugin);
 
 }
