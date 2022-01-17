@@ -91,15 +91,15 @@ DATE_FORMAT: "MMM d, yyyy"
 
 # Ignore protection plugin permissions on death chest placement or access
 protection-plugins:
-  WorldGuard:
-    ignore-on-place: false
-    ignore-on-access: true
-
-  Towny:
-    ignore-on-place: false
-    ignore-on-access: true
-
   GriefPrevention:
+    ignore-on-place: false
+    ignore-on-access: true
+
+  Lands:
+    ignore-on-place: false
+    ignore-on-access: true
+
+  PreciousStones:
     ignore-on-place: false
     ignore-on-access: true
 
@@ -107,7 +107,11 @@ protection-plugins:
     ignore-on-place: false
     ignore-on-access: true
 
-  PreciousStones:
+  Towny:
+    ignore-on-place: false
+    ignore-on-access: true
+
+  WorldGuard:
     ignore-on-place: false
     ignore-on-access: true
 
