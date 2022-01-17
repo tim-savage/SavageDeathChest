@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 
-public interface Subcommand {
+interface Subcommand {
 
 	boolean onCommand(final CommandSender sender, final List<String> argsList);
 

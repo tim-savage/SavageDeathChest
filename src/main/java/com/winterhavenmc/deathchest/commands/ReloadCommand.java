@@ -11,7 +11,7 @@ import static com.winterhavenmc.deathchest.messages.MessageId.*;
 import static com.winterhavenmc.deathchest.sounds.SoundId.COMMAND_RELOAD_SUCCESS;
 
 
-public class ReloadCommand extends AbstractSubcommand {
+final class ReloadCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
 

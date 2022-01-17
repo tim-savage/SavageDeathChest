@@ -15,7 +15,7 @@ import java.util.*;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
-public class ListCommand extends AbstractSubcommand {
+final class ListCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
 

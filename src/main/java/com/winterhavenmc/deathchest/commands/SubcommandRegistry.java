@@ -3,7 +3,7 @@ package com.winterhavenmc.deathchest.commands;
 import java.util.*;
 
 
-public class SubcommandRegistry {
+final class SubcommandRegistry {
 
 	Map<String, Subcommand> subcommandMap = new LinkedHashMap<>();
 	Map<String, String> aliasMap = new HashMap<>();

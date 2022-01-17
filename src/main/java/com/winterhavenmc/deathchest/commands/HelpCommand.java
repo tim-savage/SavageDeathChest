@@ -13,7 +13,7 @@ import java.util.Objects;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
-public class HelpCommand extends AbstractSubcommand {
+final class HelpCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
 	private final SubcommandRegistry subcommandRegistry;

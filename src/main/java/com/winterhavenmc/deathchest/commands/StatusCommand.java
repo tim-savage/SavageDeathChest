@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
-public class StatusCommand extends AbstractSubcommand {
+final class StatusCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
 

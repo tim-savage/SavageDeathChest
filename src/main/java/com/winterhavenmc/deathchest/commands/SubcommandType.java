@@ -3,7 +3,7 @@ package com.winterhavenmc.deathchest.commands;
 import com.winterhavenmc.deathchest.PluginMain;
 
 
-public enum SubcommandType {
+enum SubcommandType {
 
 	LIST() {
 		@Override
