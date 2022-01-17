@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A class to manage the configured list of material types that can be replaced by a death chest
  */
-public final class ReplaceableBlocks {
+final class ReplaceableBlocks {
 
 	// reference to main class
 	private final PluginMain plugin;
@@ -37,7 +37,7 @@ public final class ReplaceableBlocks {
 	/**
 	 * Load list of replaceable blocks from config file
 	 */
-	public void reload() {
+	void reload() {
 
 		// clear replaceable blocks
 		materialSet.clear();
@@ -62,7 +62,7 @@ public final class ReplaceableBlocks {
 	 * @param material the material the test for
 	 * @return true if replaceBlocks set contains material, false if it does not
 	 */
-	public boolean contains(final Material material) {
+	boolean contains(final Material material) {
 
 		// check for null parameter
 		if (material == null) {
