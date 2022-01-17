@@ -22,7 +22,7 @@ enum ChestBlockType {
 	 * @param block block to determine chest type
 	 * @return ChestBlockType enum value, or null if block is not a chest or sign
 	 */
-	public static ChestBlockType getType(final Block block) {
+	static ChestBlockType getType(final Block block) {
 
 		// check for null parameter
 		if (block == null) {
