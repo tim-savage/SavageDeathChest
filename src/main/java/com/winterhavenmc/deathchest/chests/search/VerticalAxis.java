@@ -1,6 +1,6 @@
 package com.winterhavenmc.deathchest.chests.search;
 
-public enum VerticalAxis {
+enum VerticalAxis {
 
 	UPPER(1),
 	LOWER(-1);
