@@ -21,7 +21,7 @@ import static com.winterhavenmc.deathchest.messages.MessageId.INVENTORY_FULL;
 
 
 /**
- * A class that represents a death chest, which is comprised of a collection of chest blocks
+ * A class that represents a death chest, which comprises a collection of chest blocks
  */
 @Immutable
 public final class DeathChest {
