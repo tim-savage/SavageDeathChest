@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * A class of helper methods for event listeners, mostly conditional statements
  */
-class Helper {
+final class Helper {
 
 	JavaPlugin plugin;
 
