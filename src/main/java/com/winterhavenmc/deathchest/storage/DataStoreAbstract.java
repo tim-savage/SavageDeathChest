@@ -4,7 +4,7 @@ package com.winterhavenmc.deathchest.storage;
 /**
  * An abstract class that declares methods for managing persistent storage of death chests and chest blocks.
  */
-public abstract class DataStoreAbstract {
+abstract class DataStoreAbstract implements DataStore {
 
 	private boolean initialized;
 
