@@ -171,7 +171,6 @@ public final class PlayerEventListener implements Listener {
 		final ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
 		if (helper.pluginBlockedAccess(blockingPlugin)) {
 			// do not cancel event - allow protection plugin to handle it
-			assert blockingPlugin != null; // conditional checks for null
 			helper.logDebugMessage(blockingPlugin.getPluginName() + " prevented access to a chest.");
 			return;
 		}
