@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 
-public class QuadrantSearch extends AbstractSearch {
+public final class QuadrantSearch extends AbstractSearch {
 
 
 	private enum Quadrant {
