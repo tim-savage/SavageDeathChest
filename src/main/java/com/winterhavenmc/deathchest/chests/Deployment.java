@@ -39,7 +39,7 @@ public final class Deployment {
 	private final DeathChest deathChest;
 
 	// set of path block type names as strings
-	private static final Set<String> pathBlockTypeNames = Set.of(
+	private static final Collection<String> pathBlockTypeNames = Set.of(
 			"GRASS_PATH",
 			"LEGACY_GRASS_PATH",
 			"DIRT_PATH"	);
@@ -52,7 +52,7 @@ public final class Deployment {
 	 * @param player the player for whom to deploy a death chest
 	 * @param droppedItems list of items dropped by player on death
 	 */
-	public Deployment(final PluginMain plugin, final Player player, final List<ItemStack> droppedItems) {
+	public Deployment(final PluginMain plugin, final Player player, final Collection<ItemStack> droppedItems) {
 
 		// set reference to main class
 		this.plugin = plugin;
@@ -131,7 +131,7 @@ public final class Deployment {
 	private SearchResult deployChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// combine stacks of same items where possible
-		List<ItemStack> remainingItems = consolidateItemStacks(droppedItems);
+		Collection<ItemStack> remainingItems = consolidateItemStacks(droppedItems);
 
 		// get required chest size
 		ChestSize chestSize = ChestSize.selectFor(remainingItems.size());
@@ -151,7 +151,7 @@ public final class Deployment {
 	 * Deploy a single chest for player and fill with dropped items on player death
 	 *
 	 * @param player       the player who died
-	 * @param droppedItems the player's items dropped on death
+	 * @param droppedItems Collection of the player's items dropped on death
 	 * @return SearchResult - the result of the attempted DeathChest deployment
 	 */
 	private SearchResult deploySingleChest(final Player player, final Collection<ItemStack> droppedItems) {
@@ -226,7 +226,7 @@ public final class Deployment {
 	 * @param droppedItems the player's items dropped on death
 	 * @return SearchResult - the result of the attempted DeathChest deployment
 	 */
-	private SearchResult deployDoubleChest(final Player player, final List<ItemStack> droppedItems) {
+	private SearchResult deployDoubleChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// make copy of dropped items
 		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
@@ -341,11 +341,11 @@ public final class Deployment {
 	 * Combine ItemStacks of same material up to max stack size
 	 *
 	 * @param itemStacks Collection of ItemStacks to combine
-	 * @return List of ItemStack with same materials combined
+	 * @return Collection of ItemStack with same materials combined
 	 */
-	private List<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
+	private Collection<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
 
-		final List<ItemStack> returnList = new ArrayList<>();
+		final Collection<ItemStack> returnList = new ArrayList<>();
 
 		for (ItemStack itemStack : itemStacks) {
 			if (itemStack == null) {
