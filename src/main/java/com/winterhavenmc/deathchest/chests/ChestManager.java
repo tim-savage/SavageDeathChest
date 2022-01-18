@@ -377,6 +377,7 @@ public final class ChestManager {
 	}
 
 
+	@SuppressWarnings("unused")
 	public String getDataStoreType() {
 		return dataStore.getType().toString();
 	}
