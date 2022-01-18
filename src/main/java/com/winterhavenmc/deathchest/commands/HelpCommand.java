@@ -6,7 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ final class HelpCommand extends AbstractSubcommand {
 	                                  final @Nonnull String alias,
 	                                  final String[] args) {
 
-		List<String> returnList = new ArrayList<>();
+		List<String> returnList = new LinkedList<>();
 
 		if (args.length == 2) {
 			for (String subcommand : subcommandRegistry.getNames()) {

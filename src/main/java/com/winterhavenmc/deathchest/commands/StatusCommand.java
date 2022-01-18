@@ -6,9 +6,7 @@ import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
@@ -73,7 +71,7 @@ final class StatusCommand extends AbstractSubcommand {
 
 			if (pp.isInstalled()) {
 
-				List<String> pluginSettings = new ArrayList<>();
+				Collection<String> pluginSettings = new LinkedList<>();
 
 				count++;
 				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";

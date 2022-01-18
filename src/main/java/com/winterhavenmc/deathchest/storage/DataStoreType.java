@@ -4,8 +4,7 @@ import com.winterhavenmc.deathchest.PluginMain;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 
 /**
@@ -168,8 +167,8 @@ public enum DataStoreType {
 	 */
 	static void convertAll(final PluginMain plugin, final DataStore newDataStore) {
 
-		// get array list of all data store types
-		ArrayList<DataStoreType> dataStores = new ArrayList<>(Arrays.asList(DataStoreType.values()));
+		// get collection of all data store types
+		Collection<DataStoreType> dataStores = new HashSet<>(Arrays.asList(DataStoreType.values()));
 
 		// remove newDataStore from list of types to convert
 		dataStores.remove(newDataStore.getType());

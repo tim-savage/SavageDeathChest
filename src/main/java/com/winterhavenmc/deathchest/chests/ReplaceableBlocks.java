@@ -3,7 +3,7 @@ package com.winterhavenmc.deathchest.chests;
 import com.winterhavenmc.deathchest.PluginMain;
 import org.bukkit.Material;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,7 +43,7 @@ final class ReplaceableBlocks {
 		materialSet.clear();
 
 		// get string list of materials from config file
-		List<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
+		Collection<String> materialStringList = plugin.getConfig().getStringList("replaceable-blocks");
 
 		// iterate over string list
 		for (String materialString : materialStringList) {

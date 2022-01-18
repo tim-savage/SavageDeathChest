@@ -131,7 +131,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	 */
 	private List<String> matchingCommands(final CommandSender sender, final String matchString) {
 
-		List<String> returnList = new ArrayList<>();
+		List<String> returnList = new LinkedList<>();
 
 		for (String subcommand : subcommandRegistry.getNames()) {
 			if (sender.hasPermission("deathchest." + subcommand)

@@ -3,8 +3,8 @@ package com.winterhavenmc.deathchest.chests.search;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 
 /**
@@ -28,7 +28,7 @@ public final class SearchResult {
 		this.resultCode = resultCode;
 		this.location = null;
 		this.protectionPlugin = null;
-		this.remainingItems = new ArrayList<>();
+		this.remainingItems = new LinkedList<>();
 	}
 
 

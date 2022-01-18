@@ -266,7 +266,7 @@ public final class ChestBlock {
 	Collection<ItemStack> transferContents(final Player player) {
 
 		// create empty list to contain items that did not fit in chest
-		List<ItemStack> remainingItems = new ArrayList<>();
+		Collection<ItemStack> remainingItems = new LinkedList<>();
 
 		// if player is null, return empty list
 		if (player == null) {
@@ -290,8 +290,8 @@ public final class ChestBlock {
 			// get chest object
 			final Chest chest = (Chest) block.getState();
 
-			// get array of ItemStack for chest inventory
-			final List<ItemStack> chestInventory = new ArrayList<>(Arrays.asList(chest.getInventory().getContents()));
+			// get Collection of ItemStack for chest inventory
+			final Collection<ItemStack> chestInventory = new LinkedList<>(Arrays.asList(chest.getInventory().getContents()));
 
 			// iterate through all inventory slots in chest inventory
 			for (ItemStack itemStack : chestInventory) {

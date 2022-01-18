@@ -332,8 +332,8 @@ public final class DeathChest {
 			return;
 		}
 
-		// create ArrayList to hold items that did not fit in player inventory
-		Collection<ItemStack> remainingItems = new ArrayList<>();
+		// create collection to hold items that did not fit in player inventory
+		Collection<ItemStack> remainingItems = new LinkedList<>();
 
 		// transfer contents of any chest blocks to player, putting any items that did not fit in remainingItems
 		for (ChestBlock chestBlock : plugin.chestManager.getBlocks(this.chestUId)) {
@@ -524,14 +524,14 @@ public final class DeathChest {
 	Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
 
 		// create empty list for return
-		Collection<ItemStack> remainingItems = new ArrayList<>();
+		Collection<ItemStack> remainingItems = new LinkedList<>();
 
 		// get inventory for this death chest
 		Inventory inventory = this.getInventory();
 
 		// if inventory is not null, add itemStacks to inventory and put leftovers in remainingItems
 		if (inventory != null) {
-			remainingItems = new ArrayList<>(inventory.addItem(itemStacks.toArray(new ItemStack[0])).values());
+			remainingItems = new LinkedList<>(inventory.addItem(itemStacks.toArray(new ItemStack[0])).values());
 		}
 
 		// return collection of items that did not fit in inventory

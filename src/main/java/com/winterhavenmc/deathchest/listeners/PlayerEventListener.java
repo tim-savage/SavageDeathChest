@@ -19,8 +19,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import static com.winterhavenmc.deathchest.messages.Macro.*;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
@@ -114,7 +114,7 @@ public final class PlayerEventListener implements Listener {
 		}
 
 		// copy event drops to new collection
-		Collection<ItemStack> droppedItems = new ArrayList<>(event.getDrops());
+		Collection<ItemStack> droppedItems = new LinkedList<>(event.getDrops());
 
 		// remove all items from event drops
 		event.getDrops().clear();

@@ -213,7 +213,7 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 	@Override
 	public Collection<ChestBlock> selectAllBlockRecords() {
 
-		final Set<ChestBlock> results = new HashSet<>();
+		final Collection<ChestBlock> results = new HashSet<>();
 
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(Queries.getQuery("SelectAllBlocks"));
@@ -268,7 +268,7 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 				// create chest block object from retrieved record
 				ChestBlock chestBlock = new ChestBlock(chestUid, world.getName(), world.getUID(), x, y, z, 0, 0);
 
-				// add DeathChestObject to results ArrayList
+				// add DeathChestObject to results set
 				results.add(chestBlock);
 			}
 		}
@@ -372,7 +372,7 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 				DeathChest deathChest = new DeathChest(chestUid, ownerUid, killerUid, itemCount,
 						placementTime, expirationTime, protectionExpirationTime);
 
-				// add DeathChestObject to results ArrayList
+				// add DeathChestObject to results set
 				results.add(deathChest);
 			}
 		}

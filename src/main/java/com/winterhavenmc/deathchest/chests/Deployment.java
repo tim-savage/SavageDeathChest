@@ -157,7 +157,7 @@ public final class Deployment {
 	private SearchResult deploySingleChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// make copy of dropped items
-		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
+		Collection<ItemStack> remainingItems = new LinkedList<>(droppedItems);
 
 		// if require-chest option is enabled
 		// and player does not have permission override
@@ -229,7 +229,7 @@ public final class Deployment {
 	private SearchResult deployDoubleChest(final Player player, final Collection<ItemStack> droppedItems) {
 
 		// make copy of dropped items
-		Collection<ItemStack> remainingItems = new ArrayList<>(droppedItems);
+		Collection<ItemStack> remainingItems = new LinkedList<>(droppedItems);
 
 		// search for valid chest location
 		Search search = new QuadrantSearch(plugin, player, ChestSize.DOUBLE);
@@ -345,7 +345,7 @@ public final class Deployment {
 	 */
 	private Collection<ItemStack> consolidateItemStacks(final Collection<ItemStack> itemStacks) {
 
-		final Collection<ItemStack> returnList = new ArrayList<>();
+		final Collection<ItemStack> returnList = new LinkedList<>();
 
 		for (ItemStack itemStack : itemStacks) {
 			if (itemStack == null) {
@@ -405,7 +405,7 @@ public final class Deployment {
 	 */
 	private Collection<ItemStack> removeOneChest(final Collection<ItemStack> itemStacks) {
 
-		Collection<ItemStack> remainingItems = new ArrayList<>(itemStacks);
+		Collection<ItemStack> remainingItems = new LinkedList<>(itemStacks);
 
 		Iterator<ItemStack> iterator = remainingItems.iterator();
 

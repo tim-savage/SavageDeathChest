@@ -20,7 +20,8 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import static com.winterhavenmc.deathchest.messages.Macro.*;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
@@ -223,7 +224,7 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// iterate through all blocks in explosion event and remove those that are DeathChest chests or signs
-		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
+		Collection<Block> blocks = new LinkedList<>(event.blockList());
 		for (Block block : blocks) {
 			if (plugin.chestManager.isChestBlock(block)) {
 				// remove death chest block from blocks exploded list if protection has not expired
@@ -251,7 +252,7 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// iterate through all blocks in explosion event and remove those that are DeathChest chests or signs
-		ArrayList<Block> blocks = new ArrayList<>(event.blockList());
+		Collection<Block> blocks = new LinkedList<>(event.blockList());
 		for (Block block : blocks) {
 			if (plugin.chestManager.isChestBlock(block)) {
 				// remove death chest block from blocks exploded list if protection has not expired

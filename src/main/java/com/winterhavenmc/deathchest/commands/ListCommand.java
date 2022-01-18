@@ -48,7 +48,7 @@ final class ListCommand extends AbstractSubcommand {
 	                                  final String[] args) {
 
 		// initialize return list
-		final List<String> returnList = new ArrayList<>();
+		final List<String> returnList = new LinkedList<>();
 
 		if (args.length == 2) {
 			if (sender.hasPermission("deathchest.list.other")) {
@@ -225,7 +225,7 @@ final class ListCommand extends AbstractSubcommand {
 
 
 	private List<DeathChest> getChestsForPlayer(final Player player) {
-		List<DeathChest> returnList = new ArrayList<>();
+		List<DeathChest> returnList = new LinkedList<>();
 
 		for (DeathChest deathChest : plugin.chestManager.getAllChests()) {
 			if (deathChest.getOwnerUid().equals(player.getUniqueId())) {
