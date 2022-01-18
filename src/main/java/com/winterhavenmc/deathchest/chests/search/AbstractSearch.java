@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 
-public abstract class AbstractSearch implements Search {
+abstract class AbstractSearch implements Search {
 
 	protected final PluginMain plugin;
 	protected final Player player;
