@@ -93,7 +93,7 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
 	                         final String[] args) {
 
 		// convert args array to list
-		List<String> argsList = new ArrayList<>(Arrays.asList(args));
+		List<String> argsList = new LinkedList<>(Arrays.asList(args));
 
 		String subcommandName;
 
