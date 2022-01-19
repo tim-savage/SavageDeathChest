@@ -91,7 +91,7 @@ public interface DataStore {
 	/**
 	 * Check if the datastore is initialized
 	 *
-	 * @return {@code true} if the datastore is initialize, {@code false} if it is not
+	 * @return {@code true} if the datastore is initialized, {@code false} if it is not
 	 */
 	boolean isInitialized();
 
