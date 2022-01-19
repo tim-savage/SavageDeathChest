@@ -93,7 +93,7 @@ final class ListCommand extends AbstractSubcommand {
 		}
 
 		// create empty list of records
-		List<DeathChest> displayRecords = new ArrayList<>();
+		List<DeathChest> displayRecords = new LinkedList<>();
 
 		// should listing include player name
 		boolean displayNames = true;
@@ -107,7 +107,7 @@ final class ListCommand extends AbstractSubcommand {
 			}
 			// else add all chests to display list
 			else {
-				displayRecords = new ArrayList<>(plugin.chestManager.getAllChests());
+				displayRecords = new LinkedList<>(plugin.chestManager.getAllChests());
 			}
 		}
 
@@ -117,7 +117,7 @@ final class ListCommand extends AbstractSubcommand {
 
 				// if wildcard character entered, add all chest records to display list
 				if (passedPlayerName.equals("*")) {
-					displayRecords = new ArrayList<>(plugin.chestManager.getAllChests());
+					displayRecords = new LinkedList<>(plugin.chestManager.getAllChests());
 				}
 
 				// else match chest records to entered target player name prefix
