@@ -25,7 +25,7 @@ final class Helper {
 	 *
  	 * @param message the debug message to log
 	 */
-	void logDebugMessage(String message) {
+	void logDebugMessage(final String message) {
 		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info(message);
 		}
