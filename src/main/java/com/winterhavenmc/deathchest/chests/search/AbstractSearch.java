@@ -4,6 +4,7 @@ import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.ChestSize;
 import com.winterhavenmc.deathchest.chests.Deployment;
 import com.winterhavenmc.deathchest.chests.LocationUtilities;
+import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -113,7 +114,8 @@ abstract class AbstractSearch implements Search {
 		}
 
 		// if block at location is protected by plugin, return negative result
-		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
+		ProtectionPlugin protectionPlugin = plugin.protectionPluginRegistry.placementAllowed(player, location);
+//		ProtectionPlugin protectionPlugin = ProtectionPlugin.allowChestPlacement(player, block);
 		if (protectionPlugin != null) {
 			result.setResultCode(ResultCode.PROTECTION_PLUGIN);
 			result.setProtectionPlugin(protectionPlugin);

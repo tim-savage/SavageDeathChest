@@ -2,9 +2,9 @@ package com.winterhavenmc.deathchest.listeners;
 
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.chests.search.ProtectionPlugin;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 
+import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -94,7 +94,7 @@ public final class InventoryEventListener implements Listener {
 		}
 
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-		ProtectionPlugin blockingPlugin = ProtectionPlugin.allowChestAccess(player, block);
+		ProtectionPlugin blockingPlugin = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
 		if (helper.pluginBlockedAccess(blockingPlugin)) {
 			// do not cancel event - allow protection plugin to handle it
 			helper.logDebugMessage(blockingPlugin.getPluginName() + " prevented access to a chest.");

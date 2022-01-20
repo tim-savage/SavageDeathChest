@@ -1,7 +1,7 @@
 package com.winterhavenmc.deathchest.listeners;
 
 import com.winterhavenmc.deathchest.chests.DeathChest;
-import com.winterhavenmc.deathchest.chests.search.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;

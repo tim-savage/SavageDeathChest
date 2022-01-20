@@ -1,7 +1,7 @@
 package com.winterhavenmc.deathchest.commands;
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.chests.search.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -67,30 +67,27 @@ final class StatusCommand extends AbstractSubcommand {
 		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
 
 		int count = 0;
-		for (ProtectionPlugin pp : ProtectionPlugin.values()) {
+		for (ProtectionPlugin pp : plugin.protectionPluginRegistry.getAll()) {
 
-			if (pp.isInstalled()) {
+			Collection<String> pluginSettings = new LinkedList<>();
 
-				Collection<String> pluginSettings = new LinkedList<>();
+			count++;
+			String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
 
-				count++;
-				String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
-
-				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-place")) {
-					pluginSettings.add("ignore on placement");
-				}
-				else {
-					pluginSettings.add("comply on placement");
-				}
-				if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-access")) {
-					pluginSettings.add("ignore on access");
-				}
-				else {
-					pluginSettings.add("comply on access");
-				}
-				statusString = statusString + ChatColor.RESET + pluginSettings;
-				sender.sendMessage(statusString);
+			if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-place")) {
+				pluginSettings.add("ignore on placement");
 			}
+			else {
+				pluginSettings.add("comply on placement");
+			}
+			if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-access")) {
+				pluginSettings.add("ignore on access");
+			}
+			else {
+				pluginSettings.add("comply on access");
+			}
+			statusString = statusString + ChatColor.RESET + pluginSettings;
+			sender.sendMessage(statusString);
 		}
 		if (count == 0) {
 			sender.sendMessage(ChatColor.AQUA + "  [ NONE ENABLED ]");
