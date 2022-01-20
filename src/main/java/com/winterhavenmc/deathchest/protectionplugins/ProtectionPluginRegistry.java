@@ -12,7 +12,6 @@ import java.util.Set;
 
 public final class ProtectionPluginRegistry {
 
-	private final JavaPlugin plugin;
 	private final Set<ProtectionPlugin> protectionPluginSet;
 
 
@@ -22,7 +21,6 @@ public final class ProtectionPluginRegistry {
 	 */
 	public ProtectionPluginRegistry(final JavaPlugin plugin) {
 
-		this.plugin = plugin;
 		this.protectionPluginSet = new LinkedHashSet<>();
 
 		// register installed protection plugins in map
