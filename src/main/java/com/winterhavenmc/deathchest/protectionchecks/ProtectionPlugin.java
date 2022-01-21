@@ -1,4 +1,4 @@
-package com.winterhavenmc.deathchest.protectionplugins;
+package com.winterhavenmc.deathchest.protectionchecks;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,5 +14,12 @@ public interface ProtectionPlugin {
 	void logAccessError();
 
 	String getPluginName();
+
+	@SuppressWarnings("unused")
+	String getPluginVersion();
+
+	boolean isIgnoredOnPlace();
+
+	boolean isIgnoredOnAccess();
 
 }

@@ -3,7 +3,7 @@ package com.winterhavenmc.deathchest.listeners;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.messages.Macro;
 import com.winterhavenmc.deathchest.chests.DeathChest;
-import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 
 import com.winterhavenmc.deathchest.chests.LocationUtilities;

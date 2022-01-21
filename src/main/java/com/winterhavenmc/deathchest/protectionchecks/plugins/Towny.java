@@ -1,7 +1,9 @@
-package com.winterhavenmc.deathchest.protectionplugins;
+package com.winterhavenmc.deathchest.protectionchecks.plugins;
 
 import com.palmergames.bukkit.towny.object.TownyPermission;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginAbstract;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
 import org.bukkit.Location;
@@ -11,17 +13,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
-final class Towny extends ProtectionPluginAbstract implements ProtectionPlugin {
+public final class Towny extends ProtectionPluginAbstract implements ProtectionPlugin {
 
 
-	public Towny(final JavaPlugin plugin, final String name) {
+	public Towny(final JavaPlugin plugin, final String name, final String version) {
 		this.plugin = plugin;
 		this.name = name;
+		this.version = version;
 	}
 
 
 	@Override
-	public boolean allowChestPlacement(Player player, Location location) {
+	public boolean allowChestPlacement(final Player player, final Location location) {
 
 		// use try..catch block to gracefully handle exceptions thrown by protection plugin
 		try {
@@ -36,7 +39,7 @@ final class Towny extends ProtectionPluginAbstract implements ProtectionPlugin {
 
 
 	@Override
-	public boolean allowChestAccess(Player player, Location location) {
+	public boolean allowChestAccess(final Player player, final Location location) {
 
 		try {
 			LandsIntegration landsIntegration = new LandsIntegration(plugin);

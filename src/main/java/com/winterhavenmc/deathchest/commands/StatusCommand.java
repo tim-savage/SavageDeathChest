@@ -1,7 +1,7 @@
 package com.winterhavenmc.deathchest.commands;
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -67,20 +67,20 @@ final class StatusCommand extends AbstractSubcommand {
 		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
 
 		int count = 0;
-		for (ProtectionPlugin pp : plugin.protectionPluginRegistry.getAll()) {
+		for (ProtectionPlugin protectionPlugin : plugin.protectionPluginRegistry.getAll()) {
 
 			Collection<String> pluginSettings = new LinkedList<>();
 
 			count++;
-			String statusString = ChatColor.AQUA + "  " + pp.getPluginName() + ": ";
+			String statusString = ChatColor.AQUA + "  " + protectionPlugin.getPluginName() + ": ";
 
-			if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-place")) {
+			if (protectionPlugin.isIgnoredOnPlace()) {
 				pluginSettings.add("ignore on placement");
 			}
 			else {
 				pluginSettings.add("comply on placement");
 			}
-			if (plugin.getConfig().getBoolean("protection-plugins." + pp.getPluginName() + ".ignore-on-access")) {
+			if (protectionPlugin.isIgnoredOnAccess()) {
 				pluginSettings.add("ignore on access");
 			}
 			else {

@@ -8,6 +8,7 @@ import com.winterhavenmc.deathchest.listeners.PlayerEventListener;
 import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.messages.Macro;
 
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginRegistry;
 import com.winterhavenmc.util.messagebuilder.MessageBuilder;
 import com.winterhavenmc.util.soundconfig.SoundConfiguration;
 import com.winterhavenmc.util.soundconfig.YamlSoundConfiguration;
@@ -30,6 +31,7 @@ public final class PluginMain extends JavaPlugin {
 	public SoundConfiguration soundConfig;
 	public ChestManager chestManager;
 	public CommandManager commandManager;
+	public ProtectionPluginRegistry protectionPluginRegistry;
 
 
 	/**
@@ -78,8 +80,8 @@ public final class PluginMain extends JavaPlugin {
 		new BlockEventListener(this);
 		new InventoryEventListener(this);
 
-		// log detected protection plugins
-//        ProtectionPlugin.reportInstalled();
+		// instantiate protection plugin registry
+		protectionPluginRegistry = new ProtectionPluginRegistry(this);
 	}
 
 

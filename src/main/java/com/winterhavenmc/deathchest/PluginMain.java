@@ -8,7 +8,7 @@ import com.winterhavenmc.deathchest.listeners.PlayerEventListener;
 import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.messages.Macro;
 
-import com.winterhavenmc.deathchest.protectionplugins.ProtectionPluginRegistry;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginRegistry;
 import com.winterhavenmc.util.messagebuilder.MessageBuilder;
 import com.winterhavenmc.util.soundconfig.SoundConfiguration;
 import com.winterhavenmc.util.soundconfig.YamlSoundConfiguration;

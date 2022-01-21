@@ -1,6 +1,6 @@
 package com.winterhavenmc.deathchest.chests.search;
 
-import com.winterhavenmc.deathchest.protectionplugins.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -79,7 +79,7 @@ public final class SearchResult {
 
 	/**
 	 * Setter method for location
-	 * @param location - the locatin to set for this result object
+	 * @param location - the location to set for this result object
 	 */
 	void setLocation(final Location location) {
 		this.location = location;

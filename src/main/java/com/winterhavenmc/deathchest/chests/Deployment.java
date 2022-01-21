@@ -436,6 +436,10 @@ public final class Deployment {
 	private void placeChest(final Location location,
 							final ChestBlockType chestBlockType) {
 
+		if (plugin.getConfig().getBoolean("debug")) {
+			plugin.getLogger().info("placeChest method called for " + chestBlockType + " with location: " + location);
+		}
+
 		// get current block at location
 		Block block = location.getBlock();
 
