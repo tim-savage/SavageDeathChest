@@ -2,7 +2,7 @@ package com.winterhavenmc.deathchest.chests;
 
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.search.QuadrantSearch;
-import com.winterhavenmc.deathchest.chests.search.ResultCode;
+import com.winterhavenmc.deathchest.chests.search.SearchResultCode;
 import com.winterhavenmc.deathchest.chests.search.Search;
 import com.winterhavenmc.deathchest.chests.search.SearchResult;
 import com.winterhavenmc.deathchest.messages.Macro;
@@ -85,8 +85,8 @@ public final class Deployment {
 		}
 
 		// if result is negative cancel expire task and return
-		if (!result.getResultCode().equals(ResultCode.SUCCESS)
-				&& !result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
+		if (!result.getResultCode().equals(SearchResultCode.SUCCESS)
+				&& !result.getResultCode().equals(SearchResultCode.PARTIAL_SUCCESS)) {
 
 			// cancel DeathChest expire task
 			deathChest.cancelExpireTask();
@@ -174,17 +174,17 @@ public final class Deployment {
 			}
 			// else return NO_CHEST result
 			else {
-				return new SearchResult(ResultCode.NO_CHEST, remainingItems);
+				return new SearchResult(SearchResultCode.NO_CHEST, remainingItems);
 			}
 		}
 
 		// search for valid chest location
 		Search search = new QuadrantSearch(plugin, player, ChestSize.SINGLE);
 		search.execute();
-		SearchResult result = search.getResult();
+		SearchResult result = search.getSearchResult();
 
 		// if search successful, place chest
-		if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+		if (result.getResultCode().equals(SearchResultCode.SUCCESS)) {
 
 			// place chest at result location
 			placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
@@ -234,25 +234,25 @@ public final class Deployment {
 		// search for valid chest location
 		Search search = new QuadrantSearch(plugin, player, ChestSize.DOUBLE);
 		search.execute();
-		SearchResult result = search.getResult();
+		SearchResult searchResult = search.getSearchResult();
 
 		// if only single chest location found, deploy single chest
-		if (result.getResultCode().equals(ResultCode.PARTIAL_SUCCESS)) {
-			result = deploySingleChest(player, remainingItems);
+		if (searchResult.getResultCode().equals(SearchResultCode.PARTIAL_SUCCESS)) {
+			searchResult = deploySingleChest(player, remainingItems);
 
 			// if single chest deployment was successful, set PARTIAL_SUCCESS result
-			if (result.getResultCode().equals(ResultCode.SUCCESS)) {
-				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
+			if (searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
+				searchResult.setResultCode(SearchResultCode.PARTIAL_SUCCESS);
 			}
 
 			// return result
-			return result;
+			return searchResult;
 		}
 
 		// if search failed, return result with remaining items
-		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
-			result.setRemainingItems(remainingItems);
-			return result;
+		if (!searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
+			searchResult.setRemainingItems(remainingItems);
+			return searchResult;
 		}
 
 		// if require-chest option is enabled
@@ -270,17 +270,17 @@ public final class Deployment {
 			}
 			// else return NO_CHEST result
 			else {
-				result.setResultCode(ResultCode.NO_CHEST);
-				result.setRemainingItems(remainingItems);
-				return result;
+				searchResult.setResultCode(SearchResultCode.NO_CHEST);
+				searchResult.setRemainingItems(remainingItems);
+				return searchResult;
 			}
 		}
 
 		// place chest at result location
-		placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
+		placeChest(searchResult.getLocation(), ChestBlockType.RIGHT_CHEST);
 
 		// place sign on chest
-		placeSign(player, result.getLocation().getBlock());
+		placeSign(player, searchResult.getLocation().getBlock());
 
 		// attempt to place second chest
 
@@ -298,20 +298,20 @@ public final class Deployment {
 			}
 			// else return new PARTIAL_SUCCESS result with location and remaining items after filling chest
 			else {
-				result.setResultCode(ResultCode.PARTIAL_SUCCESS);
-				result.setRemainingItems(deathChest.fill(remainingItems));
-				return result;
+				searchResult.setResultCode(SearchResultCode.PARTIAL_SUCCESS);
+				searchResult.setRemainingItems(deathChest.fill(remainingItems));
+				return searchResult;
 			}
 		}
 
 		// place chest at result location
-		placeChest(getLocationToRight(result.getLocation()), ChestBlockType.LEFT_CHEST);
+		placeChest(getLocationToRight(searchResult.getLocation()), ChestBlockType.LEFT_CHEST);
 
 		// set chest type to left/right for double chest
 
 		// get left and right chest block state
-		BlockState rightChestState = result.getLocation().getBlock().getState();
-		BlockState leftChestState = getLocationToRight(result.getLocation()).getBlock().getState();
+		BlockState rightChestState = searchResult.getLocation().getBlock().getState();
+		BlockState leftChestState = getLocationToRight(searchResult.getLocation()).getBlock().getState();
 
 		// get left and right chest block data
 		Chest rightChestBlockData = (Chest) rightChestState.getBlockData();
@@ -330,10 +330,10 @@ public final class Deployment {
 		leftChestState.update();
 
 		// put remaining items after filling chest in result
-		result.setRemainingItems(deathChest.fill(remainingItems));
+		searchResult.setRemainingItems(deathChest.fill(remainingItems));
 
 		// return result
-		return result;
+		return searchResult;
 	}
 
 
@@ -645,7 +645,7 @@ public final class Deployment {
 				break;
 
 			case PROTECTION_PLUGIN:
-				plugin.messageBuilder.build(player, CHEST_DENIED_PLUGIN)
+				plugin.messageBuilder.build(player, CHEST_DENIED_DEPLOYMENT_BY_PLUGIN)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
 						.send();
