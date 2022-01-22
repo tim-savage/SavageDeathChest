@@ -3,7 +3,7 @@ package com.winterhavenmc.deathchest.listeners;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.messages.Macro;
 import com.winterhavenmc.deathchest.chests.DeathChest;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResult;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 
 import com.winterhavenmc.deathchest.chests.LocationUtilities;
@@ -110,11 +110,11 @@ public final class BlockEventListener implements Listener {
 		}
 
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-		ProtectionPlugin blockingPlugin = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
+		ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
 
-		if (helper.pluginBlockedAccess(blockingPlugin)) {
+		if (helper.pluginBlockedAccess(protectionCheckResult)) {
 			// do not cancel event - allow protection plugin to handle it
-			helper.logDebugMessage(blockingPlugin.getPluginName() + " prevented access to a chest.");
+			helper.logDebugMessage(protectionCheckResult.getProtectionPlugin().getPluginName() + " prevented access to a chest.");
 			return;
 		}
 

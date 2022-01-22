@@ -5,7 +5,7 @@ import com.winterhavenmc.deathchest.messages.Macro;
 import com.winterhavenmc.deathchest.chests.ChestBlock;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.chests.Deployment;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResult;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 
 import org.bukkit.block.Block;
@@ -24,6 +24,7 @@ import java.util.LinkedList;
 
 import static com.winterhavenmc.deathchest.messages.Macro.*;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
+import static com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResultCode.*;
 
 
 /**
@@ -167,33 +168,13 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-		final ProtectionPlugin blockingPlugin = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
-
-		if (helper.pluginBlockedAccess(blockingPlugin)) {
-			// do not cancel event - allow protection plugin to handle it
-			helper.logDebugMessage(blockingPlugin.getPluginName() + " prevented access to a chest.");
-			return;
-		}
-
-		// if player is in creative mode,
-		// and creative-access is configured false,
-		// and player does not have override permission,
-		// then cancel event, send message and return
-		if (helper.creativeModeAccessDisabled(player)) {
-			event.setCancelled(true);
-			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
-					.setMacro(LOCATION, player.getLocation()
-					).send();
-			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-			helper.logDebugMessage(event.getEventName() + " cancelled by creative access check.");
-			return;
-		}
+		// log event fired
+		helper.logDebugMessage(event.getEventName() + " fired on valid deathchest.");
 
 		// if chest inventory is already being viewed: cancel event, send message and return
 		if (helper.chestCurrentlyOpen(deathChest)) {
 			event.setCancelled(true);
-			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
+			String viewerName = deathChest.getInventory().getViewers().iterator().next().getName();
 			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, deathChest.getOwnerName())
@@ -205,74 +186,42 @@ public final class PlayerEventListener implements Listener {
 			return;
 		}
 
-		// if player sneak punched block and quick-loot is enabled, try auto-loot
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
-				&& player.isSneaking()
-				&& plugin.getConfig().getBoolean("quick-loot")
-				&& player.hasPermission("deathchest.loot")) {
-
-			// if chest protection is not enabled, loot chest and return
-			if (helper.chestProtectionDisabled()) {
-				helper.cancelEventAndAutoLootChest(event, deathChest, player);
-				helper.logDebugMessage(event.getEventName() + " auto-looted because chest protection not enabled.");
-				return;
-			}
-
-			// if chest protection has expired, loot chest and return
-			if (helper.chestProtectionExpired(deathChest)) {
-				helper.cancelEventAndAutoLootChest(event, deathChest, player);
-				helper.logDebugMessage(event.getEventName() + " auto-looted because chest protection expired.");
-				return;
-			}
-
-			// if player is owner, loot chest and return
-			if (deathChest.isOwner(player)) {
-				helper.cancelEventAndAutoLootChest(event, deathChest, player);
-				helper.logDebugMessage(event.getEventName() + " auto-looted because player is owner.");
-				return;
-			}
-
-			// if player has deathchest.loot.other permission, loot chest and return
-			if (helper.playerHasLootOtherPermission(player)) {
-				helper.cancelEventAndAutoLootChest(event, deathChest, player);
-				helper.logDebugMessage(event.getEventName() + " auto-looted because player has loot.other permission.");
-				return;
-			}
-
-			// if killer looting is enabled and player is killer and has permission, loot chest and return
-			if (helper.playerIsKillerLooting(player, deathChest)) {
-				helper.cancelEventAndAutoLootChest(event, deathChest, player);
-				helper.logDebugMessage(event.getEventName() + " auto-looted because killer looting enabled and " +
-						"player is killer and has loot.killer permission.");
-				return;
-			}
-
-			// if chest protection is enabled and has not expired, send message and return
-			if (helper.chestProtectionNotExpired(deathChest)) {
-				long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
-				plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
-						.setMacro(Macro.OWNER, deathChest.getOwnerName())
-						.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
-						.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
-						.setMacro(LOCATION, deathChest.getLocation())
-						.send();
-			}
-			else {
-				// send player not-owner message
-				plugin.messageBuilder.build(player, NOT_OWNER)
-						.setMacro(LOCATION, deathChest.getLocation())
-						.setMacro(OWNER, deathChest.getOwnerName())
-						.setMacro(KILLER, deathChest.getKillerName())
-						.send();
-			}
-
-			// play denied access sound
+		// if player is in creative mode, and creative-access is configured false,
+		// and player does not have override permission: cancel event, send message and return
+		if (helper.creativeModeAccessDisabled(player)) {
+			event.setCancelled(true);
+			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
+					.setMacro(LOCATION, player.getLocation()
+					).send();
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+			helper.logDebugMessage(event.getEventName() + " cancelled by creative access check.");
 			return;
 		}
 
-		// if player did not right-click block, do nothing and return
+		// get result of all protection plugin checks
+		final ProtectionCheckResult result = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
+
+		// if plugin blocked, do nothing and return
+		if (result.getResultCode().equals(BLOCKED)) {
+			// do not cancel event - allow protection plugin to handle it
+			helper.logDebugMessage(result.getProtectionPlugin().getPluginName() + " prevented access to a chest.");
+			return;
+		}
+
+		// if player sneak punched block and quick-loot is enabled, try auto-loot
+		if (helper.isPlayerQuickLooting(event, player)) {
+			helper.performQuickLoot(event, deathChest, player);
+		}
+
+		// if player did not right-click block, do nothing and return (will be handled by block break event)
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			return;
+		}
+
+		// if protection plugin is configured ignored: cancel event, open chest for player and return
+		if (result.getResultCode().equals(IGNORED)) {
+			event.setCancelled(true);
+			player.openInventory(deathChest.getInventory());
 			return;
 		}
 
