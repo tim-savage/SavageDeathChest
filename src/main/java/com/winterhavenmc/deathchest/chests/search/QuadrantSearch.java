@@ -63,8 +63,8 @@ public final class QuadrantSearch extends AbstractSearch {
 				origin.setY(minY);
 			}
 			else {
-				result.setResultCode(ResultCode.VOID);
-				result.setLocation(origin);
+				searchResult.setResultCode(SearchResultCode.VOID);
+				searchResult.setLocation(origin);
 				return;
 			}
 		}
@@ -112,10 +112,10 @@ public final class QuadrantSearch extends AbstractSearch {
 									z * quadrant.zFactor);
 
 							// get result for test location
-							result = validateChestLocation(player, testLocation, chestSize);
+							searchResult = validateChestLocation(player, testLocation, chestSize);
 
 							// if test location is valid, return search result object
-							if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+							if (searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
 								return;
 							}
 
@@ -123,10 +123,10 @@ public final class QuadrantSearch extends AbstractSearch {
 							testLocation.setYaw(testLocation.getYaw() - 90);
 
 							// get result for test location
-							result = validateChestLocation(player, testLocation, chestSize);
+							searchResult = validateChestLocation(player, testLocation, chestSize);
 
 							// if test location is valid, return search result object
-							if (result.getResultCode().equals(ResultCode.SUCCESS)) {
+							if (searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
 								return;
 							}
 

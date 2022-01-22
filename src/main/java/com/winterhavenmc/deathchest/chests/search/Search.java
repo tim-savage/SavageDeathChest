@@ -13,6 +13,6 @@ public interface Search {
 	 *
 	 * @return SearchResult object
 	 */
-	SearchResult getResult();
+	SearchResult getSearchResult();
 
 }

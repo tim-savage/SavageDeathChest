@@ -14,7 +14,7 @@ import java.util.LinkedList;
  */
 public final class SearchResult {
 
-	private ResultCode resultCode;
+	private SearchResultCode searchResultCode;
 	private Location location;
 	private ProtectionPlugin protectionPlugin;
 	private Collection<ItemStack> remainingItems;
@@ -23,10 +23,10 @@ public final class SearchResult {
 	/**
 	 * Class constructor
 	 *
-	 * @param resultCode initial result code for result
+	 * @param searchResultCode initial result code for result
 	 */
-	SearchResult(final ResultCode resultCode) {
-		this.resultCode = resultCode;
+	SearchResult(final SearchResultCode searchResultCode) {
+		this.searchResultCode = searchResultCode;
 		this.location = null;
 		this.protectionPlugin = null;
 		this.remainingItems = new LinkedList<>();
@@ -36,12 +36,12 @@ public final class SearchResult {
 	/**
 	 * Class constructor
 	 *
-	 * @param resultCode initial result code for result
+	 * @param searchResultCode initial result code for result
 	 * @param remainingItems player dropped items remaining
 	 *
 	 */
-	public SearchResult(final ResultCode resultCode, final Collection<ItemStack> remainingItems) {
-		this.resultCode = resultCode;
+	public SearchResult(final SearchResultCode searchResultCode, final Collection<ItemStack> remainingItems) {
+		this.searchResultCode = searchResultCode;
 		this.location = null;
 		this.protectionPlugin = null;
 		this.remainingItems = remainingItems;
@@ -49,21 +49,21 @@ public final class SearchResult {
 
 
 	/**
-	 * Getter method for resultCode
+	 * Getter method for searchResultCode
 	 *
-	 * @return ResultCode - the result code currently set for this result object
+	 * @return SearchResultCode - the result code currently set for this result object
 	 */
-	public ResultCode getResultCode() {
-		return resultCode;
+	public SearchResultCode getResultCode() {
+		return searchResultCode;
 	}
 
 
 	/**
-	 * Setter method for resultCode
-	 * @param resultCode - the result code to set for this result object
+	 * Setter method for searchResultCode
+	 * @param searchResultCode - the result code to set for this result object
 	 */
-	public void setResultCode(final ResultCode resultCode) {
-		this.resultCode = resultCode;
+	public void setResultCode(final SearchResultCode searchResultCode) {
+		this.searchResultCode = searchResultCode;
 	}
 
 

@@ -4,7 +4,8 @@ import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.ChestSize;
 import com.winterhavenmc.deathchest.chests.Deployment;
 import com.winterhavenmc.deathchest.chests.LocationUtilities;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResult;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResultCode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -18,7 +19,7 @@ abstract class AbstractSearch implements Search {
 	protected final ChestSize chestSize;
 	protected final int searchDistance;
 	protected boolean placeAboveVoid;
-	protected SearchResult result;
+	protected SearchResult searchResult;
 
 
 	/**
@@ -38,8 +39,8 @@ abstract class AbstractSearch implements Search {
 		this.placeAboveVoid = plugin.getConfig().getBoolean("place-above-void");
 
 		// initialize default result
-		result = new SearchResult(ResultCode.NON_REPLACEABLE_BLOCK);
-		result.setLocation(player.getLocation());
+		searchResult = new SearchResult(SearchResultCode.NON_REPLACEABLE_BLOCK);
+		searchResult.setLocation(player.getLocation());
 	}
 
 
@@ -53,8 +54,8 @@ abstract class AbstractSearch implements Search {
 	 * @return SearchResult object
 	 */
 	@Override
-	public SearchResult getResult() {
-		return result;
+	public SearchResult getSearchResult() {
+		return searchResult;
 	}
 
 
@@ -74,7 +75,7 @@ abstract class AbstractSearch implements Search {
 		SearchResult result = validateChestLocation(player, location);
 
 		// if right chest is not successful, return result
-		if (!result.getResultCode().equals(ResultCode.SUCCESS)) {
+		if (!result.getResultCode().equals(SearchResultCode.SUCCESS)) {
 			return result;
 		}
 
@@ -103,34 +104,34 @@ abstract class AbstractSearch implements Search {
 
 		// if block at location is not replaceable block, return negative result
 		if (!plugin.chestManager.isReplaceableBlock(block)) {
-			result.setResultCode(ResultCode.NON_REPLACEABLE_BLOCK);
-			return result;
+			searchResult.setResultCode(SearchResultCode.NON_REPLACEABLE_BLOCK);
+			return searchResult;
 		}
 
 		// if block at location is above grass path, return negative result
 		if (Deployment.isAbovePath(block)) {
-			result.setResultCode(ResultCode.ABOVE_GRASS_PATH);
-			return result;
+			searchResult.setResultCode(SearchResultCode.ABOVE_GRASS_PATH);
+			return searchResult;
 		}
 
 		// if block at location is protected by plugin, return negative result
-		ProtectionPlugin protectionPlugin = plugin.protectionPluginRegistry.placementAllowed(player, location);
-		if (protectionPlugin != null) {
-			result.setResultCode(ResultCode.PROTECTION_PLUGIN);
-			result.setProtectionPlugin(protectionPlugin);
-			return result;
+		ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.placementAllowed(player, location);
+		if (protectionCheckResult.getResultCode().equals(ProtectionCheckResultCode.BLOCKED)) {
+			searchResult.setResultCode(SearchResultCode.PROTECTION_PLUGIN);
+			searchResult.setProtectionPlugin(protectionCheckResult.getProtectionPlugin());
+			return searchResult;
 		}
 
 		// if block at location is within spawn protection radius, return negative result
 		if (isSpawnProtected(location)) {
-			result.setResultCode(ResultCode.SPAWN_RADIUS);
-			return result;
+			searchResult.setResultCode(SearchResultCode.SPAWN_RADIUS);
+			return searchResult;
 		}
 
 		// return successful result with location
-		result.setResultCode(ResultCode.SUCCESS);
-		result.setLocation(location);
-		return result;
+		searchResult.setResultCode(SearchResultCode.SUCCESS);
+		searchResult.setLocation(location);
+		return searchResult;
 	}
 
 
