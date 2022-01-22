@@ -1,12 +1,20 @@
 package com.winterhavenmc.deathchest.listeners;
 
+import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.DeathChest;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
+import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResult;
+import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResultCode;
+import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import static com.winterhavenmc.deathchest.messages.Macro.*;
+import static com.winterhavenmc.deathchest.messages.MessageId.CHEST_ACCESSED_PROTECTION_TIME;
+import static com.winterhavenmc.deathchest.messages.MessageId.NOT_OWNER;
 
 
 /**
@@ -14,9 +22,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 final class Helper {
 
-	JavaPlugin plugin;
+	PluginMain plugin;
 
-	Helper(JavaPlugin plugin) {
+	Helper(PluginMain plugin) {
 		this.plugin = plugin;
 	}
 
@@ -34,12 +42,11 @@ final class Helper {
 	/**
 	 * Check if chest access is blocked by another plugin
 	 *
-	 * @param protectionPlugin a reference to a blocking plugin
+	 * @param result the access check result
 	 * @return true if protectionPlugin is a valid plugin, false if it is null
 	 */
-	boolean pluginBlockedAccess(final ProtectionPlugin protectionPlugin) {
-		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-		return protectionPlugin != null;
+	boolean pluginBlockedAccess(final ProtectionCheckResult result) {
+		return result.getResultCode().equals(ProtectionCheckResultCode.BLOCKED);
 	}
 
 	/**
@@ -69,7 +76,7 @@ final class Helper {
 	}
 
 	/**
-	 * Check if a chest is already open
+	 * Check if a chest inventory is already open and being viewed by another player
 	 * @param deathChest the deathchest to check
 	 *
 	 * @return true if chest is already open, false if not
@@ -157,4 +164,89 @@ final class Helper {
 		event.setCancelled(true);
 		deathChest.autoLoot(player);
 	}
+
+
+	/**
+	 * Test if player is attempting to quick loot chest if allowed
+	 *
+	 * @param event the PlayerInteractEvent being checked
+	 * @param player the player being checked
+	 * @return true if player is sneak-punching a chest and configuration and permissions allows
+	 */
+	boolean isPlayerQuickLooting(final PlayerInteractEvent event, final Player player) {
+		return (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+				&& player.isSneaking()
+				&& plugin.getConfig().getBoolean("quick-loot")
+				&& player.hasPermission("deathchest.loot");
+	}
+
+
+	/**
+	 * Perform the sequence of checks and actions for a player to quick loot a chest
+	 *
+	 * @param event the PlayerInteractEvent being checked
+	 * @param deathChest the deathchest that is being quick-looted
+	 * @param player the player who is attempting to quick-loot the chest
+	 */
+	void performQuickLoot(final PlayerInteractEvent event, final DeathChest deathChest, final Player player) {
+
+		// if chest protection is not enabled, loot chest and return
+		if (chestProtectionDisabled()) {
+			cancelEventAndAutoLootChest(event, deathChest, player);
+			logDebugMessage(event.getEventName() + " auto-looted because chest protection not enabled.");
+			return;
+		}
+
+		// if chest protection has expired, loot chest and return
+		if (chestProtectionExpired(deathChest)) {
+			cancelEventAndAutoLootChest(event, deathChest, player);
+			logDebugMessage(event.getEventName() + " auto-looted because chest protection expired.");
+			return;
+		}
+
+		// if player is owner, loot chest and return
+		if (deathChest.isOwner(player)) {
+			cancelEventAndAutoLootChest(event, deathChest, player);
+			logDebugMessage(event.getEventName() + " auto-looted because player is owner.");
+			return;
+		}
+
+		// if player has deathchest.loot.other permission, loot chest and return
+		if (playerHasLootOtherPermission(player)) {
+			cancelEventAndAutoLootChest(event, deathChest, player);
+			logDebugMessage(event.getEventName() + " auto-looted because player has loot.other permission.");
+			return;
+		}
+
+		// if killer looting is enabled and player is killer and has permission, loot chest and return
+		if (playerIsKillerLooting(player, deathChest)) {
+			cancelEventAndAutoLootChest(event, deathChest, player);
+			logDebugMessage(event.getEventName() + " auto-looted because killer looting enabled and " +
+					"player is killer and has loot.killer permission.");
+			return;
+		}
+
+		// if chest protection is enabled and has not expired, send message and return
+		if (chestProtectionNotExpired(deathChest)) {
+			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
+			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
+					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
+					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.send();
+		}
+		else {
+			// send player not-owner message
+			plugin.messageBuilder.build(player, NOT_OWNER)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(OWNER, deathChest.getOwnerName())
+					.setMacro(KILLER, deathChest.getKillerName())
+					.send();
+		}
+
+		// play denied access sound
+		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+	}
+
 }
