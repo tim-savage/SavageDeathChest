@@ -60,6 +60,7 @@ public final class InventoryEventListener implements Listener {
 
 		// if event is not cancelled, do nothing and return
 		if (!event.isCancelled()) {
+			helper.logDebugMessage(event.getEventName() + " event not cancelled, doing nothing.");
 			return;
 		}
 
