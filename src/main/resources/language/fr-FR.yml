@@ -65,9 +65,16 @@ MESSAGES:
     string: '&cLe coffre de la mort appartenant à %OWNER% est protégé du pillage pendant %PROTECTION_DURATION_MINUTES%.'
     # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
-  CHEST_DENIED_PLUGIN:
+  CHEST_DENIED_DEPLOYMENT_BY_PLUGIN:
     enabled: true
     string: '&cL''apparition du coffre contenant l''inventaire de votre mort a été empéché par %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
+  CHEST_DENIED_ACCESS_BY_PLUGIN:
+    enabled: true
+    string: '&cL''accès au coffre de la mort a été empêché par %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
 
   CHEST_DENIED_BLOCK:
     enabled: true

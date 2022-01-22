@@ -66,9 +66,14 @@ MESSAGES:
     string: '&cDeath chest belonging to %OWNER% is protected from looting for %PROTECTION_DURATION_MINUTES%.'
     # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
-  CHEST_DENIED_PLUGIN:
+  CHEST_DENIED_DEPLOYMENT_BY_PLUGIN:
     enabled: true
     string: '&cDeath chest deployment was prevented by %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
+  CHEST_DENIED_ACCESS_BY_PLUGIN:
+    enabled: true
+    string: '&cDeath chest access was prevented by %PLUGIN%.'
     # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
 
   CHEST_DENIED_BLOCK:

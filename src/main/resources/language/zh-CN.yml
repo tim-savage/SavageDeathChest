@@ -72,6 +72,16 @@ MESSAGES:
     string: '&c死亡箱的部署被 %PLUGIN% 阻止了.'
     # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
 
+  CHEST_DENIED_DEPLOYMENT_BY_PLUGIN:
+    enabled: true
+    string: '&c死亡箱的部署被 %PLUGIN% 阻止了.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
+  CHEST_DENIED_ACCESS_BY_PLUGIN:
+    enabled: true
+    string: '&c%PLUGIN% 阻止了对死亡宝箱的访问.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
   CHEST_DENIED_BLOCK:
     enabled: true
     string: '&c找不到一个来放置箱子的开放空间.'

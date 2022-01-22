@@ -64,9 +64,15 @@ MESSAGES:
     string: '&cEl cofre de la muerte que pertenece a %OWNER% está protegido contra el saqueo durante %PROTECTION_DURATION_MINUTES%.'
     # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
-  CHEST_DENIED_PLUGIN:
+  CHEST_DENIED_DEPLOYMENT_BY_PLUGIN:
     enabled: true
     string: '&cEl despliegue del cofre de la muerte fue prevenido por %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
+  CHEST_DENIED_ACCESS_BY_PLUGIN:
+    enabled: true
+    string: '&cEl acceso al cofre de la muerte fue impedido por %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
 
   CHEST_DENIED_BLOCK:
     enabled: true
