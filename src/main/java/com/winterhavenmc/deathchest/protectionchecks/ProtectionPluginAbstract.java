@@ -73,4 +73,9 @@ public abstract class ProtectionPluginAbstract implements ProtectionPlugin {
 		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".ignore-on-access"));
 	}
 
+	@Override
+	public String toString() {
+		return this.name;
+	}
+
 }
