@@ -211,6 +211,7 @@ public final class PlayerEventListener implements Listener {
 		// if player sneak punched block and quick-loot is enabled, try auto-loot
 		if (helper.isPlayerQuickLooting(event, player)) {
 			helper.performQuickLoot(event, deathChest, player);
+			return;
 		}
 
 		// if player did not right-click block, do nothing and return (will be handled by block break event)
