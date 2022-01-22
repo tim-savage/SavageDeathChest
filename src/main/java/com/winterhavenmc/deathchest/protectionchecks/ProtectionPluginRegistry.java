@@ -9,9 +9,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResultCode.*;
+
 
 public final class ProtectionPluginRegistry {
 
+	private final JavaPlugin plugin;
 	private final Set<ProtectionPlugin> protectionPluginSet;
 
 
@@ -21,6 +24,8 @@ public final class ProtectionPluginRegistry {
 	 */
 	public ProtectionPluginRegistry(final JavaPlugin plugin) {
 
+		this.plugin = plugin;
+
 		// initialize set
 		this.protectionPluginSet = new LinkedHashSet<>();
 
@@ -29,54 +34,99 @@ public final class ProtectionPluginRegistry {
 	}
 
 
+	/**
+	 * Insert a protection plugin check instance in the registry
+	 *
+	 * @param protectionPlugin the protection plugin check to insert in the registry
+	 */
 	private void register(final ProtectionPlugin protectionPlugin) {
 		protectionPluginSet.add(protectionPlugin);
 	}
 
 
-	public ProtectionPlugin placementAllowed(final Player player, final Location location) {
+	/**
+	 * Iterate protection plugin check instances in registry and test if chest placement is allowed for player at location
+	 *
+	 * @param player the player for whom to perform check
+	 * @param location the location to perform check
+	 * @return ProtectionCheckResult - result object with result code and blocking protection plugin if applicable
+	 */
+	public ProtectionCheckResult placementAllowed(final Player player, final Location location) {
+
+		ProtectionCheckResult result = new ProtectionCheckResult();
 
 		// iterate through active protection plugins in set
 		for (ProtectionPlugin protectionPlugin : protectionPluginSet) {
 
-			// if protection plugin is configured ignore on place, skip check
+			// if protection plugin is configured ignore on place: set result IGNORED and skip check
 			if (protectionPlugin.isIgnoredOnPlace()) {
+				result.setResultCode(IGNORED);
+				result.setProtectionPlugin(protectionPlugin);
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(protectionPlugin + " is ignored on placement.");
+				}
 				continue;
 			}
 
-			// if allow chest placement check returns false, return protection plugin
+			// if allow chest placement check returns false, set result code to BLOCKED
 			if (!protectionPlugin.allowChestPlacement(player, location)) {
-				return protectionPlugin;
+				result.setResultCode(BLOCKED);
+				result.setProtectionPlugin(protectionPlugin);
 			}
 		}
-		return null;
+		return result;
 	}
 
 
-	public ProtectionPlugin AccessAllowed(final Player player, final Location location) {
+	/**
+	 * Iterate protection plugin check instances in registry and test if chest access is allowed for player at location
+	 *
+	 * @param player the player for whom to perform check
+	 * @param location the location to perform check
+	 * @return ProtectionCheckResult - result object with result code and blocking protection plugin if applicable
+	 */
+	public ProtectionCheckResult AccessAllowed(final Player player, final Location location) {
+
+		ProtectionCheckResult result = new ProtectionCheckResult();
 
 		// iterate through active protection plugins in set
 		for (ProtectionPlugin protectionPlugin : protectionPluginSet) {
 
-			// if protection plugin is configured ignore on access, skip check
+			// if protection plugin is configured ignore on access: set result IGNORED and skip check
 			if (protectionPlugin.isIgnoredOnAccess()) {
+				result.setResultCode(IGNORED);
+				result.setProtectionPlugin(protectionPlugin);
+				if (plugin.getConfig().getBoolean("debug")) {
+					plugin.getLogger().info(protectionPlugin + " is ignored on access.");
+				}
 				continue;
 			}
 
-			// if allow chest access check returns false, return protection plugin
+			// if allow chest access check returns false, set result code to BLOCKED
 			if (!protectionPlugin.allowChestAccess(player, location)) {
-				return protectionPlugin;
+				result.setResultCode(BLOCKED);
+				result.setProtectionPlugin(protectionPlugin);
 			}
 		}
-		return null;
+		return result;
 	}
 
 
+	/**
+	 * Get all plugin check instances from registry
+	 *
+	 * @return collection of plugin check instances from registry
+	 */
 	public Collection<ProtectionPlugin> getAll() {
 		return protectionPluginSet;
 	}
 
 
+	/**
+	 * Iterate ProtectionPluginTypes and insert check instances for installed plugins
+	 *
+	 * @param plugin reference to plugin main class
+	 */
 	private void scanPlugins(final JavaPlugin plugin) {
 
 		// iterate over all plugins defined in ProtectionPluginType enum
