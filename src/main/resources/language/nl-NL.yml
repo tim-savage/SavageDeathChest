@@ -64,9 +64,15 @@ MESSAGES:
     string: '&cDoodkist van %OWNER% wordt gedurende %PROTECTION_DURATION_MINUTES% beschermd tegen plunderingen.'
     # available subs: %OWNER%, %PROTECTION_DURATION%, %PROTECTION_DURATION_MINUTES%, %LOCATION%
 
-  CHEST_DENIED_PLUGIN:
+  CHEST_DENIED_DEPLOYMENT_BY_PLUGIN:
     enabled: true
     string: '&cHet plaatsen van een dodenkist was niet mogelijk vanwege een conflict met %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
+
+  CHEST_DENIED_ACCESS_BY_PLUGIN:
+    enabled: true
+    string: '&cToegang tot de kist bij overlijden werd voorkomen door %PLUGIN%.'
+    # available subs: %PLAYER%, %PLUGIN%, %LOCATION%
 
   CHEST_DENIED_BLOCK:
     enabled: true
