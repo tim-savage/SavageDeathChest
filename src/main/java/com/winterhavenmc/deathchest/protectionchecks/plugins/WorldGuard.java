@@ -44,8 +44,8 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 	public boolean allowChestAccess(final Player player, final Location location) {
 		try {
 			RegionQuery query = regionContainer.createQuery();
-			// this query returns true if access denied, false if allowed; note inversion of result
-			return !query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
+			// this query returns true if access allowed, false if access denied
+			return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
 		}
 		catch (Exception e) {
 			logAccessError();
