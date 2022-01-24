@@ -54,7 +54,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 		try {
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
-				// this query should return true if placement is allowed, false if placement is denied NOTE: unconfirmed for paid plugin
+				// this query should return true if placement is allowed, false if placement is denied
 				return area.hasFlag(player, BLOCK_PLACE, Material.CHEST, false);
 			}
 		}
@@ -79,7 +79,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 		try {
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
-				// this query should return true if access is allowed, false if access is denied NOTE: unconfirmed for paid plugin
+				// this query should return true if access is allowed, false if access is denied
 				return area.hasFlag(player, INTERACT_CONTAINER, false);
 			}
 		}
