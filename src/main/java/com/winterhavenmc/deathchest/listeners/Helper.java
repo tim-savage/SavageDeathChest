@@ -8,6 +8,7 @@ import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResultCode;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -142,6 +143,7 @@ final class Helper {
 				player.hasPermission("deathchest.loot.killer");
 	}
 
+
 	/**
 	 * Cancel the event and destroy chest, dropping chest contents
 	 *
@@ -153,16 +155,30 @@ final class Helper {
 		deathChest.destroy();
 	}
 
+
 	/**
 	 * Cancel the event and auto-loot chest, placing contents in a player inventory
 	 *
-	 * @param event the event to cancel
-	 * @param deathChest the death chest to auto-loot
+	 *  @param event the event to cancel
 	 * @param player the player whose inventory the chest contents will be transferred
+	 * @param deathChest the death chest to auto-loot
 	 */
-	void cancelEventAndAutoLootChest(final PlayerInteractEvent event, final DeathChest deathChest, final Player player) {
+	void cancelEventAndAutoLootChest(final Cancellable event, final Player player, final DeathChest deathChest) {
 		event.setCancelled(true);
 		deathChest.autoLoot(player);
+	}
+
+
+	/**
+	 * Cancel the event and open chest inventory for player
+	 *
+	 * @param event the event to cancel
+	 * @param player the player for whom the inventory will be opened
+	 * @param deathChest the chest whose inventory will be opened
+	 */
+	void cancelEventAndOpenInventory(final Cancellable event, final Player player, final DeathChest deathChest) {
+		event.setCancelled(true);
+		player.openInventory(deathChest.getInventory());
 	}
 
 
@@ -183,46 +199,39 @@ final class Helper {
 
 	/**
 	 * Perform the sequence of checks and actions for a player to quick loot a chest
-	 *
-	 * @param event the PlayerInteractEvent being checked
-	 * @param deathChest the deathchest that is being quick-looted
+	 *  @param event the PlayerInteractEvent being checked
 	 * @param player the player who is attempting to quick-loot the chest
+	 * @param deathChest the deathchest that is being quick-looted
 	 */
-	void performQuickLoot(final PlayerInteractEvent event, final DeathChest deathChest, final Player player) {
+	void performQuickLoot(final Cancellable event, final Player player, final DeathChest deathChest) {
 
 		// if chest protection is not enabled, loot chest and return
 		if (chestProtectionDisabled()) {
-			cancelEventAndAutoLootChest(event, deathChest, player);
-			logDebugMessage(event.getEventName() + " auto-looted because chest protection not enabled.");
+			cancelEventAndAutoLootChest(event, player, deathChest);
 			return;
 		}
 
 		// if chest protection has expired, loot chest and return
 		if (chestProtectionExpired(deathChest)) {
-			cancelEventAndAutoLootChest(event, deathChest, player);
-			logDebugMessage(event.getEventName() + " auto-looted because chest protection expired.");
+			cancelEventAndAutoLootChest(event, player, deathChest);
 			return;
 		}
 
 		// if player is owner, loot chest and return
 		if (deathChest.isOwner(player)) {
-			cancelEventAndAutoLootChest(event, deathChest, player);
-			logDebugMessage(event.getEventName() + " auto-looted because player is owner.");
+			cancelEventAndAutoLootChest(event, player, deathChest);
 			return;
 		}
 
 		// if player has deathchest.loot.other permission, loot chest and return
 		if (playerHasLootOtherPermission(player)) {
-			cancelEventAndAutoLootChest(event, deathChest, player);
-			logDebugMessage(event.getEventName() + " auto-looted because player has loot.other permission.");
+			cancelEventAndAutoLootChest(event, player, deathChest);
 			return;
 		}
 
 		// if killer looting is enabled and player is killer and has permission, loot chest and return
 		if (playerIsKillerLooting(player, deathChest)) {
-			cancelEventAndAutoLootChest(event, deathChest, player);
-			logDebugMessage(event.getEventName() + " auto-looted because killer looting enabled and " +
-					"player is killer and has loot.killer permission.");
+			cancelEventAndAutoLootChest(event, player, deathChest);
 			return;
 		}
 
@@ -238,6 +247,81 @@ final class Helper {
 		}
 		else {
 			// send player not-owner message
+			plugin.messageBuilder.build(player, NOT_OWNER)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(OWNER, deathChest.getOwnerName())
+					.setMacro(KILLER, deathChest.getKillerName())
+					.send();
+		}
+
+		// play denied access sound
+		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+	}
+
+
+	/**
+	 * Test if player is attempting to open a chest by right-clicking while not sneaking
+	 *
+	 * @param event the PlayerInteractEvent being checked
+	 * @param player the player being checked
+	 * @return true if player is opening a chest by right-clinking while not sneaking, else false
+	 */
+	boolean isPlayerOpeningInventory(final PlayerInteractEvent event, final Player player) {
+		return event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !player.isSneaking();
+	}
+
+
+	/**
+	 * Perform the sequence of checks and actions for a player to open a chest
+	 *
+	 * @param event the PlayerInteractEvent being checked
+	 * @param player the player who is attempting to open a chest
+	 * @param deathChest the deathchest that is being quick-looted
+	 */
+	void performOpenInventoryOperations(final Cancellable event, final Player player, final DeathChest deathChest) {
+
+		// if chest protection is not enabled, open inventory for player and return
+		if (chestProtectionDisabled()) {
+			cancelEventAndOpenInventory(event, player, deathChest);
+			return;
+		}
+
+		// if chest protection is not enabled or chest protection has expired, open inventory for player and return
+		if (chestProtectionExpired(deathChest)) {
+			cancelEventAndOpenInventory(event, player, deathChest);
+			return;
+		}
+
+		// if player is chest owner, open inventory for player and return
+		if (deathChest.isOwner(player)) {
+			cancelEventAndOpenInventory(event, player, deathChest);
+			return;
+		}
+
+		// if player has loot other permission, open inventory for player and return
+		if (player.hasPermission("deathchest.loot.other")) {
+			cancelEventAndOpenInventory(event, player, deathChest);
+			return;
+		}
+
+		// if player is killer and killer looting enabled, open inventory for player and return
+		if (playerIsKillerLooting(player, deathChest)) {
+			cancelEventAndOpenInventory(event, player, deathChest);
+			return;
+		}
+
+		// if chest protection is enabled and has not expired, send message and return
+		if (chestProtectionNotExpired(deathChest)) {
+			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
+			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
+					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
+					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
+					.setMacro(LOCATION, deathChest.getLocation())
+					.send();
+		}
+		// else send player not-owner message
+		else {
 			plugin.messageBuilder.build(player, NOT_OWNER)
 					.setMacro(LOCATION, deathChest.getLocation())
 					.setMacro(OWNER, deathChest.getOwnerName())
