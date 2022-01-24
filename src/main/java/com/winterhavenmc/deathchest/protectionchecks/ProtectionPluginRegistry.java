@@ -14,6 +14,7 @@ import static com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResul
 
 public final class ProtectionPluginRegistry {
 
+	@SuppressWarnings({"FieldCanBeLocal", "unused"})
 	private final JavaPlugin plugin;
 	private final Set<ProtectionPlugin> protectionPluginSet;
 
@@ -58,20 +59,16 @@ public final class ProtectionPluginRegistry {
 		// iterate through active protection plugins in set
 		for (ProtectionPlugin protectionPlugin : protectionPluginSet) {
 
-			// if protection plugin is configured ignore on place: set result IGNORED and skip check
+			// if protection plugin is configured ignore on place: skip check
 			if (protectionPlugin.isIgnoredOnPlace()) {
-				result.setResultCode(IGNORED);
-				result.setProtectionPlugin(protectionPlugin);
-				if (plugin.getConfig().getBoolean("debug")) {
-					plugin.getLogger().info(protectionPlugin + " is ignored on placement.");
-				}
 				continue;
 			}
 
-			// if allow chest placement check returns false, set result code to BLOCKED
+			// if allow chest placement check returns false, set result code to BLOCKED and break loop
 			if (!protectionPlugin.allowChestPlacement(player, location)) {
 				result.setResultCode(BLOCKED);
 				result.setProtectionPlugin(protectionPlugin);
+				break;
 			}
 		}
 		return result;
@@ -92,20 +89,16 @@ public final class ProtectionPluginRegistry {
 		// iterate through active protection plugins in set
 		for (ProtectionPlugin protectionPlugin : protectionPluginSet) {
 
-			// if protection plugin is configured ignore on access: set result IGNORED and skip check
+			// if protection plugin is configured ignore on access: skip check
 			if (protectionPlugin.isIgnoredOnAccess()) {
-				result.setResultCode(IGNORED);
-				result.setProtectionPlugin(protectionPlugin);
-				if (plugin.getConfig().getBoolean("debug")) {
-					plugin.getLogger().info(protectionPlugin + " is ignored on access.");
-				}
 				continue;
 			}
 
-			// if allow chest access check returns false, set result code to BLOCKED
+			// if allow chest access check returns false, set result code to BLOCKED and break loop
 			if (!protectionPlugin.allowChestAccess(player, location)) {
 				result.setResultCode(BLOCKED);
 				result.setProtectionPlugin(protectionPlugin);
+				break;
 			}
 		}
 		return result;
