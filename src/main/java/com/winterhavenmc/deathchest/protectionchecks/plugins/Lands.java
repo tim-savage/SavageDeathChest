@@ -2,8 +2,10 @@ package com.winterhavenmc.deathchest.protectionchecks.plugins;
 
 import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
 import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginAbstract;
+
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
