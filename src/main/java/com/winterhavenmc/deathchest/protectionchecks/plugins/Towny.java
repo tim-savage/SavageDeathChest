@@ -13,9 +13,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
+
+/**
+ * Class that implements protection plugin checks for Towny
+ */
 public final class Towny extends ProtectionPluginAbstract implements ProtectionPlugin {
 
 
+	/**
+	 * Class constructor
+	 *
+	 * @param plugin reference to SavageDeathChest plugin main class instance
+	 * @param name name of the protection plugin
+	 * @param version version of the protection plugin
+	 */
 	public Towny(final JavaPlugin plugin, final String name, final String version) {
 		this.plugin = plugin;
 		this.name = name;

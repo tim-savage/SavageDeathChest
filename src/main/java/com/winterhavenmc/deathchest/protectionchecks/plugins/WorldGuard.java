@@ -12,10 +12,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
+/**
+ * Class that implements protection plugin checks for WorldGuard
+ */
 public final class WorldGuard extends ProtectionPluginAbstract implements ProtectionPlugin {
 
+	// reference to worldguard region container
 	final RegionContainer regionContainer;
 
+
+	/**
+	 * Class constructor
+	 *
+	 * @param plugin reference to SavageDeathChest plugin main class instance
+	 * @param name name of the protection plugin
+	 * @param version version of the protection plugin
+	 */
 	public WorldGuard(final JavaPlugin plugin, final String name, final String version) {
 		this.plugin = plugin;
 		this.name = name;
