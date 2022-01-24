@@ -31,7 +31,7 @@ public final class ProtectionPluginRegistry {
 		this.protectionPluginSet = new LinkedHashSet<>();
 
 		// populate set with enabled protection plugins
-		scanPlugins(plugin);
+		registerEnabledPlugins(plugin);
 	}
 
 
@@ -120,7 +120,7 @@ public final class ProtectionPluginRegistry {
 	 *
 	 * @param plugin reference to plugin main class
 	 */
-	private void scanPlugins(final JavaPlugin plugin) {
+	private void registerEnabledPlugins(final JavaPlugin plugin) {
 
 		// iterate over all plugins defined in ProtectionPluginType enum
 		for (ProtectionPluginType protectionPluginType : ProtectionPluginType.values()) {
