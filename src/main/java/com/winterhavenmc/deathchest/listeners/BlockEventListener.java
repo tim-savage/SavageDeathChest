@@ -114,7 +114,6 @@ public final class BlockEventListener implements Listener {
 
 		if (helper.pluginBlockedAccess(protectionCheckResult)) {
 			// do not cancel event - allow protection plugin to handle it
-			helper.logDebugMessage(protectionCheckResult.getProtectionPlugin().getPluginName() + " prevented access to a chest.");
 			return;
 		}
 
@@ -127,7 +126,7 @@ public final class BlockEventListener implements Listener {
 			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
 					.setMacro(LOCATION, player.getLocation())
 					.send();
-			helper.logDebugMessage(event.getEventName() + " cancelled by creative access check.");
+			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 			return;
 		}
 
@@ -142,44 +141,36 @@ public final class BlockEventListener implements Listener {
 					.setMacro(VIEWER, viewerName)
 					.send();
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-			helper.logDebugMessage(event.getEventName() + " cancelled by chest already open check.");
 			return;
 		}
 
 		// if player is owner: cancel event, break chest and return
 		if (deathChest.isOwner(player)) {
 			helper.cancelEventAndDestroyChest(event, deathChest);
-			helper.logDebugMessage(event.getEventName() + " cancelled and chest destroyed (drop items) " +
-					"because player is chest owner.");
 			return;
 		}
 
 		// if chest-protection not enabled: cancel event, break chest and return
 		if (helper.chestProtectionDisabled()) {
 			helper.cancelEventAndDestroyChest(event, deathChest);
-			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because chest protection disabled.");
 			return;
 		}
 
 		// if chest protection enabled and has expired, cancel event, break chest and return
 		if (helper.chestProtectionExpired(deathChest)) {
 			helper.cancelEventAndDestroyChest(event, deathChest);
-			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because chest protection expired.");
 			return;
 		}
 
 		// if chest protection enabled and player has deathchest.loot.other permission: cancel event, break chest and return
 		if (helper.playerHasLootOtherPermission(player)) {
 			helper.cancelEventAndDestroyChest(event, deathChest);
-			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because player has loot.other permission.");
 			return;
 		}
 
 		// if killer looting is enabled and player is killer and has permission: cancel event, break chest and return
 		if (helper.playerIsKillerLooting(player, deathChest)) {
 			helper.cancelEventAndDestroyChest(event, deathChest);
-			helper.logDebugMessage(event.getEventName() + " remaining tests skipped because killer looting enabled and " +
-					"player is killer and has loot.killer permission.");
 			return;
 		}
 
