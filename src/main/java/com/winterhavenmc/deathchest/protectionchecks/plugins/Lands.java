@@ -33,10 +33,18 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 		this.name = name;
 		this.version = version;
 
+		// get reference to LandsIntegration instance
 		landsIntegration = new LandsIntegration(plugin);
 	}
 
 
+	/**
+	 * Check if plugin will allow chest placement at location by player
+	 *
+	 * @param player the player whose death chest will be placed
+	 * @param location the location where the death chest will be placed
+	 * @return boolean - true if placement is allowed by plugin, false if not
+	 */
 	@Override
 	public boolean allowChestPlacement(final Player player, final Location location) {
 
@@ -50,10 +58,18 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 		catch (Exception e) {
 			logPlaceError();
 		}
+		// if all else fails, allow chest placement
 		return true;
 	}
 
 
+	/**
+	 * Check if plugin will allow chest access at location by player
+	 *
+	 * @param player the player who is trying to access a death chest
+	 * @param location the location where the death chest is being accessed
+	 * @return boolean - true if access is allowed by plugin, false if not
+	 */
 	@Override
 	public boolean allowChestAccess(final Player player, final Location location) {
 
@@ -67,6 +83,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 		catch (Exception e) {
 			logAccessError();
 		}
+		// if all else fails, allow chest access
 		return true;
 	}
 
