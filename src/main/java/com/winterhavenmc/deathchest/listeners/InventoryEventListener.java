@@ -58,12 +58,6 @@ public final class InventoryEventListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onInventoryOpen(final InventoryOpenEvent event) {
 
-		// if event is not cancelled, do nothing and return
-		if (!event.isCancelled()) {
-			helper.logDebugMessage(event.getEventName() + " event not cancelled, doing nothing.");
-			return;
-		}
-
 		// get event inventory
 		final Inventory inventory = event.getInventory();
 
@@ -76,8 +70,6 @@ public final class InventoryEventListener implements Listener {
 		if (!(event.getPlayer() instanceof Player)) {
 			return;
 		}
-
-		helper.logDebugMessage(event.getEventName() + " fired on deathchest.");
 
 		// get event player
 		final Player player = (Player) event.getPlayer();
