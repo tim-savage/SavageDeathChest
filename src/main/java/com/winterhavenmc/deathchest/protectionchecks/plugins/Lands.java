@@ -11,6 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
 
+import static me.angeschossen.lands.api.flags.Flags.BLOCK_PLACE;
+import static me.angeschossen.lands.api.flags.Flags.INTERACT_CONTAINER;
+
 
 /**
  * Class that implements protection plugin checks for Lands
@@ -52,7 +55,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
 				// this query should return true if placement is allowed, false if placement is denied NOTE: unconfirmed for paid plugin
-				return area.hasFlag(player, me.angeschossen.lands.api.flags.Flags.BLOCK_PLACE, Material.CHEST, false);
+				return area.hasFlag(player, BLOCK_PLACE, Material.CHEST, false);
 			}
 		}
 		catch (Exception e) {
@@ -77,7 +80,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
 				// this query should return true if access is allowed, false if access is denied NOTE: unconfirmed for paid plugin
-				return area.hasFlag(player, me.angeschossen.lands.api.flags.Flags.INTERACT_CONTAINER, false);
+				return area.hasFlag(player, INTERACT_CONTAINER, false);
 			}
 		}
 		catch (Exception e) {
