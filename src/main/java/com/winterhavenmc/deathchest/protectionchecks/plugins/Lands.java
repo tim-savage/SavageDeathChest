@@ -44,7 +44,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 
 
 	/**
-	 * Check if plugin will allow chest placement at location by player
+	 * Check if Lands plugin will allow chest placement at location by player
 	 *
 	 * @param player the player whose death chest will be placed
 	 * @param location the location where the death chest will be placed
@@ -69,7 +69,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 
 
 	/**
-	 * Check if plugin will allow chest access at location by player
+	 * Check if Lands plugin will allow chest access at location by player
 	 *
 	 * @param player the player who is trying to access a death chest
 	 * @param location the location where the death chest is being accessed
