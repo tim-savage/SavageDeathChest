@@ -30,7 +30,7 @@ public final class InventoryEventListener implements Listener {
 	// reference to permissionCheck class
 	private final PermissionCheck permissionCheck;
 
-	private final Set<InventoryAction> allowedInventoryClickActions = Set.of(
+	private final Set<InventoryAction> inventoryPlaceActions = Set.of(
 			InventoryAction.PLACE_ALL,
 			InventoryAction.PLACE_SOME,
 			InventoryAction.PLACE_ONE,
@@ -182,7 +182,7 @@ public final class InventoryEventListener implements Listener {
 		if (plugin.chestManager.isDeathChestInventory(inventory)) {
 
 			// if click action is place, test for chest slots
-			if (allowedInventoryClickActions.contains(action)) {
+			if (inventoryPlaceActions.contains(action)) {
 
 				// if slot is in chest inventory area, check for player override permission
 				if (event.getRawSlot() < inventory.getSize()) {
