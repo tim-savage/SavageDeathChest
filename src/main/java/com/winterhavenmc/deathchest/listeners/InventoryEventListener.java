@@ -4,9 +4,10 @@ package com.winterhavenmc.deathchest.listeners;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResult;
+import com.winterhavenmc.deathchest.permissions.InventoryOpenAction;
+import com.winterhavenmc.deathchest.permissions.PermissionCheck;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Set;
 
 
 /**
@@ -25,8 +28,14 @@ public final class InventoryEventListener implements Listener {
 	// reference to main class
 	private final PluginMain plugin;
 
-	// reference to helper class
-	private final Helper helper;
+	// reference to permissionCheck class
+	private final PermissionCheck permissionCheck;
+
+	private final Set<InventoryAction> allowedInventoryClickActions = Set.of(
+			InventoryAction.PLACE_ALL,
+			InventoryAction.PLACE_SOME,
+			InventoryAction.PLACE_ONE,
+			InventoryAction.SWAP_WITH_CURSOR );
 
 
 	/**
@@ -39,8 +48,8 @@ public final class InventoryEventListener implements Listener {
 		// set reference to main class
 		this.plugin = plugin;
 
-		// create instance of helper class
-		this.helper = new Helper(plugin);
+		// create instance of permissionCheck class
+		this.permissionCheck = new PermissionCheck(plugin);
 
 		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -58,11 +67,11 @@ public final class InventoryEventListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onInventoryOpen(final InventoryOpenEvent event) {
 
-		// get event inventory
-		final Inventory inventory = event.getInventory();
+		// get death chest for event inventory
+		final DeathChest deathChest = plugin.chestManager.getChest(event.getInventory());
 
-		// if inventory holder is not a death chest, do nothing and return
-		if (!plugin.chestManager.isDeathChestInventory(inventory)) {
+		// if death chest is null, do nothing and return
+		if (deathChest == null) {
 			return;
 		}
 
@@ -74,25 +83,11 @@ public final class InventoryEventListener implements Listener {
 		// get event player
 		final Player player = (Player) event.getPlayer();
 
-		// get inventory holder block (death chest)
-		Block block = null;
-
-		// if inventory is a chest, get chest block
-		if (inventory.getHolder() instanceof Chest) {
-			Chest chest = (Chest) inventory.getHolder();
-			block = chest.getBlock();
-		}
-
-		// if block is not a death chest, do nothing and return
-		if (!plugin.chestManager.isChestBlockChest(block)) {
-			return;
-		}
-
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-		ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
-		if (helper.pluginBlockedAccess(protectionCheckResult)) {
+		ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.AccessAllowed(player, deathChest.getLocation());
+
+		if (permissionCheck.pluginBlockedAccess(protectionCheckResult)) {
 			// do not cancel event - allow protection plugin to handle it
-			helper.logDebugMessage(protectionCheckResult.getProtectionPlugin().getPluginName() + " prevented access to a chest.");
 			return;
 		}
 
@@ -144,13 +139,8 @@ public final class InventoryEventListener implements Listener {
 	 *
 	 * @param event the event being handled by this method
 	 */
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
-
-		// if event is already cancelled, do nothing and return
-		if (event.isCancelled()) {
-			return;
-		}
 
 		// get inventories involved in event
 		final Inventory destination = event.getDestination();
@@ -178,13 +168,8 @@ public final class InventoryEventListener implements Listener {
 	 *
 	 * @param event the event being handled by this method
 	 */
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onInventoryClick(final InventoryClickEvent event) {
-
-		// if event is already cancelled, do nothing and return
-		if (event.isCancelled()) {
-			return;
-		}
 
 		// if prevent-item-placement is configured false, do nothing and return
 		if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
@@ -198,10 +183,7 @@ public final class InventoryEventListener implements Listener {
 		if (plugin.chestManager.isDeathChestInventory(inventory)) {
 
 			// if click action is place, test for chest slots
-			if (action.equals(InventoryAction.PLACE_ALL)
-					|| action.equals(InventoryAction.PLACE_SOME)
-					|| action.equals(InventoryAction.PLACE_ONE)
-					|| action.equals(InventoryAction.SWAP_WITH_CURSOR)) {
+			if (allowedInventoryClickActions.contains(action)) {
 
 				// if slot is in chest inventory area, check for player override permission
 				if (event.getRawSlot() < inventory.getSize()) {
@@ -234,14 +216,10 @@ public final class InventoryEventListener implements Listener {
 	 *
 	 * @param event the event being handled by this method
 	 */
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onInventoryDrag(final InventoryDragEvent event) {
 
-		// if event is already cancelled, do nothing and return
-		if (event.isCancelled()) {
-			return;
-		}
-
+		// get inventory from event
 		final Inventory inventory = event.getInventory();
 
 		// if inventory is a death chest inventory
