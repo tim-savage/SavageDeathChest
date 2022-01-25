@@ -1,6 +1,6 @@
-package com.winterhavenmc.deathchest.protectionchecks.plugins;
+package com.winterhavenmc.deathchest.permissions.protectionplugins.plugins;
 
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginAbstract;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPluginAbstract;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

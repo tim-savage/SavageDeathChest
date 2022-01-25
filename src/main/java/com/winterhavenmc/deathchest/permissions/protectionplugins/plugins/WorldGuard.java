@@ -1,12 +1,12 @@
-package com.winterhavenmc.deathchest.protectionchecks.plugins;
+package com.winterhavenmc.deathchest.permissions.protectionplugins.plugins;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginAbstract;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPlugin;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPluginAbstract;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -1,7 +1,7 @@
-package com.winterhavenmc.deathchest.protectionchecks.plugins;
+package com.winterhavenmc.deathchest.permissions.protectionplugins.plugins;
 
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPluginAbstract;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPlugin;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPluginAbstract;
 
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
