@@ -49,11 +49,14 @@ public final class QuadrantSearch extends AbstractSearch {
 		origin.setY(Math.round(origin.getY()));
 
 		// get min y for origin
-		int minY = -64;
+		int minY = 0;
 		if (origin.getWorld() != null) {
-			minY = origin.getWorld().getMinHeight();
-			if (plugin.getConfig().getBoolean("debug")) {
-				plugin.getLogger().info("world min height is " + minY);
+			//TODO: remove try/catch when minimum support is declared to be 1.16.5
+			try {
+				minY = origin.getWorld().getMinHeight();
+			}
+			catch (Exception e) {
+				plugin.getLogger().warning("Could not get world minimum height. Defaulting to 0.");
 			}
 		}
 
