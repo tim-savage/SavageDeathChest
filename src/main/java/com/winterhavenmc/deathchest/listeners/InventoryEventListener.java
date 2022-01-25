@@ -220,25 +220,26 @@ public final class InventoryEventListener implements Listener {
 		// get inventory from event
 		final Inventory inventory = event.getInventory();
 
-		// if inventory is a death chest inventory
-		if (plugin.chestManager.isDeathChestInventory(inventory)) {
+		// if inventory is not a death chest inventory, do nothing and return
+		if (!plugin.chestManager.isDeathChestInventory(inventory)) {
+			return;
+		}
 
-			// if prevent-item-placement is configured false, do nothing and return
-			if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
-				return;
-			}
+		// if prevent-item-placement is configured false, do nothing and return
+		if (!plugin.getConfig().getBoolean("prevent-item-placement")) {
+			return;
+		}
 
-			// if player has allow-place permission, do nothing and return
-			if (event.getWhoClicked().hasPermission("deathchest.allow-place")) {
-				return;
-			}
+		// if player has allow-place permission, do nothing and return
+		if (event.getWhoClicked().hasPermission("deathchest.allow-place")) {
+			return;
+		}
 
-			// iterate over dragged slots and if any are above max slot, cancel event
-			for (int slot : event.getRawSlots()) {
-				if (slot < inventory.getSize()) {
-					event.setCancelled(true);
-					break;
-				}
+		// iterate over dragged slots and if any are above max slot, cancel event
+		for (int slot : event.getRawSlots()) {
+			if (slot < inventory.getSize()) {
+				event.setCancelled(true);
+				break;
 			}
 		}
 	}
