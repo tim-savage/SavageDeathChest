@@ -4,7 +4,6 @@ import com.winterhavenmc.deathchest.messages.MessageId;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.Collection;
 import java.util.List;
 
 
@@ -20,14 +19,6 @@ interface Subcommand {
 	String getName();
 
 	void setName(final String name);
-
-	Collection<String> getAliases();
-
-	@SuppressWarnings("unused")
-	void setAliases(final List<String> aliases);
-
-	@SuppressWarnings("unused")
-	void addAlias(final String alias);
 
 	String getUsage();
 
