@@ -164,13 +164,42 @@ public final class ChestManager {
 	 */
 	public DeathChest getChest(final Block block) {
 
+		// if passed block is null, return null
+		if (block == null) {
+			return null;
+		}
+
+		// get chest block from index by location
 		ChestBlock chestBlock = this.blockIndex.get(block.getLocation());
 
+		// if returned chest block is null, return null
 		if (chestBlock == null) {
 			return null;
 		}
 
+		// return death chest referenced by uid in chest block
 		return getChest(chestBlock.getChestUid());
+	}
+
+
+	public DeathChest getChest(final Inventory inventory) {
+
+		// if inventory is not a death chest, do nothing and return
+		if (!plugin.chestManager.isDeathChestInventory(inventory)) {
+			return null;
+		}
+
+		// get inventory holder block (death chest)
+		Block block = null;
+
+		// if inventory is a chest, get chest block
+		if (inventory.getHolder() instanceof Chest) {
+			Chest chest = (Chest) inventory.getHolder();
+			block = chest.getBlock();
+		}
+
+		// return death chest for block (returns null if block is not valid chest block)
+		return getChest(block);
 	}
 
 
@@ -200,6 +229,7 @@ public final class ChestManager {
 	 * @param location the location to retrieve ChestBlock object
 	 * @return ChestBlock object, or null if no ChestBlock exists in map with passed location
 	 */
+	@SuppressWarnings("unused")
 	public ChestBlock getBlock(final Location location) {
 		return this.blockIndex.get(location);
 	}
