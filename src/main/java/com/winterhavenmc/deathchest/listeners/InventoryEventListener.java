@@ -239,7 +239,7 @@ public final class InventoryEventListener implements Listener {
 	 * @param inventory the inventory to test for emptiness
 	 * @return true if inventory is empty, false if inventory has any contents
 	 */
-	//TODO: replace this method with inventory.isEmpty() when declard minimum supported version is 1.16.3 and above
+	//TODO: replace this method with inventory.isEmpty() when declared minimum supported version is 1.16.3 and above
 	private boolean isEmpty(final Inventory inventory) {
 
 		final ItemStack[] items = inventory.getContents();
