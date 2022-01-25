@@ -6,7 +6,6 @@ import com.winterhavenmc.deathchest.chests.DeathChest;
 
 import com.winterhavenmc.deathchest.permissions.PermissionCheck;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -106,22 +105,10 @@ public final class InventoryEventListener implements Listener {
 		// get event inventory
 		final Inventory inventory = event.getInventory();
 
-		// if inventory type is not a chest, do nothing and return
-		if (!inventory.getType().equals(InventoryType.CHEST)) {
-			return;
-		}
+		// get death chest from inventory
+		final DeathChest deathChest = plugin.chestManager.getChest(inventory);
 
-		// if inventory location is null, do nothing and return
-		if (inventory.getLocation() == null) {
-			return;
-		}
-
-		// get inventory block from location
-		final Block block = inventory.getLocation().getBlock();
-
-		final DeathChest deathChest = plugin.chestManager.getChest(block);
-
-		// if inventory is not a DeathChest inventory, return
+		// if death chest is null, do nothing and return
 		if (deathChest == null) {
 			return;
 		}
