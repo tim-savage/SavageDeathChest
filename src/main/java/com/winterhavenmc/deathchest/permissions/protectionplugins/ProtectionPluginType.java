@@ -1,6 +1,6 @@
-package com.winterhavenmc.deathchest.protectionchecks;
+package com.winterhavenmc.deathchest.permissions.protectionplugins;
 
-import com.winterhavenmc.deathchest.protectionchecks.plugins.*;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.plugins.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public enum ProtectionPluginType {

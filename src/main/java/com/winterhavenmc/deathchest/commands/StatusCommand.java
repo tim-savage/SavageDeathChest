@@ -1,8 +1,9 @@
 package com.winterhavenmc.deathchest.commands;
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
 import com.winterhavenmc.deathchest.sounds.SoundId;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPlugin;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

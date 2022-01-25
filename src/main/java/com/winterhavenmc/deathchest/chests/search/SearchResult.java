@@ -1,6 +1,6 @@
 package com.winterhavenmc.deathchest.chests.search;
 
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionPlugin;
+import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPlugin;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 

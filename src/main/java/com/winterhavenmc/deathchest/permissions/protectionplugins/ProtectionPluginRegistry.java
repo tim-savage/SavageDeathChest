@@ -1,4 +1,4 @@
-package com.winterhavenmc.deathchest.protectionchecks;
+package com.winterhavenmc.deathchest.permissions.protectionplugins;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -8,8 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import static com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResultCode.*;
 
 
 public final class ProtectionPluginRegistry {
@@ -66,7 +64,7 @@ public final class ProtectionPluginRegistry {
 
 			// if allow chest placement check returns false, set result code to BLOCKED and break loop
 			if (!protectionPlugin.allowChestPlacement(player, location)) {
-				result.setResultCode(BLOCKED);
+				result.setResultCode(ProtectionCheckResultCode.BLOCKED);
 				result.setProtectionPlugin(protectionPlugin);
 				break;
 			}
@@ -96,7 +94,7 @@ public final class ProtectionPluginRegistry {
 
 			// if allow chest access check returns false, set result code to BLOCKED and break loop
 			if (!protectionPlugin.allowChestAccess(player, location)) {
-				result.setResultCode(BLOCKED);
+				result.setResultCode(ProtectionCheckResultCode.BLOCKED);
 				result.setProtectionPlugin(protectionPlugin);
 				break;
 			}

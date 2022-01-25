@@ -1,4 +1,4 @@
-package com.winterhavenmc.deathchest.protectionchecks;
+package com.winterhavenmc.deathchest.permissions.protectionplugins;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
