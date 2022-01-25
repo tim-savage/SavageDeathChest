@@ -1,10 +1,10 @@
 package com.winterhavenmc.deathchest.listeners;
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.permissions.BreakChestAction;
+import com.winterhavenmc.deathchest.permissions.PermissionCheck;
+import com.winterhavenmc.deathchest.permissions.ResultAction;
 import com.winterhavenmc.deathchest.chests.DeathChest;
-import com.winterhavenmc.deathchest.protectionchecks.ProtectionCheckResult;
-import com.winterhavenmc.deathchest.sounds.SoundId;
 
 import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import org.bukkit.Material;
@@ -23,10 +23,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import static com.winterhavenmc.deathchest.messages.Macro.*;
-import static com.winterhavenmc.deathchest.messages.MessageId.*;
-
-
 
 /**
  * A class that contains {@code EventHandler} methods to process block related events
@@ -36,8 +32,10 @@ public final class BlockEventListener implements Listener {
 	// reference to main class
 	private final PluginMain plugin;
 	
-	// reference to helper class
-	private final Helper helper;
+	// reference to permissionCheck class
+	private final PermissionCheck permissionCheck;
+
+	final ResultAction breakChestAction = new BreakChestAction();
 
 
 	/**
@@ -50,8 +48,8 @@ public final class BlockEventListener implements Listener {
 		// set reference to main class
 		this.plugin = plugin;
 
-		// create instance of helper class
-		this.helper = new Helper(plugin);
+		// create instance of permissionCheck class
+		this.permissionCheck = new PermissionCheck(plugin);
 
 		// register event handlers in this class
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -93,111 +91,19 @@ public final class BlockEventListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockBreak(final BlockBreakEvent event) {
 
-		final Block block = event.getBlock();
-		final Player player = event.getPlayer();
-
-		// if event block is not a DeathChestBlock, do nothing and return
-		if (!plugin.chestManager.isChestBlock(block)) {
-			return;
-		}
-
 		// get instance of DeathChest from event block
-		final DeathChest deathChest = plugin.chestManager.getChest(block);
+		final DeathChest deathChest = plugin.chestManager.getChest(event.getBlock());
 
-		// if returned DeathChest is null, do nothing and return
+		// if death chest is null, do nothing and return
 		if (deathChest == null) {
 			return;
 		}
 
-		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
-		ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.AccessAllowed(player, block.getLocation());
+		// get player from event
+		final Player player = event.getPlayer();
 
-		if (helper.pluginBlockedAccess(protectionCheckResult)) {
-			// do not cancel event - allow protection plugin to handle it
-			return;
-		}
-
-		// if player is in creative mode
-		// and creative-access is configured false
-		// and player does not have override permission:
-		// cancel event, send message and return
-		if (helper.creativeModeAccessDisabled(player)) {
-			event.setCancelled(true);
-			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
-					.setMacro(LOCATION, player.getLocation())
-					.send();
-			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-			return;
-		}
-
-		// if chest is already open: cancel event, send message and return
-		if (helper.chestCurrentlyOpen(deathChest)) {
-			String viewerName = deathChest.getInventory().getViewers().get(0).getName();
-			event.setCancelled(true);
-			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
-					.setMacro(LOCATION, deathChest.getLocation())
-					.setMacro(OWNER, deathChest.getOwnerName())
-					.setMacro(KILLER, deathChest.getKillerName())
-					.setMacro(VIEWER, viewerName)
-					.send();
-			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
-			return;
-		}
-
-		// if player is owner: cancel event, break chest and return
-		if (deathChest.isOwner(player)) {
-			helper.cancelEventAndDestroyChest(event, deathChest);
-			return;
-		}
-
-		// if chest-protection not enabled: cancel event, break chest and return
-		if (helper.chestProtectionDisabled()) {
-			helper.cancelEventAndDestroyChest(event, deathChest);
-			return;
-		}
-
-		// if chest protection enabled and has expired, cancel event, break chest and return
-		if (helper.chestProtectionExpired(deathChest)) {
-			helper.cancelEventAndDestroyChest(event, deathChest);
-			return;
-		}
-
-		// if chest protection enabled and player has deathchest.loot.other permission: cancel event, break chest and return
-		if (helper.playerHasLootOtherPermission(player)) {
-			helper.cancelEventAndDestroyChest(event, deathChest);
-			return;
-		}
-
-		// if killer looting is enabled and player is killer and has permission: cancel event, break chest and return
-		if (helper.playerIsKillerLooting(player, deathChest)) {
-			helper.cancelEventAndDestroyChest(event, deathChest);
-			return;
-		}
-
-		// cancel event
-		event.setCancelled(true);
-
-		if (helper.chestProtectionNotExpired(deathChest)) {
-			// if chest protection enabled and not expired, send protection time remaining message
-			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
-			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
-					.setMacro(Macro.OWNER, deathChest.getOwnerName())
-					.setMacro(Macro.LOCATION, deathChest.getLocation())
-					.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
-					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
-					.send();
-		}
-		else {
-			// send player not-owner message
-			plugin.messageBuilder.build(player, NOT_OWNER)
-					.setMacro(LOCATION, deathChest.getLocation())
-					.setMacro(OWNER, deathChest.getOwnerName())
-					.setMacro(KILLER, deathChest.getKillerName())
-					.send();
-		}
-
-		// play denied access sound
-		plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
+		// do permissions checks and take appropriate action
+		permissionCheck.performChecks(event, player, deathChest, breakChestAction);
 	}
 
 
