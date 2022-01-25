@@ -4,7 +4,6 @@ package com.winterhavenmc.deathchest.listeners;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 
-import com.winterhavenmc.deathchest.permissions.InventoryOpenAction;
 import com.winterhavenmc.deathchest.permissions.PermissionCheck;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
 import org.bukkit.block.Block;
@@ -14,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 
@@ -128,7 +126,7 @@ public final class InventoryEventListener implements Listener {
 		}
 
 		// if inventory is empty, destroy chest(s) and sign
-		if (isEmpty(inventory)) {
+		if (inventory.isEmpty()) {
 			deathChest.destroy();
 		}
 	}
@@ -243,24 +241,6 @@ public final class InventoryEventListener implements Listener {
 				}
 			}
 		}
-	}
-
-
-	/**
-	 * Test if inventory is empty
-	 *
-	 * @param inventory the inventory to test for emptiness
-	 * @return true if inventory is empty, false if inventory has any contents
-	 */
-	private boolean isEmpty(final Inventory inventory) {
-
-		final ItemStack[] items = inventory.getContents();
-		for (ItemStack item : items) {
-			if (item != null) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 }
