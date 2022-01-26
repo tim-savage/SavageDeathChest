@@ -222,31 +222,31 @@ final public class PermissionCheck {
 			return;
 		}
 
-		// if player is chest owner, open inventory for player and return
+		// if player is chest owner, perform result action and return
 		if (deathChest.isOwner(player)) {
 			resultAction.execute(event, player, deathChest);
 			return;
 		}
 
-		// if chest protection is not enabled, open inventory for player and return
+		// if chest protection is not enabled, perform result action and return
 		if (chestProtectionDisabled()) {
 			resultAction.execute(event, player, deathChest);
 			return;
 		}
 
-		// if chest protection is not enabled or chest protection has expired, open inventory for player and return
+		// if chest protection is not enabled or chest protection has expired, perform result action and return
 		if (chestProtectionExpired(deathChest)) {
 			resultAction.execute(event, player, deathChest);
 			return;
 		}
 
-		// if player has loot other permission, open inventory for player and return
+		// if player has loot other permission, perform result action and return
 		if (playerHasLootOtherPermission(player)) {
 			resultAction.execute(event, player, deathChest);
 			return;
 		}
 
-		// if player is killer and killer looting enabled, open inventory for player and return
+		// if player is killer and killer looting enabled, perform result action and return
 		if (playerIsKillerLooting(player, deathChest)) {
 			resultAction.execute(event, player, deathChest);
 			return;
