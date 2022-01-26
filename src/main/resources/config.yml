@@ -87,7 +87,7 @@ SIGN_TEXT:
 
 # Date format documentation:
 # https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-DATE_FORMAT: "MMM d, yyyy"
+DATE_FORMAT: "MMM d, y"
 
 # Ignore protection plugin permissions on death chest placement or access
 protection-plugins:
