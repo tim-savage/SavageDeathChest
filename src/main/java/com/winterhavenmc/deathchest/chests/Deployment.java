@@ -471,6 +471,7 @@ public final class Deployment {
 
 		String customInventoryName = plugin.messageBuilder.getString("CHEST_INFO.INVENTORY_NAME");
 		customInventoryName = customInventoryName.replace("%PLAYER%", player.getDisplayName());
+		customInventoryName = customInventoryName.replace("%OWNER%", player.getDisplayName());
 		if (!customInventoryName.isEmpty()) {
 			org.bukkit.block.Chest chestState = (org.bukkit.block.Chest) block.getState();
 			chestState.setCustomName(customInventoryName);
