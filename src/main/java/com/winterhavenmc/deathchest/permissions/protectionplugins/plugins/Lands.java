@@ -7,7 +7,6 @@ import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,7 +56,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
 				// this query should return true if placement is allowed, false if placement is denied
-				return area.hasFlag(player, BLOCK_PLACE, Material.CHEST, false);
+				return area.hasFlag(player, BLOCK_PLACE, false);
 			}
 		}
 		catch (Exception e) {
