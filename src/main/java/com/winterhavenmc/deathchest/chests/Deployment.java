@@ -522,11 +522,11 @@ public final class Deployment {
 
 				signBlock.setType(Material.OAK_WALL_SIGN);
 
-				BlockState bs = signBlock.getState();
-				org.bukkit.block.data.type.WallSign signBlockDataType = (org.bukkit.block.data.type.WallSign) bs.getBlockData();
+				BlockState blockState = signBlock.getState();
+				org.bukkit.block.data.type.WallSign signBlockDataType = (org.bukkit.block.data.type.WallSign) blockState.getBlockData();
 				signBlockDataType.setFacing(getCardinalDirection(player));
-				bs.setBlockData(signBlockDataType);
-				bs.update();
+				blockState.setBlockData(signBlockDataType);
+				blockState.update();
 			}
 			else {
 				// create sign post on top of chest if chest face was invalid location
@@ -535,11 +535,11 @@ public final class Deployment {
 
 					signBlock.setType(Material.OAK_SIGN);
 
-					BlockState bs = signBlock.getState();
-					org.bukkit.block.data.type.Sign signBlockDataType = (org.bukkit.block.data.type.Sign) bs.getBlockData();
+					BlockState blockState = signBlock.getState();
+					org.bukkit.block.data.type.Sign signBlockDataType = (org.bukkit.block.data.type.Sign) blockState.getBlockData();
 					signBlockDataType.setRotation(getCardinalDirection(player));
-					bs.setBlockData(signBlockDataType);
-					bs.update();
+					blockState.setBlockData(signBlockDataType);
+					blockState.update();
 				}
 				else {
 					// if top of chest is also an invalid location, do nothing and return
