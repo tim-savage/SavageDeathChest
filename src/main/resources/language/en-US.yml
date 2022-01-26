@@ -1,5 +1,12 @@
 # Language configuration file for ${project.name} v${project.version}
 
+############
+# Chest Info
+############
+CHEST_INFO:
+  # Custom chest inventory name
+  INVENTORY_NAME: '%PLAYER%''s Death Chest'
+
 ##############
 # Time strings
 ##############

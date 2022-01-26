@@ -1,4 +1,11 @@
-# Language configuration file for SavageDeathChest v1.16.0
+# Language configuration file for ${project.name} v${project.version}
+
+############
+# Chest Info
+############
+CHEST_INFO:
+  # Custom chest inventory name
+  INVENTORY_NAME: '死亡宝箱'
 
 ##############
 # Time strings

@@ -187,7 +187,7 @@ public final class Deployment {
 		if (result.getResultCode().equals(SearchResultCode.SUCCESS)) {
 
 			// place chest at result location
-			placeChest(result.getLocation(), ChestBlockType.RIGHT_CHEST);
+			placeChest(player, result.getLocation(), ChestBlockType.RIGHT_CHEST);
 
 			// get chest block state
 			BlockState chestBlockState = result.getLocation().getBlock().getState();
@@ -277,7 +277,7 @@ public final class Deployment {
 		}
 
 		// place chest at result location
-		placeChest(searchResult.getLocation(), ChestBlockType.RIGHT_CHEST);
+		placeChest(player, searchResult.getLocation(), ChestBlockType.RIGHT_CHEST);
 
 		// place sign on chest
 		placeSign(player, searchResult.getLocation().getBlock());
@@ -305,7 +305,7 @@ public final class Deployment {
 		}
 
 		// place chest at result location
-		placeChest(getLocationToRight(searchResult.getLocation()), ChestBlockType.LEFT_CHEST);
+		placeChest(player, getLocationToRight(searchResult.getLocation()), ChestBlockType.LEFT_CHEST);
 
 		// set chest type to left/right for double chest
 
@@ -433,8 +433,7 @@ public final class Deployment {
 	 * @param location       the location to place the chest block
 	 * @param chestBlockType the type of chest block (left or right)
 	 */
-	private void placeChest(final Location location,
-							final ChestBlockType chestBlockType) {
+	private void placeChest(final Player player, final Location location, final ChestBlockType chestBlockType) {
 
 		if (plugin.getConfig().getBoolean("debug")) {
 			plugin.getLogger().info("placeChest method called for " + chestBlockType + " with location: " + location);
@@ -446,14 +445,11 @@ public final class Deployment {
 		// set block material to chest
 		block.setType(Material.CHEST);
 
-		// get block direction
-		Directional blockData = (Directional) block.getBlockData();
+		// set custom inventory name
+		setCustomInventoryName(player, block);
 
-		// set new direction
-		blockData.setFacing(getCardinalDirection(location));
-
-		// set block data
-		block.setBlockData(blockData);
+		// set chest direction
+		setChestDirection(block, location);
 
 		// create new ChestBlock object
 		ChestBlock chestBlock = new ChestBlock(deathChest.getChestUid(), block.getLocation());
@@ -463,6 +459,40 @@ public final class Deployment {
 
 		// set block metadata
 		chestBlock.setMetadata(deathChest);
+	}
+
+
+	/**
+	 * Set custom inventory name for chest
+	 * @param player the owner of the chest
+	 * @param block the chest block
+	 */
+	private void setCustomInventoryName(final Player player, final Block block) {
+
+		String customInventoryName = plugin.messageBuilder.getString("CHEST_INFO.INVENTORY_NAME");
+		customInventoryName = customInventoryName.replace("%PLAYER%", player.getDisplayName());
+		if (!customInventoryName.isEmpty()) {
+			org.bukkit.block.Chest chestState = (org.bukkit.block.Chest) block.getState();
+			chestState.setCustomName(customInventoryName);
+			chestState.update();
+		}
+	}
+
+
+	/**
+	 * Set chest facing direction from player death location
+	 * @param block the chest block
+	 * @param location the player death location
+	 */
+	private void setChestDirection(final Block block, final Location location) {
+		// get block direction data
+		Directional blockData = (Directional) block.getBlockData();
+
+		// set new direction from player death location
+		blockData.setFacing(getCardinalDirection(location));
+
+		// set block data
+		block.setBlockData(blockData);
 	}
 
 
