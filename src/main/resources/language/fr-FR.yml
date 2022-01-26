@@ -5,7 +5,7 @@
 ############
 CHEST_INFO:
   # Custom chest inventory name
-  INVENTORY_NAME: 'Coffre de la mort de %PLAYER%'
+  INVENTORY_NAME: "Coffre de la mort de %PLAYER%"
 
 #################################
 # Traduction des chaînes de temps
@@ -207,16 +207,18 @@ MESSAGES:
 
   LIST_ITEM:
     enabled: true
-    string: "%ITEM_NUMBER%) &aLocation:&b %LOCATION% &aKiller:&b %KILLER%\n
-    &aExpiration time:&b %EXPIRATION_DURATION% \n
-    &aProtection time:&b %PROTECTION_DURATION%"
+    string: |-
+      %ITEM_NUMBER%) &aLocation:&b %LOCATION% &aKiller:&b %KILLER%
+      &aExpiration time:&b %EXPIRATION_DURATION%
+      &aProtection time:&b %PROTECTION_DURATION%
 
   LIST_ITEM_ALL:
     enabled: true
-    string: "%ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER% \n
-    &aLocation:&b %LOCATION% \n
-    &aExpiration time:&b %EXPIRATION_DURATION% \n
-    &aProtection time:&b %PROTECTION_DURATION%"
+    string: |-
+      %ITEM_NUMBER%) &aOwner:&b %OWNER% &aKiller:&b %KILLER%
+      &aLocation:&b %LOCATION%
+      &aExpiration time:&b %EXPIRATION_DURATION%
+      &aProtection time:&b %PROTECTION_DURATION%
 
   LIST_EMPTY:
     enabled: true
