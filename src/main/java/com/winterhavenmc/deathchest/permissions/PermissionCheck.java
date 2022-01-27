@@ -9,8 +9,6 @@ import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import static com.winterhavenmc.deathchest.messages.Macro.*;
 import static com.winterhavenmc.deathchest.messages.MessageId.*;
@@ -148,33 +146,6 @@ final public class PermissionCheck {
 				plugin.getConfig().getBoolean("killer-looting") &&
 				deathChest.isKiller(player) &&
 				player.hasPermission("deathchest.loot.killer");
-	}
-
-
-	/**
-	 * Test if player is attempting to quick loot chest if allowed
-	 *
-	 * @param event the PlayerInteractEvent being checked
-	 * @param player the player being checked
-	 * @return true if player is sneak-punching a chest and configuration and permissions allows
-	 */
-	public boolean isPlayerQuickLooting(final PlayerInteractEvent event, final Player player) {
-		return (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-				&& player.isSneaking()
-				&& plugin.getConfig().getBoolean("quick-loot")
-				&& player.hasPermission("deathchest.loot");
-	}
-
-
-	/**
-	 * Test if player is attempting to open a chest by right-clicking while not sneaking
-	 *
-	 * @param event the PlayerInteractEvent being checked
-	 * @param player the player being checked
-	 * @return true if player is opening a chest by right-clinking while not sneaking, else false
-	 */
-	public boolean isPlayerOpeningInventory(final PlayerInteractEvent event, final Player player) {
-		return event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !player.isSneaking();
 	}
 
 
