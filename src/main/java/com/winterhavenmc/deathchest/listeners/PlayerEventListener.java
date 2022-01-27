@@ -176,7 +176,7 @@ public final class PlayerEventListener implements Listener {
 	 * @param player the player being checked
 	 * @return true if player is sneak-punching a chest and configuration and permissions allows
 	 */
-	public boolean isPlayerQuickLooting(final PlayerInteractEvent event, final Player player) {
+	private boolean isPlayerQuickLooting(final PlayerInteractEvent event, final Player player) {
 		return (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 				&& player.isSneaking()
 				&& plugin.getConfig().getBoolean("quick-loot")
@@ -190,7 +190,7 @@ public final class PlayerEventListener implements Listener {
 	 * @param event the PlayerInteractEvent being checked
 	 * @return true if player is opening a chest by right-clinking
 	 */
-	public boolean isPlayerOpeningInventory(final PlayerInteractEvent event) {
+	private boolean isPlayerOpeningInventory(final PlayerInteractEvent event) {
 		return event.getAction().equals(Action.RIGHT_CLICK_BLOCK);
 	}
 
