@@ -62,8 +62,17 @@ final class StatusCommand extends AbstractSubcommand {
 				+ ChatColor.RESET + plugin.messageBuilder
 					.getTimeString(TimeUnit.MINUTES.toMillis(chestProtectionTime)));
 
+		sender.sendMessage(ChatColor.GREEN + "Search Distance: "
+				+ ChatColor.RESET + plugin.getConfig().getString("search-distance"));
+
 		sender.sendMessage(ChatColor.GREEN + "Require Chest: "
 				+ ChatColor.RESET + plugin.getConfig().getString("require-chest"));
+
+		sender.sendMessage(ChatColor.GREEN + "Quick Loot: "
+				+ ChatColor.RESET + plugin.getConfig().getString("quick-loot"));
+
+		sender.sendMessage(ChatColor.GREEN + "Killer Looting: "
+				+ ChatColor.RESET + plugin.getConfig().getString("killer-looting"));
 
 		sender.sendMessage(ChatColor.GREEN + "Protection Plugin Support:");
 
