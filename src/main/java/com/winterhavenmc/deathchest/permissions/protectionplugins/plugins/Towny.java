@@ -37,7 +37,7 @@ public final class Towny extends ProtectionPluginAbstract implements ProtectionP
 	@Override
 	public boolean allowChestPlacement(final Player player, final Location location) {
 
-		// use try..catch block to gracefully handle exceptions thrown by protection plugin
+		// use try...catch block to gracefully handle exceptions thrown by protection plugin
 		try {
 			return PlayerCacheUtil.getCachePermission(player, location,
 					Material.CHEST, TownyPermission.ActionType.BUILD);
