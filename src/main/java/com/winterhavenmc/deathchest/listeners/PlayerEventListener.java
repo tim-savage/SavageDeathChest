@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -155,16 +156,42 @@ public final class PlayerEventListener implements Listener {
 		// get player from event
 		final Player player = event.getPlayer();
 
-		// if no-sneak right-click, try to open chest inventory
-		if (permissionCheck.isPlayerOpeningInventory(event, player)) {
-			permissionCheck.performChecks(event, player, deathChest, inventoryOpenAction);
+		// if player sneak-clicked chest, try auto-loot
+		if (isPlayerQuickLooting(event, player)) {
+			permissionCheck.performChecks(event, player, deathChest, quickLootAction);
 			return;
 		}
 
-		// if player sneak punched chest, try auto-loot
-		if (permissionCheck.isPlayerQuickLooting(event, player)) {
-			permissionCheck.performChecks(event, player, deathChest, quickLootAction);
+		// if right-click chest, try to open chest inventory
+		if (isPlayerOpeningInventory(event)) {
+			permissionCheck.performChecks(event, player, deathChest, inventoryOpenAction);
 		}
+	}
+
+
+	/**
+	 * Test if player is attempting to quick loot chest if allowed
+	 *
+	 * @param event the PlayerInteractEvent being checked
+	 * @param player the player being checked
+	 * @return true if player is sneak-punching a chest and configuration and permissions allows
+	 */
+	public boolean isPlayerQuickLooting(final PlayerInteractEvent event, final Player player) {
+		return (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+				&& player.isSneaking()
+				&& plugin.getConfig().getBoolean("quick-loot")
+				&& player.hasPermission("deathchest.loot");
+	}
+
+
+	/**
+	 * Test if player is attempting to open a chest by right-clicking
+	 *
+	 * @param event the PlayerInteractEvent being checked
+	 * @return true if player is opening a chest by right-clinking
+	 */
+	public boolean isPlayerOpeningInventory(final PlayerInteractEvent event) {
+		return event.getAction().equals(Action.RIGHT_CLICK_BLOCK);
 	}
 
 }
