@@ -96,7 +96,7 @@ public final class PlayerEventListener implements Listener {
 		// and creative-deploy is configured false,
 		// and player does not have creative-deploy permission override:
 		// output message and return
-		if (permissionCheck.creativeModeDeployDisabled(player)) {
+		if (permissionCheck.isCreativeModeDeployDisabled(player)) {
 			plugin.messageBuilder.build(player, CREATIVE_MODE)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
