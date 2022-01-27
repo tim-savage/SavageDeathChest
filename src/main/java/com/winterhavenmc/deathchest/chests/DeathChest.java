@@ -2,6 +2,7 @@ package com.winterhavenmc.deathchest.chests;
 
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 import com.winterhavenmc.deathchest.tasks.ExpireChestTask;
 
@@ -15,9 +16,6 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.concurrent.Immutable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static com.winterhavenmc.deathchest.messages.MessageId.CHEST_EXPIRED;
-import static com.winterhavenmc.deathchest.messages.MessageId.INVENTORY_FULL;
 
 
 /**
@@ -347,7 +345,7 @@ public final class DeathChest {
 		}
 
 		// send player message
-		plugin.messageBuilder.build(player, INVENTORY_FULL)
+		plugin.messageBuilder.build(player, MessageId.INVENTORY_FULL)
 				.setMacro(Macro.LOCATION, player.getLocation())
 				.send();
 
@@ -378,7 +376,7 @@ public final class DeathChest {
 
 		// if player is not null, send player message
 		if (player != null) {
-			plugin.messageBuilder.build(player, CHEST_EXPIRED)
+			plugin.messageBuilder.build(player, MessageId.CHEST_EXPIRED)
 					.setMacro(Macro.LOCATION, this.getLocation())
 					.send();
 		}

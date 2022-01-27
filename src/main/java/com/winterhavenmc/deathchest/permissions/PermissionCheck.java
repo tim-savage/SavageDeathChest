@@ -3,15 +3,14 @@ package com.winterhavenmc.deathchest.permissions;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResultCode;
 import com.winterhavenmc.deathchest.sounds.SoundId;
+
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-
-import static com.winterhavenmc.deathchest.messages.Macro.*;
-import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
 /**
@@ -181,11 +180,11 @@ final public class PermissionCheck {
 		if (isCurrentlyOpen(deathChest)) {
 			event.setCancelled(true);
 			String viewerName = deathChest.getInventory().getViewers().iterator().next().getName();
-			plugin.messageBuilder.build(player, CHEST_CURRENTLY_OPEN)
-					.setMacro(LOCATION, deathChest.getLocation())
-					.setMacro(OWNER, deathChest.getOwnerName())
-					.setMacro(KILLER, deathChest.getKillerName())
-					.setMacro(VIEWER, viewerName)
+			plugin.messageBuilder.build(player, MessageId.CHEST_CURRENTLY_OPEN)
+					.setMacro(Macro.LOCATION, deathChest.getLocation())
+					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(Macro.KILLER, deathChest.getKillerName())
+					.setMacro(Macro.VIEWER, viewerName)
 					.send();
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 			return;
@@ -195,8 +194,8 @@ final public class PermissionCheck {
 		// and player does not have override permission: cancel event, send message and return
 		if (isCreativeAccessDisabled(player)) {
 			event.setCancelled(true);
-			plugin.messageBuilder.build(player, NO_CREATIVE_ACCESS)
-					.setMacro(LOCATION, player.getLocation()
+			plugin.messageBuilder.build(player, MessageId.NO_CREATIVE_ACCESS)
+					.setMacro(Macro.LOCATION, player.getLocation()
 					).send();
 			plugin.soundConfig.playSound(player, SoundId.CHEST_DENIED_ACCESS);
 			return;
@@ -235,19 +234,19 @@ final public class PermissionCheck {
 		// if chest protection is enabled and has not expired, send message and return
 		if (isProtectionNotExpired(deathChest)) {
 			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
-			plugin.messageBuilder.build(player, CHEST_ACCESSED_PROTECTION_TIME)
+			plugin.messageBuilder.build(player, MessageId.CHEST_ACCESSED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, deathChest.getOwnerName())
-					.setMacro(PROTECTION_DURATION, protectionTimeRemainingMillis)
-					.setMacro(PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
-					.setMacro(LOCATION, deathChest.getLocation())
+					.setMacro(Macro.PROTECTION_DURATION, protectionTimeRemainingMillis)
+					.setMacro(Macro.PROTECTION_DURATION_MINUTES, protectionTimeRemainingMillis)
+					.setMacro(Macro.LOCATION, deathChest.getLocation())
 					.send();
 		}
 		// else send player not-owner message
 		else {
-			plugin.messageBuilder.build(player, NOT_OWNER)
-					.setMacro(LOCATION, deathChest.getLocation())
-					.setMacro(OWNER, deathChest.getOwnerName())
-					.setMacro(KILLER, deathChest.getKillerName())
+			plugin.messageBuilder.build(player, MessageId.NOT_OWNER)
+					.setMacro(Macro.LOCATION, deathChest.getLocation())
+					.setMacro(Macro.OWNER, deathChest.getOwnerName())
+					.setMacro(Macro.KILLER, deathChest.getKillerName())
 					.send();
 		}
 

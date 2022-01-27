@@ -1,13 +1,14 @@
 package com.winterhavenmc.deathchest.listeners;
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.permissions.PermissionCheck;
-import com.winterhavenmc.deathchest.permissions.ResultAction;
-import com.winterhavenmc.deathchest.permissions.QuickLootAction;
-import com.winterhavenmc.deathchest.permissions.InventoryOpenAction;
-import com.winterhavenmc.deathchest.messages.Macro;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.chests.Deployment;
+import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.messages.MessageId;
+import com.winterhavenmc.deathchest.permissions.InventoryOpenAction;
+import com.winterhavenmc.deathchest.permissions.PermissionCheck;
+import com.winterhavenmc.deathchest.permissions.QuickLootAction;
+import com.winterhavenmc.deathchest.permissions.ResultAction;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,9 +22,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.LinkedList;
-
-import static com.winterhavenmc.deathchest.messages.Macro.*;
-import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
 /**
@@ -77,8 +75,8 @@ public final class PlayerEventListener implements Listener {
 		// if player's current world is not enabled in config,
 		// do nothing and allow inventory items to drop on ground
 		if (!plugin.worldManager.isEnabled(player.getWorld())) {
-			plugin.messageBuilder.build(player, CHEST_DENIED_WORLD_DISABLED)
-					.setMacro(LOCATION, player.getLocation())
+			plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_WORLD_DISABLED)
+					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
 		}
@@ -86,7 +84,7 @@ public final class PlayerEventListener implements Listener {
 		// if player does not have permission for death chest creation,
 		// do nothing and allow inventory items to drop on ground
 		if (!player.hasPermission("deathchest.chest")) {
-			plugin.messageBuilder.build(player, CHEST_DENIED_PERMISSION)
+			plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_PERMISSION)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
@@ -97,7 +95,7 @@ public final class PlayerEventListener implements Listener {
 		// and player does not have creative-deploy permission override:
 		// output message and return
 		if (permissionCheck.isCreativeDeployDisabled(player)) {
-			plugin.messageBuilder.build(player, CREATIVE_MODE)
+			plugin.messageBuilder.build(player, MessageId.CREATIVE_MODE)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;
@@ -105,7 +103,7 @@ public final class PlayerEventListener implements Listener {
 
 		// if player inventory is empty, output message and return
 		if (event.getDrops().isEmpty()) {
-			plugin.messageBuilder.build(player, INVENTORY_EMPTY)
+			plugin.messageBuilder.build(player, MessageId.INVENTORY_EMPTY)
 					.setMacro(Macro.LOCATION, player.getLocation())
 					.send();
 			return;

@@ -1,16 +1,15 @@
 package com.winterhavenmc.deathchest.commands;
 
 import com.winterhavenmc.deathchest.PluginMain;
-import com.winterhavenmc.deathchest.sounds.SoundId;
+import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPlugin;
+import com.winterhavenmc.deathchest.sounds.SoundId;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
 final class StatusCommand extends AbstractSubcommand {
@@ -22,14 +21,14 @@ final class StatusCommand extends AbstractSubcommand {
 		this.plugin = Objects.requireNonNull(plugin);
 		setName("status");
 		setUsage("/deathchest status");
-		setDescription(COMMAND_HELP_STATUS);
+		setDescription(MessageId.COMMAND_HELP_STATUS);
 	}
 
 
 	@Override
 	public boolean onCommand(final CommandSender sender, final List<String> args) {
 		if (!sender.hasPermission("deathchest.status")) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_STATUS_PERMISSION).send();
+			plugin.messageBuilder.build(sender, MessageId.COMMAND_FAIL_STATUS_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}

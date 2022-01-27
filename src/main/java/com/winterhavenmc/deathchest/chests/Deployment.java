@@ -1,11 +1,12 @@
 package com.winterhavenmc.deathchest.chests;
 
 import com.winterhavenmc.deathchest.PluginMain;
+import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.chests.search.QuadrantSearch;
 import com.winterhavenmc.deathchest.chests.search.SearchResultCode;
 import com.winterhavenmc.deathchest.chests.search.Search;
 import com.winterhavenmc.deathchest.chests.search.SearchResult;
-import com.winterhavenmc.deathchest.messages.Macro;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -19,9 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static com.winterhavenmc.deathchest.messages.MessageId.*;
-import static com.winterhavenmc.deathchest.chests.LocationUtilities.*;
 
 
 /**
@@ -103,7 +101,7 @@ public final class Deployment {
 
 		// if chest protection is enabled and chest-protection-time is set (non-zero), send message
 		if (plugin.getConfig().getBoolean("chest-protection") && chestProtectionTime > 0) {
-			plugin.messageBuilder.build(player, CHEST_DEPLOYED_PROTECTION_TIME)
+			plugin.messageBuilder.build(player, MessageId.CHEST_DEPLOYED_PROTECTION_TIME)
 					.setMacro(Macro.OWNER, player.getName())
 					.setMacro(Macro.LOCATION, deathChest.getLocation())
 					.setMacro(Macro.PROTECTION_DURATION, TimeUnit.MINUTES.toMillis(chestProtectionTime))
@@ -305,13 +303,13 @@ public final class Deployment {
 		}
 
 		// place chest at result location
-		placeChest(player, getLocationToRight(searchResult.getLocation()), ChestBlockType.LEFT_CHEST);
+		placeChest(player, LocationUtilities.getLocationToRight(searchResult.getLocation()), ChestBlockType.LEFT_CHEST);
 
 		// set chest type to left/right for double chest
 
 		// get left and right chest block state
 		BlockState rightChestState = searchResult.getLocation().getBlock().getState();
-		BlockState leftChestState = getLocationToRight(searchResult.getLocation()).getBlock().getState();
+		BlockState leftChestState = LocationUtilities.getLocationToRight(searchResult.getLocation()).getBlock().getState();
 
 		// get left and right chest block data
 		Chest rightChestBlockData = (Chest) rightChestState.getBlockData();
@@ -490,7 +488,7 @@ public final class Deployment {
 		Directional blockData = (Directional) block.getBlockData();
 
 		// set new direction from player death location
-		blockData.setFacing(getCardinalDirection(location));
+		blockData.setFacing(LocationUtilities.getCardinalDirection(location));
 
 		// set block data
 		block.setBlockData(blockData);
@@ -515,7 +513,7 @@ public final class Deployment {
 		// try placing sign on chest, catching any exception thrown
 		try {
 			// get block adjacent to chest facing player direction
-			Block signBlock = chestBlock.getRelative(getCardinalDirection(player));
+			Block signBlock = chestBlock.getRelative(LocationUtilities.getCardinalDirection(player));
 
 			// if chest face is valid location, create wall sign
 			if (isValidSignLocation(signBlock.getLocation())) {
@@ -524,7 +522,7 @@ public final class Deployment {
 
 				BlockState blockState = signBlock.getState();
 				org.bukkit.block.data.type.WallSign signBlockDataType = (org.bukkit.block.data.type.WallSign) blockState.getBlockData();
-				signBlockDataType.setFacing(getCardinalDirection(player));
+				signBlockDataType.setFacing(LocationUtilities.getCardinalDirection(player));
 				blockState.setBlockData(signBlockDataType);
 				blockState.update();
 			}
@@ -537,7 +535,7 @@ public final class Deployment {
 
 					BlockState blockState = signBlock.getState();
 					org.bukkit.block.data.type.Sign signBlockDataType = (org.bukkit.block.data.type.Sign) blockState.getBlockData();
-					signBlockDataType.setRotation(getCardinalDirection(player));
+					signBlockDataType.setRotation(LocationUtilities.getCardinalDirection(player));
 					blockState.setBlockData(signBlockDataType);
 					blockState.update();
 				}
@@ -658,7 +656,7 @@ public final class Deployment {
 		// send message based on result
 		switch (result.getResultCode()) {
 			case SUCCESS:
-				plugin.messageBuilder.build(player, CHEST_SUCCESS)
+				plugin.messageBuilder.build(player, MessageId.CHEST_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.EXPIRATION_DURATION, TimeUnit.MINUTES.toMillis(expireTime))
 						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, TimeUnit.MINUTES.toMillis(expireTime))
@@ -668,7 +666,7 @@ public final class Deployment {
 				break;
 
 			case PARTIAL_SUCCESS:
-				plugin.messageBuilder.build(player, DOUBLECHEST_PARTIAL_SUCCESS)
+				plugin.messageBuilder.build(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.EXPIRATION_DURATION, TimeUnit.MINUTES.toMillis(expireTime))
 						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, TimeUnit.MINUTES.toMillis(expireTime))
@@ -676,7 +674,7 @@ public final class Deployment {
 				break;
 
 			case PROTECTION_PLUGIN:
-				plugin.messageBuilder.build(player, CHEST_DENIED_DEPLOYMENT_BY_PLUGIN)
+				plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_DEPLOYMENT_BY_PLUGIN)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
 						.send();
@@ -684,31 +682,31 @@ public final class Deployment {
 
 			case ABOVE_GRASS_PATH:
 			case NON_REPLACEABLE_BLOCK:
-				plugin.messageBuilder.build(player, CHEST_DENIED_BLOCK)
+				plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_BLOCK)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
 				break;
 
 			case ADJACENT_CHEST:
-				plugin.messageBuilder.build(player, CHEST_DENIED_ADJACENT)
+				plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_ADJACENT)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
 				break;
 
 			case NO_CHEST:
-				plugin.messageBuilder.build(player, NO_CHEST_IN_INVENTORY)
+				plugin.messageBuilder.build(player, MessageId.NO_CHEST_IN_INVENTORY)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
 				break;
 
 			case SPAWN_RADIUS:
-				plugin.messageBuilder.build(player, CHEST_DENIED_SPAWN_RADIUS)
+				plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_SPAWN_RADIUS)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
 				break;
 
 			case VOID:
-				plugin.messageBuilder.build(player, CHEST_DENIED_VOID)
+				plugin.messageBuilder.build(player, MessageId.CHEST_DENIED_VOID)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
 				break;

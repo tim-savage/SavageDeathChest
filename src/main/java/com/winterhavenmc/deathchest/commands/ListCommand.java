@@ -3,6 +3,7 @@ package com.winterhavenmc.deathchest.commands;
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.sounds.SoundId;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -11,8 +12,6 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-
-import static com.winterhavenmc.deathchest.messages.MessageId.*;
 
 
 final class ListCommand extends AbstractSubcommand {
@@ -24,7 +23,7 @@ final class ListCommand extends AbstractSubcommand {
 		this.plugin = Objects.requireNonNull(plugin);
 		this.setName("list");
 		this.setUsage("/deathchest list [page]");
-		this.setDescription(COMMAND_HELP_LIST);
+		this.setDescription(MessageId.COMMAND_HELP_LIST);
 		this.setMaxArgs(2);
 	}
 
@@ -70,14 +69,14 @@ final class ListCommand extends AbstractSubcommand {
 
 		// if command sender does not have permission to list death chests, output error message and return true
 		if (!sender.hasPermission("deathchest.list")) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_PERMISSION).send();
+			plugin.messageBuilder.build(sender, MessageId.COMMAND_FAIL_LIST_PERMISSION).send();
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
 		}
 
 		// check if max args exceeded
 		if (args.size() > this.getMaxArgs()) {
-			plugin.messageBuilder.build(sender, COMMAND_FAIL_ARGS_COUNT_OVER).send();
+			plugin.messageBuilder.build(sender, MessageId.COMMAND_FAIL_ARGS_COUNT_OVER).send();
 			displayUsage(sender);
 			plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 			return true;
@@ -132,7 +131,7 @@ final class ListCommand extends AbstractSubcommand {
 
 			// else send permission denied message and return true
 			else {
-				plugin.messageBuilder.build(sender, COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
+				plugin.messageBuilder.build(sender, MessageId.COMMAND_FAIL_LIST_OTHER_PERMISSION).send();
 				plugin.soundConfig.playSound(sender, SoundId.COMMAND_FAIL);
 				return true;
 			}
@@ -140,7 +139,7 @@ final class ListCommand extends AbstractSubcommand {
 
 		// if display list is empty, output list empty message and return
 		if (displayRecords.isEmpty()) {
-			plugin.messageBuilder.build(sender, LIST_EMPTY).send();
+			plugin.messageBuilder.build(sender, MessageId.LIST_EMPTY).send();
 			return true;
 		}
 
@@ -192,7 +191,7 @@ final class ListCommand extends AbstractSubcommand {
 
 			// if passedPlayerName is wildcard, display LIST_ITEM_ALL
 			if (displayNames) {
-				plugin.messageBuilder.build(sender, LIST_ITEM_ALL)
+				plugin.messageBuilder.build(sender, MessageId.LIST_ITEM_ALL)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
 						.setMacro(Macro.OWNER, ownerName)
@@ -204,7 +203,7 @@ final class ListCommand extends AbstractSubcommand {
 						.send();
 			}
 			else {
-				plugin.messageBuilder.build(sender, LIST_ITEM)
+				plugin.messageBuilder.build(sender, MessageId.LIST_ITEM)
 						.setMacro(Macro.ITEM_NUMBER, listCount)
 						.setMacro(Macro.LOCATION, deathChest.getLocation())
 						.setMacro(Macro.OWNER, ownerName)
@@ -238,7 +237,7 @@ final class ListCommand extends AbstractSubcommand {
 
 	private void displayListHeader(final CommandSender sender, final int page, final int pageCount) {
 		// display list header
-		plugin.messageBuilder.build(sender, LIST_HEADER)
+		plugin.messageBuilder.build(sender, MessageId.LIST_HEADER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
 				.send();
@@ -247,7 +246,7 @@ final class ListCommand extends AbstractSubcommand {
 
 	private void displayListFooter(final CommandSender sender, final int page, final int pageCount) {
 		// display list footer
-		plugin.messageBuilder.build(sender, LIST_FOOTER)
+		plugin.messageBuilder.build(sender, MessageId.LIST_FOOTER)
 				.setMacro(Macro.PAGE_NUMBER, page)
 				.setMacro(Macro.PAGE_TOTAL, pageCount)
 				.send();
