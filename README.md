@@ -16,7 +16,7 @@ It has many options, but configuration and use has been kept as simple as possib
 * Chest protection allows only owners access. Also makes chests explosion proof!
 * Optionally allow player's killer to access their chest, for pvp looting.
 * Prevent concurrent access to chests when killer looting is enabled.
-* Optional quick-loot feature allows one click (sneak-punch) chest looting
+* Optional quick-loot feature allows one click (sneak-click) chest looting
 * Configurable expiration time for death chests, at which point they will break and drop their contents
 * Custom messages and language localization
 * Per world enabled in configuration
@@ -28,28 +28,28 @@ It has many options, but configuration and use has been kept as simple as possib
 
 ### Commands:
 
-Command | Description
-------- | -----------
-/deathchest&nbsp;list&nbsp;[username] | Displays a list of player's death chest locations. supply a username to list another player's deathchests, or type an asterisk (*) to list all deathchests.
-/deathchest&nbsp;reload | Reloads configuration file and messages.
-/deathchest&nbsp;status | Displays version info and some config settings.
-/deathchest&nbsp;help&nbsp;[command] | Displays a brief help message and command usage.
+| Command                               | Description                                                                                                                                                 |
+|---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| /deathchest&nbsp;list&nbsp;[username] | Displays a list of player's death chest locations. supply a username to list another player's deathchests, or type an asterisk (*) to list all deathchests. |
+| /deathchest&nbsp;reload               | Reloads configuration file and messages.                                                                                                                    |
+| /deathchest&nbsp;status               | Displays version info and some config settings.                                                                                                             |
+| /deathchest&nbsp;help&nbsp;[command]  | Displays a brief help message and command usage.                                                                                                            |
 
 ### Permissions:
 
-Permission | Description | Default
----------- | ----------- | -------
-deathchest.player | Default player permissions | true
-deathchest.chest | Enable death chests for player. | true
-deathchest.loot | Allows player to quick-loot death chests by sneak-punching. | true
-deathchest.doublechest | Allows placement of double chests if necessary. | true
-deathchest.admin | Default administrator permissions | op
-deathchest.freechest | Overrides require-chest configuration setting. | op
-deathchest.creative-access | Overrides creative mode chest opening restriction. | op
-deathchest.loot.other | Allow player to loot other player's chests. | op
-deathchest.reload | Allows use of plugin reload command. | op
-deathchest.list | Allows a user to view a list of their death chests and locations. | op
-deathchest.list.other | Allows a user to view a list of other players death chests and locations. | op
+| Permission                 | Description                                                               | Default |
+|----------------------------|---------------------------------------------------------------------------|---------|
+| deathchest.player          | Default player permissions                                                | true    |
+| deathchest.chest           | Enable death chests for player.                                           | true    |
+| deathchest.loot            | Allows player to quick-loot death chests by sneak-clicking.               | true    |
+| deathchest.doublechest     | Allows placement of double chests if necessary.                           | true    |
+| deathchest.admin           | Default administrator permissions                                         | op      |
+| deathchest.freechest       | Overrides require-chest configuration setting.                            | op      |
+| deathchest.creative-access | Overrides creative mode chest opening restriction.                        | op      |
+| deathchest.loot.other      | Allow player to loot other player's chests.                               | op      |
+| deathchest.reload          | Allows use of plugin reload command.                                      | op      |
+| deathchest.list            | Allows a user to view a list of their death chests and locations.         | op      |
+| deathchest.list.other      | Allows a user to view a list of other players death chests and locations. | op      |
 
 ### Installation
 Put the jar in your plugins folder and restart your server. Edit the generated configuration file to your liking, 
