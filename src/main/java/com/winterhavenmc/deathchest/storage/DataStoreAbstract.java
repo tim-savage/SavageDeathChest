@@ -14,7 +14,7 @@ abstract class DataStoreAbstract implements DataStore {
 	/**
 	 * Check if the datastore is initialized
 	 *
-	 * @return {@code true} if the datastore is initialize, {@code false} if it is not
+	 * @return {@code true} if the datastore is initialized, {@code false} if it is not
 	 */
 	public boolean isInitialized() {
 		return this.initialized;
