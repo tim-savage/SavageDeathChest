@@ -321,7 +321,7 @@ public final class DeathChest {
 
 	/**
 	 * Transfer all chest contents to player inventory and remove in-game chest if empty.
-	 * Items that do not fit in player inventory will retained in chest.
+	 * Items that do not fit in player inventory will be retained in chest.
 	 *
 	 * @param player the player whose inventory the chest contents will be transferred
 	 */
