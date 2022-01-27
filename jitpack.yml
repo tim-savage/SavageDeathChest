@@ -1,0 +1,4 @@
+# configuration file for building snapshots and releases with jitpack.io
+
+jdk:
+  - openjdk11
