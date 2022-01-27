@@ -5,15 +5,13 @@ import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPlug
 
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Area;
+import me.angeschossen.lands.api.flags.Flags;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
-
-import static me.angeschossen.lands.api.flags.Flags.BLOCK_PLACE;
-import static me.angeschossen.lands.api.flags.Flags.INTERACT_CONTAINER;
 
 
 /**
@@ -56,7 +54,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
 				// this query should return true if placement is allowed, false if placement is denied
-				return area.hasFlag(player, BLOCK_PLACE, false);
+				return area.hasFlag(player, Flags.BLOCK_PLACE, false);
 			}
 		}
 		catch (Exception e) {
@@ -81,7 +79,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			final @Nullable Area area = landsIntegration.getAreaByLoc(location);
 			if (area != null) {
 				// this query should return true if access is allowed, false if access is denied
-				return area.hasFlag(player, INTERACT_CONTAINER, false);
+				return area.hasFlag(player, Flags.INTERACT_CONTAINER, false);
 			}
 		}
 		catch (Exception e) {
