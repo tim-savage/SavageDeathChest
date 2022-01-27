@@ -2,6 +2,3 @@
 
 jdk:
   - openjdk11
-
-before_install:
-  - mvn clean
