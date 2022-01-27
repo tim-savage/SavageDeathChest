@@ -101,7 +101,7 @@ public final class LocationUtilities {
 	/**
 	 * Get block to right of location based on yaw
 	 *
-	 * @param location inital location
+	 * @param location initial location
 	 * @return block to right of initial location
 	 */
 	public static Block getBlockToRight(final Location location) {
