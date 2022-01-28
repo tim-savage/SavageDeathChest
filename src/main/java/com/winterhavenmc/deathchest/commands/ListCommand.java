@@ -29,10 +29,10 @@ final class ListCommand extends SubcommandAbstract {
 	 */
 	ListCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
-		this.setName("list");
-		this.setUsage("/deathchest list [page]");
-		this.setDescription(MessageId.COMMAND_HELP_LIST);
-		this.setMaxArgs(2);
+		this.name = "list";
+		this.usageString ="/deathchest list [page]";
+		this.description = MessageId.COMMAND_HELP_LIST;
+		this.maxArgs = 2;
 	}
 
 

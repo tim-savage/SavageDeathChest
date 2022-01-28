@@ -10,11 +10,11 @@ import java.util.*;
 
 abstract class SubcommandAbstract implements Subcommand {
 
-	private String name;
-	private String usageString;
-	private MessageId description;
-	private int minArgs;
-	private int maxArgs;
+	protected String name;
+	protected String usageString;
+	protected MessageId description;
+	protected int minArgs;
+	protected int maxArgs;
 
 	@Override
 	public String getName() {

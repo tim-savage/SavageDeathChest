@@ -22,9 +22,9 @@ final class StatusCommand extends SubcommandAbstract {
 
 	StatusCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
-		setName("status");
-		setUsage("/deathchest status");
-		setDescription(MessageId.COMMAND_HELP_STATUS);
+		this.name = "status";
+		this.usageString = "/deathchest status";
+		this.description = MessageId.COMMAND_HELP_STATUS;
 	}
 
 
