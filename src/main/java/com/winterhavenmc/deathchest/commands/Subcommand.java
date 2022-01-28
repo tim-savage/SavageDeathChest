@@ -18,26 +18,15 @@ interface Subcommand {
 
 	String getName();
 
-	void setName(final String name);
-
 	String getUsage();
-
-	void setUsage(final String usageString);
 
 	void displayUsage(final CommandSender sender);
 
 	MessageId getDescription();
 
-	void setDescription(final MessageId messageId);
-
 	@SuppressWarnings("unused")
 	int getMinArgs();
 
-	@SuppressWarnings("unused")
-	void setMinArgs(final int minArgs);
-
 	int getMaxArgs();
-
-	void setMaxArgs(final int maxArgs);
 
 }
