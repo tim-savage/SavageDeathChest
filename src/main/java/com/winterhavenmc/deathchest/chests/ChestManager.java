@@ -39,10 +39,10 @@ public final class ChestManager {
 	private final ReplaceableBlocks replaceableBlocks;
 
 	// DeathChest material types
-	final static Collection<Material> deathChestMaterials = Set.of(
+	final static Collection<Material> deathChestMaterials = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 			Material.CHEST,
 			Material.OAK_WALL_SIGN,
-			Material.OAK_SIGN );
+			Material.OAK_SIGN )));
 
 
 	/**

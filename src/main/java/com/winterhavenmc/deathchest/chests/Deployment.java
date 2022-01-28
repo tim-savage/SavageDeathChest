@@ -37,10 +37,10 @@ public final class Deployment {
 	private final DeathChest deathChest;
 
 	// set of path block type names as strings
-	private static final Collection<String> pathBlockTypeNames = Set.of(
+	private static final Collection<String> pathBlockTypeNames = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 			"GRASS_PATH",
 			"LEGACY_GRASS_PATH",
-			"DIRT_PATH"	);
+			"DIRT_PATH"	)));
 
 
 	/**

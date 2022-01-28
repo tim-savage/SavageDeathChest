@@ -14,6 +14,9 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -29,11 +32,11 @@ public final class InventoryEventListener implements Listener {
 	// reference to permissionCheck class
 	private final PermissionCheck permissionCheck;
 
-	private final Set<InventoryAction> inventoryPlaceActions = Set.of(
+	private final Set<InventoryAction> inventoryPlaceActions = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 			InventoryAction.PLACE_ALL,
 			InventoryAction.PLACE_SOME,
 			InventoryAction.PLACE_ONE,
-			InventoryAction.SWAP_WITH_CURSOR );
+			InventoryAction.SWAP_WITH_CURSOR )));
 
 
 	/**
