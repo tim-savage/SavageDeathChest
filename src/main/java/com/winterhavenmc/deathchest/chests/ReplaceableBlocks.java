@@ -4,8 +4,9 @@ import com.winterhavenmc.deathchest.PluginMain;
 import org.bukkit.Material;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -28,7 +29,7 @@ final class ReplaceableBlocks {
 
 		this.plugin = plugin;
 
-		this.materialSet = ConcurrentHashMap.newKeySet();
+		this.materialSet = Collections.synchronizedSet(new LinkedHashSet<>());
 
 		this.reload();
 	}
