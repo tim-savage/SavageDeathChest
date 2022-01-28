@@ -14,11 +14,19 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 
+/**
+ * Class that implements the list subcommand. Displays a list of deployed death chests.
+ */
 final class ListCommand extends AbstractSubcommand {
 
 	private final PluginMain plugin;
 
 
+	/**
+	 * Class constructor
+	 *
+	 * @param plugin reference to plugin main class
+	 */
 	ListCommand(final PluginMain plugin) {
 		this.plugin = Objects.requireNonNull(plugin);
 		this.setName("list");
