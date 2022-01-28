@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Class that implements the reload subcommand. Reloads the plugin configuration settings.
  */
-final class ReloadCommand extends AbstractSubcommand {
+final class ReloadCommand extends SubcommandAbstract {
 
 	private final PluginMain plugin;
 

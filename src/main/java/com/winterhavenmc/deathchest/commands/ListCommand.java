@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Class that implements the list subcommand. Displays a list of deployed death chests.
  */
-final class ListCommand extends AbstractSubcommand {
+final class ListCommand extends SubcommandAbstract {
 
 	private final PluginMain plugin;
 

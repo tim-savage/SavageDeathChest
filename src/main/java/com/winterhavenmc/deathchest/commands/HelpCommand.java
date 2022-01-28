@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * Class that implements the help subcommand. Displays help and usage for plugin subcommands.
  */
-final class HelpCommand extends AbstractSubcommand {
+final class HelpCommand extends SubcommandAbstract {
 
 	private final PluginMain plugin;
 	private final SubcommandRegistry subcommandRegistry;

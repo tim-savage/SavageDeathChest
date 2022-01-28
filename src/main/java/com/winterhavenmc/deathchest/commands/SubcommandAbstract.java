@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 
-abstract class AbstractSubcommand implements Subcommand {
+abstract class SubcommandAbstract implements Subcommand {
 
 	private String name;
 	private String usageString;
