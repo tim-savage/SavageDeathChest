@@ -5,7 +5,7 @@ import java.util.*;
 
 final class SubcommandRegistry {
 
-	Map<String, Subcommand> subcommandMap = new LinkedHashMap<>();
+	final Map<String, Subcommand> subcommandMap = new LinkedHashMap<>();
 
 
 	/**
