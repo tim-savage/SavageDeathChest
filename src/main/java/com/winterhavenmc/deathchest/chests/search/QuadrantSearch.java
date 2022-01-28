@@ -5,6 +5,8 @@ import com.winterhavenmc.deathchest.chests.ChestSize;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.*;
+
 
 public final class QuadrantSearch extends AbstractSearch {
 
@@ -55,8 +57,8 @@ public final class QuadrantSearch extends AbstractSearch {
 			try {
 				minY = origin.getWorld().getMinHeight();
 			}
-			catch (Exception e) {
-				plugin.getLogger().warning("Could not get world minimum height. Defaulting to 0.");
+			catch (NoSuchMethodError error) {
+				plugin.getLogger().warning("An error occurred while trying to determine world min height. Defaulting to 0.");
 			}
 		}
 
