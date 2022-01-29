@@ -84,7 +84,7 @@ final class StatusCommand extends SubcommandAbstract {
 			Collection<String> pluginSettings = new LinkedList<>();
 
 			count++;
-			String statusString = ChatColor.AQUA + "  " + protectionPlugin.getPluginName() + ": ";
+			String statusString = ChatColor.AQUA + "  " + protectionPlugin + ": ";
 
 			if (protectionPlugin.isIgnoredOnPlace()) {
 				pluginSettings.add("ignore on placement");
