@@ -41,7 +41,7 @@ public final class GriefPrevention extends ProtectionPluginAbstract implements P
 				}
 			}
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logPlaceError();
 		}
 		return true;
@@ -60,7 +60,7 @@ public final class GriefPrevention extends ProtectionPluginAbstract implements P
 				}
 			}
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logAccessError();
 		}
 		return true;

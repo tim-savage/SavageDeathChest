@@ -42,7 +42,7 @@ public final class Towny extends ProtectionPluginAbstract implements ProtectionP
 			return PlayerCacheUtil.getCachePermission(player, location,
 					Material.CHEST, TownyPermission.ActionType.BUILD);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logPlaceError();
 			return true;
 		}
@@ -57,7 +57,7 @@ public final class Towny extends ProtectionPluginAbstract implements ProtectionP
 			final Area area = landsIntegration.getAreaByLoc(location);
 			return Objects.requireNonNull(area).hasFlag(player, me.angeschossen.lands.api.flags.Flags.INTERACT_CONTAINER, false);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logAccessError();
 			return true;
 		}
