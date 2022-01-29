@@ -33,7 +33,7 @@ public final class RoadBlock extends ProtectionPluginAbstract implements Protect
 			// this query returns true if placement is allowed, false if placement is denied
 			return com.winterhavenmc.roadblock.SimpleAPI.canPlace(location);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logPlaceError();
 			// if error occurred, allow placement
 			return true;

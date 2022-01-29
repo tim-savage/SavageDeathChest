@@ -57,7 +57,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 				return area.hasFlag(player, Flags.BLOCK_PLACE, false);
 			}
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logPlaceError();
 		}
 		// if all else fails, allow chest placement
@@ -82,7 +82,7 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 				return area.hasFlag(player, Flags.INTERACT_CONTAINER, false);
 			}
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logAccessError();
 		}
 		// if all else fails, allow chest access

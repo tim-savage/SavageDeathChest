@@ -34,7 +34,7 @@ public class PreciousStones extends ProtectionPluginAbstract {
 		try {
 			return API().canPlace(player, location);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logPlaceError();
 			// allow placement on error
 			return true;
@@ -47,7 +47,7 @@ public class PreciousStones extends ProtectionPluginAbstract {
 		try {
 			return !API().flagAppliesToPlayer(player, FieldFlag.PROTECT_INVENTORIES, location);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logAccessError();
 			// allow access on error
 			return true;

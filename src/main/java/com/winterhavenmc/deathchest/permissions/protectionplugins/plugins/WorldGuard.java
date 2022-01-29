@@ -44,7 +44,7 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 			// this query returns true if placement is allowed, false if placement denied
 			return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logPlaceError();
 			// if error occurred, allow placement
 			return true;
@@ -59,7 +59,7 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 			// this query returns true if access allowed, false if access denied
 			return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
 		}
-		catch (Exception e) {
+		catch (Error | Exception e) {
 			logAccessError();
 			// if error occurred, allow access
 			return true;
