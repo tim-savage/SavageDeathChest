@@ -12,6 +12,11 @@ public abstract class ProtectionPluginAbstract implements ProtectionPlugin {
 	protected String version;
 
 	@Override
+	public String toString() {
+		return this.name;
+	}
+
+	@Override
 	public abstract boolean allowChestPlacement(final Player player, final Location location);
 
 	@Override
@@ -33,8 +38,7 @@ public abstract class ProtectionPluginAbstract implements ProtectionPlugin {
 	 */
 	@Override
 	public void logPlaceError() {
-		plugin.getLogger().warning("An error occurred checking for block place permission "
-				+ "with " + this.getPluginName());
+		plugin.getLogger().warning("An error occurred checking for block place permission with " + this);
 	}
 
 
@@ -43,8 +47,7 @@ public abstract class ProtectionPluginAbstract implements ProtectionPlugin {
 	 */
 	@Override
 	public void logAccessError() {
-		plugin.getLogger().warning("An error occurred checking for chest access permission "
-				+ "with " + this.getPluginName());
+		plugin.getLogger().warning("An error occurred checking for chest access permission with " + this);
 	}
 
 
@@ -57,7 +60,7 @@ public abstract class ProtectionPluginAbstract implements ProtectionPlugin {
 	public boolean isIgnoredOnPlace() {
 
 		// if plugin is not enabled in config, return false
-		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".ignore-on-place"));
+		return (plugin.getConfig().getBoolean("protection-plugins." + this + ".ignore-on-place"));
 	}
 
 
@@ -68,14 +71,8 @@ public abstract class ProtectionPluginAbstract implements ProtectionPlugin {
 	 */
 	@Override
 	public boolean isIgnoredOnAccess() {
-
 		// if plugin is not enabled in config, return false
-		return (plugin.getConfig().getBoolean("protection-plugins." + this.getPluginName() + ".ignore-on-access"));
-	}
-
-	@Override
-	public String toString() {
-		return this.name;
+		return (plugin.getConfig().getBoolean("protection-plugins." + this + ".ignore-on-access"));
 	}
 
 }
