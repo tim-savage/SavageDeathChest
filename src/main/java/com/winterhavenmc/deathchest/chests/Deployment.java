@@ -157,8 +157,7 @@ public final class Deployment {
 		// make copy of dropped items
 		Collection<ItemStack> remainingItems = new LinkedList<>(droppedItems);
 
-		// if require-chest option is enabled
-		// and player does not have permission override
+		// if require-chest option is enabled and player does not have permission override
 		if (plugin.getConfig().getBoolean("require-chest")
 				&& !player.hasPermission("deathchest.freechest")) {
 
@@ -432,10 +431,6 @@ public final class Deployment {
 	 * @param chestBlockType the type of chest block (left or right)
 	 */
 	private void placeChest(final Player player, final Location location, final ChestBlockType chestBlockType) {
-
-		if (plugin.getConfig().getBoolean("debug")) {
-			plugin.getLogger().info("placeChest method called for " + chestBlockType + " with location: " + location);
-		}
 
 		// get current block at location
 		Block block = location.getBlock();
@@ -731,16 +726,16 @@ public final class Deployment {
 		}
 
 		if (result.getResultCode() != null) {
-			plugin.getLogger().info("SearchResult Code: " + result.getResultCode().toString());
+			plugin.getLogger().info("SearchResult Code: " + result.getResultCode());
 		}
 		if (result.getLocation() != null) {
-			plugin.getLogger().info("Location: " + result.getLocation().toString());
+			plugin.getLogger().info("Location: " + result.getLocation());
 		}
 		if (result.getProtectionPlugin() != null) {
-			plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin().getPluginName());
+			plugin.getLogger().info("Protection Plugin: " + result.getProtectionPlugin());
 		}
 		if (result.getRemainingItems() != null) {
-			plugin.getLogger().info("Remaining Items: " + result.getRemainingItems().toString());
+			plugin.getLogger().info("Remaining Items: " + result.getRemainingItems());
 		}
 	}
 
