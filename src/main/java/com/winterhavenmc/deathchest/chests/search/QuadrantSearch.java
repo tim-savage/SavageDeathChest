@@ -5,8 +5,6 @@ import com.winterhavenmc.deathchest.chests.ChestSize;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
-
 
 public final class QuadrantSearch extends AbstractSearch {
 
