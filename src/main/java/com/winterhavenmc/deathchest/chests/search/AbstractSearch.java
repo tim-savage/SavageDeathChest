@@ -29,6 +29,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 
+/**
+ * An abstract class that provides default implementations of methods required of the Search interface
+ */
 abstract class AbstractSearch implements Search {
 
 	protected final PluginMain plugin;
