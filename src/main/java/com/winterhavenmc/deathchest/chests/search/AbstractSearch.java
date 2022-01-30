@@ -24,7 +24,6 @@ import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResultCode;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -168,13 +167,13 @@ abstract class AbstractSearch implements Search {
 			return false;
 		}
 
-		// if no ops defined, spawn protection is disabled
-		if (plugin.getServer().getOperators().isEmpty()) {
+		// if location world is null, return false
+		if (location.getWorld() == null) {
 			return false;
 		}
 
-		// if location world is null, return false
-		if (location.getWorld() == null) {
+		// if no server ops, spawn protection is disabled
+		if (plugin.getServer().getOperators().isEmpty()) {
 			return false;
 		}
 
@@ -185,7 +184,7 @@ abstract class AbstractSearch implements Search {
 		double spawnRadius = plugin.getServer().getSpawnRadius();
 
 		// if location is within spawn radius of world spawn location, return true; else return false
-		return location.distanceSquared(worldSpawn) < (Math.pow(spawnRadius, 2.0));
+		return location.distanceSquared(worldSpawn) < (Math.pow(spawnRadius, 2.0d));
 	}
 
 }
