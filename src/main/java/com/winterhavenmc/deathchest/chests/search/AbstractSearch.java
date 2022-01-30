@@ -168,20 +168,24 @@ abstract class AbstractSearch implements Search {
 			return false;
 		}
 
-		// get world spawn location
-		World world = location.getWorld();
-
-		if (world == null) {
+		// if no ops defined, spawn protection is disabled
+		if (plugin.getServer().getOperators().isEmpty()) {
 			return false;
 		}
 
+		// if location world is null, return false
+		if (location.getWorld() == null) {
+			return false;
+		}
+
+		// get world spawn location for location
 		Location worldSpawn = plugin.worldManager.getSpawnLocation(location.getWorld());
 
 		// get spawn protection radius
-		int spawnRadius = plugin.getServer().getSpawnRadius();
+		double spawnRadius = plugin.getServer().getSpawnRadius();
 
 		// if location is within spawn radius of world spawn location, return true; else return false
-		return location.distanceSquared(worldSpawn) < (spawnRadius ^ 2);
+		return location.distanceSquared(worldSpawn) < (Math.pow(spawnRadius, 2.0));
 	}
 
 }
