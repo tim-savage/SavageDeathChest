@@ -23,9 +23,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 
+/**
+ * A class that implements a search strategy for a valid chest location
+ */
 public final class QuadrantSearch extends AbstractSearch {
 
 
+	/**
+	 * An enum that implements a cartesian quadrant system, where each member defines the sign of the x and z coordinates
+	 */
 	private enum Quadrant {
 		I(1,1),
 		II(-1,1),
@@ -36,6 +42,11 @@ public final class QuadrantSearch extends AbstractSearch {
 		final int zFactor;
 
 
+		/**
+		 * Constructor for the Quadrant enum
+		 * @param xFactor the x multiplier to achieve negative or positive sign for the quadrant member
+		 * @param zFactor the z multiplier to achieve negative or positive sign for the quadrant member
+		 */
 		Quadrant(final int xFactor, final int zFactor) {
 
 			this.xFactor = xFactor;
@@ -44,6 +55,12 @@ public final class QuadrantSearch extends AbstractSearch {
 	}
 
 
+	/**
+	 * Class constructor
+	 * @param plugin reference to plugin main class
+	 * @param player the player whose death triggered a death chest deployment
+	 * @param chestSize the size of chest required to accommodate the players inventory
+	 */
 	public QuadrantSearch(final PluginMain plugin,
 						  final Player player,
 						  final ChestSize chestSize) {
