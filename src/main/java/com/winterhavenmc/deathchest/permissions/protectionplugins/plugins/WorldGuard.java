@@ -66,9 +66,9 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
-			// if error occurred, allow placement
-			return true;
 		}
+		// if all else fails, allow placement
+		return true;
 	}
 
 
@@ -84,9 +84,9 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
-			// if error occurred, allow access
-			return true;
 		}
+		// if all else fails, allow access
+		return true;
 	}
 
 }

@@ -55,9 +55,9 @@ public final class RoadBlock extends ProtectionPluginAbstract implements Protect
 			if (plugin.getConfig().getBoolean("debug")) {
 				e.printStackTrace();
 			}
-			// if error occurred, allow placement
-			return true;
 		}
+		// if all else fails, allow placement
+		return true;
 	}
 
 
