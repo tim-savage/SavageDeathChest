@@ -111,7 +111,7 @@ abstract class AbstractSearch implements Search {
 
 
 	/**
-	 * Validate chest location for chest type
+	 * Validate chest solitary location
 	 *
 	 * @param player    the player for whom the chest is being placed
 	 * @param location  the location to test
