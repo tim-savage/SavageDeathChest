@@ -60,7 +60,11 @@ public final class Towny extends ProtectionPluginAbstract implements ProtectionP
 					Material.CHEST, TownyPermission.ActionType.BUILD);
 		}
 		catch (Error | Exception e) {
-			logPlaceError();
+			logPlaceError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
+			// if error occurred, allow placement
 			return true;
 		}
 	}
@@ -75,7 +79,11 @@ public final class Towny extends ProtectionPluginAbstract implements ProtectionP
 			return Objects.requireNonNull(area).hasFlag(player, me.angeschossen.lands.api.flags.Flags.INTERACT_CONTAINER, false);
 		}
 		catch (Error | Exception e) {
-			logAccessError();
+			logAccessError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
+			// if error occurred, allow access
 			return true;
 		}
 	}

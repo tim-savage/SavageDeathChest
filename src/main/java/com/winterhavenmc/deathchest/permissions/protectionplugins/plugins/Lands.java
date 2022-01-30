@@ -75,7 +75,10 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			}
 		}
 		catch (Error | Exception e) {
-			logPlaceError();
+			logPlaceError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 		}
 		// if all else fails, allow chest placement
 		return true;
@@ -100,7 +103,10 @@ public final class Lands extends ProtectionPluginAbstract implements ProtectionP
 			}
 		}
 		catch (Error | Exception e) {
-			logAccessError();
+			logAccessError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 		}
 		// if all else fails, allow chest access
 		return true;

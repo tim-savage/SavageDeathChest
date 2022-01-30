@@ -62,7 +62,10 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 			return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.BUILD);
 		}
 		catch (Error | Exception e) {
-			logPlaceError();
+			logPlaceError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 			// if error occurred, allow placement
 			return true;
 		}
@@ -77,7 +80,10 @@ public final class WorldGuard extends ProtectionPluginAbstract implements Protec
 			return query.testState(BukkitAdapter.adapt(location), WorldGuardPlugin.inst().wrapPlayer(player), Flags.CHEST_ACCESS);
 		}
 		catch (Error | Exception e) {
-			logAccessError();
+			logAccessError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 			// if error occurred, allow access
 			return true;
 		}

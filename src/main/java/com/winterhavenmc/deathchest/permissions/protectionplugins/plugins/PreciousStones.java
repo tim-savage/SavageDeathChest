@@ -52,8 +52,11 @@ public class PreciousStones extends ProtectionPluginAbstract {
 			return API().canPlace(player, location);
 		}
 		catch (Error | Exception e) {
-			logPlaceError();
-			// allow placement on error
+			logPlaceError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
+			// if error occurred, allow placement
 			return true;
 		}
 	}
@@ -65,8 +68,11 @@ public class PreciousStones extends ProtectionPluginAbstract {
 			return !API().flagAppliesToPlayer(player, FieldFlag.PROTECT_INVENTORIES, location);
 		}
 		catch (Error | Exception e) {
-			logAccessError();
-			// allow access on error
+			logAccessError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
+			// if error occurred, allow access
 			return true;
 		}
 	}
