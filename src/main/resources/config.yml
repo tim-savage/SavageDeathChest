@@ -120,10 +120,29 @@ protection-plugins:
 replaceable-blocks:
   - AIR
   - CAVE_AIR
+  - VOID_AIR
+  - WATER
   - GRASS
   - TALL_GRASS
   - SNOW
   - VINE
   - LILY_PAD
-  - WATER
-  - LAVA
+  - DEAD_BUSH
+  - ALLIUM
+  - AZURE_BLUET
+  - BLUE_ORCHID
+  - CORN_FLOWER
+  - DANDELION
+  - LILAC
+  - LILY_OF_THE_VALLEY
+  - OXEYE_DAISY
+  - PEONY
+  - POPPY
+  - ROSE_BUSH
+  - SUNFLOWER
+  - ORANGE_TULIP
+  - PINK_TULIP
+  - RED_TULIP
+  - WHITE_TULIP
+  - BROWN_MUSHROOM
+  - RED_MUSHROOM
