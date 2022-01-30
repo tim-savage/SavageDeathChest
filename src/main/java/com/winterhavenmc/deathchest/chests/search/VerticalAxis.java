@@ -17,6 +17,11 @@
 
 package com.winterhavenmc.deathchest.chests.search;
 
+
+/**
+ * An enum that defines upper and lower region and provides a multiplier to achieve
+ * the positive or negative sign of each member
+ */
 enum VerticalAxis {
 
 	UPPER(1),
