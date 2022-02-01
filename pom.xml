@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven-mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.18.7-SNAPSHOT</version>
+	<version>1.18.7</version>
 	<name>SavageDeathChest</name>
 
 	<url>https://github.com/tim-savage/SavageDeathChest</url>
@@ -173,7 +173,7 @@
 		<dependency>
 			<groupId>com.github.seeseemelk</groupId>
 			<artifactId>MockBukkit-v1.18</artifactId>
-			<version>1.15.0</version>
+			<version>1.15.5</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
