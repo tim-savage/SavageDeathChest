@@ -24,11 +24,13 @@ import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResultCode;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 
+/**
+ * An abstract class that provides default implementations of methods required of the Search interface
+ */
 abstract class AbstractSearch implements Search {
 
 	protected final PluginMain plugin;
@@ -109,7 +111,7 @@ abstract class AbstractSearch implements Search {
 
 
 	/**
-	 * Validate chest location for chest type
+	 * Validate chest solitary location
 	 *
 	 * @param player    the player for whom the chest is being placed
 	 * @param location  the location to test
@@ -165,13 +167,13 @@ abstract class AbstractSearch implements Search {
 			return false;
 		}
 
-		// if no ops defined, spawn protection is disabled
-		if (plugin.getServer().getOperators().isEmpty()) {
+		// if location world is null, return false
+		if (location.getWorld() == null) {
 			return false;
 		}
 
-		// if location world is null, return false
-		if (location.getWorld() == null) {
+		// if no server ops, spawn protection is disabled
+		if (plugin.getServer().getOperators().isEmpty()) {
 			return false;
 		}
 
@@ -182,7 +184,7 @@ abstract class AbstractSearch implements Search {
 		double spawnRadius = plugin.getServer().getSpawnRadius();
 
 		// if location is within spawn radius of world spawn location, return true; else return false
-		return location.distanceSquared(worldSpawn) < (Math.pow(spawnRadius, 2.0));
+		return location.distanceSquared(worldSpawn) < (Math.pow(spawnRadius, 2.0d));
 	}
 
 }
