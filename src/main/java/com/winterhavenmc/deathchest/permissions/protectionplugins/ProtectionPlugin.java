@@ -50,9 +50,22 @@ public interface ProtectionPlugin {
 
 
 	/**
+	 * Log error if chest placement failed
+	 */
+	void logPlaceError(final String message);
+
+
+	/**
 	 * Log error if chest access failed
 	 */
+	@SuppressWarnings("unused")
 	void logAccessError();
+
+
+	/**
+	 * Log error if chest access failed
+	 */
+	void logAccessError(final String message);
 
 
 	/**
@@ -60,6 +73,7 @@ public interface ProtectionPlugin {
 	 *
 	 * @return String - the name of the protection plugin
 	 */
+	@SuppressWarnings("unused")
 	String getPluginName();
 
 

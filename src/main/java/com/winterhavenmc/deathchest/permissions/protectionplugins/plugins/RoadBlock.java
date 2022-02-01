@@ -51,10 +51,13 @@ public final class RoadBlock extends ProtectionPluginAbstract implements Protect
 			return com.winterhavenmc.roadblock.SimpleAPI.canPlace(location);
 		}
 		catch (Error | Exception e) {
-			logPlaceError();
-			// if error occurred, allow placement
-			return true;
+			logPlaceError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 		}
+		// if all else fails, allow placement
+		return true;
 	}
 
 

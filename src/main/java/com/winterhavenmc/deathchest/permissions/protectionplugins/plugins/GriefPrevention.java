@@ -59,7 +59,10 @@ public final class GriefPrevention extends ProtectionPluginAbstract implements P
 			}
 		}
 		catch (Error | Exception e) {
-			logPlaceError();
+			logPlaceError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}
@@ -78,7 +81,10 @@ public final class GriefPrevention extends ProtectionPluginAbstract implements P
 			}
 		}
 		catch (Error | Exception e) {
-			logAccessError();
+			logAccessError(e.getLocalizedMessage());
+			if (plugin.getConfig().getBoolean("debug")) {
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}

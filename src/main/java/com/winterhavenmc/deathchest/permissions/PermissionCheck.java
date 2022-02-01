@@ -248,6 +248,9 @@ final public class PermissionCheck {
 			return;
 		}
 
+		// cancel event
+		event.setCancelled(true);
+
 		// if chest protection is enabled and has not expired, send message and return
 		if (isProtectionNotExpired(deathChest)) {
 			long protectionTimeRemainingMillis = deathChest.getProtectionTime() - System.currentTimeMillis();
