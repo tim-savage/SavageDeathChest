@@ -24,6 +24,7 @@ import com.winterhavenmc.deathchest.listeners.InventoryEventListener;
 import com.winterhavenmc.deathchest.listeners.PlayerEventListener;
 import com.winterhavenmc.deathchest.messages.MessageId;
 import com.winterhavenmc.deathchest.messages.Macro;
+import com.winterhavenmc.deathchest.util.MetricsHandler;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionPluginRegistry;
 
 import com.winterhavenmc.util.messagebuilder.MessageBuilder;
@@ -31,7 +32,6 @@ import com.winterhavenmc.util.soundconfig.SoundConfiguration;
 import com.winterhavenmc.util.soundconfig.YamlSoundConfiguration;
 import com.winterhavenmc.util.worldmanager.WorldManager;
 
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -50,9 +50,6 @@ public final class PluginMain extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-
-		// bStats
-		new Metrics(this, 13916);
 
 		// copy default config from jar if it doesn't exist
 		saveDefaultConfig();
@@ -82,6 +79,9 @@ public final class PluginMain extends JavaPlugin {
 
 		// instantiate protection plugin registry
 		protectionPluginRegistry = new ProtectionPluginRegistry(this);
+
+		// bStats
+		new MetricsHandler(this);
 	}
 
 
