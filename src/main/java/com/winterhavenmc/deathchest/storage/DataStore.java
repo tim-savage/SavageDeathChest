@@ -121,6 +121,9 @@ public interface DataStore {
 	DataStoreType getType();
 
 
+	int getChestCount();
+
+
 	/**
 	 * Create new data store of given type and convert old data store.<br>
 	 * Two parameter version used when a datastore instance already exists

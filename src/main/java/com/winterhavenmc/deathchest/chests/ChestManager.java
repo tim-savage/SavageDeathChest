@@ -18,9 +18,9 @@
 package com.winterhavenmc.deathchest.chests;
 
 import com.winterhavenmc.deathchest.PluginMain;
-
 import com.winterhavenmc.deathchest.storage.DataStore;
 import com.winterhavenmc.deathchest.storage.DataStoreType;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -458,6 +458,10 @@ public final class ChestManager {
 
 	public ReplaceableBlocks getReplaceableBlocks() {
 		return replaceableBlocks;
+	}
+
+	public int getChestCount() {
+		return this.dataStore.getChestCount();
 	}
 
 }

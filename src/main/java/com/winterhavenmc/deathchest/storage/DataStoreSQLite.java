@@ -228,6 +228,27 @@ final class DataStoreSQLite extends DataStoreAbstract implements DataStore {
 
 
 	@Override
+	public int getChestCount() {
+
+		int count = 0;
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(Queries.getQuery("SelectChestCount"));
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt("ChestCount");
+			}
+		}
+		catch (SQLException e) {
+			plugin.getLogger().warning("An error occurred while attempting to retrieve a count of chest records from the " + this + " datastore.");
+			plugin.getLogger().warning(e.getLocalizedMessage());
+		}
+
+		return count;
+	}
+
+
+	@Override
 	public Collection<ChestBlock> selectAllBlockRecords() {
 
 		final Collection<ChestBlock> results = new HashSet<>();
