@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.winterhaven-mc</groupId>
 	<artifactId>SavageDeathChest</artifactId>
-	<version>1.18.8-SNAPSHOT</version>
+	<version>1.18.8</version>
 	<name>SavageDeathChest</name>
 
 	<url>https://github.com/tim-savage/SavageDeathChest</url>
