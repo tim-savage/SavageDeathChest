@@ -329,61 +329,38 @@ public abstract class AbstractDeployment implements Deployment {
 
 		// send message based on result
 		switch (result.getResultCode()) {
-			case SUCCESS:
-				plugin.messageBuilder.compose(player, MessageId.CHEST_SUCCESS)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.EXPIRATION_DURATION, MINUTES.toMillis(expireTime))
-						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, MINUTES.toMillis(expireTime))
-						.setMacro(Macro.PROTECTION_DURATION, MINUTES.toMillis(deathChest.getProtectionTime()))
-						.setMacro(Macro.PROTECTION_DURATION_MINUTES, MINUTES.toMillis(deathChest.getProtectionTime()))
-						.send();
-				break;
-
-			case PARTIAL_SUCCESS:
-				plugin.messageBuilder.compose(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.EXPIRATION_DURATION, MINUTES.toMillis(expireTime))
-						.setMacro(Macro.EXPIRATION_DURATION_MINUTES, MINUTES.toMillis(expireTime))
-						.send();
-				break;
-
-			case PROTECTION_PLUGIN:
-				plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_DEPLOYMENT_BY_PLUGIN)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
-						.send();
-				break;
-
-			case ABOVE_GRASS_PATH:
-			case NON_REPLACEABLE_BLOCK:
-				plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_BLOCK)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case ADJACENT_CHEST:
-				plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_ADJACENT)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case NO_CHEST:
-				plugin.messageBuilder.compose(player, MessageId.NO_CHEST_IN_INVENTORY)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case SPAWN_RADIUS:
-				plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_SPAWN_RADIUS)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
-
-			case VOID:
-				plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_VOID)
-						.setMacro(Macro.LOCATION, result.getLocation())
-						.send();
-				break;
+			case SUCCESS -> plugin.messageBuilder.compose(player, MessageId.CHEST_SUCCESS)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.setMacro(Macro.EXPIRATION_DURATION, MINUTES.toMillis(expireTime))
+					.setMacro(Macro.EXPIRATION_DURATION_MINUTES, MINUTES.toMillis(expireTime))
+					.setMacro(Macro.PROTECTION_DURATION, MINUTES.toMillis(deathChest.getProtectionTime()))
+					.setMacro(Macro.PROTECTION_DURATION_MINUTES, MINUTES.toMillis(deathChest.getProtectionTime()))
+					.send();
+			case PARTIAL_SUCCESS -> plugin.messageBuilder.compose(player, MessageId.DOUBLECHEST_PARTIAL_SUCCESS)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.setMacro(Macro.EXPIRATION_DURATION, MINUTES.toMillis(expireTime))
+					.setMacro(Macro.EXPIRATION_DURATION_MINUTES, MINUTES.toMillis(expireTime))
+					.send();
+			case PROTECTION_PLUGIN -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_DEPLOYMENT_BY_PLUGIN)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.setMacro(Macro.PLUGIN, result.getProtectionPlugin())
+					.send();
+			case ABOVE_GRASS_PATH, NON_REPLACEABLE_BLOCK ->
+					plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_BLOCK)
+							.setMacro(Macro.LOCATION, result.getLocation())
+							.send();
+			case ADJACENT_CHEST -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_ADJACENT)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.send();
+			case NO_CHEST -> plugin.messageBuilder.compose(player, MessageId.NO_CHEST_IN_INVENTORY)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.send();
+			case SPAWN_RADIUS -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_SPAWN_RADIUS)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.send();
+			case VOID -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_VOID)
+					.setMacro(Macro.LOCATION, result.getLocation())
+					.send();
 		}
 	}
 
