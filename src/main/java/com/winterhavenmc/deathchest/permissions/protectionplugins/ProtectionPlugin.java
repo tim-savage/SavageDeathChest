@@ -44,31 +44,6 @@ public interface ProtectionPlugin {
 
 
 	/**
-	 * Log error if chest placement failed
-	 */
-	void logPlaceError();
-
-
-	/**
-	 * Log error if chest placement failed
-	 */
-	void logPlaceError(final String message);
-
-
-	/**
-	 * Log error if chest access failed
-	 */
-	@SuppressWarnings("unused")
-	void logAccessError();
-
-
-	/**
-	 * Log error if chest access failed
-	 */
-	void logAccessError(final String message);
-
-
-	/**
 	 * Get the name of the protection plugin
 	 *
 	 * @return String - the name of the protection plugin
