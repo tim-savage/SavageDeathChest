@@ -61,6 +61,8 @@ public final class ChestManager {
 			Material.OAK_WALL_SIGN,
 			Material.OAK_SIGN );
 
+	private final DeploymentFactory deploymentFactory;
+
 
 	/**
 	 * Class constructor
@@ -83,8 +85,13 @@ public final class ChestManager {
 
 		// initialize blockIndex
 		blockIndex = new BlockIndex();
+
+		deploymentFactory = new DeploymentFactory();
 	}
 
+	public DeploymentFactory getDeploymentFactory() {
+		return this.deploymentFactory;
+	}
 
 	/**
 	 * Load death chest blocks from datastore.

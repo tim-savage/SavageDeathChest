@@ -43,7 +43,7 @@ public final class QuadrantSearch extends AbstractSearch {
 
 
 		/**
-		 * Constructor for the Quadrant enum
+		 * Constructor for Quadrant enum
 		 * @param xFactor the x multiplier to achieve negative or positive sign for the quadrant member
 		 * @param zFactor the z multiplier to achieve negative or positive sign for the quadrant member
 		 */
@@ -74,7 +74,7 @@ public final class QuadrantSearch extends AbstractSearch {
 	 * Execute search algorithm
 	 */
 	@Override
-	public void execute() {
+	public SearchResult execute() {
 
 		// get player death location
 		Location origin = player.getLocation();
@@ -102,7 +102,7 @@ public final class QuadrantSearch extends AbstractSearch {
 			else {
 				searchResult.setResultCode(SearchResultCode.VOID);
 				searchResult.setLocation(origin);
-				return;
+				return searchResult;
 			}
 		}
 
@@ -153,7 +153,7 @@ public final class QuadrantSearch extends AbstractSearch {
 
 							// if test location is valid, return search result object
 							if (searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
-								return;
+								return searchResult;
 							}
 
 							// rotate test location 90 degrees
@@ -164,7 +164,7 @@ public final class QuadrantSearch extends AbstractSearch {
 
 							// if test location is valid, return search result object
 							if (searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
-								return;
+								return searchResult;
 							}
 
 							// reset test location
@@ -174,6 +174,7 @@ public final class QuadrantSearch extends AbstractSearch {
 				}
 			}
 		}
+		return searchResult;
 	}
 
 }

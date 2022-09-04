@@ -19,10 +19,10 @@ package com.winterhavenmc.deathchest.chests.search;
 
 import com.winterhavenmc.deathchest.PluginMain;
 import com.winterhavenmc.deathchest.chests.ChestSize;
-import com.winterhavenmc.deathchest.chests.Deployment;
 import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResult;
 import com.winterhavenmc.deathchest.permissions.protectionplugins.ProtectionCheckResultCode;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ abstract class AbstractSearch implements Search {
 	protected final Player player;
 	protected final ChestSize chestSize;
 	protected final int searchDistance;
-	protected boolean placeAboveVoid;
+	protected final boolean placeAboveVoid;
 	protected SearchResult searchResult;
 
 
@@ -58,24 +58,13 @@ abstract class AbstractSearch implements Search {
 		this.placeAboveVoid = plugin.getConfig().getBoolean("place-above-void");
 
 		// initialize default result
-		searchResult = new SearchResult(SearchResultCode.NON_REPLACEABLE_BLOCK);
+		searchResult = new SearchResult();
 		searchResult.setLocation(player.getLocation());
 	}
 
 
 	@Override
-	public abstract void execute();
-
-
-	/**
-	 * Get search result
-	 *
-	 * @return SearchResult object
-	 */
-	@Override
-	public SearchResult getSearchResult() {
-		return searchResult;
-	}
+	public abstract SearchResult execute();
 
 
 	/**
@@ -128,7 +117,7 @@ abstract class AbstractSearch implements Search {
 		}
 
 		// if block at location is above grass path, return negative result
-		if (Deployment.isAbovePath(block)) {
+		if (LocationUtilities.isAbovePath(block)) {
 			searchResult.setResultCode(SearchResultCode.ABOVE_GRASS_PATH);
 			return searchResult;
 		}
@@ -185,6 +174,23 @@ abstract class AbstractSearch implements Search {
 
 		// if location is within spawn radius of world spawn location, return true; else return false
 		return location.distanceSquared(worldSpawn) < (Math.pow(spawnRadius, 2.0d));
+	}
+
+
+	/**
+	 * An enum that defines upper and lower region and provides a multiplier to achieve
+	 * the positive or negative sign of each member
+	 */
+	enum VerticalAxis {
+
+		UPPER(1),
+		LOWER(-1);
+
+		final int yFactor;
+
+		VerticalAxis(final int yFactor) {
+			this.yFactor = yFactor;
+		}
 	}
 
 }

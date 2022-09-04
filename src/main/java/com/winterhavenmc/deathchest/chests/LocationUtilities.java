@@ -22,11 +22,21 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+import java.util.Set;
+
 
 /**
  * A utility class that implements static methods for various location manipulations
  */
 public final class LocationUtilities {
+
+	// set of path block material names as strings
+	private static final Collection<String> PATH_MATERIAL_NAMES = Set.of(
+			"GRASS_PATH",
+			"LEGACY_GRASS_PATH",
+			"DIRT_PATH"	);
+
 
 	/**
 	 * Private constructor to prevent instantiation this class
@@ -43,7 +53,7 @@ public final class LocationUtilities {
 	 * @param yaw Direction in degrees
 	 * @return BlockFace of cardinal direction
 	 */
-	private static BlockFace getCardinalDirection(final float yaw) {
+	private static BlockFace getCardinalBlockFace(final float yaw) {
 
 		// ensure yaw is between 0 and 360 (in case of negative yaw)
 		double rotation = (yaw + 360) % 360;
@@ -70,8 +80,8 @@ public final class LocationUtilities {
 	 * @param location location to determine cardinal direction
 	 * @return BlockFace of cardinal direction
 	 */
-	public static BlockFace getCardinalDirection(final Location location) {
-		return getCardinalDirection(location.getYaw());
+	public static BlockFace getCardinalBlockFace(final Location location) {
+		return getCardinalBlockFace(location.getYaw());
 	}
 
 
@@ -82,8 +92,8 @@ public final class LocationUtilities {
 	 * @param player player to determine cardinal direction
 	 * @return BlockFace of cardinal direction
 	 */
-	public static BlockFace getCardinalDirection(final Player player) {
-		return getCardinalDirection(player.getLocation().getYaw());
+	public static BlockFace getCardinalBlockFace(final Player player) {
+		return getCardinalBlockFace(player.getLocation().getYaw());
 	}
 
 
@@ -111,7 +121,7 @@ public final class LocationUtilities {
 	 */
 	public static Block getBlockToLeft(final Location location) {
 		float yaw = location.getYaw() + 90;
-		return location.getBlock().getRelative(getCardinalDirection(yaw));
+		return location.getBlock().getRelative(getCardinalBlockFace(yaw));
 	}
 
 
@@ -123,7 +133,17 @@ public final class LocationUtilities {
 	 */
 	public static Block getBlockToRight(final Location location) {
 		float yaw = location.getYaw() - 90;
-		return location.getBlock().getRelative(getCardinalDirection(yaw));
+		return location.getBlock().getRelative(getCardinalBlockFace(yaw));
+	}
+
+
+	public static boolean isAbovePath(final Block block) {
+
+		// get string for block material type at location below block
+		String materialType = block.getRelative(0, -1, 0).getType().toString();
+
+		// if block at location is above grass path, return negative result
+		return PATH_MATERIAL_NAMES.contains(materialType);
 	}
 
 }

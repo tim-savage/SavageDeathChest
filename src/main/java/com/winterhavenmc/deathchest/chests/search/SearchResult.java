@@ -39,11 +39,9 @@ public final class SearchResult {
 
 	/**
 	 * Class constructor
-	 *
-	 * @param searchResultCode initial result code for result
 	 */
-	SearchResult(final SearchResultCode searchResultCode) {
-		this.searchResultCode = searchResultCode;
+	SearchResult() {
+		this.searchResultCode = SearchResultCode.NON_REPLACEABLE_BLOCK;
 		this.location = null;
 		this.protectionPlugin = null;
 		this.remainingItems = new LinkedList<>();
@@ -77,6 +75,7 @@ public final class SearchResult {
 
 	/**
 	 * Setter method for searchResultCode
+	 *
 	 * @param searchResultCode - the result code to set for this result object
 	 */
 	public void setResultCode(final SearchResultCode searchResultCode) {
@@ -96,6 +95,7 @@ public final class SearchResult {
 
 	/**
 	 * Setter method for location
+	 *
 	 * @param location - the location to set for this result object
 	 */
 	void setLocation(final Location location) {
@@ -115,6 +115,7 @@ public final class SearchResult {
 
 	/**
 	 * Setter method for protectionPlugin
+	 *
 	 * @param protectionPlugin - the protection plugin enum value to set for this result object
 	 */
 	@SuppressWarnings("unused")
@@ -135,6 +136,7 @@ public final class SearchResult {
 
 	/**
 	 * Setter method for remainingItems
+	 *
 	 * @param remainingItems Collection of ItemStack - the remaining items to set for this result object
 	 */
 	public void setRemainingItems(final Collection<ItemStack> remainingItems) {
