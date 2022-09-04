@@ -36,7 +36,7 @@ import org.bukkit.event.Cancellable;
 final public class PermissionCheck {
 
 	// reference to plugin main class
-	PluginMain plugin;
+	final PluginMain plugin;
 
 
 	/**

@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 public final class Lands extends ProtectionPluginAbstract implements ProtectionPlugin {
 
 	// reference to LandsIntegration instance
-	LandsIntegration landsIntegration;
+	final LandsIntegration landsIntegration;
 
 
 	/**
