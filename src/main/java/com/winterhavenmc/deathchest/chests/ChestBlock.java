@@ -215,8 +215,7 @@ public final class ChestBlock {
 		Block returnBlock = null;
 
 		// if block is a wall sign, get block behind
-		if (block.getBlockData() instanceof WallSign) {
-			WallSign wallSign = (WallSign) block.getBlockData();
+		if (block.getBlockData() instanceof WallSign wallSign) {
 			returnBlock = block.getRelative(wallSign.getFacing().getOppositeFace());
 		}
 

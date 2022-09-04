@@ -141,13 +141,11 @@ public class ChestSign {
 		BlockState signBlockState = signBlock.getState();
 
 		// if block has not been successfully transformed into a sign, return false
-		if (!(signBlockState instanceof org.bukkit.block.Sign)) {
+		if (!(signBlockState instanceof org.bukkit.block.Sign sign)) {
 			return;
 		}
 
 		// Place text on sign with player name and death date
-		// cast signBlockState to org.bukkit.block.Sign type object
-		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlockState;
 
 		// get configured date format from config file
 		String dateFormat = plugin.getConfig().getString("DATE_FORMAT");
