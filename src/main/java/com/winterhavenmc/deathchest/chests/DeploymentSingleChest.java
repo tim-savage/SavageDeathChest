@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 
-public class DeploymentSingleChest extends Deployment {
+public class DeploymentSingleChest extends AbstractDeployment implements Deployment {
 
 	/**
 	 * Class constructor
