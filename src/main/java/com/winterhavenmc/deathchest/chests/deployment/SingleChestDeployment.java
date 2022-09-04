@@ -15,9 +15,13 @@
  *
  */
 
-package com.winterhavenmc.deathchest.chests;
+package com.winterhavenmc.deathchest.chests.deployment;
 
 import com.winterhavenmc.deathchest.PluginMain;
+import com.winterhavenmc.deathchest.chests.ChestBlockType;
+import com.winterhavenmc.deathchest.chests.ChestSign;
+import com.winterhavenmc.deathchest.chests.ChestSize;
+import com.winterhavenmc.deathchest.chests.DeathChest;
 import com.winterhavenmc.deathchest.chests.search.QuadrantSearch;
 import com.winterhavenmc.deathchest.chests.search.SearchResult;
 import com.winterhavenmc.deathchest.chests.search.SearchResultCode;
@@ -30,7 +34,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 
-public class DeploymentSingleChest extends AbstractDeployment implements Deployment {
+public class SingleChestDeployment extends AbstractDeployment implements Deployment {
 
 	/**
 	 * Class constructor
@@ -39,7 +43,7 @@ public class DeploymentSingleChest extends AbstractDeployment implements Deploym
 	 * @param player the player for whom a death chest is being deployed
 	 * @param droppedItems the player's death drops
 	 */
-	public DeploymentSingleChest(PluginMain plugin, Player player, Collection<ItemStack> droppedItems) {
+	public SingleChestDeployment(PluginMain plugin, Player player, Collection<ItemStack> droppedItems) {
 		super(plugin, player, droppedItems);
 	}
 

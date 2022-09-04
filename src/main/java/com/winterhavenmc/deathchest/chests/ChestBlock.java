@@ -336,7 +336,7 @@ public final class ChestBlock {
 	 *
 	 * @param deathChest the DeathChest whose metadata will be set on this chest block
 	 */
-	void setMetadata(final DeathChest deathChest) {
+	public void setMetadata(final DeathChest deathChest) {
 
 		// check for null object
 		if (deathChest == null || deathChest.getChestUid() == null) {

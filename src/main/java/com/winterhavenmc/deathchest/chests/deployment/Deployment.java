@@ -15,7 +15,7 @@
  *
  */
 
-package com.winterhavenmc.deathchest.chests;
+package com.winterhavenmc.deathchest.chests.deployment;
 
 import com.winterhavenmc.deathchest.chests.search.SearchResult;
 

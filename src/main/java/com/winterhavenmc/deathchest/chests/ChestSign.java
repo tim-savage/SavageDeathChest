@@ -38,13 +38,13 @@ public class ChestSign {
 
 
 	// new chestSign(plugin, player, deathChest).place();
-	ChestSign(final PluginMain plugin, final Player player, final DeathChest deathChest) {
+	public ChestSign(final PluginMain plugin, final Player player, final DeathChest deathChest) {
 		this.plugin = plugin;
 		this.player = player;
 		this.deathChest = deathChest;
 	}
 
-	void place() {
+	public void place() {
 
 		// if chest-signs are not enabled in configuration, do nothing and return
 		if (!plugin.getConfig().getBoolean("chest-signs")) {

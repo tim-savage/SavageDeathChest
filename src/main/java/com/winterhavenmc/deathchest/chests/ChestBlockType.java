@@ -26,7 +26,7 @@ import org.bukkit.block.data.BlockData;
 /**
  * An enum whose values represent the different types of chest blocks
  */
-enum ChestBlockType {
+public enum ChestBlockType {
 
 	SIGN,
 	LEFT_CHEST,

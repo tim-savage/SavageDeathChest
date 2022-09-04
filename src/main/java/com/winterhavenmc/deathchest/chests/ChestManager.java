@@ -18,6 +18,7 @@
 package com.winterhavenmc.deathchest.chests;
 
 import com.winterhavenmc.deathchest.PluginMain;
+import com.winterhavenmc.deathchest.chests.deployment.DeploymentFactory;
 import com.winterhavenmc.deathchest.storage.DataStore;
 import com.winterhavenmc.deathchest.storage.DataStoreType;
 
@@ -164,7 +165,7 @@ public final class ChestManager {
 	 *
 	 * @param deathChest the DeathChest object to put in map
 	 */
-	void putChest(final DeathChest deathChest) {
+	public void putChest(final DeathChest deathChest) {
 		this.chestIndex.put(deathChest);
 	}
 
@@ -242,7 +243,7 @@ public final class ChestManager {
 	 *
 	 * @param chestBlock the ChestBlock to put in map
 	 */
-	void putBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
+	public void putBlock(final ChestBlockType chestBlockType, final ChestBlock chestBlock) {
 		this.blockIndex.put(chestBlockType, chestBlock);
 	}
 

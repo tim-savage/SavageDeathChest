@@ -15,9 +15,13 @@
  *
  */
 
-package com.winterhavenmc.deathchest.chests;
+package com.winterhavenmc.deathchest.chests.deployment;
 
 import com.winterhavenmc.deathchest.PluginMain;
+import com.winterhavenmc.deathchest.chests.ChestBlock;
+import com.winterhavenmc.deathchest.chests.ChestBlockType;
+import com.winterhavenmc.deathchest.chests.DeathChest;
+import com.winterhavenmc.deathchest.chests.LocationUtilities;
 import com.winterhavenmc.deathchest.chests.search.SearchResult;
 import com.winterhavenmc.deathchest.chests.search.SearchResultCode;
 import com.winterhavenmc.deathchest.messages.Macro;

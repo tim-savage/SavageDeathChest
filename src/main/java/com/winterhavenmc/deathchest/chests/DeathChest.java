@@ -69,8 +69,7 @@ public final class DeathChest {
 	private final int expireTaskId;
 
 	/**
-	 * Class constructor
-	 * This constructor is used to create a DeathChest object from an existing record read from the datastore.
+	 * Class constructor used to create a DeathChest object from an existing record read from the datastore.
 	 *
 	 * @param chestUId      the chest UUID
 	 * @param ownerUid      the chest owner UUID
@@ -100,8 +99,7 @@ public final class DeathChest {
 
 
 	/**
-	 * Class constructor
-	 * This constructor is used to create a new DeathChest object on player death.
+	 * Class constructor used to create a new DeathChest object on player death.
 	 *
 	 * @param player the death chest owner
 	 */
@@ -222,7 +220,6 @@ public final class DeathChest {
 	 *
 	 * @return integer - itemCount
 	 */
-	@SuppressWarnings("unused")
 	public int getItemCount() {
 		return itemCount;
 	}
@@ -521,7 +518,7 @@ public final class DeathChest {
 	/**
 	 * Cancel expire task for this death chest
 	 */
-	void cancelExpireTask() {
+	public void cancelExpireTask() {
 
 		// if task id is positive integer, cancel task
 		if (this.expireTaskId > 0) {
@@ -536,7 +533,7 @@ public final class DeathChest {
 	 * @param itemStacks Collection of ItemStacks to place in chest
 	 * @return Collection of ItemStacks that did not fit in chest
 	 */
-	Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
+	public Collection<ItemStack> fill(final Collection<ItemStack> itemStacks) {
 
 		// create empty list for return
 		Collection<ItemStack> remainingItems = new LinkedList<>();

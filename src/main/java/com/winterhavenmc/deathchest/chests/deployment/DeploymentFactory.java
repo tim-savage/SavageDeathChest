@@ -15,9 +15,10 @@
  *
  */
 
-package com.winterhavenmc.deathchest.chests;
+package com.winterhavenmc.deathchest.chests.deployment;
 
 import com.winterhavenmc.deathchest.PluginMain;
+import com.winterhavenmc.deathchest.chests.ChestSize;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,10 +38,10 @@ public class DeploymentFactory {
 
 		// deploy appropriately sized chest
 		if (chestSize.equals(ChestSize.SINGLE) || !player.hasPermission("deathchest.doublechest")) {
-			return new DeploymentSingleChest(plugin, player, consolidatedItems);
+			return new SingleChestDeployment(plugin, player, consolidatedItems);
 		}
 		else {
-			return new DeploymentDoubleChest(plugin, player, consolidatedItems);
+			return new DoubleChestDeployment(plugin, player, consolidatedItems);
 		}
 	}
 

@@ -15,9 +15,10 @@
  *
  */
 
-package com.winterhavenmc.deathchest.chests;
+package com.winterhavenmc.deathchest.chests.deployment;
 
 import com.winterhavenmc.deathchest.PluginMain;
+import com.winterhavenmc.deathchest.chests.*;
 import com.winterhavenmc.deathchest.chests.search.QuadrantSearch;
 import com.winterhavenmc.deathchest.chests.search.SearchResult;
 import com.winterhavenmc.deathchest.chests.search.SearchResultCode;
@@ -30,7 +31,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 
-public class DeploymentDoubleChest extends AbstractDeployment implements Deployment {
+public class DoubleChestDeployment extends AbstractDeployment implements Deployment {
 
 	/**
 	 * Class constructor
@@ -39,7 +40,7 @@ public class DeploymentDoubleChest extends AbstractDeployment implements Deploym
 	 * @param player the player for whom a death chest is being deployed
 	 * @param droppedItems the player's death drops
 	 */
-	public DeploymentDoubleChest(final PluginMain plugin, final Player player, final Collection<ItemStack> droppedItems) {
+	public DoubleChestDeployment(final PluginMain plugin, final Player player, final Collection<ItemStack> droppedItems) {
 		super(plugin, player, droppedItems);
 	}
 
@@ -60,7 +61,7 @@ public class DeploymentDoubleChest extends AbstractDeployment implements Deploym
 
 		// if only single chest location found, deploy single chest
 		if (searchResult.getResultCode().equals(SearchResultCode.PARTIAL_SUCCESS)) {
-			searchResult = new DeploymentSingleChest(plugin, player, remainingItems).deploy();
+			searchResult = new SingleChestDeployment(plugin, player, remainingItems).deploy();
 
 			// if single chest deployment was successful, set PARTIAL_SUCCESS result
 			if (searchResult.getResultCode().equals(SearchResultCode.SUCCESS)) {
