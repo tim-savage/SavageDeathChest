@@ -85,13 +85,7 @@ public final class QuadrantSearch extends AbstractSearch {
 		// get min y for origin
 		int minY = 0;
 		if (origin.getWorld() != null) {
-			//TODO: remove try/catch when minimum support is declared to be 1.16.5
-			try {
-				minY = origin.getWorld().getMinHeight();
-			}
-			catch (NoSuchMethodError error) {
-				plugin.getLogger().warning("An error occurred while trying to determine world min height. Defaulting to 0.");
-			}
+			minY = origin.getWorld().getMinHeight();
 		}
 
 		// if player died below world min height and place-above-void configured true, start search at world min height
