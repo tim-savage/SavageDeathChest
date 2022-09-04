@@ -29,7 +29,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 
@@ -91,12 +90,9 @@ public final class InventoryEventListener implements Listener {
 		}
 
 		// if event entity is not a player, do nothing and return
-		if (!(event.getPlayer() instanceof Player)) {
+		if (!(event.getPlayer() instanceof final Player player)) {
 			return;
 		}
-
-		// get event player
-		final Player player = (Player) event.getPlayer();
 
 		// if access is blocked by a protection plugin, do nothing and return (allow protection plugin to handle event)
 		ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.AccessAllowed(player, deathChest.getLocation());
@@ -131,7 +127,7 @@ public final class InventoryEventListener implements Listener {
 		}
 
 		// if inventory is empty, destroy chest(s) and sign
-		if (isEmpty(inventory)) {
+		if (inventory.isEmpty()) {
 			deathChest.destroy();
 		}
 	}
@@ -247,25 +243,6 @@ public final class InventoryEventListener implements Listener {
 				break;
 			}
 		}
-	}
-
-
-	/**
-	 * Test if inventory is empty
-	 *
-	 * @param inventory the inventory to test for emptiness
-	 * @return true if inventory is empty, false if inventory has any contents
-	 */
-	//TODO: replace this method with inventory.isEmpty() when declared minimum supported version is 1.16.3 and above
-	private boolean isEmpty(final Inventory inventory) {
-
-		final ItemStack[] items = inventory.getContents();
-		for (ItemStack item : items) {
-			if (item != null) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 }
