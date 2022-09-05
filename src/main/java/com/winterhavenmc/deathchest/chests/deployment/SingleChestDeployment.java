@@ -100,12 +100,6 @@ public class SingleChestDeployment extends AbstractDeployment implements Deploym
 
 			// place sign on chest
 			new ChestSign(plugin, player, deathChest).place();
-
-			// place hologram above chest
-//			UUID hologramUid = new Hologram(plugin, player, deathChest.getLocation(), ChestSize.SINGLE).place();
-
-			// put hologramUid in search result
-//			searchResult.setHologramUid(hologramUid);
 		}
 
 		// set remaining items in result
