@@ -256,8 +256,6 @@ public abstract class AbstractDeployment implements Deployment {
 	 */
 	void finish(final SearchResult searchResult, final DeathChest deathChest) {
 
-		plugin.getLogger().info("finish method called.");
-
 		// if debugging, log result
 		if (plugin.getConfig().getBoolean("debug")) {
 			logResult(searchResult);
@@ -298,15 +296,10 @@ public abstract class AbstractDeployment implements Deployment {
 					.send();
 		}
 
-		// create new deathchest object with hologramUid set
-//		DeathChest finalDeathChest = new DeathChest(deathChest, searchResult.getHologramUid());
-
 		// put DeathChest in DeathChest map
-//		plugin.chestManager.putChest(finalDeathChest);
 		plugin.chestManager.putChest(deathChest);
 
 		// put DeathChest in datastore
-//		Set<DeathChest> deathChests = Collections.singleton(finalDeathChest);
 		Set<DeathChest> deathChests = Collections.singleton(deathChest);
 		plugin.chestManager.insertChestRecords(deathChests);
 	}

@@ -116,7 +116,7 @@ public final class QuadrantSearch extends AbstractSearch {
 				}
 
 				// if world min height reached, break loop
-				if (y * verticalAxis.yFactor + testLocation.getY() <= minY) {
+				if (y * verticalAxis.yFactor + testLocation.getY() < minY) {
 					break;
 				}
 

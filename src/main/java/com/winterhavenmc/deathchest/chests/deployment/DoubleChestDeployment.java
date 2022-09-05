@@ -105,6 +105,9 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 		// place chest at result location
 		placeChest(player, deathChest, searchResult.getLocation(), ChestBlockType.RIGHT_CHEST);
 
+		// place sign on chest
+		new ChestSign(plugin, player, deathChest).place();
+
 		// attempt to place second chest
 
 		// if require-chest option is enabled
@@ -140,15 +143,6 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 
 		// put remaining items in result after filling chest
 		searchResult.setRemainingItems(deathChest.fill(remainingItems));
-
-		// place sign on chest
-		new ChestSign(plugin, player, deathChest).place();
-
-		// place hologram above chest
-//		UUID hologramUid = new Hologram(plugin, player, searchResult.getLocation(), ChestSize.DOUBLE).place();
-
-		// put hologramUid in search result
-//		searchResult.setHologramUid(hologramUid);
 
 		// finish deployment
 		this.finish(searchResult, deathChest);
