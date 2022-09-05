@@ -94,6 +94,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 			else {
 				searchResult.setResultCode(SearchResultCode.NO_REQUIRED_CHEST);
 				searchResult.setRemainingItems(remainingItems);
+				this.finish(searchResult, new DeathChest(player));
 				return searchResult;
 			}
 		}
@@ -113,6 +114,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 
 			// check that player has chest in inventory
 			if (containsChest(remainingItems)) {
+
 				// if consume-required-chest configured true: remove one chest from remaining items
 				if (plugin.getConfig().getBoolean("consume-required-chest")) {
 					remainingItems = removeOneChest(remainingItems);
@@ -122,6 +124,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 			else {
 				searchResult.setResultCode(SearchResultCode.PARTIAL_SUCCESS);
 				searchResult.setRemainingItems(deathChest.fill(remainingItems));
+				this.finish(searchResult, deathChest);
 				return searchResult;
 			}
 		}
