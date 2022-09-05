@@ -92,7 +92,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 			}
 			// else return NO_CHEST result
 			else {
-				searchResult.setResultCode(SearchResultCode.NO_CHEST);
+				searchResult.setResultCode(SearchResultCode.NO_REQUIRED_CHEST);
 				searchResult.setRemainingItems(remainingItems);
 				return searchResult;
 			}

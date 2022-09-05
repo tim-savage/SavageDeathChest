@@ -72,7 +72,7 @@ public class SingleChestDeployment extends AbstractDeployment implements Deploym
 			}
 			// else return NO_CHEST result
 			else {
-				return new SearchResult(SearchResultCode.NO_CHEST, remainingItems);
+				return new SearchResult(SearchResultCode.NO_REQUIRED_CHEST, remainingItems);
 			}
 		}
 

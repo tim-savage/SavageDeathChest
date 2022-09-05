@@ -367,7 +367,7 @@ public abstract class AbstractDeployment implements Deployment {
 						.send();
 				break;
 
-			case NO_CHEST:
+			case NO_REQUIRED_CHEST:
 				plugin.messageBuilder.compose(player, MessageId.NO_CHEST_IN_INVENTORY)
 						.setMacro(Macro.LOCATION, result.getLocation())
 						.send();
