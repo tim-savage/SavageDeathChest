@@ -3,7 +3,7 @@ main: com.winterhavenmc.deathchest.PluginMain
 author: ${project.author}
 version: ${project.version}
 api-version: 1.18
-softdepend: [GriefPrevention, Lands, Multiverse-Core, My_Worlds, PreciousStones, RoadBlock, Towny, WorldGuard]
+softdepend: [ GriefPrevention, Iris, Lands, Multiverse-Core, My_Worlds, PreciousStones, RoadBlock, Towny, WorldGuard ]
 
 commands:
    deathchest:
