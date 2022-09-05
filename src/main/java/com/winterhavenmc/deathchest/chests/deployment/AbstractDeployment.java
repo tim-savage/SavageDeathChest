@@ -254,7 +254,7 @@ public abstract class AbstractDeployment implements Deployment {
 	 * @param searchResult the search result of the deployment
 	 * @param deathChest the death chest object
 	 */
-	void finish(final SearchResult searchResult, final DeathChest deathChest) {
+	void finalize(final SearchResult searchResult, final DeathChest deathChest) {
 
 		// if debugging, log result
 		if (plugin.getConfig().getBoolean("debug")) {
@@ -281,7 +281,7 @@ public abstract class AbstractDeployment implements Deployment {
 		// get configured chest protection time
 		long chestProtectionTime = plugin.getConfig().getLong("chest-protection-time");
 
-		// protection time is zero, set to negative to display infinite time in message
+		// if protection time is zero, set to negative to display infinite time in message
 		if (chestProtectionTime == 0) {
 			chestProtectionTime = -1;
 		}

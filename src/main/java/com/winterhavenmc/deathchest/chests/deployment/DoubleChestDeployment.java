@@ -94,7 +94,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 			else {
 				searchResult.setResultCode(SearchResultCode.NO_REQUIRED_CHEST);
 				searchResult.setRemainingItems(remainingItems);
-				this.finish(searchResult, new DeathChest(player));
+				this.finalize(searchResult, new DeathChest(player));
 				return searchResult;
 			}
 		}
@@ -127,7 +127,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 			else {
 				searchResult.setResultCode(SearchResultCode.PARTIAL_SUCCESS);
 				searchResult.setRemainingItems(deathChest.fill(remainingItems));
-				this.finish(searchResult, deathChest);
+				this.finalize(searchResult, deathChest);
 				return searchResult;
 			}
 		}
@@ -145,7 +145,7 @@ public class DoubleChestDeployment extends AbstractDeployment implements Deploym
 		searchResult.setRemainingItems(deathChest.fill(remainingItems));
 
 		// finish deployment
-		this.finish(searchResult, deathChest);
+		this.finalize(searchResult, deathChest);
 
 		// return result
 		return searchResult;

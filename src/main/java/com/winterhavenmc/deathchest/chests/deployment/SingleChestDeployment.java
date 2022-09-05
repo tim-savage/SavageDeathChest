@@ -75,7 +75,7 @@ public class SingleChestDeployment extends AbstractDeployment implements Deploym
 			// else return NO_CHEST result
 			else {
 				searchResult = new SearchResult(SearchResultCode.NO_REQUIRED_CHEST, remainingItems);
-				this.finish(searchResult, new DeathChest(player));
+				this.finalize(searchResult, new DeathChest(player));
 				return searchResult;
 			}
 		}
@@ -106,7 +106,7 @@ public class SingleChestDeployment extends AbstractDeployment implements Deploym
 		searchResult.setRemainingItems(remainingItems);
 
 		// finish deployment
-		this.finish(searchResult, deathChest);
+		this.finalize(searchResult, deathChest);
 
 		// return result
 		return searchResult;
