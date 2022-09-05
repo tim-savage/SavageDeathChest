@@ -59,6 +59,8 @@ public class SingleChestDeployment extends AbstractDeployment implements Deploym
 		// make copy of dropped items
 		Collection<ItemStack> remainingItems = new LinkedList<>(droppedItems);
 
+		SearchResult searchResult;
+
 		// if require-chest option is enabled and player does not have permission override
 		if (chestRequired()) {
 
@@ -72,12 +74,14 @@ public class SingleChestDeployment extends AbstractDeployment implements Deploym
 			}
 			// else return NO_CHEST result
 			else {
-				return new SearchResult(SearchResultCode.NO_CHEST, remainingItems);
+				searchResult = new SearchResult(SearchResultCode.NO_REQUIRED_CHEST, remainingItems);
+				this.finish(searchResult, new DeathChest(player));
+				return searchResult;
 			}
 		}
 
 		// search for valid chest location
-		SearchResult searchResult = new QuadrantSearch(plugin, player, ChestSize.SINGLE).execute();
+		searchResult = new QuadrantSearch(plugin, player, ChestSize.SINGLE).execute();
 
 		// create new deathChest object for player
 		DeathChest deathChest = new DeathChest(player);

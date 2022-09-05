@@ -256,6 +256,8 @@ public abstract class AbstractDeployment implements Deployment {
 	 */
 	void finish(final SearchResult searchResult, final DeathChest deathChest) {
 
+		plugin.getLogger().info("finish method called.");
+
 		// if debugging, log result
 		if (plugin.getConfig().getBoolean("debug")) {
 			logResult(searchResult);
@@ -352,7 +354,7 @@ public abstract class AbstractDeployment implements Deployment {
 			case ADJACENT_CHEST -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_ADJACENT)
 					.setMacro(Macro.LOCATION, result.getLocation())
 					.send();
-			case NO_CHEST -> plugin.messageBuilder.compose(player, MessageId.NO_CHEST_IN_INVENTORY)
+			case NO_REQUIRED_CHEST -> plugin.messageBuilder.compose(player, MessageId.NO_CHEST_IN_INVENTORY)
 					.setMacro(Macro.LOCATION, result.getLocation())
 					.send();
 			case SPAWN_RADIUS -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_SPAWN_RADIUS)
