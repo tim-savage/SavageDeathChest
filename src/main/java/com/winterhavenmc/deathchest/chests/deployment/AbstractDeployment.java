@@ -335,6 +335,8 @@ public abstract class AbstractDeployment implements Deployment {
 					.setMacro(Macro.LOCATION, result.getLocation())
 					.setMacro(Macro.EXPIRATION_DURATION, MINUTES.toMillis(expireTime))
 					.setMacro(Macro.EXPIRATION_DURATION_MINUTES, MINUTES.toMillis(expireTime))
+					.setMacro(Macro.PROTECTION_DURATION, MINUTES.toMillis(deathChest.getProtectionTime()))
+					.setMacro(Macro.PROTECTION_DURATION_MINUTES, MINUTES.toMillis(deathChest.getProtectionTime()))
 					.send();
 			case PROTECTION_PLUGIN -> plugin.messageBuilder.compose(player, MessageId.CHEST_DENIED_DEPLOYMENT_BY_PLUGIN)
 					.setMacro(Macro.LOCATION, result.getLocation())
