@@ -1,34 +1,34 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/871d864a23794c6583cc5eb7a930a8e4)](https://app.codacy.com/gh/tim-savage/SavageDeathChest?utm_source=github.com&utm_medium=referral&utm_content=tim-savage/SavageDeathChest&utm_campaign=Badge_Grade_Settings)
 
-### Description:
+### Description
 
 This plugin stores a player's inventory in a chest on death for later retrieval. 
 It has many options, but configuration and use has been kept as simple as possible.
 
-### Features:
+### Features
 
-* Places a single or double chest at player's death location containing the player's inventory
-* Optional sign placement on chest, showing player name and death date
-* Configurable list of block types that chests can replace
-* WorldGuard, GriefPrevention, PreciousStones and Towny aware, will not place a chest where the player does not have access. Enabled individually.
-* Option to check protection plugins on chest access. Enabled individually, disabled by default.
-* added WorldGuard 7.0 compatibility.
-* Searches a configurable distance from death location to find a suitable chest location
-* Optionally require players to have chest(s) in inventory
-* Chest protection allows only owners access. Also makes chests explosion proof!
-* Optionally allow player's killer to access their chest, for pvp looting.
-* Prevent concurrent access to chests when killer looting is enabled.
-* Optional quick-loot feature allows one click (sneak-click) chest looting
-* Configurable expiration time for death chests, at which point they will break and drop their contents
-* Custom messages and language localization
-* Per world enabled in configuration
-* Uses sqlite for persistent storage
-* Prevents creative mode players from opening death chests
-* Optionally prevent players from placing items in death chests
-* Optional sound effects!
-* A perfect compliment to SavageDeathCompass and SavageGraveyards
+  * Places a single or double chest at player's death location containing the player's inventory
+  * Optional sign placement on chest, showing player name and death date
+  * Configurable list of block types that chests can replace
+  * WorldGuard, GriefPrevention, PreciousStones and Towny aware, will not place a chest where the player does not have access. Enabled individually.
+  * Option to check protection plugins on chest access. Enabled individually, disabled by default.
+  * added WorldGuard 7.0 compatibility.
+  * Searches a configurable distance from death location to find a suitable chest location
+  * Optionally require players to have chest(s) in inventory
+  * Chest protection allows only owners access. Also makes chests explosion proof!
+  * Optionally allow player's killer to access their chest, for pvp looting.
+  * Prevent concurrent access to chests when killer looting is enabled.
+  * Optional quick-loot feature allows one click (sneak-click) chest looting
+  * Configurable expiration time for death chests, at which point they will break and drop their contents
+  * Custom messages and language localization
+  * Per world enabled in configuration
+  * Uses sqlite for persistent storage
+  * Prevents creative mode players from opening death chests
+  * Optionally prevent players from placing items in death chests
+  * Optional sound effects!
+  * A perfect compliment to SavageDeathCompass and SavageGraveyards
 
-### Commands:
+### Commands
 
 | Command                               | Description                                                                                                                                                 |
 |---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -37,7 +37,7 @@ It has many options, but configuration and use has been kept as simple as possib
 | /deathchest&nbsp;status               | Displays version info and some config settings.                                                                                                             |
 | /deathchest&nbsp;help&nbsp;[command]  | Displays a brief help message and command usage.                                                                                                            |
 
-### Permissions:
+### Permissions
 
 | Permission                 | Description                                                               | Default |
 |----------------------------|---------------------------------------------------------------------------|---------|
