@@ -30,12 +30,12 @@ It has many options, but configuration and use has been kept as simple as possib
 
 ### Commands
 
-| Command                               | Description                                                                                                                                                 |
-|---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| /deathchest&nbsp;list&nbsp;[username] | Displays a list of player's death chest locations. supply a username to list another player's deathchests, or type an asterisk (*) to list all deathchests. |
-| /deathchest&nbsp;reload               | Reloads configuration file and messages.                                                                                                                    |
-| /deathchest&nbsp;status               | Displays version info and some config settings.                                                                                                             |
-| /deathchest&nbsp;help&nbsp;[command]  | Displays a brief help message and command usage.                                                                                                            |
+| Command                                 | Description                                                                                                                                                 |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| /deathchest&nbsp;list&nbsp;\[username\] | Displays a list of player's death chest locations. supply a username to list another player's deathchests, or type an asterisk (*) to list all deathchests. |
+| /deathchest&nbsp;reload                 | Reloads configuration file and messages.                                                                                                                    |
+| /deathchest&nbsp;status                 | Displays version info and some config settings.                                                                                                             |
+| /deathchest&nbsp;help&nbsp;\[command\]  | Displays a brief help message and command usage.                                                                                                            |
 
 ### Permissions
 
