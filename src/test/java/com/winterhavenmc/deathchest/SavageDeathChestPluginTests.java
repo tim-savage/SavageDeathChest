@@ -169,7 +169,7 @@ public class SavageDeathChestPluginTests {
         // class constructor
         SoundTests() {
             // add all SoundId enum values to collection
-            for (com.winterhavenmc.deathchest.sounds.SoundId SoundId : SoundId.values()) {
+            for (SoundId SoundId : SoundId.values()) {
                 enumSoundNames.add(SoundId.name());
             }
         }
