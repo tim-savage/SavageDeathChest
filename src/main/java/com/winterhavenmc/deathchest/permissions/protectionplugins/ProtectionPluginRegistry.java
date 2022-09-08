@@ -97,7 +97,7 @@ public final class ProtectionPluginRegistry {
 	 * @param location the location to perform check
 	 * @return ProtectionCheckResult - result object with result code and blocking protection plugin if applicable
 	 */
-	public ProtectionCheckResult AccessAllowed(final Player player, final Location location) {
+	public ProtectionCheckResult accessAllowed(final Player player, final Location location) {
 
 		ProtectionCheckResult result = new ProtectionCheckResult();
 

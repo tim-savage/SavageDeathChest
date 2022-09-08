@@ -185,7 +185,7 @@ final public class PermissionCheck {
 	                          final DeathChest deathChest, final ResultAction resultAction) {
 
 		// get protectionCheckResult of all protection plugin checks
-		final ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.AccessAllowed(player, deathChest.getLocation());
+		final ProtectionCheckResult protectionCheckResult = plugin.protectionPluginRegistry.accessAllowed(player, deathChest.getLocation());
 
 		// if access blocked by protection plugin, do nothing and return (allow protection plugin to handle)
 		if (isPluginBlockingAccess(protectionCheckResult)) {
