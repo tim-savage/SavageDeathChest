@@ -1,5 +1,7 @@
 ### Description:
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/871d864a23794c6583cc5eb7a930a8e4)](https://app.codacy.com/gh/tim-savage/SavageDeathChest?utm_source=github.com&utm_medium=referral&utm_content=tim-savage/SavageDeathChest&utm_campaign=Badge_Grade_Settings)
+
 This plugin stores a player's inventory in a chest on death for later retrieval. 
 It has many options, but configuration and use has been kept as simple as possible.
 
