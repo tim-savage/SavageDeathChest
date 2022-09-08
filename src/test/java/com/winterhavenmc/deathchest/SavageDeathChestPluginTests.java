@@ -54,25 +54,25 @@ public class SavageDeathChestPluginTests {
 
         @Test
         @DisplayName("server is not null.")
-        void ServerNotNull() {
+        void serverNotNull() {
             Assertions.assertNotNull(server,"server is null.");
         }
 
         @Test
         @DisplayName("plugin is not null.")
-        void PluginNotNull() {
+        void pluginNotNull() {
             Assertions.assertNotNull(plugin,"plugin is null.");
         }
 
         @Test
         @DisplayName("plugin is enabled.")
-        void PluginEnabled() {
+        void pluginEnabled() {
             Assertions.assertTrue(plugin.isEnabled(),"plugin is not enabled.");
         }
 
         @Test
         @DisplayName("data folder is not null.")
-        void DataFolderNotNull() {
+        void dataFolderNotNull() {
             Assertions.assertNotNull(plugin.getDataFolder(),
                     "data folder is null.");
         }
@@ -86,28 +86,28 @@ public class SavageDeathChestPluginTests {
 
         @Test
         @DisplayName("config not null.")
-        void ConfigNotNull() {
+        void configNotNull() {
             Assertions.assertNotNull(plugin.getConfig(),
                     "plugin configuration is null.");
         }
 
         @Test
         @DisplayName("world manager not null.")
-        void WorldManagerNotNull() {
+        void worldManagerNotNull() {
             Assertions.assertNotNull(plugin.worldManager,
                     "world manager is null.");
         }
 
         @Test
         @DisplayName("sound config not null.")
-        void SoundConfigNotNull() {
+        void soundConfigNotNull() {
             Assertions.assertNotNull(plugin.soundConfig,
                     "sound configuration is null.");
         }
 
         @Test
         @DisplayName("command manager not null.")
-        void CommandManagerNotNull() {
+        void commandManagerNotNull() {
             Assertions.assertNotNull(plugin.commandManager,
                     "command manager is null.");
         }
@@ -134,14 +134,14 @@ public class SavageDeathChestPluginTests {
 
         @Test
         @DisplayName("test enum string set not null")
-        void EnumStringsNotNull() {
+        void enumStringsNotNull() {
             Assertions.assertNotNull(enumConfigKeyStrings,
                     "Enum key set is null.");
         }
 
         @Test
         @DisplayName("test enum string set not empty.")
-        void EnumStringsNotEmpty() {
+        void enumStringsNotEmpty() {
             Assertions.assertFalse(enumConfigKeyStrings.isEmpty(),
                     "Enum key set is empty.");
         }
@@ -149,7 +149,7 @@ public class SavageDeathChestPluginTests {
         @ParameterizedTest
         @EnumSource(ConfigSetting.class)
         @DisplayName("ConfigSetting enum matches config file key/value pairs.")
-        void ConfigFileKeysContainsEnumKey(ConfigSetting configSetting) {
+        void configFileKeysContainsEnumKey(ConfigSetting configSetting) {
             Assertions.assertEquals(configSetting.getValue(), plugin.getConfig().getString(configSetting.getKey()),
                     "Enum key " + configSetting.getKey() + " not found in config file.");
         }
@@ -175,102 +175,62 @@ public class SavageDeathChestPluginTests {
         }
 
         @SuppressWarnings("unused")
-        Collection<String> GetConfigFileKeys() {
+        Collection<String> getConfigFileKeys() {
             return plugin.soundConfig.getSoundConfigKeys();
         }
 
         @ParameterizedTest
         @EnumSource(SoundId.class)
         @DisplayName("enum member soundId is contained in getConfig() keys.")
-        void FileKeysContainsEnumValue(SoundId soundId) {
+        void fileKeysContainsEnumValue(SoundId soundId) {
             Assertions.assertTrue(plugin.soundConfig.isValidSoundConfigKey(soundId.name()),
                     "Enum key '" + soundId.name() + "' not found in sound config file.");
         }
 
         @ParameterizedTest
-        @MethodSource("GetConfigFileKeys")
+        @MethodSource("getConfigFileKeys")
         @DisplayName("config file key has matching key in enum sound names.")
-        void SoundConfigEnumContainsAllFileSounds(String key) {
+        void soundConfigEnumContainsAllFileSounds(String key) {
             Assertions.assertTrue(enumSoundNames.contains(key),
                     "sound config file key '" + key + "' not found in Enum.");
         }
 
         @ParameterizedTest
-        @MethodSource("GetConfigFileKeys")
+        @MethodSource("getConfigFileKeys")
         @DisplayName("sound file key has valid bukkit sound name")
-        void SoundConfigFileHasValidBukkitSound(String key) {
+        void soundConfigFileHasValidBukkitSound(String key) {
             String bukkitSoundName = plugin.soundConfig.getBukkitSoundName(key);
             Assertions.assertTrue(plugin.soundConfig.isValidBukkitSoundName(bukkitSoundName),
                     "File key '" + key + "' has invalid bukkit sound name: '" + bukkitSoundName + "'.");
         }
-
-//        @Nested
-//        @DisplayName("Play all sounds.")
-//        class PlaySoundTests {
-//
-//            @Nested
-//            @DisplayName("Play all sounds in SoundId for player")
-//            class PlayerSoundTests {
-//
-//                private final EnumMap<SoundId, Boolean> soundsPlayed = new EnumMap<>(SoundId.class);
-//
-//                @ParameterizedTest
-//                @EnumSource(SoundId.class)
-//                @DisplayName("play sound for player")
-//                void SoundConfigPlaySoundForPlayer(SoundId soundId) {
-//                    plugin.soundConfig.playSound(player, soundId);
-//                    soundsPlayed.put(soundId, true);
-//                    Assertions.assertTrue(soundsPlayed.containsKey(soundId),
-//                            "Sound '" + soundId.name() + "' did not play for player." );
-//                }
-//            }
-//
-//            @Nested
-//            @DisplayName("Play all sounds in SoundId at world location")
-//            class WorldSoundTests {
-//
-//                private final EnumMap<SoundId, Boolean> soundsPlayed = new EnumMap<>(SoundId.class);
-//
-//                @ParameterizedTest
-//                @EnumSource(SoundId.class)
-//                @DisplayName("play sound for location")
-//                void SoundConfigPlaySoundForPlayer(SoundId soundId) {
-//                    plugin.soundConfig.playSound(world.getSpawnLocation(), soundId);
-//                    soundsPlayed.put(soundId, true);
-//                    Assertions.assertTrue(soundsPlayed.containsKey(soundId),
-//                            "Sound '" + soundId.name() + "' did not play for location." );
-//                }
-//            }
-//        }
-
     }
 
 
 
     @Test
     @DisplayName("Test Help Command.")
-    void HelpCommand() {
+    void helpCommand() {
         Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest help"),
                 "help command returned true.");
     }
 
     @Test
     @DisplayName("Test List Command.")
-    void ListCommand() {
+    void listCommand() {
         Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest list"),
                 "list command returned true.");
     }
 
     @Test
     @DisplayName("Test Reload Command.")
-    void ReloadCommand() {
+    void reloadCommand() {
         Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest reload"),
                 "reload command returned true.");
     }
 
     @Test
     @DisplayName("Test Status Command.")
-    void StatusCommand() {
+    void statusCommand() {
         Assertions.assertFalse(server.dispatchCommand(server.addPlayer(), "/deathchest status"),
                 "status command returned true.");
     }
